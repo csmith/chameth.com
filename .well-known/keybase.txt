@@ -1,0 +1,76 @@
+==================================================================
+https://keybase.io/cjsmith
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://csmith.github.io
+  * I am cjsmith (https://keybase.io/cjsmith) on keybase.
+  * I have a public key with fingerprint AB4D D2F3 64FB 6B4B AAB2  873F D736 7BB8 25DD A717
+
+To claim this, I am signing this object:
+
+{
+    "body": {
+        "client": {
+            "name": "keybase.io node.js client",
+            "version": "0.5.1"
+        },
+        "key": {
+            "fingerprint": "ab4dd2f364fb6b4baab2873fd7367bb825dda717",
+            "host": "keybase.io",
+            "key_id": "D7367BB825DDA717",
+            "uid": "d3c1ebac2a04f60621021f23c3db7500",
+            "username": "cjsmith"
+        },
+        "merkle_root": {
+            "ctime": 1410858029,
+            "hash": "80301e6ba676dd00d0765eaf6b535d39402ac53e6f721a0309386b249402a9258fdf4a214e5a647cdcb1220e73f6028a677375284e69b7f785309d98b7f389b9",
+            "seqno": 48934
+        },
+        "service": {
+            "hostname": "csmith.github.io",
+            "protocol": "https:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1410861347,
+    "expire_in": 157680000,
+    "prev": "79d889c4b892955c7f7a85a853962c3d7672fe33524795418926ed2b39b70758",
+    "seqno": 8,
+    "tag": "signature"
+}
+
+with the aforementioned key, yielding the PGP signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1
+
+owFVkm1oHEUYxy8XE0mNtd/aimKzUStpPGdndt4uKFhPQYOQklqk0F5ndmbvNs3t
+Xnc3adMQEC2ExhYV8S0V31JrW0sppdQWbKNtpY0FET9UOLEBUfGdQgRPpdbZa4p1
+GZaZeX7zn+f/PPP8zc2ZbNOXZPTYXV+/t7jp/I8ys3pJW+eoJUM1YuVHLXfQ10GS
+zgJR0Vbe2qhHpIh1zg+XBaHSuYF42TzTbQ3rKPbDwFAgh3O2Ndad4ulhzw9KOqpG
+fqplCekoBT1EHE8S6UghJGQUeYoiQqVkECslqE2NZDmMk//dajU0i74yu4WUX7nS
+8IXCg1f5oUZAIdfWUrhQAMcjgEAbQNuDyEVKUgxACsY6mrfkDsQVPymn6VZ0tHFQ
+F6MwbHh2Ez8lbMcGDDMAuUlIxGVzhgEEbE2kIJQoBYAClGAtPCIxwgpxB0DhYqSJ
+R6EtDMwRIxI6jQCHmHnKcwS0HY0FcairXGlDCLSpAgGQGVmKKIbM0YRL6lGGjYTi
+zMwR45IbB7HeFIRW3mEcOWPpMhr2XZ2mnRbtmreGtVzJ/Ibk1fJVozAJ3XDQRMtJ
+Uo3zqfFkpJrimw9pWZxXKko/UKZv1zfWNuj1RSE2cmi3pbdU/UgX/ZTAlDBgvvQi
+PWw0KVeMcdeRjEOOsWvcCIbNQJxA0xFKKPQ0Qhg6lGPHNhjRCkpkjAOK2X9WmclT
+lIxk7JcCkQxF2hrb3nTbDZmmbKa1JZu+3MyCtkXXnrPsvfHKlq1vdQ089A7ffWrk
+7NzD350Zv7jwkfqLz5SmN9V+/bbnw5+SQjB69ML31m8z77d4e09+tbo3u6r35wWt
+nZtLc7f2901ceXuK1MG5zzomngvWz5Z+v/j0gcn+zjcnuk7umqmcOWzUwg9A0N/Z
+/2xL+/Jm+vnHzbPj9b93/IPa9s6dfqN84diKo4+/svN0/Y6+l2Z3z0yfunzP3bfv
+jDv+uPeFmUvZHyo3HWxfe4u169Pq1NaONX8+VXv1iXWT42DpR1+8/trlbz55dN/h
+tg1PHu+qHWm9tP7dcyemDtSWt+M9PZlKmd//8gOF7J3RtvqevuOT0zuS7fnMXz3b
+MveVfwlWwA0L84/V9vNV5+f+BQ==
+=Q9i7
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/cjsmith
+
+==================================================================
