@@ -74,3 +74,81 @@ appending to this document.
 View my publicly-auditable identity here: https://keybase.io/cjsmith
 
 ==================================================================
+
+==================================================================
+https://keybase.io/cjsmith
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://www.chameth.com
+  * I am cjsmith (https://keybase.io/cjsmith) on keybase.
+  * I have a public key with fingerprint AB4D D2F3 64FB 6B4B AAB2  873F D736 7BB8 25DD A717
+
+To claim this, I am signing this object:
+
+{
+    "body": {
+        "client": {
+            "name": "keybase.io node.js client",
+            "version": "0.5.1"
+        },
+        "key": {
+            "fingerprint": "ab4dd2f364fb6b4baab2873fd7367bb825dda717",
+            "host": "keybase.io",
+            "key_id": "D7367BB825DDA717",
+            "uid": "d3c1ebac2a04f60621021f23c3db7500",
+            "username": "cjsmith"
+        },
+        "merkle_root": {
+            "ctime": 1416527897,
+            "hash": "1b38a62f73f3b8c189e4b7397a8b5527f90b7b56b0ebf2024357f23d103bdf1cb515133f67434eac24945d09bc7d31caaf284c87855b88ef0d280c6df31aca36",
+            "seqno": 97281
+        },
+        "service": {
+            "hostname": "www.chameth.com",
+            "protocol": "https:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "ctime": 1416527964,
+    "expire_in": 157680000,
+    "prev": "9168efbe7077bf5807952881c76d5b671cea4ea095db81b54593e46738503029",
+    "seqno": 18,
+    "tag": "signature"
+}
+
+with the aforementioned key, yielding the PGP signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v1
+
+owFVkm1oHEUYxy9Jq9RSrZYiqJSwGIttvM7s7LzsFbXGFCUQUOpRNeo5r7lNk93L
+7jZnmpycWluj/WCUUKRU6BerIrVqQy1YiApq8PAF1FDQxBSxFltfQLTtB3U2RrT7
+aXbm9/yf//+ZeXZFS665aYaMvN32zcGrmz4+LXL3hPUHRhwRqWGnMOLI/kCHabYK
++YB2Cs42PSx4ovNB1BpGSuf7ktZFpt0Z0nESRKGlQB7noVNrz/Cs2ARhr44rcZBp
+OVx4SrkGEc8IIjzBuXAZRUZRRKgQzMVKcQqplSxHSXpRV2dBsxQou9uZ8R0dlu/s
+vO0ffvvCgUISasGly4FnCCAuBC40LpJICYoByMBEx4uRZF8yEKTlzO6Ajrf161Ic
+RQuZZRpkBPQgwS5lPrWGeFK2NVAgxolrrGskmITM156gyKecCWxZ4wNBBSYCaGFc
+4HoIU2tAQYCEMlAKDDFEyBDqIU9bp57vYQV8IalCUHJuXOZJRhnGgjFtgHIZkEQZ
+BLnkiNgEiR4MI6fgU5fBWvYbDwVSZ7azoS1mq1areVm267Scl9GALavEURrJqN8e
+ltO0khSy3OlwZYHWh0VpUagkglDZa/v/vWZ9Lp6JT7x2Rz9SCWJdCjICU8KA/bJG
+eshq+pBY/0JTQKkwmAHqY5cxKClRWBAKpeZ2AsDHSjAosId9pD1CEcMAAdf/Lylk
+1ijvtZpJ0BvydHusndpY03VLck3NuUuWNmcvN3fZspX/Pmdy46V/bQ0GR3dfvuv1
+TUuOPlV8452Ns3dPsisPvDR9+uzNF95fWWy7f8Oa3+88du7Io3L9B8vr3VMth+Hq
+d2d/PP7wqeVH1o2PpcFnN3y1ZeyXHavj+cae3Vv2TbSCPctyM/d9/v3Wu05tnv9z
+pKvn1nWH6ntrD30Rt3+6Ztcdqxrda4dfvOr44HtxaXxq8vFjJzf+MTFd2vDm2Xr0
+zBXPffnd3MsnWgbPnJy7qc+wrmqxZ+jMvaMHxl+rnLsQFWqN/l+dp2Nn7aGdH66H
+PT/Pz7zVs+r8RwcnNjU+ebBzeucOdb03+cK+xiuvPr+0o/uW0fM/PPHYb+bbJ4vV
+a7v2fz0VFFe01a+5/cTmuaNVd3ZvrYv/9Dc=
+=CZAk
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/cjsmith
+
+==================================================================
+
