@@ -1,29 +1,14 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Chameth.com</title>
-    <link rel="stylesheet" href="res/css/style.css">
-  </head>
-  <body>
-    <div id="wrapper">
-      <div id="main">
-        <article class="post">
-          <header>
-            <div class="title">
-              <h2>Coming soon... maybe</h2>
-              <p>Subheading?</p>
-            </div>
-          </header>
-          <p>&lt;!-- TODO --&gt;</p>
-        </article>
-      </div>
-
-      <section id="sidebar">
-        <header>
-          <h1>Chameth.com</h1>
-          <p>Personal website of Chris Smith</p>
-        </header>
-      </section>
+---
+layout: default
+---
+{% for post in paginator.posts %}
+<article class="post">
+  <header>
+    <div class="title">
+      <h2><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></h2>
+      <p>{{ post.strapline }}</p>
     </div>
-  </body>
-</html>
+  </header>
+  {{ post.content }}
+</article>
+{% endfor %}

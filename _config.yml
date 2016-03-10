@@ -1,1 +1,5 @@
 include: [".well-known"]
+gems: [jekyll-paginate]
+
+paginate: 20
+paginate_path: "/posts/page:num/"
