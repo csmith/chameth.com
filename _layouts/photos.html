@@ -12,8 +12,8 @@ layout: default
     <a href="{{page.path | replace:'photos/','https://photos.chameth.com/' | replace:'index.html',photo.file}}"
        class="image gallery"
        data-lightbox="gallery"
-       data-title="{{photo.caption}}">
-      <img src="{{ photo.file }}" alt="{{photo.alt}}">
+       data-title="{{photo.caption|xml_escape}}">
+      <img src="{{ photo.file }}" alt="{{photo.alt|xml_escape}}">
     </a>
   {% endfor %}
 </article>

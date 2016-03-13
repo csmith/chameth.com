@@ -19,7 +19,7 @@ for folder in $SOURCE/*; do
     for file in $folder/*; do
         filename=${file##*/}
         out="photos/$foldername/$filename";
-        test -e $out || convert -thumbnail 400^ -gravity center -crop 400x200+0+0 -strip -quality 86 $file $out;
+        test -e "$out" || convert -thumbnail 400^ -gravity center -crop 400x200+0+0 -strip -quality 86 "$file" "$out";
     done
 
     if [ ! -e "photos/$foldername/index.html" ]; then
