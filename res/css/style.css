@@ -715,6 +715,10 @@ header p {
 
 }
 
+#sidebar h1, #sidebar h2, #sidebar header p {
+  text-align: center;
+}
+
 #sidebar header h1 {
   font-size: 2em;
   font-weight: 900;
