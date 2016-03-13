@@ -8,9 +8,11 @@ layout: default
       <p>{{ page.album_date }}</p>
     </div>
   </header>
-  <!-- Base URL: https://photos.chameth.com/{{page.path | replace:'index.html',''}}/ -->
   {% for photo in page.photos %}
-    <a class="image gallery">
+    <a href="{{page.path | replace:'photos/','https://photos.chameth.com/' | replace:'index.html',photo.file}}"
+       class="image gallery"
+       data-lightbox="gallery"
+       data-title="{{photo.caption}}">
       <img src="{{ photo.file }}" alt="{{photo.alt}}">
     </a>
   {% endfor %}
