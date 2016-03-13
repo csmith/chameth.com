@@ -1,0 +1,17 @@
+---
+layout: default
+---
+<article class="post">
+  <header>
+    <div class="title">
+      <h2>{{ page.album_title }}</h2>
+      <p>{{ page.album_date }}</p>
+    </div>
+  </header>
+  <!-- Base URL: https://photos.chameth.com/{{page.path | replace:'index.html',''}}/ -->
+  {% for photo in page.photos %}
+    <a class="image gallery">
+      <img src="{{ photo.file }}" alt="{{photo.alt}}">
+    </a>
+  {% endfor %}
+</article>

@@ -356,18 +356,24 @@ header p {
   white-space: nowrap;
 }
 
-.post > .image.featured {
+.post > .image {
   overflow: hidden;
 }
 
-.post > .image.featured img {
+.post > .image.gallery {
+  display: inline-block;
+  max-width: calc(50% - 12px);
+  margin: 5px;
+}
+
+.post > .image img {
   -moz-transition: -moz-transform 0.2s ease-out;
   -webkit-transition: -webkit-transform 0.2s ease-out;
   -ms-transition: -ms-transform 0.2s ease-out;
   transition: transform 0.2s ease-out;
 }
 
-.post > .image.featured:hover img {
+.post > .image:hover img {
   -moz-transform: scale(1.05);
   -webkit-transform: scale(1.05);
   -ms-transform: scale(1.05);

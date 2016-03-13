@@ -3,10 +3,14 @@
 SOURCE=~/Dropbox/photos-site
 TEMPLATE='---
 layout: photos
-title: Unknown album
+album_title: XXX
+album_date: YYY
+title: Photos of XXX — YYY · Chameth.com
 photos:
 $PHOTOS
 ---'
+
+PHOTO_PRINTF='- file: %f\n  alt: Unknown\n  caption: Unknown\n'
 
 for folder in $SOURCE/*; do
     foldername=${folder##*/}
@@ -19,8 +23,7 @@ for folder in $SOURCE/*; do
     done
 
     if [ ! -e "photos/$foldername/index.html" ]; then
-        export PHOTOS=$(find "photos/$foldername" -type f -printf '- %f\n')
+        export PHOTOS=$(find "photos/$foldername" -type f -printf "$PHOTO_PRINTF")
         envsubst <<< "$TEMPLATE" > "photos/$foldername/index.html"
     fi
 done
-
