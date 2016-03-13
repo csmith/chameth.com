@@ -1,6 +1,12 @@
 #!/bin/bash
 
 SOURCE=~/Dropbox/photos-site
+TEMPLATE='---
+layout: photos
+title: Unknown album
+photos:
+$PHOTOS
+---'
 
 for folder in $SOURCE/*; do
     foldername=${folder##*/}
@@ -11,5 +17,10 @@ for folder in $SOURCE/*; do
         out="photos/$foldername/$filename";
         test -e $out || convert -thumbnail 400^ -gravity center -crop 400x200+0+0 -strip -quality 86 $file $out;
     done
+
+    if [ ! -e "photos/$foldername/index.html" ]; then
+        export PHOTOS=$(find "photos/$foldername" -type f -printf '- %f\n')
+        envsubst <<< "$TEMPLATE" > "photos/$foldername/index.html"
+    fi
 done
 
