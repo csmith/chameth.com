@@ -383,6 +383,13 @@ header p {
   transform: scale(1.05);
 }
 
+.post > .image.left:hover img, .post > .image.right:hover img {
+  -moz-transform: none;
+  -webkit-transform: none;
+  -ms-transform: none;
+  transform: none;
+}
+
 .post > footer {
   display: -moz-flex;
   display: -webkit-flex;
