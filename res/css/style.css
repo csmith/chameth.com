@@ -193,6 +193,9 @@ pre {
 }
 
 pre code {
+  background: #000;
+  border: 0;
+  margin: 0 0.5em;
   display: block;
   line-height: 1.75em;
   padding: 1em 1.5em;
