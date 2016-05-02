@@ -1,5 +1,12 @@
 include: [".well-known"]
-gems: [jekyll-paginate]
+gems:
+  - jekyll-paginate
+  - jekyll-feed
+
+title: 'Chameth.com'
+description: 'Personal Website of Chris Smith'
+url: 'https://www.chameth.com'
+author: 'Chris Smith'
 
 paginate: 20
 paginate_path: "/posts/page:num/"
