@@ -62,7 +62,9 @@ body {
 
 body {
   -ms-overflow-style: scrollbar;
-  background: #f4f4f4;
+  background: #f4f4f4 url('/res/images/background.jpg');
+  background-attachment: fixed;
+  background-size: cover;
 }
 
 @media screen and (max-width: 480px) {
@@ -289,11 +291,12 @@ header p {
   flex-grow: 1;
   -ms-flex: 1;
   width: 100%;
+  overflow-x: hidden;
 }
 
 /* Post */
 
-.post {
+.post, #disqus_thread {
   padding: 3em 3em 1em 3em ;
   background: #ffffff;
   border: solid 1px rgba(160, 160, 160, 0.3);
@@ -440,6 +443,10 @@ header p {
 .post > footer .stats li .icon:before {
   color: rgba(160, 160, 160, 0.3);
   margin-right: 0.75em;
+}
+
+.post img {
+  max-width: 100%;
 }
 
 @media screen and (max-width: 980px) {
