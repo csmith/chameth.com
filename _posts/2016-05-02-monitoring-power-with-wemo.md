@@ -114,7 +114,7 @@ Next, I created a small python script to retrieve the power using SOAP:
 import requests
 from xml.etree import ElementTree
 
-def get_power(ip):
+def get_power(ip_and_port):
     headers = {'Content-type': 'text/xml', 'SOAPACTION': '"urn:Belkin:service:insight:1#GetPower"'}
     payload = '''<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"
                              s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
@@ -122,7 +122,7 @@ def get_power(ip):
                    <u:GetPower xmlns:u="urn:Belkin:service:insight:1"/>
                   </s:Body>
                  </s:Envelope>'''
-    r = requests.post("http://%s:49153/upnp/control/insight1" % ip, headers=headers, data=payload)
+    r = requests.post("http://%s/upnp/control/insight1" % ip_and_port, headers=headers, data=payload)
     et = ElementTree.fromstring(r.text)
     return et.find('.//InstantPower').text
 {% endhighlight %}
@@ -130,6 +130,11 @@ def get_power(ip):
 I then have a dictionary of IP addresses to data series names, and the script polls each one in
 turn and then executes an `rrdtool update` query to add the items to the database. I have this
 script running every minute via cron.
+
+<ins datetime="2016-05-06">**Update:** After leaving my script running for a few days, it suddenly
+stopped getting any data. It turns out the WeMo switches spontaneously change the ports they listen
+on every now and then. To reliably query them, you need to perform an SSDP search on the network,
+and get the correct address from the switches' response.</ins>
 
 After leaving the script to run for a bit and gather data, it's time to make some graphs. I use
 the following to create a graph with a background gradient:
