@@ -120,7 +120,7 @@ em, i {
   font-style: italic;
 }
 
-p {
+p, ol {
   margin: 0 0 2em 0;
 }
 
@@ -234,6 +234,15 @@ header p {
   line-height: 2.5;
   margin-top: -1em;
   text-transform: uppercase;
+}
+
+ol {
+  list-style-type: decimal;
+  margin-left: 2em;
+}
+
+ol li {
+  padding-left: 1ex;
 }
 
 /* Wrapper */
