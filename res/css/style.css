@@ -735,6 +735,10 @@ ol li {
   padding-top: 0;
 }
 
+#sidebar > :first-child a:hover {
+  color: #ffffff !important;
+}
+
 @media screen and (max-width: 1280px) {
 
   #sidebar {
