@@ -2,6 +2,7 @@
 layout: post
 title: Monitoring power draw with WeMo Insight Switches
 strapline: Fun with SOAP and rrdtool
+thumbnail: /res/images/wemo/switch.thumb.jpg
 ---
 
 <div class="image right">

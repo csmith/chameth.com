@@ -2,6 +2,7 @@
 layout: post
 title: Automatic reverse proxying with Docker and nginx
 strapline: It's containers all the way down...
+thumbnail: /res/images/docker/logo.thumb.png
 ---
 
 <div class="image left">
