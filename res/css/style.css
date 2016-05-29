@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Raleway:400,800,900");
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Raleway:400,600,800,900");
 
 /* Reset */
 
@@ -718,21 +718,22 @@ ol li {
 /* Sidebar */
 
 #sidebar {
-  margin-right: 3em;
+  margin: 0 3em 3em 0;
   min-width: 22em;
   width: 22em;
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 #sidebar > * {
   border-top: solid 1px rgba(160, 160, 160, 0.3);
   margin: 3em 0 0 0;
-  padding: 3em 0 0 0;
+  padding: 3em 1.5em 0 1.5em;
 }
 
 #sidebar > :first-child {
   border-top: 0;
   margin-top: 0;
-  padding-top: 0;
+  padding: 1.5em 0 0 0;
 }
 
 #sidebar > :first-child a:hover {
@@ -756,12 +757,17 @@ ol li {
 }
 
 #sidebar header h1 {
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: 900;
 }
 
 #sidebar header p {
   font-size: 0.8em;
+}
+
+#sidebar header em {
+  font-weight: 600;
+  font-style: normal;
 }
 
 @media screen and (max-width: 1280px) {
