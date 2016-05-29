@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Raleway:400,600,800,900");
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Raleway:400,800,900");
 
 /* Reset */
 
@@ -721,7 +721,7 @@ ol li {
   margin: 0 3em 3em 0;
   min-width: 22em;
   width: 22em;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 #sidebar > * {
@@ -762,12 +762,7 @@ ol li {
 }
 
 #sidebar header p {
-  font-size: 0.8em;
-}
-
-#sidebar header em {
-  font-weight: 600;
-  font-style: normal;
+  font-size: 0.75em;
 }
 
 @media screen and (max-width: 1280px) {
