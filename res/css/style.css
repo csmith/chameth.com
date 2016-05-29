@@ -723,6 +723,7 @@ ol li {
   min-width: 22em;
   width: 22em;
   background-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0px 0px 5px rgba(255, 255, 255, 0.6);
 }
 
 #sidebar > * {
