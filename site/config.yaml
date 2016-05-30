@@ -1,0 +1,7 @@
+baseurl: https://www.chameth.com
+disablePathToLower: true
+languageCode: en-gb
+title: Chameth.com
+
+pygmentsuseclasses: true
+...

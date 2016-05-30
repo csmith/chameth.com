@@ -1,4 +1,4 @@
-Lightbox files (res/*/*lightbox*, and res/images/{close,loading,next,prev}.*):
+Lightbox files (static/res/*/*lightbox*, and static/res/images/{close,loading,next,prev}.*):
 
   The MIT License (MIT)
 

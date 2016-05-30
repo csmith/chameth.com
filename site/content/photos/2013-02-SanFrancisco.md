@@ -1,9 +1,13 @@
 ---
-layout: photos
-album_title: San Francisco, California, USA
-album_date: January and Feburary 2013
-title: Photos of San Francisco — February 2013 · Chameth.com
+album_title: San Francisco, CA, USA
+album_date: January and February 2013
+date: 2013-02-01
+title: Photos of San Francisco — February 2013
+url: /photos/2013-02-SanFrancisco/
 photos:
+- file: 2013-02-02 11.46.28.JPG
+  alt: Golden Gate Bridge
+  caption: The Golden Gate Bridge. The fog lifted pretty suddenly after this.
 - file: 2013-02-03 11.03.55.JPG
   alt: AT&T Park
   caption: ♫ Take me to the ball game...
@@ -22,9 +26,6 @@ photos:
 - file: 2013-01-30 20.37.13.JPG
   alt: "'San Francisco' lit up in neon"
   caption: Ah, so that's where I was.
-- file: 2013-02-02 11.46.28.JPG
-  alt: Golden Gate Bridge
-  caption: The Golden Gate Bridge. The fog lifted pretty suddenly after this.
 - file: 2013-01-27 07.46.51.JPG
   alt: Silhouette of a pier against a yellow sky.
   caption: One of SF's many piers.

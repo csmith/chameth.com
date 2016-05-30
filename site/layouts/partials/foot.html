@@ -1,0 +1,39 @@
+</div>
+
+<section id="sidebar">
+  <header>
+    <h1><a href="/">Chameth.com</a></h1>
+    <p>Personal website of Chris Smith</p>
+  </header>
+
+  <section id="posts">
+    <h2>Latest posts</h2>
+    {{ range first 3 (where .Site.Pages "Type" "post") }}
+      <article class="mini-post">
+        <header>
+          <h3><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+        </header>
+        <a href="{{ .Permalink }}" class="image"><img src="{{ .Params.thumbnail }}" alt="{{ .Title }}"></a>
+      </article>
+    {{ end }}
+  </section>
+
+  <section id="photos">
+    <h2>Recent albums</h2>
+
+    {{ range first 3 (where .Site.Pages "Type" "photos") }}
+      <article class="mini-post">
+        <header>
+          <h3><a href="{{ .Permalink }}">{{ .Params.album_title }}</a></h3>
+          <time class="published" datetime="{{ .Date }}">{{ .Params.album_date }}</time>
+        </header>
+        <a href="{{ .Permalink }}" class="image"><img src="{{ .URL }}{{ (index .Params.photos 0).file }}" alt="{{ (index .Params.photos 0).alt }}"></a>
+      </article>
+    {{ end }}
+
+  </section>
+</section>
+</div>
+<script src="/res/js/lightbox-plus-jquery.min.js"></script>
+</body>
+</html>

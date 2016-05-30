@@ -1,8 +1,9 @@
 ---
-layout: post
-title: Monitoring power draw with WeMo Insight Switches
+date: 2016-05-02
 strapline: Fun with SOAP and rrdtool
 thumbnail: /res/images/wemo/switch.thumb.jpg
+title: Monitoring power draw with WeMo Insight Switches
+url: /2016/05/02/monitoring-power-with-wemo/
 ---
 
 <div class="image right">
@@ -40,7 +41,7 @@ actions including `GetPower` and `GetTodayKWH`. Sending a SOAP request isn't too
 (albeit nowhere near as nice as a REST JSON API) &mdash; here's a sample request I made using
 the <a href="https://chrome.google.com/webstore/detail/dhc-rest-client/aejoelaoggembcahagimdiliamlcdmfm/">DHC chrome extension</a>:
 
-{% highlight http %}
+{{< highlight http >}}
 POST /upnp/control/insight1 HTTP/1.1
 Accept: */*
 Accept-Encoding: gzip, deflate
@@ -55,12 +56,12 @@ User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
         <u:GetPower xmlns:u="urn:Belkin:service:insight:1"/>
     </s:Body>
 </s:Envelope>
-{% endhighlight %}
+{{< / highlight >}}
 
 The name of the action (in the SOAPACTION header) and the XML namespace in the body are both
 constructed from information in the service definition. The result that comes back is:
 
-{% highlight xml %}
+{{< highlight xml >}}
 <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
     <s:Body>
         <u:GetPowerResponse xmlns:u="urn:Belkin:service:insight:1">
@@ -68,7 +69,7 @@ constructed from information in the service definition. The result that comes ba
         </u:GetPowerResponse>
     </s:Body>
 </s:Envelope>
-{% endhighlight %}
+{{< / highlight >}}
 
 The current power draw in milliwatts is returned in the `<InstantPower>` argument.
 
@@ -80,7 +81,7 @@ app, but it's sadly missing. After a bit of research I settled on the tried and 
 <a href="http://oss.oetiker.ch/rrdtool/">rrdtool</a> to store data and generate graphs. I created a
 new database to store the values from the two switches:
 
-{% highlight bash %}
+{{< highlight bash >}}
 rrdtool create power.rrd \
     --start now \
     --step 60 \
@@ -92,7 +93,7 @@ rrdtool create power.rrd \
     RRA:AVERAGE:0.5:120:1488 \
     RRA:AVERAGE:0.5:360:1488 \
     RRA:AVERAGE:0.5:1440:36500
-{% endhighlight %}
+{{< / highlight >}}
 
 This creates a database file which expects values to be given every 60 seconds for two data series:
 'wemoComputer' and 'wemoNetworking'. These are gauge types (i.e., a value we read off a gauge,
@@ -109,7 +110,7 @@ resolution.
 
 Next, I created a small python script to retrieve the power using SOAP:
 
-{% highlight python %}
+{{< highlight python >}}
 #!/usr/bin/python3
 
 import requests
@@ -126,7 +127,7 @@ def get_power(ip_and_port):
     r = requests.post("http://%s/upnp/control/insight1" % ip_and_port, headers=headers, data=payload)
     et = ElementTree.fromstring(r.text)
     return et.find('.//InstantPower').text
-{% endhighlight %}
+{{< / highlight >}}
 
 I then have a dictionary of IP addresses to data series names, and the script polls each one in
 turn and then executes an `rrdtool update` query to add the items to the database. I have this
@@ -140,7 +141,7 @@ and get the correct address from the switches' response.</ins>
 After leaving the script to run for a bit and gather data, it's time to make some graphs. I use
 the following to create a graph with a background gradient:
 
-{% highlight bash %}
+{{< highlight bash >}}
 rrdtool graph desk-1d.png
         -o -X0 -w800 -h500 \
         -u 2000 -l 20 -r \
@@ -170,7 +171,7 @@ rrdtool graph desk-1d.png
         CDEF:powere=power,20,LT,power,20,IF CDEF:powereNoUnk=power,UN,0,powere,IF AREA:powereNoUnk#00ffa8 \
         CDEF:powerd=power,0,LT,power,0,IF CDEF:powerdNoUnk=power,UN,0,powerd,IF AREA:powerdNoUnk#00ffd0 \
         LINE:power#080
-{% endhighlight %}
+{{< / highlight >}}
 
 This seems a bit unweildy, but it's fairly straight forward. The options tell rrdtool to create
 a graph with a canvas size of 800x500 pixels, a lower limit of 20W, upper limit of 2kW, and a

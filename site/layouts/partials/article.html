@@ -1,22 +1,18 @@
----
-layout: default
----
 <article class="post">
   <header>
     <div class="title">
-      <h2>{{ page.title }}</h2>
-      <p>{{ page.strapline }}</p>
-      <p>{{ page.date | date: '%B %d, %Y' }}</p>
+      <h2>{{ .Title }}</h2>
+      <p>{{ .Params.strapline }}</p>
+      <p>{{ .Date.Format "Jan 2, 2006" }}</p>
     </div>
   </header>
-  {{ content }}
+  {{ .Content }}
 </article>
 
 <div id="disqus_thread"></div>
 <script>
 var disqus_config = function () {
-this.page.url = "https://www.chameth.com{{ page.url }}";
-this.page.identifier = "{{ page.url }}";
+this.page.url = "https://www.chameth.com{{ .Permalink }}";
 };
 (function() {
 var d = document, s = d.createElement('script');
