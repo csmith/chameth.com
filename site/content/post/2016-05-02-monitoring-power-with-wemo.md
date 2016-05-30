@@ -4,6 +4,7 @@ strapline: Fun with SOAP and rrdtool
 thumbnail: /res/images/wemo/switch.thumb.jpg
 title: Monitoring power draw with WeMo Insight Switches
 url: /2016/05/02/monitoring-power-with-wemo/
+aliases: ["/2016/05/02/monitoring-power-with-wemo.html"]
 ---
 
 <div class="image right">
