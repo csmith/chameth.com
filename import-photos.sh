@@ -15,7 +15,7 @@ PHOTO_PRINTF='- file: %f\n  alt: Unknown\n  caption: Unknown\n'
 
 for folder in $SOURCE/*; do
     foldername=${folder##*/}
-    mkdir -p photos/$foldername
+    mkdir -p site/static/photos/$foldername
 
     for file in $folder/*; do
         filename=${file##*/}
@@ -23,8 +23,8 @@ for folder in $SOURCE/*; do
         test -e "$out" || convert -thumbnail 400^ -gravity center -crop 400x200+0+0 -strip -quality 86 "$file" "$out";
     done
 
-    if [ ! -e "site/content/photos/$foldername.html" ]; then
+    if [ ! -e "site/content/photos/$foldername.md" ]; then
         export PHOTOS=$(find "site/static/photos/$foldername" -type f -printf "$PHOTO_PRINTF")
-        envsubst <<< "$TEMPLATE" > "site/content/photos/$foldername.html"
+        envsubst <<< "$TEMPLATE" > "site/content/photos/$foldername.md"
     fi
 done
