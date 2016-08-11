@@ -852,3 +852,7 @@ ol li {
 .image.main img {
   width: 100%;
 }
+
+figcaption {
+  text-align: center;
+}
