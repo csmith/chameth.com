@@ -61,7 +61,7 @@ on a different drive. If you're starting on a Linux box, you can just use the Ta
 directly instead of doing the two-drive shuffle.
 
 Just to be completely paranoid, I disconnected my PC from the network before booting Tails. This
-is known as [air-gapping](https://en.wikipedia.org/wiki/Air_gap_(networking)), and is done to
+is known as [air-gapping](https://en.wikipedia.org/wiki/Air_gap_%28networking%29), and is done to
 eliminate the possibility of a remote attacker doing something to your system. Ideally the machine
 would never have been connected to the network, but I didn't happen to have an unused machine
 laying around.
