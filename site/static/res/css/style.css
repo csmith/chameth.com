@@ -728,7 +728,7 @@ ol li {
 
 #sidebar > * {
   border-top: solid 1px rgba(160, 160, 160, 0.3);
-  margin: 3em 0 0 0;
+  margin: 1.5em 0 0 0;
   padding: 3em 1.5em 0 1.5em;
 }
 
@@ -855,4 +855,16 @@ ol li {
 
 figcaption {
   text-align: center;
+}
+
+#links .fa-li {
+  padding-top: 3px;
+}
+
+#links li {
+  padding-bottom: 15px;
+}
+
+#links #pgp {
+  font-family: monospace;
 }
