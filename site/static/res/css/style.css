@@ -411,6 +411,7 @@ ol li {
   -webkit-align-items: center;
   -ms-align-items: center;
   align-items: center;
+  clear: both;
 }
 
 .post > footer .actions {
