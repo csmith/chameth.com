@@ -1,0 +1,16 @@
+<article class="index">
+  <header>
+    <div class="title">
+      <h2>Content listing</h2>
+    </div>
+  </header>
+  <ul>
+  {{ range where .Site.Pages "Type" "post" }}
+    <li>
+      <a href="{{ .Permalink }}">{{ .Title }}</a> - {{ .Date.Format "Jan 2, 2006" }}
+    </li>
+  {{ end }}
+  </ul>
+</article>
+
+
