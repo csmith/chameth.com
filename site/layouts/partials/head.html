@@ -15,14 +15,56 @@
       {{ end }}
     </title>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/res/css/style.css">
     <link rel="stylesheet" href="/res/css/monokai.css">
     <link rel="stylesheet" href="/res/css/font-awesome.min.css">
     <link rel="stylesheet" href="/res/css/lightbox.min.css">
-    {{ if .RSSlink }}
-      <link href="{{ .RSSlink }}" rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" />
+    {{ if .RSSLink }}
+      <link href="{{ .RSSLink }}" rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" />
     {{ end }}
   </head>
-  <body>
-    <div id="wrapper">
-      <div id="main">
+  <body id="top">
+
+    <header id="header">
+      <div class="inner">
+        <h1><a href="/">Chameth.com</a></h1>
+        <p>Personal website of Chris&nbsp;Smith</p>
+
+        <section id="posts">
+          <ul>
+            {{ range first 3 (where .Site.Pages "Type" "post") }}
+              <li class="recent">
+                <a href="{{ .Permalink }}">{{ .Title }}</a>
+                <p>{{ .Date.Format "Jan 2, 2006" }}</p>
+              </li>
+            {{ end }}
+            <li>
+              <a href="/index">All articles</a>
+            </li>
+          </ul>
+        </section>
+
+        <section id="identities">
+          <ul class="fa-ul">
+            <li id="twitter">
+              <i class="fa-li fa-lg fa fa-twitter" aria-hidden="true"></i>
+              <a href="https://twitter.com/MD87_" title="My twitter account">MD87_</a>
+            </li>
+            <li id="github">
+              <i class="fa-li fa-lg fa fa-github" aria-hidden="true"></i>
+              <a href="https://github.com/csmith" title="My GitHub account">csmith</a>
+            </li>
+            <li id="pgp">
+              <i class="fa-li fa-lg fa fa-key" aria-hidden="true"></i>
+              <a href="/pgp/" title="My PGP key">
+                460E 2723 CDB6 701A D929<br>
+                89D1 F843 D93A 1640 2FE2
+              </a>
+            </li>
+          </ul>
+        </section>
+      </div>
+    </header>
+
+    <div id="main">

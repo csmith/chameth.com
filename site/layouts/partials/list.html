@@ -4,14 +4,12 @@
   <header>
     <div class="title">
       <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
-      <p>{{ .Params.strapline }}</p>
+      <p>Published on {{ .Date.Format "Jan 2, 2006" }}</p>
     </div>
   </header>
   {{ .Summary }}
   <footer>
-    <ul>
-      <li><a href="{{ .Permalink }}">Read more</a></li>
-    </ul>
+    <a href="{{ .Permalink }}">Read more &raquo;</a>
   </footer>
 </article>
 
