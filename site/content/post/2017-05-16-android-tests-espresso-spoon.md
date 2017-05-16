@@ -22,9 +22,9 @@ and executes Spoon with a few arguments:
 
 {{< highlight bash >}}
 java -jar spoon-runner.jar \
-    --apk application.apk
-    --test-apk applicationTests.apk
-    --fail-on-failure
+    --apk application.apk \
+    --test-apk applicationTests.apk \
+    --fail-on-failure \
     --fail-if-no-device-connected
 {{< / highlight >}}
 
@@ -33,6 +33,8 @@ instrumentation tests. We use two physical devices and an emulator to cover
 the form factors and API versions that are important to us; if any test fails
 on any of those devices, Spoon will return an error code and the build will
 fail.
+
+<!--more-->
 
 For library projects, you only have a single APK containing both the tests
 and the library itself. The current version of Spoon requires both `--apk` and
