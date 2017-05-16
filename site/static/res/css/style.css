@@ -2041,6 +2041,10 @@
 
 /* Image */
 
+article img {
+  max-width: 100%;
+}
+
   .image {
     border-radius: 0.35em;
     border: 0;
