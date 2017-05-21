@@ -1,11 +1,25 @@
 @import url("font-awesome.min.css");
-@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400italic;Raleway:800");
 
-/*
-  Strata by Pixelarity
-  pixelarity.com | hello@pixelarity.com
-  License: pixelarity.com/license
-*/
+@font-face {
+    font-family: 'Aileron Regular';
+    src: url('../fonts/aileron-regular-webfont.woff2') format('woff2'),
+         url('../fonts/aileron-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'League Spartan';
+    src: url('../fonts/leaguespartan-bold.eot');
+    src: url('../fonts/leaguespartan-bold.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/leaguespartan-bold.woff2') format('woff2'),
+         url('../fonts/leaguespartan-bold.woff') format('woff'),
+         url('../fonts/leaguespartan-bold.ttf') format('truetype'),
+         url('../fonts/leaguespartan-bold.svg#league_spartanbold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
 
 /* Reset */
 
@@ -1568,7 +1582,7 @@
 
   body, input, select, textarea {
     color: #a2a2a2;
-    font-family: "Source Sans Pro", Helvetica, sans-serif;
+    font-family: "Aileron Regular", Helvetica, sans-serif;
     font-size: 16pt;
     font-weight: 400;
     line-height: 1.75em;
@@ -1579,15 +1593,12 @@
     -webkit-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
     -ms-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
     transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-    border-bottom: dotted 1px;
     color: #49bf9d;
-    text-decoration: none;
   }
 
     a:hover {
       border-bottom-color: transparent;
       color: #49bf9d !important;
-      text-decoration: none;
     }
 
   strong, b {
@@ -1606,15 +1617,14 @@
   h1, h2, h3, h4, h5, h6 {
     color: #787878;
     font-weight: 800;
-    font-family: Raleway, sans-serif;
-    text-transform: uppercase;
+    font-family: "League Spartan", sans-serif;
+    .text-transform: uppercase;
     line-height: 1em;
     margin: 0 0 1em 0;
   }
 
     h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
       color: inherit;
-      text-decoration: none;
     }
 
   h1 {
@@ -1623,7 +1633,7 @@
   }
 
   h2 {
-    font-size: 1.25em;
+    font-size: 1.5em;
     line-height: 1.5em;
   }
 
@@ -1781,11 +1791,14 @@
     padding: 20px 0;
   }
 
+  #header a {
+    text-decoration: none;
+  }
+
   #posts .recent a {
     background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 30%);
     display: inline-block;
     width: 100%;
-    border: 0;
     padding: 0 0.7em 0 2em;
   }
 
