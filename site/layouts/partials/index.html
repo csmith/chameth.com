@@ -5,7 +5,7 @@
     </div>
   </header>
   <ul>
-  {{ range where .Site.Pages "Type" "post" }}
+  {{ range where (where .Site.Pages "Type" "post") "Kind" "page" }}
     <li>
       <a href="{{ .Permalink }}">{{ .Title }}</a> - {{ .Date.Format "Jan 2, 2006" }}
     </li>

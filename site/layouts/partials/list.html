@@ -1,4 +1,4 @@
-{{ $paginator := .Paginate (where .Site.Pages "Type" "post") }}
+{{ $paginator := .Paginate (where (where .Site.Pages "Type" "post") "Kind" "page") }}
 {{ range $paginator.Pages }}
 <article class="post">
   <header>
