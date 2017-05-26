@@ -9,13 +9,4 @@ services:
     restart: always
     labels:
       com.chameth.vhost: 'chameth.com,www.chameth.com'
-      com.chameth.proxy: '1313'
-    command:
-      - hugo
-      - server
-      - --bind=0.0.0.0
-      - --port=1313
-      - --baseURL=https://www.chameth.com/
-      - --appendPort=false
-      - --disableLiveReload
-      - --log
+      com.chameth.proxy: '80'
