@@ -1,8 +1,8 @@
-FROM debian:jessie
+FROM debian:stretch-slim
 MAINTAINER dkr@chameth.com
 
 RUN apt-get -qq update \
-	&& DEBIAN_FRONTEND=noninteractive apt-get -qq install -y curl --no-install-recommends ca-certificates apt-transport-https nginx
+	&& DEBIAN_FRONTEND=noninteractive apt-get -qq install -y curl --no-install-recommends ca-certificates apt-transport-https nginx gnupg1
 
 RUN curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
 RUN echo 'deb https://deb.nodesource.com/node_6.x jessie main' > /etc/apt/sources.list.d/nodesource.list
@@ -13,7 +13,7 @@ RUN apt-get -qq update \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Download and install hugo
-ENV HUGO_VERSION 0.20.7
+ENV HUGO_VERSION 0.21
 ENV HUGO_BINARY hugo_${HUGO_VERSION}_Linux-64bit.deb
 ADD https://github.com/spf13/hugo/releases/download/v${HUGO_VERSION}/${HUGO_BINARY} /tmp/hugo.deb
 RUN dpkg -i /tmp/hugo.deb \
