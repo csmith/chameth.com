@@ -1589,11 +1589,8 @@
   }
 
   a {
-    -moz-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-    -webkit-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-    -ms-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-    transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
     color: #49bf9d;
+    text-decoration-skip: ink;
   }
 
     a:hover {
@@ -1624,7 +1621,11 @@
   }
 
     h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
-      color: inherit;
+    -moz-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    -webkit-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    -ms-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    color: inherit;
     }
 
   h1 {
