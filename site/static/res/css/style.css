@@ -1,9 +1,7 @@
-@import url("font-awesome.min.css");
-
 @font-face {
     font-family: 'Aileron Regular';
-    src: url('../fonts/aileron-regular-webfont.woff2') format('woff2'),
-         url('../fonts/aileron-regular-webfont.woff') format('woff');
+    src: url('/res/fonts/aileron-regular-webfont.woff2') format('woff2'),
+         url('/res/fonts/aileron-regular-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 
@@ -11,12 +9,12 @@
 
 @font-face {
     font-family: 'League Spartan';
-    src: url('../fonts/leaguespartan-bold.eot');
-    src: url('../fonts/leaguespartan-bold.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/leaguespartan-bold.woff2') format('woff2'),
-         url('../fonts/leaguespartan-bold.woff') format('woff'),
-         url('../fonts/leaguespartan-bold.ttf') format('truetype'),
-         url('../fonts/leaguespartan-bold.svg#league_spartanbold') format('svg');
+    src: url('/res/fonts/leaguespartan-bold.eot');
+    src: url('/res/fonts/leaguespartan-bold.eot?#iefix') format('embedded-opentype'),
+         url('/res/fonts/leaguespartan-bold.woff2') format('woff2'),
+         url('/res/fonts/leaguespartan-bold.woff') format('woff'),
+         url('/res/fonts/leaguespartan-bold.ttf') format('truetype'),
+         url('/res/fonts/leaguespartan-bold.svg#league_spartanbold') format('svg');
     font-weight: bold;
     font-style: normal;
 }
@@ -2079,7 +2077,7 @@ article img {
       -webkit-transition: opacity 0.2s ease-in-out;
       -ms-transition: opacity 0.2s ease-in-out;
       transition: opacity 0.2s ease-in-out;
-      background: url("../images/overlay.png");
+      background: url("/res/images/overlay.png");
       border-radius: 0.35em;
       content: '';
       display: block;
@@ -2124,7 +2122,7 @@ article img {
       }
 
       .image.thumb:hover:before {
-        background: url("../images/overlay.png"), url("../images/overlay.png");
+        background: url("/res/images/overlay.png"), url("/res/images/overlay.png");
         opacity: 1.0;
       }
 
@@ -2566,7 +2564,7 @@ article img {
     justify-content: space-between;
     background-color: #1f1815;
     background-attachment: scroll,                fixed;
-    background-image: url("../images/overlay.png"), url("../images/background.jpg");
+    background-image: url("/res/images/overlay.png"), url("/res/images/background.jpg");
     background-position: top left,              top left;
     background-repeat: repeat,                no-repeat;
     background-size: auto,                auto 100%;
@@ -3066,7 +3064,7 @@ article img {
       #footer {
         background-attachment: scroll;
         background-color: #1f1815;
-        background-image: url("../images/overlay.png"), url("../images/background.jpg");
+        background-image: url("/res/images/overlay.png"), url("/res/images/background.jpg");
         background-position: top left,            bottom center;
         background-repeat: repeat,              no-repeat;
         background-size: auto,              cover;
