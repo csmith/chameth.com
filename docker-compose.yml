@@ -8,4 +8,4 @@ services:
     restart: always
     labels:
       com.chameth.vhost: 'chameth.com,www.chameth.com'
-      com.chameth.proxy: '1313'
+      com.chameth.proxy: '80'
