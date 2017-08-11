@@ -3,13 +3,13 @@
 <article class="post">
   <header>
     <div class="title">
-      <h2><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+      <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
       <p>Published on {{ .Date.Format "Jan 2, 2006" }}</p>
     </div>
   </header>
   {{ .Summary }}
   <footer>
-    <a href="{{ .Permalink }}">Read more &raquo;</a>
+    <a href="{{ .RelPermalink }}">Read more &raquo;</a>
   </footer>
 </article>
 

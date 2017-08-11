@@ -35,7 +35,7 @@
           <ul>
             {{ range first 3 (where .Site.Pages "Type" "post") }}
               <li class="recent">
-                <a href="{{ .Permalink }}">{{ .Title }}</a>
+                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
                 <p>{{ .Date.Format "Jan 2, 2006" }}</p>
               </li>
             {{ end }}
