@@ -13,6 +13,9 @@ to another and I ended up doing a survey of the nameservers of the top
 
 The top providers by a large margin were, unsurprisingly, Cloudflare and AWS
 Route 53. Between them they accounted for around 30% of the top 100k sites.
+
+<!--more--> 
+
 The top 10 providers overall were:
 
 | Provider        | Country       | Sites |
