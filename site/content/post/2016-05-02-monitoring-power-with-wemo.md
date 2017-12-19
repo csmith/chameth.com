@@ -5,6 +5,8 @@ thumbnail: /res/images/wemo/switch.thumb.jpg
 title: Monitoring power draw with WeMo Insight Switches
 url: /2016/05/02/monitoring-power-with-wemo/
 aliases: ["/2016/05/02/monitoring-power-with-wemo.html"]
+image: /res/images/wemo/desk-1d.png
+description: Using SOAP requests to get raw data, and rrdtool to produce graphs.
 ---
 
 <div class="image right">

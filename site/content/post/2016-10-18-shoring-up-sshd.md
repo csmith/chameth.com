@@ -4,6 +4,8 @@ thumbnail: /res/images/ssh/openssh.thumb.png
 title: Shoring up SSHd configuration
 strapline: Down with weak algorithms!
 url: /2016/10/18/shoring-up-sshd/
+image: /res/images/ssh/openssh.png
+description: Tools and suggestions for improving the security of SSHd by disabling weak algorithms and modern config tweaks.
 ---
 <div class="image right">
  <img src="/res/images/ssh/openssh.png" alt="OpenSSH logo">

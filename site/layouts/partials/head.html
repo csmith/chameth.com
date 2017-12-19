@@ -23,6 +23,19 @@
     {{ if .RSSLink }}
       <link href="{{ .RSSLink }}" rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" />
     {{ end }}
+    {{ if $.IsPage }}
+      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:site" content="@MD87_" />
+      <meta name="twitter:creator" content="@MD87_" />
+      <meta property="og:url" content="{{ .Permalink }}" />
+      <meta property="og:title" content="{{ .Title }}" />
+      {{ if $.Param "description" }}
+        <meta property="og:description" content="{{ $.Param "description" | htmlEscape }}" />
+      {{ end }}
+      {{ if $.Param "image" }}
+        <meta property="og:image" content="{{ $.Param "image" | absURL }}" />
+      {{ end }}
+    {{ end }}
   </head>
   <body id="top">
 

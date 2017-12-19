@@ -2,6 +2,8 @@
 date: 2017-08-16
 title: A look at the DNS habits of the top 100k websites
 url: /2017/08/16/top-sites-dns-providers/
+image: /res/images/dns/providers.png
+description: An analysis of the DNS providers and resilience of the top 100,000 websites.
 ---
 
 I was thinking about switching DNS providers recently, and found myself
