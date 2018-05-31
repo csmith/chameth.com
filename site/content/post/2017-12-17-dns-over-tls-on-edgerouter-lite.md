@@ -29,6 +29,12 @@ clients. To get DNS-over-TLS support I switched to using
 [Unbound](https://unbound.net/), an open source DNS resolver with support
 for many modern features such as DNSSEC and DNS-over-TLS.
 
+{{% update 2017-05-31 %}}
+Before installing unbound, if you haven't done so before, you will need to enable the apt
+repositories as described in the [Ubiquiti help center](https://help.ubnt.com/hc/en-us/articles/205202560-EdgeRouter-Add-other-Debian-packages-to-EdgeOS).
+Thanks to [@ozaed](https://twitter.com/ozaed/status/960615650489233408) for the tip.
+{{% / update %}}
+
 Installing unbound on the ERL is a simple case of SSHing in, and then:
 
 {{< highlight text >}}

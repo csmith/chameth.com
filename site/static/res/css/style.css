@@ -1693,6 +1693,20 @@
     margin-bottom: 0;
   }
 
+  aside.update {
+    display: block;
+    border-left: solid 10px #696;
+    padding-left: 15px;
+  }
+
+  aside.update h5 {
+    margin-bottom: 0;
+  }
+
+  aside.update ins {
+    text-decoration: none;
+  }
+
   .highlight {
     border-radius: 0.35em;
   }
