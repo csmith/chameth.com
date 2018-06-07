@@ -14,11 +14,9 @@ ADD https://github.com/spf13/hugo/releases/download/v${HUGO_VERSION}/${HUGO_BINA
 RUN dpkg -i /tmp/hugo.deb \
 	&& rm /tmp/hugo.deb
 
-ARG baseurl=https://www.chameth.com/
-
 USER nobody:nogroup
 ADD site /tmp/site
-RUN hugo -b $baseurl -v -s /tmp/site -d /tmp/hugo && \
+RUN hugo -b https://www.chameth.com/ -v -s /tmp/site -d /tmp/hugo && \
 	cp /tmp/hugo/index.xml /tmp/hugo/feed.xml
 
 ##
