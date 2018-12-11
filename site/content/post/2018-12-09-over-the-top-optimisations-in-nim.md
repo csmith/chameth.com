@@ -14,7 +14,7 @@ The puzzles are always interesting — especially as they get progressively
 harder — and there's an awesome community of folks that share their solutions
 in a huge variety of languages.
 
-To up the ante somewhat, [Shane](https://blog.dataforce.org.uk/) and I usually
+To up the ante somewhat, [Shane](https://dataforce.org.uk/) and I usually
 have a little informal competition to see who can write the most performant
 code. This year, though, Shane went massively overboard and wrote an entire
 [benchmarking suite and webapp](https://blog.dataforce.org.uk/2018/08/advent-of-code-benchmarking/)
