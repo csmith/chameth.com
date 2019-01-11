@@ -1579,7 +1579,7 @@
     }
 
   body, input, select, textarea {
-    color: #a2a2a2;
+    color: #565656;
     font-family: "Aileron Regular", Helvetica, sans-serif;
     font-size: 16pt;
     font-weight: 400;
@@ -1610,7 +1610,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    color: #787878;
+    color: #565656;
     font-weight: 800;
     font-family: "League Spartan", sans-serif;
     .text-transform: uppercase;
@@ -1781,6 +1781,7 @@
   }
 
   header h2 + p {
+    color: #939393;
     font-size: 1.25em;
     margin-top: -1em;
     line-height: 1.5em;
