@@ -24,7 +24,7 @@ RUN hugo -b https://www.chameth.com/ -v -s /tmp/site -d /tmp/hugo && \
 
 FROM debian:stretch as minify
 RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y --no-install-recommends yui-compressor tidy \
+    && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y --no-install-recommends yui-compressor tidy webp \
 	&& rm -rf /var/lib/apt/lists/*
 
 COPY --from=hugo /tmp/hugo /tmp/site
@@ -40,4 +40,4 @@ RUN /tmp/minify.sh
 
 FROM nginx:mainline-alpine AS nginx
 COPY --from=minify /tmp/site /usr/share/nginx/html
-ADD nginx.conf /etc/nginx/conf.d/site.conf
+ADD nginx.conf /etc/nginx/nginx.conf
