@@ -1,0 +1,21 @@
+kind: pipeline
+name: default
+
+steps:
+- name: docker  
+  image: plugins/docker
+  settings:
+    auto_tag: true
+    registry: r.c5h.io
+    repo: r.c5h.io/testchamethcom
+    username:
+      from_secret: dockerusername
+    password:
+      from_secret: dockerpassword
+        
+trigger:
+  branch:
+  - master
+  event:
+  - push
+
