@@ -7,7 +7,7 @@ steps:
   settings:
     auto_tag: true
     registry: r.c5h.io
-    repo: r.c5h.io/testchamethcom
+    repo: r.c5h.io/chamethcom
     username:
       from_secret: dockerusername
     password:
