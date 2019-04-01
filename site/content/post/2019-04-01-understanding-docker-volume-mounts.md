@@ -87,7 +87,7 @@ are the same as the directory on your host. The only way to fix them are
 to either change the permissions on the host, or have the container
 change them at runtime (assuming it has sufficient privileges).
 
-One final wrinkle in all this happens when you use the same container
+One final wrinkle in all this happens when you use the same volume
 in multiple containers. Here we have two images built from the
 Dockerfile above, one with userid 1113 and one with userid 1114:
 
