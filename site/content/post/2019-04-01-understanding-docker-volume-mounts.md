@@ -170,7 +170,7 @@ drwxr-xr-x 3 chris chris 4096 Apr  1 22:05 ..
 
 Nothing is copied in, and inside the container the folder will be empty.
 Based on our discoveries with permisions, it's reasonable to assume the
-same will happy with a non-empty volume too:
+same will happen with a non-empty volume too:
 
 {{< highlight console >}}
 $ docker volume create testing
