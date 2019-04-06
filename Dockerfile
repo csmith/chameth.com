@@ -41,3 +41,4 @@ RUN /tmp/minify.sh
 FROM nginx:mainline-alpine AS nginx
 COPY --from=minify /tmp/site /usr/share/nginx/html
 ADD nginx.conf /etc/nginx/nginx.conf
+VOLUME /logs
