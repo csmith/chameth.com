@@ -2,17 +2,7 @@
 ## Step 1 - add content and build with Hugo
 ##
 
-FROM debian:stretch as hugo
-RUN apt-get -qq update \
-	&& DEBIAN_FRONTEND=noninteractive apt-get -qq install -y --no-install-recommends python-pygments git ca-certificates asciidoc \
-	&& rm -rf /var/lib/apt/lists/*
-
-ENV HUGO_VERSION 0.53
-ENV HUGO_BINARY hugo_${HUGO_VERSION}_Linux-64bit.deb
-
-ADD https://github.com/spf13/hugo/releases/download/v${HUGO_VERSION}/${HUGO_BINARY} /tmp/hugo.deb
-RUN dpkg -i /tmp/hugo.deb \
-	&& rm /tmp/hugo.deb
+FROM r.c5h.io/hugo as hugo
 
 ADD site /tmp/site
 RUN hugo -b https://www.chameth.com/ -v -s /tmp/site -d /tmp/hugo && \
