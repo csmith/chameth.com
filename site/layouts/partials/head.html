@@ -47,7 +47,7 @@
 
         <section id="posts">
           <ul>
-            {{ range first 3 .Pages }}
+            {{ range first 3 .Site.Pages }}
               <li class="recent">
                 <a href="{{ .RelPermalink }}">{{ .Title }}</a>
                 <p>{{ .Date.Format "Jan 2, 2006" }}</p>
