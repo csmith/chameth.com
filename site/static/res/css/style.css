@@ -71,6 +71,7 @@
 }
 
 .hire img {
+  box-sizing: content-box;
   padding-top: 15px;
   background-color: #959bb9;
   border: 3px solid #959bb9;
