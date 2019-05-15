@@ -60,6 +60,34 @@
     -webkit-text-size-adjust: none;
   }
 
+/* hire */
+.hire {
+  background-color: #afb6d9;
+  border-radius: 10px;
+  display: flex;
+  padding: 20px 5px;
+  align-items: center;
+  margin-bottom: 2em;
+}
+
+.hire img {
+  padding-top: 15px;
+  background-color: #959bb9;
+  border: 3px solid #959bb9;
+  border-radius: 100%;
+  margin: 0 20px 0 10px;
+  width: 100px;
+  height: 100px;
+}
+
+.hire h3, .hire p {
+  margin: 0;
+}
+
+.hire a, .hire a:hover, .hire a:active {
+  color: #4565ad !important;
+}
+
 /* Box Model */
 
   *, *:before, *:after {

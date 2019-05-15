@@ -4,6 +4,7 @@ title: Understanding Docker volume mounts
 url: /2019/04/01/understanding-docker-volume-mounts/
 image: /res/images/docker/logo.png
 description: It's basically magic.
+area: Docker
 ---
 
 One thing that always confuses me with Docker is how exactly mounting

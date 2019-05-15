@@ -7,6 +7,7 @@ url: /2016/05/21/docker-automatic-nginx-proxy/
 aliases: ["/2016/05/21/docker-automatic-nginx-proxy.html"]
 image: /res/images/docker/reverse-proxy.png
 description: Automatically retrieve certificates from Let's Encrypt and configure an SSL-terminating reverse proxy based on running containers.
+area: Docker
 ---
 
 <div class="image left">

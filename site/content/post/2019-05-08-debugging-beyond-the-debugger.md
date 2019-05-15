@@ -4,6 +4,7 @@ title: Debugging beyond the debugger
 url: /2019/05/08/debugging-beyond-the-debugger/
 image: /res/images/debugging/strace.png
 description: What happens when your usual approach fails you?
+area: troubleshooting
 ---
 
 Most programming -- and sysadmin -- problems can be debugged in a

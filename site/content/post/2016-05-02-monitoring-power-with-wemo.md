@@ -7,6 +7,7 @@ url: /2016/05/02/monitoring-power-with-wemo/
 aliases: ["/2016/05/02/monitoring-power-with-wemo.html"]
 image: /res/images/wemo/desk-1d.png
 description: Using SOAP requests to get raw data, and rrdtool to produce graphs.
+area: data analysis
 ---
 
 <div class="image right">

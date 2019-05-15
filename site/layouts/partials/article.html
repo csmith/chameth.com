@@ -7,6 +7,19 @@
   </header>
   {{ .Content }}
 </article>
+<aside class="hire">
+	<img src="/res/images/profile.png" alt="Picture of Chris">
+	<div>
+		<h3>Need someone to help with {{ .Params.Area }}?</h3>
+		<p>
+			Hi, I'm Chris. Thanks for reading all the way through! If you or your
+			company need any help with any of the areas I've written about, I'm
+			available for hire as a freelance developer and consultant through my
+			company <a href="https://lunarian.uk">Lunarian Limited</a>. Just drop
+			me a line through the website, or using the feedback form below.
+		</p>
+	</div>
+</aside>
 <details>
 <summary>Comments? Feedback? Contact me.</summary>
 <iframe src="https://contact.chameth.com/?page={{ .Permalink | urlize | htmlEscape }}" width="100%" height="400px"></iframe>

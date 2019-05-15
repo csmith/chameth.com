@@ -4,6 +4,7 @@ title: Over-the-top optimisations with Nim
 url: /2018/12/09/over-the-top-optimisations-in-nim/
 image: /res/images/aoc/advent-of-code.jpg
 description: Sometimes its fun to just abandon good practice and make something *fast*.
+area: optimisation
 ---
 
 For the past few years I've been taking part in

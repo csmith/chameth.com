@@ -6,6 +6,7 @@ title: Why you should be using HTTPS
 url: /2016/06/17/why-you-should-be-using-https/
 image: /res/images/https/https-everywhere.jpg
 description: There's no good reason for sites to avoid HTTPS any more, and lots of reasons they should be actively encouraging it.
+area: security
 ---
 
 <div class="image right">
