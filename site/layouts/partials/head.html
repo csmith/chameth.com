@@ -21,8 +21,10 @@
     <link rel="stylesheet" href="/res/css/font-awesome.min.css">
     <link rel="stylesheet" href="/res/css/lightbox.min.css">
     <link rel="canonical" href="{{ .Permalink }}" />
-    {{ if .RSSLink }}
-      <link href="{{ .RSSLink }}" rel="alternate" type="application/rss+xml" title="{{ .Site.Title }}" />
+    {{ with .Site.GetPage "home" }}
+      {{ with .OutputFormats.Get "RSS" }}
+        <link href="{{ .RelPermalink }}" rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }} - all posts" />
+      {{ end }}
     {{ end }}
     {{ if $.IsPage }}
       <meta name="twitter:card" content="summary" />
