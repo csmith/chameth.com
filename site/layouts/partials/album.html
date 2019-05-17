@@ -7,7 +7,7 @@
   </header>
 
   {{ range $photo := .Params.photos }}
-    <a href="{{ replace $.URL "/photos/" "https://photos.chameth.com/" }}{{ $photo.file }}"
+    <a href="{{ replace $.RelPermalink "/photos/" "https://photos.chameth.com/" }}{{ $photo.file }}"
        class="image gallery"
        data-lightbox="gallery"
        data-title="{{ $photo.caption }}">
