@@ -64,21 +64,8 @@
 .hire {
   background-color: #afb6d9;
   border-radius: 10px;
-  display: flex;
-  padding: 20px 5px;
-  align-items: center;
+  padding: 1em 1.5em;
   margin-bottom: 2em;
-}
-
-.hire img {
-  box-sizing: content-box;
-  padding-top: 15px;
-  background-color: #959bb9;
-  border: 3px solid #959bb9;
-  border-radius: 100%;
-  margin: 0 20px 0 10px;
-  width: 100px;
-  height: 100px;
 }
 
 .hire h3, .hire p {
@@ -87,6 +74,10 @@
 
 .hire a, .hire a:hover, .hire a:active {
   color: #4565ad !important;
+}
+
+summary {
+  cursor: pointer;
 }
 
 /* Box Model */
@@ -1725,7 +1716,9 @@
   aside.update {
     display: block;
     border-left: solid 10px #696;
-    padding-left: 15px;
+    background-color: #efe;
+    padding: 1em;
+    margin: 0 0 2em 0;
   }
 
   aside.update h5 {
