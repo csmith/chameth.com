@@ -27,7 +27,7 @@ working...
 At first it seemed like ProGuard was refusing to obfuscate any class with a
 `keep` rule. With a simple test class:
 
-```kotlin
+{{< highlight kotlin >}}
 class Test {
 
     private val secret = 123
@@ -47,21 +47,21 @@ class Test {
     )
 
 }
-```
+{{< / highlight >}}
 
 And a ProGuard rule of:
 
-```proguard
+{{< highlight proguard >}}
 -keep public class Test {
     public void greet();
 }
-```
+{{< / highlight >}}
 
 I expected that the `Test` class and the `greet` method would remain, but both
 fields and the `guess` method would be obfuscated. When I built the project
 and opened the class from Android Studio's APK inspector I was disappointed:
 
-```kotlin
+{{< highlight kotlin >}}
 public final class Test public constructor() {
     public final var name: kotlin.String /* compiled code */
 
@@ -71,7 +71,7 @@ public final class Test public constructor() {
 
     private final fun guess(attempt: kotlin.Int): kotlin.Unit { /* compiled code */ }
 }
-```
+{{< / highlight >}}
 
 Having your secret sauce in a field labelled "secret" isn't exactly the level of
 obfuscation I was hoping for. ProGuard has lots of knobs that you can twist to
@@ -93,29 +93,29 @@ like reading the ProGuard mapping file and automatically deobfuscating the
 output for me. Looking at the mapping file it seems that ProGuard has
 indeed decided to rename some things:
 
-```
+{{< highlight proguardmapping >}}
 Test -> Test:
     int secret -> a
     java.lang.String name -> b
     void greet() -> greet
     void <init>() -> <init>
-```
+{{< / highlight >}}
 
 The obvious solution is to look at the class file in something less smart
 than Android Studio. A couple of unzips later and I could do a quick test
 to see if the original names were still present:
 
-```console
+{{< highlight console >}}
 $ strings Test.class | grep secret
 secret
-```
+{{< / highlight >}}
 
 The problem is evidently not with Android Studio, as `secret` shouldn't end
 up in the class file at all: it should have been entirely replaced with `a` like
 the mapping file says. The output from `javap -p` doesn't show any hint of the
 original names, however:
 
-```console
+{{< highlight console >}}
 $ javap -p Test
 public final class Test {
   private final int a;
@@ -123,13 +123,13 @@ public final class Test {
   public final void greet();
   public Test();
 }
-```
+{{< / highlight >}}
 
 But, given the names show up in `strings`, they must be kicking around
 somewhere. None of the various outputs from `javap` helped until I hit
 `-verbose`. Right at the end of the class is:
 
-```
+{{< highlight javap >}}
 RuntimeVisibleAnnotations:
   0: #58(#84=[I#2,I#2,I#4],#69=[I#2,I#1,I#3],#81=I#2,#70=[s#40],#71=[s#55,s#39,s#43,s#85,s#39,s#72,s#42,s#91,s#47,s#90,s#39,s#73,s#39,s#74,s#67,s#83])
     kotlin.Metadata(
@@ -139,7 +139,7 @@ RuntimeVisibleAnnotations:
       d1=["\u0000\"\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0002\b\u0002\n\u0002\u0010\u000e\n\u0002\b\u0005\n\u0002\u0010\b\n\u0000\n\u0002\u0010\u0002\n\u0002\b\u0003\u0018\u00002\u00020\u0001B\u0005¢\u0006\u0002\u0010\u0002J\u0006\u0010\u000b\u001a\u00020\fJ\u0010\u0010\r\u001a\u00020\f2\u0006\u0010\u000e\u001a\u00020\nH\u0002R\u001a\u0010\u0003\u001a\u00020\u0004X\u0086\u000e¢\u0006\u000e\n\u0000\u001a\u0004\b\u0005\u0010\u0006\"\u0004\b\u0007\u0010\bR\u000e\u0010\t\u001a\u00020\nX\u0082D¢\u0006\u0002\n\u0000¨\u0006\u000f"]
       d2=["LTest;","","()V","name","","getName","()Ljava/lang/String;","setName","(Ljava/lang/String;)V","secret","","greet","","guess","attempt","lib_release"]
     )
-```
+{{< / highlight >}}
 
 There's a Kotlin *annotation* containing all of the symbols we were trying to
 obfuscate away! Kotlin apparently uses this annotation for reflection and for
@@ -148,7 +148,7 @@ Java bytecode (such as members with `internal` access). Sure enough, switching
 back to Android Studio and making it "decompile" the Kotlin code into Java
 shows the annotation:
 
-```java
+{{< highlight java >}}
 @Metadata(
    mv = {1, 1, 15},
    bv = {1, 0, 3},
@@ -157,7 +157,7 @@ shows the annotation:
    d2 = {"LTest;", "", "()V", "name", "", "getName", "()Ljava/lang/String;", "setName", "(Ljava/lang/String;)V", "secret", "", "greet", "", "guess", "attempt", "lib_release"}
 )
 public final class Test {
-```
+{{< / highlight >}}
 
 ## Solving the right problem
 
@@ -177,9 +177,9 @@ Adding a `-printconfiguration` instruction to my configuration lets me see
 the full configuration being passed to ProGuard, and the reason for keeping
 quickly becomes obvious:
 
-```proguard
+{{< highlight proguard >}}
 -keepattributes *Annotation*,*Annotation*
-```
+{{< / highlight >}}
 
 This appears to be added by the Android build plugin before it invokes
 ProGuard, and there's no obvious way to disable it. ProGuard doesn't offer
@@ -187,20 +187,20 @@ a way to reverse this instruction, either, but fortunately the build plugin
 seems to concatenate all of the `-keepattribute` values together and puts our
 user-supplied ones first. Adding a negative filter:
 
-```proguard
+{{< highlight proguard >}}
 -keepattributes !*Annotation*
-```
+{{< / highlight >}}
 
 Results in the following in the printed configuration:
 
-```proguard
+{{< highlight proguard >}}
 -keepattributes !*Annotation*,*Annotation*,*Annotation*
-```
+{{< / highlight >}}
 
 The negative filter prevents any subsequent filters from matching. Recompiling
 and looking at the class file again looks a lot more sensible:
 
-```java
+{{< highlight java >}}
 import kotlin.io.ConsoleKt;
 
 public final class Test {
@@ -219,6 +219,6 @@ public final class Test {
       }
    }
 }
-```
+{{< / highlight >}}
 
 And that's the story of how I spent half a day making a one line change.
