@@ -7,7 +7,7 @@ description: What happens when your usual approach fails you?
 area: troubleshooting
 ---
 
-<figure class="image right">
+<figure class="right">
   <img src="/res/images/unsplash/tools.jpg" alt="Collection of tools">
   <figcaption>Real-life debugging tools</figcaption>
 </figure>

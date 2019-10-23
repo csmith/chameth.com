@@ -2108,12 +2108,29 @@ article img {
   max-width: 100%;
 }
 
-  .image {
-    border-radius: 0.35em;
-    border: 0;
-    display: inline-block;
-    position: relative;
-  }
+.image {
+  border-radius: 0.35em;
+  border: 0;
+  display: inline-block;
+  position: relative;
+}
+
+figure {
+  border: 2px solid rgba(200, 200, 200, 0.7);
+  border-radius: 0.35em;
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+figure img {
+  display: block;
+}
+
+figure figcaption {
+  display: block;
+  background-color: rgba(200, 200, 200, 0.7); 
+}
 
     .image:before {
       -moz-transition: opacity 0.2s ease-in-out;
@@ -2174,23 +2191,23 @@ article img {
       display: block;
     }
 
-    .image.left {
+    .image.left, figure.left {
       float: left;
       margin: 0 1.5em 1em 0;
       top: 0.25em;
     }
 
-    .image.right {
+    .image.right, figure.right {
       float: right;
       margin: 0 0 1em 1.5em;
       top: 0.25em;
     }
 
-    .image.left, .image.right {
+    .image.left, .image.right, figure.left, figure.right {
       max-width: 40%;
     }
 
-      .image.left img, .image.right img {
+      .image.left img, .image.right img, figure.left img, figure.right img {
         width: 100%;
       }
 

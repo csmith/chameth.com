@@ -7,6 +7,11 @@ description: In which Kotlin tries to be helpful, and we smite it
 area: Android
 ---
 
+<figure class="left">
+  <img src="/res/images/obfuscation/kotlin-proguard.png" alt="Kotlin and Proguard logos">
+  <figcaption>Kotlin + ProGuard = fun</figcaption>
+</figure>
+
 Obfuscating code is the process of modifying source code or build output in
 order to make it harder for humans to understand. It's often employed as a
 tactic to deter reverse engineering of commercial applications or libraries
