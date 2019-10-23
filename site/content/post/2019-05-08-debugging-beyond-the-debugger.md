@@ -7,6 +7,11 @@ description: What happens when your usual approach fails you?
 area: troubleshooting
 ---
 
+<figure class="image right">
+  <img src="/res/images/unsplash/tools.jpg" alt="Collection of tools">
+  <figcaption>Real-life debugging tools</figcaption>
+</figure>
+
 Most programming -- and sysadmin -- problems can be debugged in a
 fairly straight forward manner using logs, print statements,
 educated guesses, or an actual debugger. Sometimes, though, the
