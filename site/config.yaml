@@ -1,7 +1,8 @@
 baseurl: https://www.chameth.com
+assetDir: assets
 disablePathToLower: true
 languageCode: en-gb
 title: Chameth.com
 disableKinds: ["taxonomy", "taxonomyTerm"]
 
-pygmentsuseclasses: true
+pygmentsUseClasses: true

@@ -16,10 +16,8 @@
     </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="/res/css/style.css">
-    <link rel="stylesheet" href="/res/css/monokai.css">
-    <link rel="stylesheet" href="/res/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/res/css/lightbox.min.css">
+    {{ $style := resources.Get "style.sass" | toCSS (dict "outputStyle" "compressed") | fingerprint }}
+    <link rel="stylesheet" href="{{ $style.Permalink }}">
     <link rel="canonical" href="{{ .Permalink }}" />
     {{ with .Site.GetPage "home" }}
       {{ with .OutputFormats.Get "RSS" }}

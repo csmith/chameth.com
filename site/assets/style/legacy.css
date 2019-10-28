@@ -1639,7 +1639,6 @@ figcaption {
     color: #565656;
     font-weight: 800;
     font-family: "League Spartan", sans-serif;
-    .text-transform: uppercase;
     line-height: 1em;
     margin: 0 0 1em 0;
   }
@@ -1861,11 +1860,6 @@ figcaption {
     font-size: 0.9em;
     line-height: 1.3em;
   }
-
-  #posts ul li a {
-    .color: #ccc;
-  }
-
 
 /* Form */
 
