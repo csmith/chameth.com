@@ -62,7 +62,7 @@ and towards the bottom is this little tidbit:
 > the data within the volume after it has been declared, those changes will
 > be discarded.
 
-As soon as Docker hits `VOLUME` instruction, the directory becomes a mount
+As soon as Docker hits the `VOLUME` instruction the directory becomes a mount
 point, and anything we do to the temporary volume mounted there is discarded
 during the build process. So we have to change the ownership *before* the
 instruction, which may seem a little counter-intuitive:
