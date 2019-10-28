@@ -10,9 +10,10 @@ description: Automatically retrieve certificates from Let's Encrypt and configur
 area: Docker
 ---
 
-<div class="image left">
- <img src="/res/images/docker/logo.png" alt="Docker logo">
-</div>
+<figure class="right">
+  <img src="/res/images/docker/logo.png" alt="Docker logo">
+  <figcaption>The Docker project logo</figcaption>
+</figure>
 
 Over the past few weeks I've gradually been migrating services from running in LXC containers to
 Docker containers. It takes a while to get into the right mindset for Docker - thinking of

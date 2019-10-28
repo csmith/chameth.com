@@ -7,13 +7,16 @@ description: It's basically magic.
 area: Docker
 ---
 
+<figure class="left">
+  <img src="/res/images/docker/logo.png" alt="Docker logo">
+  <figcaption>The Docker project logo</figcaption>
+</figure>
+
 One thing that always confuses me with Docker is how exactly mounting
 volumes behaves. At a basic level it's fairly straight forward: you
 declare a volume in a Dockerfile, and then either explicitly mount
 something there or docker automatically creates an anonymous volume
 for you. Done. But it turns out there's quite a few edge cases...
-
-<!--more-->
 
 ### Changing ownership of the folder
 
@@ -21,6 +24,8 @@ Perhaps the most common operation done on a Docker volume other than
 simply mounting it is trying to change the ownership of the directory.
 If your Docker process runs as a certain user you probably want the
 directory to be writable by that user.
+
+<!--more-->
 
 At first we might try something like:
 

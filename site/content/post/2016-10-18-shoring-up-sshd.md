@@ -8,9 +8,11 @@ image: /res/images/ssh/openssh.png
 description: Tools and suggestions for improving the security of SSHd by disabling weak algorithms and modern config tweaks.
 area: security
 ---
-<div class="image right">
- <img src="/res/images/ssh/openssh.png" alt="OpenSSH logo">
-</div>
+
+<figure class="left">
+  <img src="/res/images/ssh/openssh.png" alt="OpenSSH logo">
+  <figcaption>The OpenSSH project logo</figcaption>
+</figure>
 
 I recently came across a useful tool on GitHub called
 [ssh-audit](https://github.com/arthepsy/ssh-audit). It's a small Python script

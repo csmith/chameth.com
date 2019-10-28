@@ -9,9 +9,10 @@ description: How to use an aircapped computer, a large dose of paranoia, an iron
 area: security
 ---
 
-<div class="image left">
- <img src="/res/images/yubikey/keys.png" alt="Two yubikeys">
-</div>
+<figure class="right">
+  <img src="/res/images/yubikey/keys.png" alt="Two yubikeys">
+  <figcaption>A (key-)pair of Yubikeys. (Sorry.)</figcaption>
+</figure>
 
 I recently noticed that I'd accidentally lost my previous GPG private key &mdash; whoops. It was on
 a drive that I'd since formatted and used for a fair amount of time, so there's no hope of

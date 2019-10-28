@@ -10,9 +10,10 @@ description: Using SOAP requests to get raw data, and rrdtool to produce graphs.
 area: data analysis
 ---
 
-<div class="image right">
- <img src="/res/images/wemo/switch.jpg" alt="WeMo Insight Switch">
-</div>
+<figure class="left">
+  <img src="/res/images/wemo/switch.jpg" alt="WeMo Insight Switch">
+  <figcaption>A WeMo Insight Switch</figcaption>
+</figure>
 
 I recently picked up a couple of <a href="http://www.belkin.com/uk/p/P-F7C029/">Belkin's WeMo
 Insight Switches</a> to monitor power usage for my PC and networking equipment. WeMo is Belkin's

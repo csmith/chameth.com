@@ -9,9 +9,10 @@ description: There's no good reason for sites to avoid HTTPS any more, and lots 
 area: security
 ---
 
-<div class="image right">
- <img src="/res/images/https/https-everywhere.jpg" alt="EFF HTTPS Everywhere logo">
-</div>
+<figure class="left">
+  <img src="/res/images/https/https-everywhere.jpg" alt="EFF HTTPS Everywhere logo">
+  <figcaption>The EFF's HTTPS Everywhere logo</figcaption>
+</figure>
 
 One of my favourite hobbyhorses recently has been the use of HTTPS, or lack thereof. HTTPS is the
 thing that makes the little padlock appear in your browser, and has existed for over 20 years.

@@ -7,9 +7,10 @@ description: Installing and configuring Unbound on an Edgerouter Lite to enable 
 area: security
 ---
 
-<div class="image left">
- <img src="/res/images/erl/edgerouter.jpg" alt="EdgeRouter Lite">
-</div>
+<figure class="left">
+  <img src="/res/images/erl/edgerouter.jpg" alt="An EdgeRouter Lite">
+  <figcaption>The EdgeRouter Lite</figcaption>
+</figure>
 
 DNS-over-TLS is a fairly recent specificiation described in
 [RFC7858](https://tools.ietf.org/html/rfc7858), which enables DNS clients to
