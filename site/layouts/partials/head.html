@@ -17,7 +17,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     {{ $style := resources.Get "style/style.sass" | toCSS (dict "outputStyle" "compressed") | fingerprint }}
-    <link rel="stylesheet" href="{{ $style.Permalink }}">
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}">
     <link rel="canonical" href="{{ .Permalink }}" />
     {{ with .Site.GetPage "home" }}
       {{ with .OutputFormats.Get "RSS" }}
