@@ -1,0 +1,83 @@
+// The site-wide header, with title, recent posts, and identity links
+
+#header
+  display: flex
+  flex-direction: column
+  align-items: flex-end
+  justify-content: space-between
+
+  background-color: #1f1815
+  background-attachment: scroll, fixed
+  background-image: url("/res/images/overlay.png"), url("/res/images/background.jpg")
+  background-position: top left, top left
+  background-repeat: repeat, no-repeat
+  background-size: auto, auto 100%
+
+  color: rgba(255, 255, 255, 0.4)
+
+  width: 20%
+  height: 100%
+  left: 0
+  top: 0
+
+  position: fixed
+  padding: 8em 2em 8em 1em
+  text-align: right
+
+  & > *
+    flex-shrink: 0
+    width: 100%
+
+  & > .inner
+    flex-grow: 1
+    margin: 0 0 2em 0
+
+  section
+    padding: 20px 0
+
+  a
+    text-decoration: none
+
+  h1
+    font-size: 1.35em
+    line-height: 1.75em
+    margin: 0
+    text-transform: uppercase
+    color: #3c3c3c
+
+
+// Recent posts list
+
+#posts ul
+  list-style-type: none
+
+  li
+    margin: 20px 0
+    font-size: 0.9em
+    line-height: 1.3em
+
+    &.recent a
+      background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 30%)
+      display: inline-block
+      width: 100%
+      padding: 0 0.7em 0 2em
+
+
+// Identity links
+
+#identities
+  position: absolute
+  bottom: 20px
+  left: 20px
+  text-align: left
+
+  ul
+    margin-bottom: 0
+
+  li
+    font-size: 0.8em
+    line-height: 1.4em
+    margin: 0.4em 0
+
+    &#pgp
+      font-family: monospace
