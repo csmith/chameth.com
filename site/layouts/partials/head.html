@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>
       {{ if $.IsPage }}
@@ -16,7 +16,7 @@
     </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {{ $style := resources.Get "style.sass" | toCSS (dict "outputStyle" "compressed") | fingerprint }}
+    {{ $style := resources.Get "style/style.sass" | toCSS (dict "outputStyle" "compressed") | fingerprint }}
     <link rel="stylesheet" href="{{ $style.Permalink }}">
     <link rel="canonical" href="{{ .Permalink }}" />
     {{ with .Site.GetPage "home" }}

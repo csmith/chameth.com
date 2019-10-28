@@ -1,0 +1,22 @@
+// Deals with article-specific layouts
+
+article
+
+  & + article
+    padding-top: 100px
+    border-top: 10px solid rgba(200, 200, 200, 0.3)
+    margin-top: 100px
+
+    @media screen and (max-width: 1800px)
+      padding-top: 50px
+      margin-top: 50px
+
+  header p
+    position: relative
+    margin: -1em 0 1.5em 0
+    color: #939393
+    font-size: 1.25em
+    line-height: 1.5em
+
+  img
+    max-width: 100%

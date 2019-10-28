@@ -6,13 +6,17 @@ body
   font-size: 16pt
   font-weight: 400
   line-height: 1.75em
+  -webkit-text-size-adjust: none
+
+  @media screen and (max-width: 1800px)
+    font-size: 12pt
 
 a
   color: $cyan
   text-decoration-skip-ink: auto
 
 strong, b
-  color: $light-gray
+  color: $gray
   font-weight: 400
 
 em, i
@@ -27,3 +31,12 @@ sup
   font-size: 0.8em
   position: relative
   top: -0.5em
+
+p code
+  background: $code-background
+  border-radius: .35em
+  border: solid 2px $code-border
+  font-family: "Courier New", monospace
+  font-size: .9em
+  margin: 0 .25em
+  padding: .25em .65em

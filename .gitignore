@@ -1,5 +1,6 @@
 .DS_Store
 .idea
 
-# When running outside of docker, Hugo writes content here
+# Hugo generated content 
 /site/public
+/site/resources

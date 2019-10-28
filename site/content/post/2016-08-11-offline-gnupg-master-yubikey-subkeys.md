@@ -103,7 +103,7 @@ followed the instructions at the end of Simon's guide to import my public key an
 of the subkeys on the Yubikey. After that [Enigmail](https://www.enigmail.net/index.php/en/)
 was able to sign and encrypt e-mail in Thunderbird.
 
-<figure class="image left">
+<figure class="left">
   <img src="/res/images/yubikey/wisdom_of_the_ancients.png" alt="XKCD: Wisdom of the ancients">
   <figcaption><a href="https://xkcd.com/979/">XKCD #979: Wisdom of the ancients</a></figcaption>
 </figure>

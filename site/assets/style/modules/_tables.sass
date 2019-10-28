@@ -1,0 +1,33 @@
+// Basic tables
+
+.table-wrapper
+  -webkit-overflow-scrolling: touch
+  overflow-x: auto
+
+table
+  margin: 0 0 2em 0
+  width: 100%
+
+  tbody tr
+    border: solid 1px $light-gray
+    border-left: 0
+    border-right: 0
+
+    &:nth-child(2n + 1)
+      background-color: $lightest-gray
+
+  td
+    padding: 0.75em 0.75em
+
+  th
+    color: $gray
+    font-size: 0.9em
+    font-weight: 400
+    padding: 0 0.75em 0.75em 0.75em
+    text-align: left
+
+  thead
+    border-bottom: solid 2px $light-gray
+
+  tfoot
+    border-top: solid 2px $light-gray

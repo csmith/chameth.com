@@ -21,8 +21,38 @@
   top: 0
 
   position: fixed
-  padding: 8em 2em 8em 1em
   text-align: right
+  padding: 8em 2em 8em 1em
+
+  @media screen and (max-width: 1280px)
+    padding: 6em 3em 3em 3em
+    width: 30%
+
+  @media screen and (max-width: 980px)
+    background-attachment: scroll
+    background-position: top left, center center
+    background-size: auto, cover
+    left: auto
+    padding: 6em 4em
+    position: relative
+    text-align: center
+    top: auto
+    width: 100%
+    display: block
+
+  @media screen and (max-width: 736px), screen and (max-height: 700px)
+    padding: 2.25em 1.5em
+    min-height: 18em
+
+    ul
+      margin-bottom: 0
+
+  @media screen and (max-width: 480px), screen and (max-height: 700px)
+    padding: 2.25em 1.5em 2em
+    min-height: 18em
+
+  ul
+    margin-bottom: 0
 
   & > *
     flex-shrink: 0
@@ -35,6 +65,9 @@
   section
     padding: 20px 0
 
+    @media screen and (max-width: 980px)
+      padding: 0
+
   a
     text-decoration: none
 
@@ -45,16 +78,38 @@
     text-transform: uppercase
     color: #3c3c3c
 
+    @media screen and (max-width: 1280px)
+      font-size: 1.25em
+
+    @media screen and (max-width: 980px)
+      font-size: 1.75em
+
+  p
+    color: #d2d2d2
+    position: relative
+    margin: 0 0 1.5em 0
+
 
 // Recent posts list
 
 #posts ul
   list-style-type: none
 
+  @media screen and (max-width: 980px)
+    position: absolute
+    bottom: 20px
+    right: 20px
+
+    .recent
+      display: none
+
   li
     margin: 20px 0
     font-size: 0.9em
     line-height: 1.3em
+
+    @media screen and (max-width: 980px)
+      margin: 0.4em
 
     &.recent a
       background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 30%)
