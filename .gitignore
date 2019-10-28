@@ -1,1 +1,4 @@
 .DS_Store
+
+# When running outside of docker, Hugo writes content here
+/site/public

@@ -7,6 +7,11 @@ description: Sometimes its fun to just abandon good practice and make something 
 area: optimisation
 ---
 
+<figure class="right">
+  <img src="/res/images/nim/logo.jpg" alt="Yellow crown on a dark background">
+  <figcaption>The Nim logo</figcaption>
+</figure>
+
 For the past few years I've been taking part in
 [Eric Wastl](https://twitter.com/ericwastl)'s
 [Advent of Code](https://adventofcode.com/), a coding challenge that provides
