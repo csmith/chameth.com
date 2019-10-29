@@ -1,4 +1,4 @@
-baseurl: https://www.chameth.com
+baseUrl: https://chameth.com
 assetDir: assets
 disablePathToLower: true
 languageCode: en-gb
