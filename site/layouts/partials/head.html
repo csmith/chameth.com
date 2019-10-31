@@ -33,9 +33,14 @@
       {{ if $.Param "description" }}
         <meta property="og:description" content="{{ $.Param "description" | htmlEscape }}" />
       {{ end }}
-      {{ if $.Param "image" }}
+      {{ if $.Param "image" -}}
         <meta property="og:image" content="{{ $.Param "image" | absURL }}" />
-      {{ end }}
+      {{- end }}
+      {{ range $.Resources.ByType "image" -}}
+        {{ if .Params.default }}
+          <meta property="og:image" content="{{ .Permalink }}" />
+        {{ end }}
+      {{- end }}
     {{ end }}
   </head>
   <body id="top">

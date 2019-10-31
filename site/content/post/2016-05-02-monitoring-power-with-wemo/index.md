@@ -1,19 +1,23 @@
 ---
 date: 2016-05-02
-strapline: Fun with SOAP and rrdtool
-thumbnail: /res/images/wemo/switch.thumb.jpg
 title: Monitoring power draw with WeMo Insight Switches
-url: /2016/05/02/monitoring-power-with-wemo/
-aliases: ["/2016/05/02/monitoring-power-with-wemo.html"]
-image: /res/images/wemo/desk-1d.png
 description: Using SOAP requests to get raw data, and rrdtool to produce graphs.
 area: data analysis
+url: /2016/05/02/monitoring-power-with-wemo/
+aliases: ["/2016/05/02/monitoring-power-with-wemo.html"]
+
+resources:
+  - src: switch.jpg
+    name: A WeMo Insight Switch
+    params:
+      default: true
+  - src: desk-1d.png
+    name: Graph of power usage over a day
+  - src: desk-1w.png
+    name: Graph of power usage over a week
 ---
 
-<figure class="left">
-  <img src="/res/images/wemo/switch.jpg" alt="WeMo Insight Switch">
-  <figcaption>A WeMo Insight Switch</figcaption>
-</figure>
+{{< figure "left" "A WeMo Insight Switch" >}}
 
 I recently picked up a couple of <a href="http://www.belkin.com/uk/p/P-F7C029/">Belkin's WeMo
 Insight Switches</a> to monitor power usage for my PC and networking equipment. WeMo is Belkin's
@@ -190,14 +194,14 @@ The big block of `CDEF`/`CDEF`/`AREA` parameters creates a series of area plots 
 according to the power level. They're in descending order so the smaller areas are drawn on top of
 the larger layers. This results in a graph that looks like this:
 
-<img src="/res/images/wemo/desk-1d.png" alt="Graph of power usage over a day">
+{{< img "Graph of power usage over a day" >}}
 
 This graph shows the total power for all the things plugged in at my desk. You can see the idle
 power draw is around 60W. When I'm using the computer it jumps up to around 130W, and when the
 computer is under heavy load (playing games, for example) it goes up even further to the 200W mark.
 With a couple of small tweaks to the rrdtool command, I also have a graph showing the entire week:
 
-<img src="/res/images/wemo/desk-1w.png" alt="Graph of power usage over a week">
+{{< img "Graph of power usage over a week" >}}
 
 The two huge spikes near the start of the data are caused by a heater under my desk. They're also
 one of the main reasons I chose to plot the graphs with a logarithmic scale. With a linear scale

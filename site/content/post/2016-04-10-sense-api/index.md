@@ -1,19 +1,20 @@
 ---
 date: 2016-04-10
-strapline: Who needs API docs when you can do a MITM attack?
-thumbnail: /res/images/sense/sense.thumb.jpg
 title: Reverse engineering the Sense API
-url: /2016/04/10/sense-api/
-aliases: ["/2016/04/10/sense-api.html"]
-image: /res/images/sense/sense.jpg
 description: How to retrieve data from a Hello Sense without using the official apps.
 area: REST APIs
+url: /2016/04/10/sense-api/
+aliases: ["/2016/04/10/sense-api.html"]
+
+resources:
+  - src: sense.jpg
+    name: A Sense unit and its two pillow sensors
+    title: A Sense unit and its two pillow sensors
+    params:
+      default: true
 ---
 
-<figure class="right">
-  <img src="/res/images/sense/sense.jpg" alt="Sense">
-  <figcaption>A Sense unit and its two pillow sensors</figcaption>
-</figure>
+{{< figure "right" "A Sense unit and its two pillow sensors" >}}
 
 Sense is a little device that sits by your bedside and, in
 conjunction with a little 'pill' attached to your pillow, monitors your sleeping patterns and
