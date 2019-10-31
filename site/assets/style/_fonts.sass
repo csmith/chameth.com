@@ -1,32 +1,27 @@
 // Defines font families
 
 $font-dir: '/res/fonts/'
+$text-font: 'TeX Gyre Heros'
 
 // Provides src properties for woff2 and woff font files.
 @mixin woff-font-src($file-name)
   $font: $font-dir + $file-name
   src: url($font + '.woff2') format('woff2'), url($font + '.woff') format('woff')
 
-// Provides src properties for all types of font with some hacks to support IE.
-@mixin full-font-src($file-name, $svg-name)
-  $font: $font-dir + $file-name
-  src: url($font + '.eot')
-  src: url($font + '.eot?#iefix') format('embedded-opentype'), url($font + '.woff2') format('woff2'), url($font + '.woff') format('woff'), url($font + '.ttf') format('truetype'), url($font + '.svg#' + $svg-name) format('svg')
-
 @font-face
-  font-family: 'Aileron Regular'
+  font-family: 'TeX Gyre Heros'
   font-weight: normal
   font-style: normal
-  @include woff-font-src('aileron-regular-webfont')
+  @include woff-font-src('TeXGyreHeros-Regular')
 
 @font-face
   font-family: 'League Spartan'
   font-weight: bold
   font-style: normal
-  @include full-font-src('leaguespartan-bold', 'league_spartanbold')
+  @include woff-font-src('leaguespartan-bold')
 
 @font-face
   font-family: 'FontAwesome'
   font-weight: normal
   font-style: normal
-  @include full-font-src('fontawesome-chameth-1', 'fontawesome-chameth')
+  @include woff-font-src('fontawesome-chameth-1')
