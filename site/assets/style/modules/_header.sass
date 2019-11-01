@@ -69,14 +69,18 @@
       padding: 0
 
   a
-    text-decoration: none
+    text-decoration-color: transparent
+    transition: color 0.2s ease-in-out, text-decoration-color 0.25s linear
+
+    &:hover
+      text-decoration: underline
 
   h1
     font-size: 1.35em
     line-height: 1.75em
     margin: 0
     text-transform: uppercase
-    color: #3c3c3c
+    color: $darkest-gray
 
     @media screen and (max-width: 1280px)
       font-size: 1.25em
@@ -112,10 +116,10 @@
       margin: 0.4em
 
     &.recent a
-      background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 30%)
+      background: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.3) 60%)
       display: inline-block
       width: 100%
-      padding: 0 0.7em 0 2em
+      padding: 0.4em 0.5em 0.5em 2em
 
 
 // Identity links
