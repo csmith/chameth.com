@@ -1,19 +1,21 @@
 ---
 date: 2016-05-21
-strapline: It's containers all the way down...
-thumbnail: /res/images/docker/logo.thumb.png
 title: Automatic reverse proxying with Docker and nginx
-url: /2016/05/21/docker-automatic-nginx-proxy/
-aliases: ["/2016/05/21/docker-automatic-nginx-proxy.html"]
-image: /res/images/docker/reverse-proxy.png
 description: Automatically retrieve certificates from Let's Encrypt and configure an SSL-terminating reverse proxy based on running containers.
 area: Docker
+url: /2016/05/21/docker-automatic-nginx-proxy/
+aliases: ["/2016/05/21/docker-automatic-nginx-proxy.html"]
+
+resources:
+  - src: reverse-proxy.png
+    name: Diagram showing components of a reverse proxy implementation
+    params:
+      default: true
+  - src: logo.png
+    name: The Docker project logo
 ---
 
-<figure class="right">
-  <img src="/res/images/docker/logo.png" alt="Docker logo">
-  <figcaption>The Docker project logo</figcaption>
-</figure>
+{{< figure "right" "The Docker project logo" >}}
 
 Over the past few weeks I've gradually been migrating services from running in LXC containers to
 Docker containers. It takes a while to get into the right mindset for Docker - thinking of
@@ -85,7 +87,7 @@ understand it all.
 
 In the end I decided to roll my own solution. Here's a high-level overview of how it all works:
 
-<img src="/res/images/docker/reverse-proxy.png" alt="Diagram">
+{{< img "Diagram showing components of a reverse proxy implementation" >}}
 
 As you probably noticed, there are quite a few containers involved. Each one performs a small,
 well-defined task, and its output can easily be inspected in either a volume or a database. I
@@ -128,7 +130,7 @@ write a domains.txt yourself). It uses `iowait` to watch the domains text file f
 automatically reruns when there are changes. It also runs once a day to renew any certs that are
 coming up for expiry.
 
-#### service-nginx and nginx.
+#### service-nginx and nginx
 
 The right fork of the diagram is concerned with nginx. My
 [service-nginx](https://github.com/csmith/docker-service-nginx) container again connects to etcd

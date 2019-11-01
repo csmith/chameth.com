@@ -1,18 +1,18 @@
 ---
 date: 2016-06-17
-strapline: It's time to stop with the excuses
-thumbnail: /res/images/https/https-everywhere.thumb.jpg
 title: Why you should be using HTTPS
-url: /2016/06/17/why-you-should-be-using-https/
-image: /res/images/https/https-everywhere.jpg
 description: There's no good reason for sites to avoid HTTPS any more, and lots of reasons they should be actively encouraging it.
 area: security
+url: /2016/06/17/why-you-should-be-using-https/
+
+resources:
+  - src: https-everywhere.jpg
+    name: The EFF's HTTPS Everywhere logo
+    params:
+      default: true
 ---
 
-<figure class="left">
-  <img src="/res/images/https/https-everywhere.jpg" alt="EFF HTTPS Everywhere logo">
-  <figcaption>The EFF's HTTPS Everywhere logo</figcaption>
-</figure>
+{{< figure "left" "The EFF's HTTPS Everywhere logo" >}}
 
 One of my favourite hobbyhorses recently has been the use of HTTPS, or lack thereof. HTTPS is the
 thing that makes the little padlock appear in your browser, and has existed for over 20 years.
