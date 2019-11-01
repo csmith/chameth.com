@@ -1,7 +1,7 @@
 // Defines font families
 
 $font-dir: '/res/fonts/'
-$text-font: 'TeX Gyre Heros'
+$text-font: 'Source Sans Pro'
 
 // Provides src properties for woff2 and woff font files.
 @mixin woff-font-src($file-name)
@@ -9,10 +9,10 @@ $text-font: 'TeX Gyre Heros'
   src: url($font + '.woff2') format('woff2'), url($font + '.woff') format('woff')
 
 @font-face
-  font-family: 'TeX Gyre Heros'
+  font-family: 'Source Sans Pro'
   font-weight: normal
   font-style: normal
-  @include woff-font-src('TeXGyreHeros-Regular')
+  @include woff-font-src('SourceScansPro-Regular')
 
 @font-face
   font-family: 'League Spartan'
