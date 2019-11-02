@@ -1,18 +1,20 @@
 ---
 date: 2016-10-18
-thumbnail: /res/images/ssh/openssh.thumb.png
 title: Shoring up SSHd configuration
-strapline: Down with weak algorithms!
-url: /2016/10/18/shoring-up-sshd/
-image: /res/images/ssh/openssh.png
 description: Tools and suggestions for improving the security of SSHd by disabling weak algorithms and modern config tweaks.
 area: security
+url: /2016/10/18/shoring-up-sshd/
+
+resources:
+  - src: openssh.png
+    name: The OpenSSH project logo
+    params:
+      default: true
+  - src: ssh-audit-github.png
+    name: Output of ssh-audit pointing at GitHub's SSH servers
 ---
 
-<figure class="left">
-  <img src="/res/images/ssh/openssh.png" alt="OpenSSH logo">
-  <figcaption>The OpenSSH project logo</figcaption>
-</figure>
+{{< figure "left" "The OpenSSH project logo" >}}
 
 I recently came across a useful tool on GitHub called
 [ssh-audit](https://github.com/arthepsy/ssh-audit). It's a small Python script
@@ -27,7 +29,7 @@ This is the kind of output you get when running ssh-audit. In this particular
 example, I'm looking at GitHub's SSH server and have filtered the output to
 just warnings and failures:
 
-<img src="/res/images/ssh/ssh-audit-github.png" alt="ssh-audit output">
+{{< img "Output of ssh-audit pointing at GitHub's SSH servers" >}}
 
 GitHub's a bit of a special case, as they're trying to cope with scores of
 developers pushing code: they can't disable weaker algorithms without also
@@ -93,8 +95,8 @@ as a warning, but there's no compelling reason to keep it around if you're
 using remotely modern clients to connect. Similarly the host-key DSA algorithm
 uses a 1024 bit key, so should be disabled.
 
-Many of the supported encryption algorithms use basically-broken algorithms
-(`3des-cbc`, `arcfour`, for example). Some of the remaining are block ciphers
+Many of the rejected encryption algorithms use basically-broken algorithms
+(`3des-cbc` and `arcfour` for example). Some of the remaining are block ciphers
 with small block sizes, which makes them weak (e.g. `blockfish-cbc` uses a
 block size of 64 bits).
 

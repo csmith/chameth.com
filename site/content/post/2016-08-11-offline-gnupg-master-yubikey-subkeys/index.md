@@ -1,18 +1,20 @@
 ---
 date: 2016-08-11
-strapline: With bonus completely over-the-top security
-thumbnail: /res/images/yubikey/keys.thumb.png
 title: Creating an offline GnuPG master key with Yubikey-stored subkeys
-url: /2016/08/11/offline-gnupg-master-yubikey-subkeys/
-image: /res/images/yubikey/keys.png
 description: How to use an aircapped computer, a large dose of paranoia, an ironkey, and some yubikeys to create a new GPG key and subkeys.
 area: security
+url: /2016/08/11/offline-gnupg-master-yubikey-subkeys/
+
+resources:
+  - src: keys.png
+    name: A pair of Yubikeys
+    params:
+      default: true
+  - src: wisdom_of_the_ancients.png
+    name: "XKCD: Wisdom of the Ancients"
 ---
 
-<figure class="right">
-  <img src="/res/images/yubikey/keys.png" alt="Two yubikeys">
-  <figcaption>A (key-)pair of Yubikeys. (Sorry.)</figcaption>
-</figure>
+{{< figure "right" "A pair of Yubikeys" >}}
 
 I recently noticed that I'd accidentally lost my previous GPG private key &mdash; whoops. It was on
 a drive that I'd since formatted and used for a fair amount of time, so there's no hope of
@@ -104,7 +106,7 @@ of the subkeys on the Yubikey. After that [Enigmail](https://www.enigmail.net/in
 was able to sign and encrypt e-mail in Thunderbird.
 
 <figure class="left">
-  <img src="/res/images/yubikey/wisdom_of_the_ancients.png" alt="XKCD: Wisdom of the ancients">
+  {{< img "XKCD: Wisdom of the Ancients" >}}
   <figcaption><a href="https://xkcd.com/979/">XKCD #979: Wisdom of the ancients</a></figcaption>
 </figure>
 
