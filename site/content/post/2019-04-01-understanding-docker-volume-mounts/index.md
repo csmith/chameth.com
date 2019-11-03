@@ -1,16 +1,16 @@
 ---
 date: 2019-04-01
 title: Understanding Docker volume mounts
-url: /2019/04/01/understanding-docker-volume-mounts/
-image: /res/images/docker/logo.png
 description: It's basically magic.
 area: Docker
+url: /2019/04/01/understanding-docker-volume-mounts/
+
+resources:
+  - src: logo.png
+    name: The Docker project logo
 ---
 
-<figure class="left">
-  <img src="/res/images/docker/logo.png" alt="Docker logo">
-  <figcaption>The Docker project logo</figcaption>
-</figure>
+{{< figure "left" "The Docker project logo" >}}
 
 One thing that always confuses me with Docker is how exactly mounting
 volumes behaves. At a basic level it's fairly straight forward: you
