@@ -1,16 +1,20 @@
 ---
 date: 2019-10-21
 title: Obfuscating Kotlin code with ProGuard
-url: /2019/10/21/obfuscating-kotlin-proguard/
-image: /res/images/obfuscation/obfuscated.png
 description: In which Kotlin tries to be helpful, and we smite it
 area: Android
+url: /2019/10/21/obfuscating-kotlin-proguard/
+
+resources:
+  - src: obfuscated.png
+    name: Obfuscated code viewed in Android Studio
+    default: true
+  - src: kotlin-proguard.png
+    name: Kotlin and Proguard logos
+    title: Kotlin + Proguard = fun
 ---
 
-<figure class="left">
-  <img src="/res/images/obfuscation/kotlin-proguard.png" alt="Kotlin and Proguard logos">
-  <figcaption>Kotlin + ProGuard = fun</figcaption>
-</figure>
+{{< figure "left" "Kotlin and Proguard logos" >}}
 
 Obfuscating code is the process of modifying source code or build output in
 order to make it harder for humans to understand. It's often employed as a

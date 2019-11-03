@@ -1,16 +1,18 @@
 ---
 date: 2017-12-17
 title: DNS-over-TLS on the EdgeRouter Lite
-url: /2017/12/17/dns-over-tls-on-edgerouter-lite/
-image: /res/images/erl/edgerouter.jpg
 description: Installing and configuring Unbound on an Edgerouter Lite to enable encrypoted DNS requests.
 area: security
+url: /2017/12/17/dns-over-tls-on-edgerouter-lite/
+
+resources:
+  - src: edgerouter.jpg
+    name: An EdgeRouter Lite
+    params:
+      default: true
 ---
 
-<figure class="left">
-  <img src="/res/images/erl/edgerouter.jpg" alt="An EdgeRouter Lite">
-  <figcaption>The EdgeRouter Lite</figcaption>
-</figure>
+{{< figure "left" "An EdgeRouter Lite" >}}
 
 DNS-over-TLS is a fairly recent specificiation described in
 [RFC7858](https://tools.ietf.org/html/rfc7858), which enables DNS clients to
@@ -157,7 +159,7 @@ set service nat rule 1 type destination
 You could of course redirect any traffic to port 53, but that would prevent you
 from explicitly querying any other DNS server. By just intercepting traffic to
 8.8.8.8 I'm taking care of the vast majority of my statically configured
-devices, and can still issue manual queries to other resolves when needed.
+devices, and can still issue manual queries to other resolvers when needed.
 
 ### Validating
 

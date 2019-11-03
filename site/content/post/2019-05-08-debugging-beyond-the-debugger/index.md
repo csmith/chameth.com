@@ -1,16 +1,20 @@
 ---
 date: 2019-05-08
 title: Debugging beyond the debugger
-url: /2019/05/08/debugging-beyond-the-debugger/
-image: /res/images/debugging/strace.png
 description: What happens when your usual approach fails you?
 area: troubleshooting
+url: /2019/05/08/debugging-beyond-the-debugger/
+
+resources:
+  - src: strace.png
+    name: Output from running curl under strace
+    default: true
+  - src: tools.jpg
+    name: Collection of tools hanging on a wall
+    title: Real-life debugging tools
 ---
 
-<figure class="right">
-  <img src="/res/images/unsplash/tools.jpg" alt="Collection of tools">
-  <figcaption>Real-life debugging tools</figcaption>
-</figure>
+{{< figure "right" "Collection of tools hanging on a wall" >}}
 
 Most programming -- and sysadmin -- problems can be debugged in a
 fairly straight forward manner using logs, print statements,

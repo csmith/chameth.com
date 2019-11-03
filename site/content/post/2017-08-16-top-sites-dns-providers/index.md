@@ -1,10 +1,19 @@
 ---
 date: 2017-08-16
 title: A look at the DNS habits of the top 100k websites
-url: /2017/08/16/top-sites-dns-providers/
-image: /res/images/dns/providers.png
 description: An analysis of the DNS providers and resilience of the top 100,000 websites.
 area: data analysis
+url: /2017/08/16/top-sites-dns-providers/
+
+resources:
+  - src: providers.png
+    name: Graph showing popularity of DNS providers across sites grouped by position
+    params:
+      default: true
+  - src: resilience.png
+    name: Graph showing use of resilience techniques by site position
+  - src: provider-pairings.png
+    name: Chart showing frequency of pairings of top providers
 ---
 
 I was thinking about switching DNS providers recently, and found myself
@@ -48,7 +57,7 @@ Route 53.
 This graph shows the relative frequency of some of the big providers for
 sites in different positions in the top 100,000 list:
 
-<img src="/res/images/dns/providers.png" alt="Graph showing popularity of DNS providers across sites grouped by position">
+{{< img "Graph showing popularity of DNS providers across sites grouped by position" >}}
 
 There are a few interesting transitions that can be seen here. The very large
 sites tend to manage their own DNS, as can be seen with the large
@@ -82,14 +91,14 @@ namesevers under multiple TLDs.
 As you would expect, the use of these techniques tend to be more common with
 the higher ranking sites:
 
-<img src="/res/images/dns/resilience.png" alt="Graph showing use of resilience techniques by site position">
+{{< img "Graph showing use of resilience techniques by site position" >}}
 
 #### Most popular pairings
 
 Of those sites that do use multiple providers, there are some fairly common
 pairings:
 
-<img src="/res/images/dns/provider-pairings.png" alt="Chart showing frequency of pairings of top providers">
+{{< img "Chart showing frequency of pairings of top providers" >}}
 
 Dyn is obviously frequently paired with a number of providers. In fact, of all
 the top 100k sites using Dyn 40% also use a different provider. They're second

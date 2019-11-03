@@ -1,16 +1,19 @@
 ---
 date: 2018-12-09
 title: Over-the-top optimisations with Nim
-url: /2018/12/09/over-the-top-optimisations-in-nim/
-image: /res/images/aoc/advent-of-code.jpg
 description: Sometimes its fun to just abandon good practice and make something *fast*.
 area: optimisation
+url: /2018/12/09/over-the-top-optimisations-in-nim/
+
+resources:
+  - src: advent-of-code.png
+    name: Christmas Tree from Advent of Code 2005
+    default: true
+  - src: logo.jpg
+    name: The Nim logo
 ---
 
-<figure class="right">
-  <img src="/res/images/nim/logo.jpg" alt="Yellow crown on a dark background">
-  <figcaption>The Nim logo</figcaption>
-</figure>
+{{< figure "right" "Christmas Tree from Advent of Code 2005" >}}
 
 For the past few years I've been taking part in
 [Eric Wastl](https://twitter.com/ericwastl)'s
@@ -39,6 +42,8 @@ started using Nim.
 <!--more-->
 
 ### Introducing Nim
+
+{{< figure "left" "The Nim logo" >}}
 
 [Nim](https://nim-lang.org/), formerly Nimrod, is a compiled language that
 takes a lot of cues from Python. It has a very nice and familiar syntax,
