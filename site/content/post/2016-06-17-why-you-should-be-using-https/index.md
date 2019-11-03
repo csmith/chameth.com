@@ -3,7 +3,7 @@ date: 2016-06-17
 title: Why you should be using HTTPS
 description: There's no good reason for sites to avoid HTTPS any more, and lots of reasons they should be actively encouraging it.
 area: security
-url: /2016/06/17/why-you-should-be-using-https/
+slug: why-you-should-be-using-https
 
 resources:
   - src: https-everywhere.jpg

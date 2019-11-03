@@ -3,8 +3,7 @@ date: 2016-05-02
 title: Monitoring power draw with WeMo Insight Switches
 description: Using SOAP requests to get raw data, and rrdtool to produce graphs.
 area: data analysis
-url: /2016/05/02/monitoring-power-with-wemo/
-aliases: ["/2016/05/02/monitoring-power-with-wemo.html"]
+slug: monitoring-power-with-wemo
 
 resources:
   - src: switch.jpg

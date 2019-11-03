@@ -3,7 +3,7 @@ date: 2018-12-09
 title: Over-the-top optimisations with Nim
 description: Sometimes its fun to just abandon good practice and make something *fast*.
 area: optimisation
-url: /2018/12/09/over-the-top-optimisations-in-nim/
+slug: over-the-top-optimisations-in-nim
 
 resources:
   - src: advent-of-code.png

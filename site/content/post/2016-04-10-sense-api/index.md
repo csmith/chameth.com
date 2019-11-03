@@ -3,8 +3,7 @@ date: 2016-04-10
 title: Reverse engineering the Sense API
 description: How to retrieve data from a Hello Sense without using the official apps.
 area: REST APIs
-url: /2016/04/10/sense-api/
-aliases: ["/2016/04/10/sense-api.html"]
+slug: sense-api
 
 resources:
   - src: sense.jpg

@@ -3,7 +3,7 @@ date: 2017-12-17
 title: DNS-over-TLS on the EdgeRouter Lite
 description: Installing and configuring Unbound on an Edgerouter Lite to enable encrypoted DNS requests.
 area: security
-url: /2017/12/17/dns-over-tls-on-edgerouter-lite/
+slug: dns-over-tls-on-edgerouter-lite
 
 resources:
   - src: edgerouter.jpg

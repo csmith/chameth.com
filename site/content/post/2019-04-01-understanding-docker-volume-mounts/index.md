@@ -3,7 +3,7 @@ date: 2019-04-01
 title: Understanding Docker volume mounts
 description: It's basically magic.
 area: Docker
-url: /2019/04/01/understanding-docker-volume-mounts/
+slug: understanding-docker-volume-mounts
 
 resources:
   - src: logo.png

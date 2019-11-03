@@ -3,7 +3,7 @@ date: 2019-05-08
 title: Debugging beyond the debugger
 description: What happens when your usual approach fails you?
 area: troubleshooting
-url: /2019/05/08/debugging-beyond-the-debugger/
+slug: debugging-beyond-the-debugger
 
 resources:
   - src: strace.png
