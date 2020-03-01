@@ -128,7 +128,8 @@ on top, only the "on top" layer will be downloaded if I already have the relevan
 
 If all the layers are cached, what happens when you change a file? This is dealt
 with using the copy-on-write technique: when you modify a file it is copied from
-the source layer and the changes are only made in a new layer.
+the source layer and the changes are only made in a new layer. This is handled
+bu the OverlayFS filesystem which is part of the mainline kernel.
 
 When a container is running, changes made to its filesystem are temporary, and
 do not persist across container restarts. To persist data - or introduce new
@@ -136,10 +137,20 @@ data to a container - you can mount volumes. How this works varies depending
 on how you're running your container, but at the basic level it is pretty much
 the same as bind-mounting (`mount -o bind`).
 
+You may be familiar with using `chroots` to change the apparent root directory
+of processes, perhaps with full-blown "jails" built on top. Containers offer
+much better isolation thanks to the use of namespaces. Instead of being
+constrained to a portion of the host's filesystem, they don't even have
+it mounted! Containers also get to specify their environment - if they
+expect in certain places, for example - instead of the sysadmin having to
+manually set up the chroot. Finally, containers offer much more fine-grained
+control over what processes can do (if you want it), and allow much more
+advanced use-cases such as inter-container networking.
+
 Images and filesystems employ a little magic to ensure that layers are reusable
 and cacheable, but again there's nothing terribly special about them: a container
 has a filesystem that appears to it to work the same way as a filesystem on
-the host.
+the host, and it's using a standard filesystem shipped with the kernel.
 
 ## How about networking?
 
