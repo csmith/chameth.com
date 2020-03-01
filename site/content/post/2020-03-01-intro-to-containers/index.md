@@ -266,5 +266,5 @@ when you started, feel free to drop me a note using the feedback form below.
 
 [^1]: OK, maybe you should care if you're deploying something written in crazy languages like PHP.
 [^2]: Some multi-process apps, such as web browsers, are starting to use namespaces to enhance security,
-as do certain package systems like Flatpak
+      as do certain package systems like Flatpak
 [^3]: "Unix timesharing system"; in practice this means having a separate hostname
