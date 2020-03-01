@@ -31,7 +31,7 @@ volume there isn't a question about how they're packaged - they go in an intermo
 The same container can be deployed on a freight train, a lorry, or a ship. The haulage company
 doesn't need to care what's in the container because they're completely standardised.
 Likewise, with software containers you don't really need to care about what's inside: the
-software you're deploying could be written in Go, Python3, Python3, Bash, LOLCODE, or
+software you're deploying could be written in Go, Python2, Python3, Bash, PHP, LOLCODE, or
 anything[^1]. 
 
 <!--more-->
@@ -264,7 +264,7 @@ Hopefully this has helped demystify containers a little. If you feel like
 I've missed something important out, or I've left you more confused than
 when you started, feel free to drop me a note using the feedback form below.
 
-[^1]: OK, maybe you should care if you're deploying something written in crazy languages like Bash.
+[^1]: OK, maybe you should care if you're deploying something written in crazy languages like PHP.
 [^2]: Some multi-process apps, such as web browsers, are starting to use namespaces to enhance security,
 as do certain package systems like Flatpak
 [^3]: "Unix timesharing system"; in practice this means having a separate hostname
