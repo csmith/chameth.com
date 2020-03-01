@@ -129,7 +129,7 @@ on top, only the "on top" layer will be downloaded if I already have the relevan
 If all the layers are cached, what happens when you change a file? This is dealt
 with using the copy-on-write technique: when you modify a file it is copied from
 the source layer and the changes are only made in a new layer. This is handled
-bu the OverlayFS filesystem which is part of the mainline kernel.
+by the OverlayFS filesystem which is part of the mainline kernel.
 
 When a container is running, changes made to its filesystem are temporary, and
 do not persist across container restarts. To persist data - or introduce new
