@@ -4,6 +4,13 @@ disablePathToLower: true
 languageCode: en-gb
 title: Chameth.com
 disableKinds: ["taxonomy", "taxonomyTerm"]
+
 permalinks:
   post: /:slug
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
 pygmentsUseClasses: true

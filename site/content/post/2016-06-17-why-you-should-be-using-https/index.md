@@ -20,8 +20,6 @@ In the past, that little padlock was the exclusive preserve of banks and other '
 establishments; over time its use has gradually expanded to most (but not all) websites
 that handle user information, and the time is now right for it to become ubiquitous.
 
-<!--more-->
-
 ### Why use HTTPS?
 
 There are numerous advantages to using HTTPS, both for the users of a website and for the
@@ -36,6 +34,8 @@ who happens to operate a network along the path between the user and the server.
 Users on shared WiFi networks (such as those in coffee shops, hotels, or offices) are particularly
 vulnerable to passive sniffing by anyone else on that network. If the network is open (as is
 frequently the case) then anyone in radio range can see exactly what the user is up to.
+
+<!--more-->
 
 #### Integrity
 

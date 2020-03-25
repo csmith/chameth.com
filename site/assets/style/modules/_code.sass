@@ -4,23 +4,30 @@
   border-radius: 0.35em
   clear: both
 
+  @media screen and (max-width: 980px)
+    width: 100vw
+    position: relative
+    left: 50%
+    right: 50%
+    margin-left: -50vw
+    margin-right: -50vw
+    border-radius: 0
+
   pre
     -webkit-overflow-scrolling: touch
     font-family: "Courier New", monospace
-    font-size: 0.9em
-    margin: 0 0 2em 0
+    margin: var(--content-padding-small) 0
 
     code
       display: block
       line-height: 1.75em
-      padding: 1em 1.5em
+      padding: var(--content-padding-small)
       overflow-x: auto
       background: transparent
       border-radius: 0.35em
       border: 0
       font-family: "Courier New", monospace
-      font-size: 0.9em
-      margin: 0 0.25em
+      margin: 0
 
   // Monokai style from https://xyproto.github.io/splash/docs/monokai.html
   color: #f8f8f2

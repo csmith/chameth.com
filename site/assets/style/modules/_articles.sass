@@ -4,17 +4,19 @@
 
 article
 
-  & + article
-    padding-top: 50px
-    border-top: 4px double $gray
-    margin-top: 50px
+  & + article, & + nav
+    border-top: 1px solid $mid-gray
+    padding-top: var(--content-padding)
+    margin-top: var(--content-padding)
+    clear: both
 
-  header p
-    position: relative
-    margin: -1em 0 1.5em 0
-    color: $gray
-    font-size: 1.25em
-    line-height: 1.5em
+  header
+    h2
+      margin-bottom: 0.2em
+
+    p
+      color: var(--subtitle-colour)
+      line-height: 1.5em
 
   img
     max-width: 100%
@@ -22,33 +24,5 @@ article
   img + p, img + h3
     margin-top: 1.5em
 
-  p a, figcaption a
-    color: $link-color
-    text-decoration-color: $link-underline-color
-    text-decoration-skip-ink: auto
-    font-weight: bold
-    transition: all 0.1s linear
-
-    &:visited
-      color: $visited-link-color
-      text-decoration-color: $visited-link-underline-color
-
-    &:hover, &:focus
-      color: $active-link-color
-      text-decoration-color: $active-link-underline-color
-
 .readmore
-  text-align: right
-
-  a
-    display: inline-block
-    background-color: $dark-gray
-    border-radius: 2em
-    color: #fff
-    padding: 0.5em 2em
-    text-decoration: none
-    transition: background-color 0.1s linear
-
-
-    &:hover
-      background-color: $cyan
+  clear: both

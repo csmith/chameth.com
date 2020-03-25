@@ -9,7 +9,8 @@ resources:
   - src: containers.jpg
     name: Containers in port
     title: So. Many. Containers.
-    default: true
+    params:
+      default: true
 ---
 
 {{< figure "right" "Containers in port" >}}
@@ -36,7 +37,7 @@ anything[^1].
 
 <!--more-->
 
-## What does a running container look like?
+### What does a running container look like?
 
 When you run a container, you're just running a process. In a lot of ways it's not
 very different to what happens if you were to start the same process on the host
@@ -102,7 +103,7 @@ looks very similar to running ps instead the container:
 So: a process running inside a container is just a heavily namespaced process running
 otherwise normally in the operating system. No voodoo magic here!
 
-## What about the filesystem? What are 'images'?
+### What about the filesystem? What are 'images'?
 
 Containers run in their own mount namespace meaning mount points can be different
 inside the container to those on the host. This means the container can have a different
@@ -152,7 +153,7 @@ and cacheable, but again there's nothing terribly special about them: a containe
 has a filesystem that appears to it to work the same way as a filesystem on
 the host, and it's using a standard filesystem shipped with the kernel.
 
-## How about networking?
+### How about networking?
 
 Again, networking is namespaced, so a container has its own network stack,
 its own virtual network interface, its own IP address and so on. How that network
@@ -192,7 +193,7 @@ $ ip l
 This shows a bridge and two virtual NICs, just the same as if you'd manually created
 them (albeit with seemingly random names). So: as before, nothing special here. 
 
-## Docker? Compose? K8s? Floccinaucinihilipilification?
+### Docker? Compose? K8s? Floccinaucinihilipilification?
 
 (OK, Floccinaucinihilipilification isn't actually a container technology, as far
 as I'm aware.)
@@ -230,7 +231,7 @@ of a container on different hosts) and load balancing. Kubernetes is sometimes
 shorted to **k8s** (as in `K` - 8 elided letters - `s`) because computer people
 don't like long words.
 
-## OK, they make sense now. But why bother?
+### OK, they make sense now. But why bother?
 
 Hopefully if you've read this far you've already picked up on some of the potential
 benefits, but this is my personal list:

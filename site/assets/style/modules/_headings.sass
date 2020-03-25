@@ -3,45 +3,13 @@
 @import ../colours
 @import ../fonts
 
+h1, h4, h5, h6
+  font-weight: bold
+
 h1, h2, h3, h4, h5, h6
-  color: $darkest-gray
-  font-weight: 800
-  font-family: $header-font, sans-serif
-  line-height: 1.5em
-  margin: 0 0 1em 0
+  color: var(--heading-colour)
+  font-family: $header-font, serif
+  margin: var(--content-padding-small) 0
 
-  a
-    transition: color 0.2s ease-in-out
-    color: inherit
-
-    &:hover
-      color: $cyan
-
-h1
-  font-size: 2em
-
-h2
-  font-size: 1.5em
-
-h3
-  font-size: 1.1em
-
-h4
-  font-size: 0.9em
-
-h5
-  font-size: 0.7em
-
-h6
-  font-size: 0.7em
-
-@media screen and (max-width: 736px), screen and (max-height: 700px)
-
-  h1
-    font-size: 1.5em
-
-  h2
-    font-size: 1.2em
-
-  h3
-    font-size: 1em
+  a, a:visited
+    font-weight: normal

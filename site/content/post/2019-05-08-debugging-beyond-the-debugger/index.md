@@ -8,7 +8,8 @@ slug: debugging-beyond-the-debugger
 resources:
   - src: strace.png
     name: Output from running curl under strace
-    default: true
+    params:
+      default: true
   - src: tools.jpg
     name: Collection of tools hanging on a wall
     title: Real-life debugging tools
@@ -25,9 +26,9 @@ overview of them, so here's mine. I'm mainly focusing on Linux
 and similar systems, but there tend to be alternatives available
 for other Operating Systems or VMs if you seek them out.
 
-## Networking
+### Networking
 
-### tcpdump
+#### tcpdump
 
 `tcpdump` prints out descriptions of packets on a network interface. You can
 apply filters to limit which packets are displayed, chose to dump the entire
@@ -37,7 +38,7 @@ content of the packet, and so forth.
 
 Typical usage might look something like:
 
-{{< highlight console >}}
+{{< highlight text >}}
 # tcpdump -nSi eth0 port 80
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
 listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
@@ -57,13 +58,13 @@ when it connected, did the server ever respond, etc.
 if you're not familiar with it and don't want to jump straight into the man
 page.
 
-#### ... with Docker
+##### ... with Docker
 
 Docker sets up separate network namespaces for each container. To see the
 traffic across the interfaces of a single container you can `nsenter` the
 container's network namespace:
 
-{{< highlight console >}}
+{{< highlight text >}}
 # nsenter -t $(docker inspect --format '{{.State.Pid}}' my_container) -n tcpdump -nS port 80
 {{< / highlight >}}
 
@@ -71,7 +72,7 @@ This retrieves the PID for the container, and tells `nsenter` to enter the
 network (`-n`) namespace from the given target (`-t`) PID, and then run the
 given command (in this case `tcpdump ...`).
 
-### openssl s_client / s_server
+#### openssl s_client / s_server
 
 When a connection is using TLS it's often useful to try connecting to the
 server and see what certificate it presents, algorithms it negoitates, and
@@ -83,7 +84,7 @@ For example using `s_client` to connect to `google.com` on the standard
 HTTPS port shows us details about the server cert and its verification
 status:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ openssl s_client -connect google.com:443
 CONNECTED(00000003)
 depth=2 OU = GlobalSign Root CA - R2, O = GlobalSign, CN = GlobalSign
@@ -106,7 +107,7 @@ Whereas connecting to my webserver and providing an unknown host in the SNI
 field results in an SSL alert 112 ("The server name sent was not recognized")
 and no server certificate is sent:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ openssl s_client -connect chameth.com:443 -servername example.com
 CONNECTED(00000003)
 140384831313024:error:14094458:SSL routines:ssl3_read_bytes:tlsv1 unrecognized name:../ssl/record/rec_layer_s3.c:1536:SSL alert number 112
@@ -123,7 +124,7 @@ being able to directly connect and test can help diagnose a lot of issues.
 Once a connection is established you can read and write plain text and it
 will be encrypted and decrypted automatically.
 
-### Java apps
+#### Java apps
 
 If a Java app is involved in the connection, you can enable a lot of built-in
 debugging with a simple JVM property: `javax.net.debug`. You can tweak
@@ -131,7 +132,7 @@ what exactly gets logged, but the easiest thing to do is just set the property
 to `all` and you'll see information about certificate chains, verification,
 and packet dumps:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ java -Djavax.net.debug=all -jar ....
 # ...
 found key for : duke
@@ -146,7 +147,7 @@ chain [0] = [
 More information about Java's debugging options is available on
 [docs.oracle.com](https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html).
 
-## Thread and core dumps
+### Thread and core dumps
 
 Higher-level languages frequently provide an interactive way to dump the
 current executation state of all of their threads (a "thread dump"). This
@@ -162,7 +163,7 @@ For Java you can also use the `jstack` tool from the JDK to dump threads
 by PID; this can be useful if the application is running in the background
 or has redirected sysout:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ jstack 8321
 Attaching to process ID 8321, please wait...
 Debugger attached successfully.
@@ -184,13 +185,13 @@ create a core dump of a process with a given PID. You can then generally
 load the core file using your normal debugger, depending on the language
 in question.
 
-## System calls
+### System calls
 
 `strace` is the swiss army knife for seeing what a process is doing. It
 details each system call made by a program (you can filter them down, of
 course). For example:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ strace -e read curl https://google.com/
 read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0 \236\0\0\0\0\0\0"..., 832) = 832
 read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0P!\0\0\0\0\0\0"..., 832) = 832
@@ -211,7 +212,7 @@ read(3, "\27\3\3\0!", 5)                = 5
 [Brendan Gregg](http://www.brendangregg.com/blog/2014-05-12/strace-wow-much-syscall.html)
 has a nice guide on `strace` and alternatives.
 
-### ... with docker
+#### ... with docker
 
 When the application is running in docker you can usually just `strace` it
 from the host with the correct PID
@@ -220,7 +221,7 @@ Sometimes you may need to trace the startup of an application though, which is
 a bit trickier. Instead you can run a new container using the same PID
 namespace as your target, and the permissions needed to `strace`:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ docker run --rm -it --pid=container:my_container \
   --net=container:my_container \
   --cap-add sys_admin \
@@ -234,14 +235,14 @@ new program you need access to the target container's file system, which you
 can get to via `/proc/1/root` (PID `1` being the main process that docker
 started in the target container).
 
-## Files
+### Files
 
 Sometimes the problem might relate to file access. There are a couple of
 straight forward - but nonetheless useful - tools which might help here.
 `inotifywait` uses the Linux `inotify` subsystem to watch files or directories
 for operations. For example:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ inotifywait -mr site/content
 Setting up watches.  Beware: since -r was given, this may take a while!
 Watches established.
@@ -261,7 +262,7 @@ there.
 If you want to see what processes currently have a file open, `fuser` is the
 go-to tool. For example:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ fuser -v /
                      USER PID ACCESS COMMAND
 /:                   root     kernel mount /
@@ -272,7 +273,7 @@ $ fuser -v /
 # ...
 {{< / highlight >}}
 
-## Honourable mentions
+### Honourable mentions
 
 These aren't really debugging tools, but I feel it's worth mentioning as
 they often feature somewhere along the debugging-of-weird-problems journey.

@@ -1,3 +1,43 @@
-   </div>
-  </body>
+</div>
+
+<footer id="pagefooter">
+    <section>
+        <h2>Recent posts</h2>
+        <ul>
+            {{ range first 4 (where site.RegularPages "Type" "post") }}
+            <li class="recent">
+                <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+                <p>{{ .Date.Format "Jan 2, 2006" }}</p>
+            </li>
+            {{ end }}
+        </ul>
+    </section>
+    <section>
+        <h2>Other links</h2>
+        <ul>
+            <li>
+                <a href="/index">All posts</a>
+                <p>Complete index of all posts</p>
+            </li>
+            <li>
+                <a href="/feed.xml">RSS feed</a>
+                <p>Subscribe to new posts</p>
+            </li>
+            <li>
+                <a href="https://github.com/csmith">
+                    On GitHub
+                </a>
+                <p>My open-source projects</p>
+            </li>
+            <li>
+                <a href="/pgp/" title="My PGP key">
+                    F843 D93A 1640 2FE2
+                </a>
+                <p>PGP Key</p>
+            </li>
+        </ul>
+    </section>
+</footer>
+
+</body>
 </html>

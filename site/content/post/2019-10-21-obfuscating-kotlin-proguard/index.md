@@ -8,7 +8,8 @@ slug: obfuscating-kotlin-proguard
 resources:
   - src: obfuscated.png
     name: Obfuscated code viewed in Android Studio
-    default: true
+    params:
+      default: true
   - src: kotlin-proguard.png
     name: Kotlin and Proguard logos
     title: Kotlin + Proguard = fun
@@ -31,7 +32,7 @@ working...
 
 <!--more-->
 
-## If at first you don't succeed...
+### If at first you don't succeed...
 
 At first it seemed like ProGuard was refusing to obfuscate any class with a
 `keep` rule. With a simple test class:
@@ -60,7 +61,7 @@ class Test {
 
 And a ProGuard rule of:
 
-{{< highlight proguard >}}
+{{< highlight text >}}
 -keep public class Test {
     public void greet();
 }
@@ -95,14 +96,14 @@ I tried seemed to make a difference. I'm not the biggest fan of ProGuard, but
 I've used it enough before to know that it's not usually that hard to make
 it submit to your demands. Obviously something else was going on.
 
-## ... Maybe you're solving the wrong problem
+### ... Maybe you're solving the wrong problem
 
 My next thought was that perhaps Android Studio was doing something clever
 like reading the ProGuard mapping file and automatically deobfuscating the
 output for me. Looking at the mapping file it seems that ProGuard has
 indeed decided to rename some things:
 
-{{< highlight proguardmapping >}}
+{{< highlight text >}}
 Test -> Test:
     int secret -> a
     java.lang.String name -> b
@@ -114,7 +115,7 @@ The obvious solution is to look at the class file in something less smart
 than Android Studio. A couple of unzips later and I could do a quick test
 to see if the original names were still present:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ strings Test.class | grep secret
 secret
 {{< / highlight >}}
@@ -124,7 +125,7 @@ up in the class file at all: it should have been entirely replaced with `a` like
 the mapping file says. The output from `javap -p` doesn't show any hint of the
 original names, however:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ javap -p Test
 public final class Test {
   private final int a;
@@ -138,7 +139,7 @@ But, given the names show up in `strings`, they must be kicking around
 somewhere. None of the various outputs from `javap` helped until I hit
 `-verbose`. Right at the end of the class is:
 
-{{< highlight javap >}}
+{{< highlight text >}}
 RuntimeVisibleAnnotations:
   0: #58(#84=[I#2,I#2,I#4],#69=[I#2,I#1,I#3],#81=I#2,#70=[s#40],#71=[s#55,s#39,s#43,s#85,s#39,s#72,s#42,s#91,s#47,s#90,s#39,s#73,s#39,s#74,s#67,s#83])
     kotlin.Metadata(
@@ -168,7 +169,7 @@ shows the annotation:
 public final class Test {
 {{< / highlight >}}
 
-## Solving the right problem
+### Solving the right problem
 
 Now I had an idea of what was happening I was able to find a couple of other
 reports of people having the same issue. There's an open
@@ -186,7 +187,7 @@ Adding a `-printconfiguration` instruction to my configuration lets me see
 the full configuration being passed to ProGuard, and the reason for keeping
 quickly becomes obvious:
 
-{{< highlight proguard >}}
+{{< highlight text >}}
 -keepattributes *Annotation*,*Annotation*
 {{< / highlight >}}
 
@@ -196,13 +197,13 @@ a way to reverse this instruction, either, but fortunately the build plugin
 seems to concatenate all of the `-keepattribute` values together and puts our
 user-supplied ones first. Adding a negative filter:
 
-{{< highlight proguard >}}
+{{< highlight text >}}
 -keepattributes !*Annotation*
 {{< / highlight >}}
 
 Results in the following in the printed configuration:
 
-{{< highlight proguard >}}
+{{< highlight text >}}
 -keepattributes !*Annotation*,*Annotation*,*Annotation*
 {{< / highlight >}}
 

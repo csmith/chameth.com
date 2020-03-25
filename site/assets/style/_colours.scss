@@ -1,0 +1,60 @@
+// Site-wide colour definitions
+
+$gray: #787878;
+$mid-gray: #a3a3a3;
+$light-gray: #efefef;
+$lightest-gray: #f7f7f7;
+
+$light-green: #eeffee;
+$green: #669966;
+
+$update-border: $green;
+
+:root {
+  --background: white;
+  --subtitle-colour: #666666;
+  --text-colour: #2a2f35;
+  --heading-colour: #2a2f35;
+  --inline-code-background-colour: #f7f7f7;
+  --inline-code-border-colour: #a3a3a3;
+  --update-background-colour: #eeffee;
+  --footer-background-colour: #efefef;
+
+  --link-colour: hsl(206, 73%, 43%);
+  --link-underline-colour: hsl(206, 73%, 58%);
+
+  --active-link-colour: hsl(206, 73%, 23%);
+  --active-link-underline-colour: hsl(206, 73%, 38%);
+
+  --visited-link-colour: hsl(277, 33%, 53%);
+  --visited-link-underline-colour: hsl(277, 33%, 68%);
+
+  --active-visited-link-colour: hsl(277, 33%, 33%);
+  --active-visited-link-underline-colour: hsl(277, 33%, 48%);
+
+  --figure-border-colour: rgba(200, 200, 200, 0.7);
+  --figure-caption-colour: var(--text-colour);
+
+  @media (prefers-color-scheme: dark) {
+    --background: #333333;
+    --subtitle-colour: #888888;
+    --text-colour: #cccccc;
+    --heading-colour: #dddddd;
+    --inline-code-background-colour: #444444;
+    --inline-code-border-colour: #636363;
+    --update-background-colour: #334433;
+    --footer-background-colour: #222222;
+
+    --active-link-colour: hsl(206, 73%, 53%);
+    --active-link-underline-colour: hsl(206, 73%, 68%);
+
+    --link-underline-colour: hsl(206, 73%, 48%);
+    --visited-link-underline-colour: hsl(277, 33%, 60%);
+
+    --active-visited-link-colour: hsl(277, 33%, 63%);
+    --active-visited-link-underline-colour: hsl(277, 33%, 78%);
+
+    --figure-border-colour: hsla(0, 0%, 38%, 0.7);
+  }
+}
+

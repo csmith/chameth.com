@@ -4,39 +4,51 @@
 @import fonts
 
 body
-  color: $text
-  font-family: $text-font, Helvetica, sans-serif
-  font-size: 18px
+  color: var(--text-colour)
+  font-family: $text-font, serif
   font-weight: 400
-  line-height: 1.75em
+  line-height: 1.8em
   -webkit-text-size-adjust: none
 
-a
-  color: $cyan
-  text-decoration-skip-ink: auto
-
 strong, b
-  color: $gray
-  font-weight: 400
+  font-weight: bold
 
 em, i
   font-style: italic
 
 sub
-  font-size: 0.8em
   position: relative
   top: 0.5em
 
 sup
-  font-size: 0.8em
   position: relative
   top: -0.5em
 
 p code
-  background: $code-background
+  background: var(--inline-code-background-colour)
   border-radius: .35em
-  border: solid 2px $code-border
+  border: solid 2px var(--inline-code-border-colour)
   font-family: "Courier New", monospace
-  font-size: .9em
-  margin: 0 .25em
-  padding: .25em .65em
+  margin: 0 .1em
+  padding: .1em .2em
+  white-space: pre
+
+a
+  text-decoration-skip-ink: auto
+  font-weight: bold
+
+  &:link
+    color: var(--link-colour)
+    text-decoration-color: var(--link-underline-colour)
+
+    &:hover, &:focus
+      color: var(--active-link-colour)
+      text-decoration-color: var(--active-link-underline-colour)
+
+  &:visited
+    color: var(--visited-link-colour)
+    text-decoration-color: var(--visited-link-underline-colour)
+
+    &:hover, &:focus
+      color: var(--active-visited-link-colour)
+      text-decoration-color: var(--active-visited-link-underline-colour)

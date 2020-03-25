@@ -24,14 +24,14 @@ I use an [EdgeRouter Lite](https://www.ubnt.com/edgemax/edgerouter-lite/) from
 Ubiquiti Networks at home, and recently configured it to use DNS-over-TLS for
 all DNS queries. Here's how I did it.
 
-<!--more-->
-
 ### Installing unbound
 
 Out of the box, the ERL uses `dnsmasq` to service DNS requests from local
 clients. To get DNS-over-TLS support I switched to using
 [Unbound](https://unbound.net/), an open source DNS resolver with support
 for many modern features such as DNSSEC and DNS-over-TLS.
+
+<!--more-->
 
 {{% update 2017-05-31 %}}
 Before installing unbound, if you haven't done so before, you will need to enable the apt

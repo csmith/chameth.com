@@ -14,8 +14,6 @@ resources:
     name: Output of ssh-audit pointing at GitHub's SSH servers
 ---
 
-{{< figure "left" "The OpenSSH project logo" >}}
-
 I recently came across a useful tool on GitHub called
 [ssh-audit](https://github.com/arthepsy/ssh-audit). It's a small Python script
 that connects to an SSH server, gathers a bunch of information, and then
@@ -23,11 +21,11 @@ highlights any problems it has detected. The problems it reports range from
 potentially weak algorithms right up to know remote code execution
 vulnerabilities.
 
-<!--more-->
-
 This is the kind of output you get when running ssh-audit. In this particular
 example, I'm looking at GitHub's SSH server and have filtered the output to
 just warnings and failures:
+
+<!--more-->
 
 {{< img "Output of ssh-audit pointing at GitHub's SSH servers" >}}
 

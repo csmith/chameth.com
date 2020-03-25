@@ -79,7 +79,7 @@ user. It's not quite over, yet, though. This works if we let Docker create
 a volume automatically for us, or if we create a named volume and mount that;
 if we try and mount a host directory, though, it falls flat:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ docker run --rm -it -v "$PWD/testing:/testing" testing ls -al /testing
 total 8
 drwxr-xr-x    2 1000     1000          4096 Apr  1 19:39 .
@@ -97,7 +97,7 @@ One final wrinkle in all this happens when you use the same volume
 in multiple containers. Here we have two images built from the
 Dockerfile above, one with userid 1113 and one with userid 1114:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ docker volume create testing
 testing
 
@@ -141,7 +141,7 @@ One of the more esoteric features of the way Docker handles volume
 mounts is that in some cases files from the image are copied over
 into the container. For example:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ docker volume create testing
 testing
 
@@ -165,7 +165,7 @@ at `/tmp`, we can see all of the files that were in the first container's
 As with permissions, this behaviour is anything but consistent. Say we
 switch from a volume to a host directory:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ mkdir testing
 $ docker run --rm -it -v "$PWD/testing:/usr/bin" testing sleep 1
 $ ls -al testing
@@ -175,10 +175,10 @@ drwxr-xr-x 3 chris chris 4096 Apr  1 22:05 ..
 {{< / highlight >}}
 
 Nothing is copied in, and inside the container the folder will be empty.
-Based on our discoveries with permisions, it's reasonable to assume the
+Based on our discoveries with permissions, it's reasonable to assume the
 same will happen with a non-empty volume too:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ docker volume create testing
 testing
 
@@ -199,7 +199,7 @@ That's because within the container `/etc/` has some files bind-mounted
 into it, such as `/etc/resolv.conf`, and these *do* always result in files
 being created in the mounted volumes or folders:
 
-{{< highlight console >}}
+{{< highlight text >}}
 $ mkdir testing
 $ docker run --rm -it -v "$PWD/testing:/etc" testing sleep 1
 $ ls -al testing

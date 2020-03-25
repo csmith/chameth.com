@@ -8,7 +8,8 @@ slug: android-espresso-spoon
 resources:
   - src: spoon-espresso.png
     name: Spoon output details, showing a screenshot captured of the failure
-    default: true
+    params:
+      default: true
   - src: spoon.png
     name: Spoon output summary, showing results of 171 tests run on 3 devices
 ---

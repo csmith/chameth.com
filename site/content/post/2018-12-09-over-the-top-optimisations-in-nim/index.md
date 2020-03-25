@@ -8,7 +8,8 @@ slug: over-the-top-optimisations-in-nim
 resources:
   - src: advent-of-code.png
     name: Christmas Tree from Advent of Code 2005
-    default: true
+    params:
+      default: true
   - src: logo.jpg
     name: The Nim logo
 ---
@@ -16,7 +17,7 @@ resources:
 {{< figure "right" "Christmas Tree from Advent of Code 2005" >}}
 
 For the past few years I've been taking part in
-[Eric Wastl](https://twitter.com/ericwastl)'s
+[Eric Wastl's](https://twitter.com/ericwastl)
 [Advent of Code](https://adventofcode.com/), a coding challenge that provides
 a 2-part problem each day from the 1st of December through to Christmas Day.
 The puzzles are always interesting — especially as they get progressively
@@ -43,13 +44,10 @@ started using Nim.
 
 ### Introducing Nim
 
-{{< figure "left" "The Nim logo" >}}
-
 [Nim](https://nim-lang.org/), formerly Nimrod, is a compiled language that
 takes a lot of cues from Python. It has a very nice and familiar syntax,
 a reasonable standard library, and it's *fast*. I'd thought about learning
 it before but didn't really have anything suitable to use it on, until now.
-
 The code I used for my day one part one answer looks like this in Nim:
 
 {{< highlight nim >}}
@@ -111,8 +109,8 @@ Because we have to delete a marble at an arbitrary point and maintain the
 ordering of the others, I was using the `delete()` proc which has an O(n)
 runtime. The other potentially costly operation is inserting a new marble;
 the documentation doesn't mention the runtime but all of the nim docs have
-a direct link to the source code, and we can [see](https://github.com/nim-lang/Nim/blob/72e15ff739cc73fbf6e3090756d3f9cb3d5af2fa/lib/system.nim#L1561)
-that inserting an element requires iterating over all the elements after it,
+a direct link to the source code, and we can
+[see that inserting an element requires iterating over all the elements after it,](https://github.com/nim-lang/Nim/blob/72e15ff739cc73fbf6e3090756d3f9cb3d5af2fa/lib/system.nim#L1561)
 so it's also O(n) in the worse case.
 
 ### DoublyLinkedLists: ~500ms
@@ -315,5 +313,5 @@ it's definitely worth a look.
 
 [^1]: PHP has always been fast to start, due to its primary use in a CGI
       environment, and the last few major versions of PHP have made its
-      unbelievbably blazingly fast as well, while Python unfortunately
+      unbelievably blazingly fast as well, while Python unfortunately
       [has issues with startup time](https://mail.python.org/pipermail/python-dev/2018-May/153296.html)
