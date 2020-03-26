@@ -2,7 +2,7 @@
 ## Step 1 - add content and build with Hugo
 ##
 
-FROM r.c5h.io/hugo as hugo
+FROM monachus/hugo:v0.68.3 as hugo
 
 ADD site /tmp/site
 RUN hugo -v -s /tmp/site -d /tmp/hugo && \
