@@ -2,7 +2,7 @@
 
 :root {
   --fluid-min-width: 320;
-  --fluid-max-width: 1500;
+  --fluid-max-width: 1200;
   --fluid-min-size: 14;
   --fluid-max-size: 19;
   --fluid-min-ratio: 1.33;
@@ -14,7 +14,7 @@
   --fluid-bp: calc((var(--fluid-screen) - ((var(--fluid-min-width) / 16) * 1rem)) / ((var(--fluid-max-width) / 16) - (var(--fluid-min-width) / 16)));
 }
 
-@media screen and (min-width: 1500px) {
+@media screen and (min-width: 1200px) {
   :root {
     --fluid-screen: calc(var(--fluid-max-width) * 1px);
   }

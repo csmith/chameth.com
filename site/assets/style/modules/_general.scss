@@ -8,9 +8,9 @@
   --content-padding-small: calc(var(--content-padding) / 2)
 }
 
-@media screen and (min-width: 1500px) {
+@media screen and (min-width: 1200px) {
   :root {
-    --content-max-width: 1500px;
+    --content-max-width: 1200px;
   }
 }
 
