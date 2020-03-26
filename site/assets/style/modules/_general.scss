@@ -41,7 +41,11 @@ body {
     h1 {
       line-height: 1.75em;
       margin: 0;
-      color: black;
+
+      a:link, a:visited {
+        text-decoration: underline;
+        text-decoration-color: var(--accent-colour);
+      }
     }
   }
 
