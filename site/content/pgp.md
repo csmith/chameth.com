@@ -4,29 +4,7 @@ url: /pgp/
 ---
 The fingerprint for my public key is `460E 2723 CDB6 701A D929 89D1 F843 D93A 1640 2FE2`.
 
-The following statement is signed with my key:
-
-<blockquote><pre>-----BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
-
-I am Chris Smith, owner of https://chameth.com/.
-
-I use the username MD87_ on Twitter, csmith on GitHub, and cjsmith on Keybase.
-
-I use the public key with fingerprint 460E 2723 CDB6 701A D929 89D1 F843 D93A 1640 2FE2.
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJXrMwVAAoJEDotS73Eo8mpjfkH/1u6sbU6gSy7tAjN/1fJbYdM
-MGQSYGXHqb38RrSWFuipOnLKaTvhXeAz0u/GuOzhR8m6LQL/qe/qHAqJ8YnkZoKx
-q10LNy3hJSn4o/O4UZGMDZQmppksj6YQBIDVey/052OTuFzOqSEoLWVzASyeGOUg
-NaE3Nb3Dom8MZzRRDvBeVeYcmJjz/NKA1E6V+IFTz5aYGwD0xjpHPWCFfQQtwKYj
-o9Ai09pgD36sgsYXLSwcVBN/En0G2IZT7/xvpXfFsTxei0+VCEEB+pRFki38ajfw
-wkDVzfCIR9BwAcsG9P+8jxOPq9CrxFTr/6A+lY3mYfE4kOlPsGgnXQt3wFQpOls=
-=+jRf
------END PGP SIGNATURE-----</pre></blockquote>
-
-You can also [find me on keybase as cjsmith](https://keybase.io/cjsmith). Keybase employs
+You can [find me on keybase as cjsmith](https://keybase.io/cjsmith). Keybase employs
 a system of cryptographic proofs (typically signed JSON objects) to link public keys to
 social media accounts.
 
