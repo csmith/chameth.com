@@ -6,21 +6,25 @@ $light-gray: #efefef;
 $lightest-gray: #f7f7f7;
 
 $light-green: #eeffee;
-$green: #669966;
-
-$update-border: $green;
 
 :root {
-  --accent-colour: #FC4A1A;
+  --accent-colour: #fc4a1a;
 
-  --background: white;
+  --background: #ffffff;
+  --background-alt: #efefef;
   --subtitle-colour: #666666;
   --text-colour: #2a2f35;
   --heading-colour: #2a2f35;
   --inline-code-background-colour: #f7f7f7;
   --inline-code-border-colour: #a3a3a3;
+  --update-border-colour: #669966;
+  --blockquote-border-colour: #efefef;
   --update-background-colour: #eeffee;
   --footer-background-colour: #efefef;
+  --separator-colour: #a3a3a3;
+
+  --table-border-colour: #cccccc;
+  --table-header-background-colour: #cccccc;
 
   --link-colour: #000000;
   --visited-link-colour: #000000;
@@ -39,6 +43,7 @@ $update-border: $green;
 
   @media (prefers-color-scheme: dark) {
     --background: #333333;
+    --background-alt: #444444;
     --subtitle-colour: #aaaaaa;
     --text-colour: #cccccc;
     --heading-colour: #dddddd;
@@ -46,6 +51,9 @@ $update-border: $green;
     --inline-code-border-colour: #636363;
     --update-background-colour: #334433;
     --footer-background-colour: #222222;
+
+    --table-border-colour: #111111;
+    --table-header-background-colour: #111111;
 
     --link-colour: #ffffff;
     --visited-link-colour: #ffffff;

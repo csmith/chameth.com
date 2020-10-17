@@ -1,7 +1,5 @@
 // General elements and overall layout
 
-@import "colours";
-
 :root {
   --content-max-width: 100vw;
   --content-padding: calc(10px + var(--fluid-bp) * 4);
@@ -51,7 +49,7 @@ body {
 
   #main {
     & > section {
-      border-top: solid 2px $light-gray;
+      border-top: solid 2px var(--separator-colour);
       margin: 4em 0 0 0;
       padding: 4em 0 0 0;
 
@@ -70,7 +68,7 @@ p {
 
 hr {
   border: 0;
-  border-bottom: 2px solid $light-gray;
+  border-bottom: 2px solid var(--separator-colour);
   margin: 2em 0;
 }
 
