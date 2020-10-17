@@ -2,7 +2,7 @@
 ## Step 1 - add content and build with Hugo
 ##
 
-FROM monachus/hugo:v0.68.3 as hugo
+FROM csmith/hugo as hugo
 
 ADD site /tmp/site
 RUN hugo -v -s /tmp/site -d /tmp/hugo && \
