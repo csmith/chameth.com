@@ -72,8 +72,21 @@ hr {
   margin: 2em 0;
 }
 
-summary {
-  cursor: pointer;
+details {
+  & > p {
+    margin-left: var(--content-padding);
+    margin-right: var(--content-padding);
+  }
+
+  summary {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 10px;
+    cursor: pointer;
+    & + * {
+      margin-top: var(--content-padding-small);
+    }
+  }
 }
 
 #pagefooter {

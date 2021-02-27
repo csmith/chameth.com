@@ -7,7 +7,15 @@
   </header>
   {{ .Content }}
 </article>
+
 <details>
-<summary>Comments? Feedback? Contact me.</summary>
-<iframe src="https://contact.chameth.com/?page={{ .Permalink | urlize | htmlEscape }}" width="100%" height="400px"></iframe>
+  <summary>Spot a mistake? Have something to add? Let me know!</summary>
+  <p>I'd love to receive your feedback. Please fill in the form below and it'll reach me.</p>
+  <p>
+    As a general rule, I won't answer individual requests for help — if you need help with something I'd recommend
+    describing the problem in a relevant public forum such as Stack Overflow or a language/tech-specific
+    subreddit. That way you get access to lots of potential people who may be able to help, and the response is
+    available publicly for anyone else with the same issue in the future.
+  </p>
+  <iframe src="https://contact.chameth.com/?page={{ .Permalink | urlize | htmlEscape }}" width="100%" height="400px"></iframe>
 </details>
