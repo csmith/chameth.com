@@ -92,11 +92,12 @@ details {
 #pagefooter {
   background-color: var(--footer-background-colour);
   margin-top: var(--content-padding);
-  padding: var(--content-padding-small);
+  padding-left: var(--content-padding-small);
+  padding-right: var(--content-padding-small);
   border-top-left-radius: 2em;
   border-top-right-radius: 2em;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 
   h2 {
     font-size: var(--fluid-1);
@@ -112,8 +113,15 @@ details {
     margin-bottom: 1.25em;
   }
 
-  section + section {
+  section.links {
     text-align: right;
+  }
+
+  section.licence {
+    grid-column: 1 / span 2;
+    font-size: smaller;
+    text-align: center;
+    padding: var(--content-padding-small) var(--content-padding);
   }
 
   @media screen and (max-width: 980px) {

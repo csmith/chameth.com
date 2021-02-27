@@ -1,7 +1,7 @@
 </div>
 
 <footer id="pagefooter">
-    <section>
+    <section class="recentposts">
         <h2>Recent posts</h2>
         <ul>
             {{ range first 4 (where site.RegularPages "Type" "post") }}
@@ -12,7 +12,7 @@
             {{ end }}
         </ul>
     </section>
-    <section>
+    <section class="links">
         <h2>Other links</h2>
         <ul>
             <li>
@@ -36,6 +36,10 @@
                 <p>PGP Key</p>
             </li>
         </ul>
+    </section>
+    <section class="licence">
+        <p>The written content of this website is released under the <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> licence.</p>
+        <p>This website does not use cookies, does not perform any user tracking, and does not log full IP addresses.</p>
     </section>
 </footer>
 
