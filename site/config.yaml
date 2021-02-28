@@ -4,6 +4,7 @@ disablePathToLower: true
 languageCode: en-gb
 title: Chameth.com
 disableKinds: ["taxonomy", "taxonomyTerm"]
+paginate: 5
 
 permalinks:
   post: /:slug
