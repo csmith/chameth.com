@@ -15,13 +15,14 @@
       {{ end }}
     </title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preload" href="/res/fonts/bitter.woff2" as="font" crossorigin>
     {{ $style := resources.Get "style/style.sass" | toCSS (dict "outputStyle" "compressed") | fingerprint }}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}">
-    <link rel="canonical" href="{{ .Permalink }}" />
+    <link rel="canonical" href="{{ .Permalink }}">
     {{ with .Site.GetPage "home" }}
       {{ with .OutputFormats.Get "RSS" }}
-        <link href="{{ .RelPermalink }}" rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }} - all posts" />
+        <link href="{{ .RelPermalink }}" rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }} - all posts">
       {{ end }}
     {{ end }}
     {{ if $.IsPage }}
