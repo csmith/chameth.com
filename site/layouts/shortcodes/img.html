@@ -1,2 +1,2 @@
 {{ $img := $.Page.Resources.GetMatch (.Get 0) }}
-<img src="{{ $img.RelPermalink }}" alt="{{ $img.Name }}">
+<img src="{{ $img.RelPermalink }}" alt="{{ $img.Name }}" loading="lazy">
