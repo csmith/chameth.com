@@ -72,7 +72,7 @@ during the same period there has been a marked restriction in how you can actual
 Android devices -- both as an end-user and as a developer. iOS has always had very stark
 restrictions on what apps can do in the background; Android started its life allowing
 pretty much anything, like any good general purpose computing device. This inevitably
-lead to lots of apps doing lots of things that ranged to stupid to mildly suboptimal,
+lead to lots of apps doing lots of things that ranged from stupid to mildly suboptimal,
 creating a [tragedy of the commons](https://en.wikipedia.org/wiki/Tragedy_of_the_commons)
 amongst apps. The victim was the phone's battery life, and Google's solution was a
 progressive series of restrictions on what apps can do and when. This includes limits
