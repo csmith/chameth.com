@@ -4,7 +4,7 @@ $font-dir: '/res/fonts/'
 
 \:root
   --text-font: 'Bitter'
-  --header-font: 'Bitter'
+  --header-font: 'Chameth Line 01'
 
 // Provides src properties for woff2 and woff font files.
 @mixin woff-font-src($file-name)
@@ -17,3 +17,10 @@ $font-dir: '/res/fonts/'
   font-style: normal
   font-display: swap
   @include woff-font-src('bitter')
+
+@font-face
+  font-family: 'Chameth Line 01'
+  font-weight: normal
+  font-style: normal
+  font-display: swap
+  @include woff-font-src('ChamethLine01')

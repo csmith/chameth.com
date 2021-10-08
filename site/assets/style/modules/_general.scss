@@ -30,6 +30,7 @@ body {
     p {
       margin: 0 0 0 1ex;
       color: var(--subtitle-colour);
+      font-family: var(--header-font);
 
       @media screen and (max-width: 980px) {
         margin: 0
@@ -37,12 +38,11 @@ body {
     }
 
     h1 {
-      line-height: 1.75em;
       margin: 0;
 
       a:link, a:visited {
-        text-decoration: underline;
-        text-decoration-color: var(--accent-colour);
+        text-decoration: none;
+        border-bottom: 4px solid var(--accent-colour);
       }
     }
   }
