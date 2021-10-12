@@ -18,8 +18,10 @@ $light-green: #eeffee;
   --inline-code-background-colour: #f7f7f7;
   --inline-code-border-colour: #a3a3a3;
   --update-border-colour: #669966;
+  --feedback-border-colour: #669999;
   --blockquote-border-colour: #efefef;
   --update-background-colour: #eeffee;
+  --feedback-background-colour: #eeffff;
   --footer-background-colour: #efefef;
   --separator-colour: #a3a3a3;
 
@@ -50,6 +52,7 @@ $light-green: #eeffee;
     --inline-code-background-colour: #444444;
     --inline-code-border-colour: #636363;
     --update-background-colour: #334433;
+    --feedback-background-colour: #334444;
     --footer-background-colour: #222222;
 
     --table-border-colour: #111111;
