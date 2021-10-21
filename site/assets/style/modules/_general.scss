@@ -15,7 +15,12 @@
 
 body {
   background: var(--background);
-  padding: var(--content-padding) calc(1em + (100vw - var(--content-max-width)) / 2) 0 calc(1em + (100vw - var(--content-max-width)) / 2);
+  padding: var(--content-padding) 0 0 0;
+
+  #header, #main {
+    margin-left: calc(1em + (100vw - var(--content-max-width)) / 2);
+    margin-right: calc(1em + (100vw - var(--content-max-width)) / 2);
+  }
 
   #header {
     display: flex;
@@ -92,10 +97,8 @@ details {
 #pagefooter {
   background-color: var(--footer-background-colour);
   margin-top: var(--content-padding);
-  padding-left: var(--content-padding-small);
-  padding-right: var(--content-padding-small);
-  border-top-left-radius: 2em;
-  border-top-right-radius: 2em;
+  padding: var(--content-padding-small)  calc(1em + (100vw - var(--content-max-width)) / 2) 0 calc(1em + (100vw - var(--content-max-width)) / 2);
+  border-top: 1px solid var(--accent-colour);
   display: grid;
   grid-template-columns: 1fr 1fr;
 
@@ -122,6 +125,7 @@ details {
     font-size: smaller;
     text-align: center;
     padding: var(--content-padding-small) var(--content-padding);
+    font-family: var(--header-font);
   }
 
   @media screen and (max-width: 980px) {
