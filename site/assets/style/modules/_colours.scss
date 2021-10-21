@@ -10,26 +10,10 @@ $light-green: #eeffee;
 :root {
   --accent-colour: #fc4a1a;
 
-  --background: #ffffff;
-  --background-alt: #efefef;
-  --subtitle-colour: #666666;
-  --text-colour: #2a2f35;
-  --heading-colour: #2a2f35;
-  --inline-code-background-colour: #f7f7f7;
-  --inline-code-border-colour: #a3a3a3;
   --update-border-colour: #669966;
   --feedback-border-colour: #669999;
   --blockquote-border-colour: #efefef;
-  --update-background-colour: #eeffee;
-  --feedback-background-colour: #eeffff;
-  --footer-background-colour: #efefef;
   --separator-colour: #a3a3a3;
-
-  --table-border-colour: #cccccc;
-  --table-header-background-colour: #cccccc;
-
-  --link-colour: #000000;
-  --visited-link-colour: #000000;
 
   --link-underline-colour: transparent;
   --visited-link-underline-colour: transparent;
@@ -40,28 +24,48 @@ $light-green: #eeffee;
   --active-visited-link-colour: var(--accent-colour);
   --active-visited-link-underline-colour: var(--accent-colour);
 
-  --figure-border-colour: #dddddd;
   --figure-caption-colour: var(--text-colour);
 
-  @media (prefers-color-scheme: dark) {
-    --background: #333333;
-    --background-alt: #444444;
-    --subtitle-colour: #aaaaaa;
-    --text-colour: #cccccc;
-    --heading-colour: #dddddd;
-    --inline-code-background-colour: #444444;
-    --inline-code-border-colour: #636363;
-    --update-background-colour: #334433;
-    --feedback-background-colour: #334444;
-    --footer-background-colour: #222222;
+  --background: #333333;
+  --background-alt: #444444;
+  --subtitle-colour: #aaaaaa;
+  --text-colour: #cccccc;
+  --heading-colour: #dddddd;
 
-    --table-border-colour: #111111;
-    --table-header-background-colour: #111111;
+  --inline-code-background-colour: #444444;
+  --inline-code-border-colour: #636363;
+  --update-background-colour: #334433;
+  --feedback-background-colour: #334444;
+  --footer-background-colour: #222222;
 
-    --link-colour: #ffffff;
-    --visited-link-colour: #ffffff;
+  --table-border-colour: #111111;
+  --table-header-background-colour: #111111;
 
-    --figure-border-colour: #444444;
+  --link-colour: #ffffff;
+  --visited-link-colour: #ffffff;
+
+  --figure-border-colour: #444444;
+
+  @media (prefers-color-scheme: light) {
+    --background: #ffffff;
+    --background-alt: #efefef;
+    --subtitle-colour: #666666;
+    --text-colour: #2a2f35;
+    --heading-colour: #2a2f35;
+
+    --inline-code-background-colour: #f7f7f7;
+    --inline-code-border-colour: #a3a3a3;
+    --update-background-colour: #eeffee;
+    --feedback-background-colour: #eeffff;
+    --footer-background-colour: #efefef;
+
+    --table-border-colour: #cccccc;
+    --table-header-background-colour: #cccccc;
+
+    --link-colour: #000000;
+    --visited-link-colour: #000000;
+
+    --figure-border-colour: #dddddd;
   }
 }
 
