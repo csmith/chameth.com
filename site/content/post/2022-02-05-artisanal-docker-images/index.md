@@ -157,6 +157,6 @@ project about the exact same issue.
 
 Finally, all the images I build I push to my own registry so there are obviously no rate limiting issues.
 Standing up a service (assuming the Dockerfile has been written!) is amazingly quick because the base layers are all
-shared and cached, and the registry is a lot physically closer than Docker Hub. Bootstrapping this while thing becomes
+shared and cached, and the registry is a lot physically closer than Docker Hub. Bootstrapping this whole thing becomes
 an interesting problem because the image for the registry is stored on the registry, but I'll leave that discussion for
 another post...

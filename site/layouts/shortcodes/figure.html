@@ -1,5 +1,5 @@
 {{ $img := $.Page.Resources.GetMatch (.Get 1) }}
 <figure class="{{ .Get 0 }}">
     <img src="{{ $img.RelPermalink }}" alt="{{ $img.Name }}" loading="lazy">
-    <figcaption>{{ if strings.HasSuffix $img.Permalink $img.Title }}{{ $img.Name }}{{ else }}{{ $img.Title}}{{ end }}</figcaption>
+    <figcaption>{{ if strings.HasSuffix $img.Permalink $img.Title }}{{ $img.Name }}{{ else }}{{ $img.Title }}{{ end }}</figcaption>
 </figure>
