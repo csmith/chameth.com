@@ -3,7 +3,7 @@ assetDir: assets
 disablePathToLower: true
 languageCode: en-gb
 title: Chameth.com
-disableKinds: ["taxonomy", "taxonomyTerm"]
+disableKinds: ["taxonomy", "taxonomyTerm", "section"]
 paginate: 5
 
 permalinks:
