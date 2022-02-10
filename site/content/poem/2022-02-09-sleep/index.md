@@ -5,35 +5,32 @@ slug: sleep
 ---
 
 <pre>
-Sleep — that sublime and delectable state,
-when the problems of the day go away:
-dreary daytime difficulties dropped
-in favour of idyllic fantasies.
+Sleep: that sublime state, placid and serene,
+when problems of the day proceed away:
+day's dreary difficulties dropped dead,
+forgot, replaced with legion fantasies.
 
 But why is it that sleep, so essential,
-can be stubbornly unprocurable?
+is also stubborn, unobtainable?
 Instead of falling off for forty winks,
 you lie awake and in your head instead
 those dreary daytime difficulties swell,
-and multiply and magnify and maim.
-A suffocating, encompassing cloud
-of dread, despair, despondency and doom.
+and multiply and maim and magnify.
 
-Then, as if that wasn't enough: some more.
-Meta-worries. Clock watching. Fight or flight.
-Second to second feels like year to year,
-while the primate inside prepares to fight.
-But work and finances aren't predators,
-past mistakes and social errs are not threats.
+Then, as if that was not enough: some more.
+Clock watching. Meta-worries. Fight or flight.
+Each second twists and lengthens into years,
+while primate brain prepares to wage a war;
+but finances and work aren't predators,
+long-past mistakes and social errs not threats.
 
-Sometimes, for reasons unexplainable,
+At times, for reasons unexplainable,
 sleep comes: the problems fade; normalcy reigns.
-Sometimes the circadian gods smile,
-and sleep happens on time each day for weeks.
+And sometimes the circadian gods smile,
+sleep happens orderly each day for weeks.
 But the good times, too, have dark undertows:
-insomnia lurking in the distance,
-ready, waiting, poised to retake her throne.
-Maybe she can be banished completely?
-If you know how: answers on a postcard,
-please.
+insomnia is lurking in the west,
+a-waiting, seeking to retake her throne.
+Perhaps she can be banished utterly?
+If you know: answers on a postcard, please.
 </pre>
