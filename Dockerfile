@@ -6,8 +6,7 @@ FROM csmith/hugo as hugo
 
 ADD site /tmp/site
 RUN hugo -v -s /tmp/site -d /tmp/hugo && \
-	cp /tmp/hugo/post/index.xml /tmp/hugo/feed.xml && \
-	cp /tmp/hugo/post/index.xml /tmp/hugo/index.xml
+	cp /tmp/hugo/index.xml /tmp/hugo/feed.xml
 
 ##
 ## Step 2 - compress, minify, etc

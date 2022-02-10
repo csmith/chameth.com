@@ -4,3 +4,4 @@
 # Hugo generated content 
 /site/public
 /site/resources
+.hugo_build.lock
