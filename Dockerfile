@@ -2,27 +2,25 @@
 ## Step 1 - add content and build with Hugo
 ##
 
-FROM csmith/hugo as hugo
+FROM reg.c5h.io/hugo as hugo
 
 ADD site /tmp/site
-RUN hugo -v -s /tmp/site -d /tmp/hugo && \
-	cp /tmp/hugo/index.xml /tmp/hugo/feed.xml
+RUN ["hugo", "-v", "-s", "/tmp/site", "-d", "/tmp/hugo"]
 
 ##
 ## Step 2 - compress, minify, etc
 ##
 
-FROM debian:stretch as minify
-RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get -qq install -y --no-install-recommends yui-compressor tidy webp \
-	&& rm -rf /var/lib/apt/lists/*
+FROM reg.c5h.io/alpine as minify
+RUN apk add --no-cache tidyhtml libwebp-tools
 
-COPY --from=hugo /tmp/hugo /tmp/site
-ADD minify.sh /tmp/minify.sh
+COPY --from=hugo --chown=65532:65532 /tmp/hugo /tmp/site
+COPY --from=hugo --chown=65532:65532 /tmp/hugo/index.xml /tmp/site/feed.xml
 
-RUN chown -R nobody:nogroup /tmp/site && chmod +x /tmp/minify.sh
-USER nobody:nogroup
-RUN /tmp/minify.sh
+USER 65532:65532
+RUN set -eux; \
+    find /tmp/site/ -name '*.html' -print -exec tidy -q -i -w 120 -m --vertical-space yes --drop-empty-elements no "{}" \;; \
+    find /tmp/site/ -name '*.jpg' -o -name '*.png' -o -name '*.jpeg' -exec cwebp -m 6 -mt -o "{}.webp" -- "{}" \;;
 
 ##
 ## Step 3 - host!
