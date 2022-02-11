@@ -6,23 +6,22 @@ slug: sleep
 
 <pre>
 Sleep: that sublime state, placid and serene,
-when problems of the day proceed away:
-day's dreary difficulties dropped dead,
+when problems of the day proceed away,
 forgot, replaced with legion fantasies.
 
 But why is it that sleep, so essential,
 is also stubborn, unobtainable?
 Instead of falling off for forty winks,
 you lie awake and in your head instead
-those dreary daytime difficulties swell,
+the dreary daytime difficulties dwell,
 and multiply and maim and magnify.
 
 Then, as if that was not enough: some more.
 Clock watching. Meta-worries. Fight or flight.
-Each second twists and lengthens into years,
+Each second twists and lengthens into years
 while primate brain prepares to wage a war;
-but finances and work aren't predators,
-long-past mistakes and social errs not threats.
+but money and work are not predators,
+year-old mistakes and faux-pas are not threats.
 
 At times, for reasons unexplainable,
 sleep comes: the problems fade; normalcy reigns.
