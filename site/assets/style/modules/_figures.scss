@@ -3,16 +3,13 @@
 figure {
   margin: var(--content-padding-small) 0;
   border-radius: 0.35em;
-  display: grid;
   position: relative;
   overflow: hidden;
-  grid-template-areas: ". image ." ". caption .";
-  grid-template-rows: auto;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
+  flex-direction: column;
   background-color: var(--figure-border-colour);
 
   img {
-    grid-area: image;
     display: block;
     width: 100%;
     height: auto;
@@ -20,7 +17,6 @@ figure {
   }
 
   figcaption {
-    grid-area: caption;
     display: block;
     padding: 0 1em;
     text-align: center;
