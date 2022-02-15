@@ -28,12 +28,4 @@
       text-decoration-color: var(--accent-colour);
     }
   }
-
-  a {
-    text-decoration-color: transparent;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
 }
