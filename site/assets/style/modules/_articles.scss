@@ -1,0 +1,47 @@
+// Deals with article-specific layouts
+
+article {
+  & + article, & + nav {
+    border-top: 1px solid var(--separator-colour);
+    padding-top: var(--content-padding);
+    margin-top: var(--content-padding);
+    clear: both;
+  }
+
+  header {
+    h2 {
+      margin-bottom: 0.2em;
+    }
+
+    p {
+      color: var(--subtitle-colour);
+      line-height: 1.5em;
+    }
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  img + p, img + h3 {
+    margin-top: 1.5em;
+  }
+}
+
+.readmore {
+  clear: both;
+}
+
+aside.feedback {
+  display: block;
+  border-top: solid 3px var(--feedback-border-colour);
+  border-bottom: solid 3px var(--feedback-border-colour);
+  background-color: var(--feedback-background-colour);
+  padding: 1em;
+  margin: 4em 0 0 0;
+
+  h3 {
+    margin: 0 0 0.75em 0;
+    padding: 0;
+  }
+}

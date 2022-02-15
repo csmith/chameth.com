@@ -25,38 +25,9 @@ body {
     margin-right: calc(1em + (100vw - var(--content-max-width)) / 2);
   }
 
-  #header {
-    display: flex;
-    align-items: baseline;
-    margin-bottom: var(--content-padding);
-
-    @media screen and (max-width: 980px) {
-      flex-direction: column;
-      align-items: center;
-    }
-
-    p {
-      margin: 0 0 0 1ex;
-      color: var(--subtitle-colour);
-
-      @media screen and (max-width: 980px) {
-        margin: 0
-      }
-    }
-
-    h1 {
-      line-height: 1.75em;
-      margin: 0;
-
-      a:link, a:visited {
-        text-decoration: underline;
-        text-decoration-color: var(--accent-colour);
-      }
-    }
-  }
-
   #main {
     flex-grow: 1;
+
     & > section {
       border-top: solid 2px var(--separator-colour);
       margin: 4em 0 0 0;
@@ -92,6 +63,7 @@ details {
     margin-right: 0;
     padding-left: 10px;
     cursor: pointer;
+
     & + * {
       margin-top: var(--content-padding-small);
     }
@@ -101,7 +73,7 @@ details {
 #pagefooter {
   background-color: var(--footer-background-colour);
   margin-top: var(--content-padding);
-  padding: var(--content-padding-small)  calc(1em + (100vw - var(--content-max-width)) / 2) 0 calc(1em + (100vw - var(--content-max-width)) / 2);
+  padding: var(--content-padding-small) calc(1em + (100vw - var(--content-max-width)) / 2) 0 calc(1em + (100vw - var(--content-max-width)) / 2);
   border-top: 1px solid var(--accent-colour);
   display: grid;
   grid-template-columns: 1fr 1fr;

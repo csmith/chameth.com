@@ -1,0 +1,39 @@
+// The site-wide header
+
+#header {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: var(--content-padding);
+
+  @media screen and (max-width: 980px) {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  p {
+    margin: 0 0 0 1ex;
+    color: var(--subtitle-colour);
+
+    @media screen and (max-width: 980px) {
+      margin: 0
+    }
+  }
+
+  h1 {
+    line-height: 1.75em;
+    margin: 0;
+
+    a:link, a:visited {
+      text-decoration: underline;
+      text-decoration-color: var(--accent-colour);
+    }
+  }
+
+  a {
+    text-decoration-color: transparent;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

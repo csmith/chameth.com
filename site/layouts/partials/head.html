@@ -17,7 +17,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="preload" href="/res/fonts/bitter.woff2" as="font" crossorigin>
-    {{ $style := resources.Get "style/style.sass" | toCSS (dict "outputStyle" "compressed") | fingerprint }}
+    {{ $style := resources.Get "style/style.scss" | toCSS (dict "outputStyle" "compressed") | fingerprint }}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}">
     <link rel="canonical" href="{{ .Permalink }}">
     {{ with .Site.GetPage "home" }}
