@@ -11,7 +11,14 @@ $light-green: #eeffee;
   --accent-colour: #fc4a1a;
 
   --update-border-colour: #669966;
+  --update-background-colour: #334433;
+
+  --sidenote-border-colour: #666666;
+  --sidenote-background-colour: #444444;
+
   --feedback-border-colour: #669999;
+  --feedback-background-colour: #334444;
+
   --blockquote-border-colour: #efefef;
   --separator-colour: #a3a3a3;
 
@@ -34,8 +41,7 @@ $light-green: #eeffee;
 
   --inline-code-background-colour: #444444;
   --inline-code-border-colour: #636363;
-  --update-background-colour: #334433;
-  --feedback-background-colour: #334444;
+
   --footer-background-colour: #222222;
 
   --table-border-colour: #111111;
@@ -58,6 +64,9 @@ $light-green: #eeffee;
     --update-background-colour: #eeffee;
     --feedback-background-colour: #eeffff;
     --footer-background-colour: #efefef;
+
+    --sidenote-border-colour: #999999;
+    --sidenote-background-colour: #efefef;
 
     --table-border-colour: #cccccc;
     --table-header-background-colour: #cccccc;
