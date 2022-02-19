@@ -9,7 +9,8 @@ resources:
 - src: dependency.png
   name: Comic showing all modern digital infrastructure is built upon one project by a random person in Nebraska
   title: "XKCD 2347: Dependency"
-  default: true
+  params:
+    default: true
 ---
 
 {{< figure "left" "Comic showing all modern digital infrastructure is built upon one project by a random person in Nebraska" >}}

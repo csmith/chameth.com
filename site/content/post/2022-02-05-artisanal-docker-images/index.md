@@ -9,7 +9,8 @@ resources:
 - src: artisanal-containers.jpg
   name: Shelf showing a variety of artisanal containers
   title: Artisanal containers...
-  default: true
+  params:
+    default: true
 - src: doijanky.png
   name: An 'official' Docker Hub image pushed by user 'doijanky'
 ---

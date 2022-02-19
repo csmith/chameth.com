@@ -9,7 +9,8 @@ resources:
 - src: headset.png
   name: Boxed SteelSeries Arctis Pro Wireless Headset
   title: The Arctis Pro Wireless Headset.
-  default: true
+  params:
+    default: true
 - src: wireshark1.png
   name: Wireshark, showing a packet capture of a SET_REPORT request from the host to the headset
 - src: wireshark2.png
