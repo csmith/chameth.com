@@ -20,7 +20,8 @@ COPY --from=hugo --chown=65532:65532 /tmp/hugo/index.xml /tmp/site/feed.xml
 USER 65532:65532
 RUN set -eux; \
     find /tmp/site/ -name '*.html' -print -exec tidy -q -i -w 120 -m --vertical-space yes --drop-empty-elements no "{}" \;; \
-    find /tmp/site/ \( -name '*.jpg' -o -name '*.png' -o -name '*.jpeg' \) -exec cwebp -m 6 -mt -o "{}.webp" -- "{}" \;;
+    find /tmp/site/ \( -name '*.jpg' -o -name '*.png' -o -name '*.jpeg' \) -not -name 'favicon*' -exec cwebp -m 6 -mt -o "{}.webp" -- "{}" \;; \
+    find /tmp/site/ -name 'favicon*.png' -exec cwebp -z 9 -mt -o "{}.webp" -- "{}" \;;
 
 ##
 ## Step 3 - host!
