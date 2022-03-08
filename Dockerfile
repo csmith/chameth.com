@@ -12,17 +12,24 @@ RUN ["hugo", "-v", "-s", "/tmp/site", "-d", "/tmp/hugo"]
 ##
 
 FROM reg.c5h.io/alpine as minify
-RUN apk add --no-cache tidyhtml libwebp-tools brotli
+RUN apk add --no-cache tidyhtml libwebp-tools brotli libavif-apps
 
 COPY --from=hugo --chown=65532:65532 /tmp/hugo /tmp/site
 COPY --from=hugo --chown=65532:65532 /tmp/hugo/index.xml /tmp/site/feed.xml
 
 USER 65532:65532
 RUN set -eux; \
-    find /tmp/site/ -name '*.html' -print -exec tidy -q -i -w 120 -m --vertical-space yes --drop-empty-elements no "{}" \;; \
-    find /tmp/site/ \( -name '*.jpg' -o -name '*.png' -o -name '*.jpeg' \) -not -name 'favicon*' -exec cwebp -m 6 -mt -o "{}.webp" -- "{}" \;; \
-    find /tmp/site/ -name 'favicon*.png' -exec cwebp -z 9 -mt -o "{}.webp" -- "{}" \;; \
-    find /tmp/site/ \( -name '*.html' -o -name '*.css' -o -name '*.xml' \) -exec brotli -kq 11 "{}" \; -exec gzip -k9 "{}" \;;
+    find /tmp/site/ -name '*.html' \
+        -exec tidy -q -i -w 120 -m --vertical-space yes --drop-empty-elements no "{}" \;; \
+    find /tmp/site/ \( -name '*.jpg' -o -name '*.png' -o -name '*.jpeg' \) -not -name 'favicon*' \
+        -exec cwebp -m 6 -mt -o "{}.webp" -- "{}" \; \
+        -exec avifenc -j all -s 0 "{}" "{}.avif" \; ; \
+    find /tmp/site/ -name 'favicon*.png' \
+        -exec cwebp -z 9 -mt -o "{}.webp" -- "{}" \; \
+        -exec avifenc -j all -s 0 "{}" "{}.avif" \; ; \
+    find /tmp/site/ \( -name '*.html' -o -name '*.css' -o -name '*.xml' \) \
+        -exec brotli -kq 11 "{}" \; \
+        -exec gzip -k9 "{}" \;;
 
 ##
 ## Step 3 - host!
