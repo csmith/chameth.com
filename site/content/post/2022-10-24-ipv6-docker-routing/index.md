@@ -125,7 +125,7 @@ exists) will likely just contain comments and examples; if there are no uncommen
 the library will use its built-in defaults based on the RFC requirements.
 
 To make our container happy, we need to cause `fd00::/8` to have the same label as a public IPv6 address. To do this we
-can add uncomment the default labels in `gai.conf` and then add a single extra line, like so:
+can uncomment the default labels in `gai.conf` and then add a single extra line, like so:
 
 {{< highlight patch >}}
  label ::1/128       0
