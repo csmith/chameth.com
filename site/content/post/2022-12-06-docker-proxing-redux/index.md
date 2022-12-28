@@ -54,7 +54,7 @@ it irked me.
 
 So from nginx I switched to haproxy. It has a `strict-sni` option when configuring
 TLS connections which makes it behave properly. It also performs a lot better for
-this type of workload than nginx. All was well for a while, until then I started getting alerts
+this type of workload than nginx. All was well for a while, but then I started getting alerts
 that requests were occasionally failing. I couldn't reproduce the issue, but
 my nightly jobs to build and push containers managed to hit it nearly every
 night, causing them to fail.
