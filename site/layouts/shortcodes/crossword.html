@@ -1,0 +1,10 @@
+{{- $style := resources.Get "exolve/exolve.css" | resources.Minify -}}
+{{- $script := resources.Get "exolve/exolve.js" | resources.Minify -}}
+
+<div id="xwd"></div>
+<link rel="stylesheet" href="{{ $style.RelPermalink }}">
+<script src="{{ $script.RelPermalink }}"></script>
+<script nonce="xwd">
+  createExolve({{.Inner}}, 'xwd')
+</script>
+
