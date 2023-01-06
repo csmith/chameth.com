@@ -55,3 +55,8 @@ exolve-begin
     20 "Imbecilic fish" found on a Triple Triad card (4)
 exolve-end
 {{< /crossword >}}
+
+----
+
+_FINAL FANTASY is a registered trademark of Square Enix Holdings Co., Ltd._ \
+_Names and other content are © SQUARE ENIX CO., LTD. All Rights Reserved._

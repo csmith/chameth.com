@@ -1,0 +1,40 @@
+.xlv-curr-clue {
+  background-color: var(--background-alt) !important;
+  color: var(--text-colour) !important;
+}
+
+tr[style="background: mistyrose;"] {
+  background-color: var(--background-alt) !important;
+  color: var(--text-colour) !important;
+}
+
+#xlv1-small-print {
+  display: none;
+}
+
+.xlv-clues {
+  margin-top: var(--content-padding);
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--content-padding-small);
+  width: 100% !important;
+  max-width: inherit !important;
+
+  .xlv-clues-panel, .xlv-clues-panel > * {
+    width: 100% !important;
+  }
+
+  .xlv-clues-label {
+    text-align: center;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+  }
+
+  .xlv-solved, .xlv-solved td:first-child {
+    color: var(--accent-colour) !important;
+  }
+}
+
+.xlv-frame {
+  font-family: var(--text-font) !important;
+}
