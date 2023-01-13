@@ -4,7 +4,7 @@ title: Sleep
 slug: sleep
 ---
 
-<pre>
+{{< poem >}}
 Sleep: that sublime state, placid and serene,
 when problems of the day proceed away,
 forgot, replaced with legion fantasies.
@@ -32,4 +32,15 @@ insomnia is lurking in the west,
 a-waiting, seeking to retake her throne.
 Perhaps she can be banished utterly?
 If you know: answers on a postcard, please.
-</pre>
+{{< / poem >}}
+
+----
+
+This was an attempt to write in iambic pentameter -- where each line consists
+of 5 pairs of unstressed and stressed syllables (i.e., da-DUM da-DUM da-DUM
+da-DUM da-DUM). It's a style used in lots of traditional English poetry and
+verse, most famously by Shakespeare (e.g.: "Shall I compare thee to a summer's
+day?").
+
+It turns out I'm _really_ bad at figuring out which syllables are stressed or
+not. There were a lot of dictionary lookups to try and figure it out. 
