@@ -1,0 +1,36 @@
+@use "_colours";
+@use "_dimens";
+
+nav ol {
+  display: flex;
+  list-style-type: none;
+  justify-content: center;
+  gap: dimens.$medium-space;
+  padding: 0;
+  margin: dimens.$medium-space 0 0 0;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: dimens.$small-space;
+  }
+
+  a[aria-current] {
+    font-weight: bold;
+  }
+}
+
+nav.readmore {
+  margin-top: dimens.$small-space;
+
+  a {
+    font-family: "Berkeley Mono", monospace;
+    text-transform: uppercase;
+  }
+}
+
+.excerpt {
+  border-bottom: 2px solid colours.$accent;
+  margin-bottom: dimens.$large-space;
+  padding-bottom: dimens.$large-space;
+}

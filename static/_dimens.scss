@@ -1,0 +1,34 @@
+$border-radius: 10px;
+
+$small-space: var(--small-space);
+$medium-space: var(--medium-space);
+$large-space: var(--large-space);
+
+$content-width: var(--content-width);
+$content-margin: var(--content-margin);
+
+:root {
+  --small-space: 0.5em;
+  --medium-space: 1.5em;
+  --large-space: 5em;
+
+  --content-width: min(1200px, calc(100vw - 2 * var(--large-space)));
+  --content-margin: calc((100vw - var(--content-width)) / 2);
+
+  @media (max-width: 1200px) {
+    --small-space: 0.5em;
+    --medium-space: 1.2em;
+    --large-space: 4em;
+  }
+
+  @media (max-width: 800px) {
+    --small-space: 0.4em;
+    --medium-space: 1em;
+    --large-space: 2em;
+  }
+
+  @media (max-width: 500px) {
+    --content-width: calc(100vw - 20px);
+  }
+}
+

@@ -1,0 +1,55 @@
+@use "_colours";
+@use "_dimens";
+@use "_typography";
+
+blockquote {
+  border-left: 10px solid colours.$accent;
+  padding-left: 15px;
+  font-size: typography.$large;
+}
+
+aside.update {
+  background-color: colours.$background-alt;
+  border-radius: dimens.$border-radius;
+  padding: dimens.$medium-space;
+  border: 3px solid colours.$accent;
+  box-shadow: 0 0 20px colours.$accent;
+  margin: dimens.$medium-space 0;
+
+  ins {
+    text-decoration: none;
+  }
+
+  h5 {
+    &::before {
+      content: '';
+      margin: 0;
+    }
+
+    text-transform: uppercase;
+    color: colours.$text-alt;
+    font-size: typography.$tiny;
+    margin-top: 0;
+    margin-bottom: dimens.$small-space;
+
+    & + p {
+      margin-top: dimens.$small-space;
+    }
+  }
+
+  *:last-child {
+    margin-bottom: 0;
+  }
+}
+
+aside.sidenote {
+  border-left: 10px solid colours.$background-alt;
+  padding-left: 15px;
+
+  h5 {
+    &::before {
+      content: '';
+      margin: 0;
+    }
+  }
+}

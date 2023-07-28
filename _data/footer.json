@@ -1,0 +1,17 @@
+[
+  {
+    "link": "/index.xml",
+    "title": "RSS feed",
+    "description": "Subscribe to new posts"
+  },
+  {
+    "link": "https://github.com/csmith",
+    "title": "@csmith on GitHub",
+    "description": "My open-source projects"
+  },
+  {
+    "link": "https://lunarian.uk",
+    "title": "Lunarian Limited",
+    "description": "My software development company"
+  }
+]

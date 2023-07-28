@@ -1,7 +1,8 @@
-.DS_Store
-.idea
+/.idea
 
-# Hugo generated content 
-/site/public
-/site/resources
-.hugo_build.lock
+# Generated content
+/_site
+/node_modules
+
+# Random backup files
+*~

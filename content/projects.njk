@@ -1,0 +1,33 @@
+---
+permalink: /projects/
+layout: page.njk
+title: Projects
+---
+
+<h2>Projects</h2>
+
+<p>
+    These are some of the side-projects I've worked on recently. You can find a lot more on my
+    <a href="https://github.com/csmith">GitHub profile</a>.
+</p>
+
+<div class="projects">
+    {% for p in projects %}
+    <section class="project">
+        <h3>{{ p.name }}</h3>
+        <p class="tags">// Tags:
+            {% for t in p.tags %}
+            {{ t }}
+            {% endfor %}
+        </p>
+
+        <p class="description">{{ p.description }}</p>
+
+        <ul>
+            {% for l in p.links %}
+            <li><a href="{{ l.url }}">{{ l.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endfor %}
+</div>

@@ -1,35 +1,15 @@
-##
-## Step 1 - add content and build with Hugo
-##
-
-FROM reg.c5h.io/hugo as hugo
-
-ADD site /tmp/site
-RUN ["hugo", "-v", "-s", "/tmp/site", "-d", "/tmp/hugo"]
-
-##
-## Step 2 - compress, minify, etc
-##
-
-FROM reg.c5h.io/alpine as minify
-RUN apk add --no-cache tidyhtml brotli
-
-COPY --from=hugo --chown=65532:65532 /tmp/hugo /tmp/site
-COPY --from=hugo --chown=65532:65532 /tmp/hugo/index.xml /tmp/site/feed.xml
-
-USER 65532:65532
+# Step 1 - add content and build with 11ty
+FROM node as node
+ADD . /tmp/site
+ENV LANG C.UTF-8
 RUN set -eux; \
-    find /tmp/site/ -name '*.html' \
-        -exec tidy -q -i -w 120 -m --vertical-space yes --drop-empty-elements no "{}" \;; \
-    find /tmp/site/ \( -name '*.html' -o -name '*.css' -o -name '*.xml' \) \
-        -exec brotli -kq 11 "{}" \; \
-        -exec gzip -k9 "{}" \;;
+    cd /tmp/site; \
+    npm install; \
+    npm run build; \
+    rm -rf node_modules;
 
-##
-## Step 3 - host!
-##
-
-FROM nginx:mainline-alpine AS nginx
-COPY --from=minify /tmp/site /usr/share/nginx/html
-ADD nginx.conf /etc/nginx/nginx.conf
-VOLUME /logs
+# Step 2 - host with SWS
+FROM ghcr.io/static-web-server/static-web-server AS sws
+COPY --from=node /tmp/site/_site /site
+ENV SERVER_CONFIG_FILE=/sws.toml
+ADD sws.toml /sws.toml

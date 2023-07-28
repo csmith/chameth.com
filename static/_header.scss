@@ -1,0 +1,57 @@
+@use "_colours";
+@use "_dimens";
+@use "_typography";
+
+body > header {
+  padding: dimens.$small-space 0;
+  width: dimens.$content-width;
+  margin: dimens.$large-space auto 2em auto;
+
+  display: flex;
+  justify-content: space-between;
+
+  @media (max-width: 1200px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: dimens.$medium-space;
+  }
+
+  & > a {
+    // Safari underlines block level elements within an A...
+    text-decoration: none;
+  }
+
+  h1 {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    color: colours.$text-highlight;
+    font-family: "Berkeley Mono", monospace;
+    text-transform: uppercase;
+
+    .prelude {
+      font-size: typography.$small;
+      line-height: 1;
+      color: colours.$text-alt;
+      text-decoration: none;
+    }
+
+    .title {
+      font-size: typography.$giant;
+      line-height: 1;
+    }
+
+    border-bottom: 4px solid colours.$accent;
+  }
+
+  nav {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+
+    a {
+      font-family: "Berkeley Mono", monospace;
+      text-transform: uppercase;
+    }
+  }
+}

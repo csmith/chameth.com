@@ -1,0 +1,44 @@
+@use "_colours";
+@use "_dimens";
+@use "_typography";
+
+figure {
+  margin: 0 dimens.$medium-space dimens.$small-space dimens.$medium-space;
+  padding: dimens.$medium-space;
+  border-radius: dimens.$border-radius;
+  text-align: center;
+  background-color: colours.$background-alt;
+  max-width: 100%;
+  font-family: "Berkeley Mono", monospace;
+  font-size: typography.$tiny;
+  line-height: 1;
+  text-transform: uppercase;
+  color: colours.$text-alt;
+
+  img, video {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: dimens.$border-radius;
+    height: auto;
+  }
+
+  @media (max-width: 500px) {
+    margin: 0;
+  }
+
+  @media (min-width: 1200px) {
+    &.left {
+      float: left;
+      max-width: 30%;
+    }
+
+    &.right {
+      float: right;
+      max-width: 30%;
+    }
+  }
+
+  figcaption {
+    margin-top: dimens.$medium-space;
+  }
+}

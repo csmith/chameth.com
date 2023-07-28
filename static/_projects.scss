@@ -1,0 +1,51 @@
+@use "_colours";
+@use "_dimens";
+@use "_typography";
+
+.projects {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: dimens.$large-space;
+  margin-top: dimens.$large-space;
+
+  .project {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    h3 {
+      margin-bottom: 0;
+    }
+
+    p.tags {
+      margin-top: 0;
+      font-family: "Berkeley Mono", monospace;
+      text-transform: uppercase;
+      color: colours.$text-alt;
+      font-size: typography.$tiny;
+    }
+
+    p.description {
+      margin-top: 0;
+      flex-grow: 1;
+    }
+
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: dimens.$small-space;
+
+      @media (max-width: 500px) {
+        flex-direction: column;
+      }
+
+      a {
+        font-family: "Berkeley Mono", monospace;
+        text-transform: uppercase;
+        font-size: typography.$small;
+      }
+    }
+  }
+}

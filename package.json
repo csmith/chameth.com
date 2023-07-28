@@ -1,0 +1,28 @@
+{
+  "name": "chameth.com",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx @11ty/eleventy",
+    "serve": "npx @11ty/eleventy --serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "",
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy-plugin-rss": "^1.2.0",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
+    "postcss": "8.4.27",
+    "prettier": "3.0.0"
+  },
+  "dependencies": {
+    "eleventy-plugin-rev": "^1.1.1",
+    "eleventy-sass": "^2.2.3",
+    "image-size": "^1.0.2",
+    "js-yaml": "^4.1.0",
+    "markdown-it-footnote": "^3.0.3",
+    "markdown-it-prism": "^2.3.0"
+  }
+}

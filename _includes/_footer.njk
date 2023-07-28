@@ -1,0 +1,35 @@
+<footer>
+    <section>
+        <h2>Recent posts</h2>
+        <ul class="recent">
+            {% for post in collections.posts | reverse | head(footer.length) %}
+            <li>
+                <a href="{{ post.url }}">{{ post.data.title }}</a>
+                <p>{{ post.date | dateFormat }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section>
+        <h2>Other links</h2>
+        <ul>
+            {% for f in footer %}
+            <li>
+                <a href="{{ f.link }}">{{ f.title }}</a>
+                <p>{{ f.description }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section class="licence">
+        <p>
+            The written content of this website is released under the
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a> licence.
+        </p>
+
+        <p>
+            This website does not use cookies, does not perform any user tracking, and does not log full IP
+            addresses.
+        </p>
+    </section>
+</footer>

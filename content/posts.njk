@@ -1,0 +1,23 @@
+---
+layout: page.njk
+title: All posts
+permalink: "/posts/{% if pagination.pageNumber > 0 %}{{ pagination.pageNumber + 1 }}/{% endif %}"
+pagination:
+  data: collections.posts
+  size: 5
+  alias: posts
+  reverse: true
+---
+
+{% for post in posts %}
+<article class="excerpt">
+    <h2>{{ post.data.title }}</h2>
+    <p class="date">Published on {{ post.date | dateFormat }}</p>
+    {{ post.page | excerpt | safe }}
+    <nav class="readmore">
+        <a href="{{ post.url }}">Read more &raquo;</a>
+    </nav>
+</article>
+{% endfor %}
+
+{% include '_pagination_navigation.njk' %}

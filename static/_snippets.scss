@@ -1,0 +1,21 @@
+@use "_dimens";
+@use "_typography";
+
+.snippets {
+  columns: 400px 2;
+  column-fill: balance;
+
+  section {
+    padding-top: dimens.$medium-space;
+  }
+
+  h4 {
+    margin-top: 0;
+  }
+
+  a {
+    font-family: "Berkeley Mono", monospace;
+    font-size: typography.$small;
+    text-decoration-thickness: 1px;
+  }
+}

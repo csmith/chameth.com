@@ -1,0 +1,58 @@
+@use "_reset";
+
+@use "_colours";
+@use "_dimens";
+
+@use "_about";
+@use "_articles";
+@use "_asides";
+@use "_figures";
+@use "_footer";
+@use "_header";
+@use "_pagination";
+@use "_projects";
+@use "_snippets";
+@use "_syntax";
+@use "_tables";
+@use "_typography";
+
+body {
+  background-color: colours.$background;
+  color: colours.$text;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+main {
+  width: dimens.$content-width;
+  margin: 0 auto;
+  flex-grow: 1;
+}
+
+hr {
+  border: 0;
+  border-top: 5px solid colours.$accent;
+  margin: dimens.$medium-space 0;
+}
+
+ol {
+  list-style-type: decimal;
+  padding-left: 1em;
+}
+
+ul {
+  list-style-type: disc;
+  padding-left: 1.5em;
+}
+
+.footnote-ref {
+  font-size: typography.$tiny;
+  vertical-align: super;
+  padding: 0.2em;
+  a {
+    text-decoration-thickness: 2px;
+  }
+}

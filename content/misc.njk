@@ -1,0 +1,43 @@
+---
+layout: page.njk
+title: Miscellany
+permalink: "/misc/"
+---
+
+<h2>Miscellany</h2>
+
+<p>This is the everything-but-the-kitchen-sink area of the website.</p>
+
+<hr>
+
+<h3>Snippets / How-tos</h3>
+
+<p>These are small snippets of code or other instructions that I find useful.</p>
+
+<section class="snippets">
+    {% set group = '' %}
+        {% for post in collections.snippets %}
+        {% if post.data.group != group %}
+            {% if group != '' %} </ul></section> {% endif %}
+            {% set group = post.data.group %}
+            <section>
+                <h4>{{ group }}</h4>
+                <ul>
+        {% endif %}
+            <li><a href="/snippets/{{post.fileSlug}}">{{post.data.title}}</a></li>
+    {% endfor %}
+        </ul>
+    </section>
+</section>
+
+<hr>
+
+<h3>Poetry</h3>
+
+<p>I occasionally write poems. Note that I didn't say "good poems".</p>
+
+<ul>
+    {% for post in collections.poems %}
+    <li><a href="{{post.data.permalink}}">{{post.data.title}}</a></li>
+    {% endfor %}
+</ul>

@@ -1,0 +1,158 @@
+@use "_colours";
+@use "_dimens";
+@use "_typography";
+
+.about {
+  // Centers the trading card when it's not floated
+  text-align: center;
+
+  * {
+    text-align: left;
+  }
+
+  &>:last-child {
+    flex: 100%;
+    margin-right: dimens.$small-space;
+    padding-top: dimens.$small-space;
+
+    @media (max-width: 500px) {
+      margin-right: 0;
+    }
+
+    .drop {
+      color: colours.$text-highlight;
+      font-weight: 800;
+    }
+
+    li {
+      font-family: "Berkeley Mono", monospace;
+      font-size: typography.$small;
+    }
+
+    .interests {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-row-gap: dimens.$small-space;
+    }
+  }
+}
+
+.tcg-outer {
+  float: right;
+
+  @media (max-width: 1200px) {
+    float: none;
+    margin-bottom: dimens.$large-space;
+  }
+
+  @media (max-width: 800px) {
+    transform: rotate(0deg);
+  }
+
+  display: inline-block;
+  border: 16px solid colours.$accent;
+  border-radius: dimens.$border-radius;
+  box-shadow: 20px 20px 5px black;
+  transform: rotate(4deg) translateY(40px);
+  margin-left: dimens.$medium-space;
+  margin-bottom: dimens.$medium-space;
+
+  @media (max-width: 500px) {
+    margin-left: 0;
+    margin-bottom: 0;
+    box-shadow: 10px 10px 5px black;
+  }
+
+  .tcg-inner {
+    width: 360px;
+    margin: -4px;
+    background-color: colours.$background-alt;
+    border-radius: dimens.$border-radius;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    font-size: typography.$tiny;
+
+    @media (max-width: 500px) {
+      width: 280px;
+    }
+
+    &::before {
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      content: ' ';
+      border-radius: dimens.$border-radius;
+
+      transform: translateZ(1.41px);
+      overflow: hidden;
+
+      background-image: radial-gradient(
+                      farthest-corner circle at 300px 400px,
+                      hsla(0, 0%, 100%, 0.8) 10%,
+                      hsla(0, 0%, 100%, 0.65) 20%,
+                      hsla(0, 0%, 0%, 0.5) 90%
+      );
+
+      mix-blend-mode: overlay;
+    }
+
+    img {
+      width: 100%;
+      border-bottom: 3px solid colours.$accent;
+    }
+
+    .tcg-properties {
+      width: 100%;
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      padding: 10px;
+      grid-column-gap: dimens.$small-space;
+      align-items: baseline;
+
+      dt {
+        font-weight: bold;
+        text-align: right;
+      }
+    }
+
+    .tcg-skills {
+      margin: 0 10px;
+      // Safari doesn't like to calculate the width properly by itself...?
+      max-width: calc(100% - 20px);
+
+      td {
+        border: 0;
+        padding: 4px;
+
+        &:first-child {
+          // Types
+          text-align: center;
+        }
+
+        &:last-child {
+          // Damage
+          font-size: typography.$regular;
+        }
+      }
+
+      em {
+        font-weight: bold;
+      }
+    }
+
+    footer {
+      width: 100%;
+      padding: 10px 10px 5px 10px;
+      font-size: typography.$small;
+      font-style: italic;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}

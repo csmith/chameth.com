@@ -1,0 +1,54 @@
+==================================================================
+https://keybase.io/cjsmith
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://chameth.com
+  * I am cjsmith (https://keybase.io/cjsmith) on keybase.
+  * I have a public key ASAC0-T_2j52zCjI013_Rn3H-5IuCMXnDYlbP5GlcOSrgQo
+
+To do so, I am signing this object:
+
+{
+    "body": {
+        "key": {
+            "eldest_kid": "012002d3e4ffda3e76cc28c8d35dff467dc7fb922e08c5e70d895b3f91a570e4ab810a",
+            "host": "keybase.io",
+            "kid": "012002d3e4ffda3e76cc28c8d35dff467dc7fb922e08c5e70d895b3f91a570e4ab810a",
+            "uid": "d3c1ebac2a04f60621021f23c3db7500",
+            "username": "cjsmith"
+        },
+        "service": {
+            "hostname": "chameth.com",
+            "protocol": "https:"
+        },
+        "type": "web_service_binding",
+        "version": 1
+    },
+    "client": {
+        "name": "keybase.io go client",
+        "version": "1.0.16"
+    },
+    "ctime": 1470870088,
+    "expire_in": 504576000,
+    "merkle_root": {
+        "ctime": 1470870065,
+        "hash": "46636516e5b6ad67d14fa9692e456b88fbe5ae9fa35a93c420e4ded8d7eeb0b6149f6ab86352d7974873ca79f60adccae3b9f12ad93abf4f89f78f763492283c",
+        "seqno": 570004
+    },
+    "prev": "8c6e38e071904766804b617bc70523c7b55a232c5985bf09009530b3eec14f1c",
+    "seqno": 28,
+    "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEgAtPk/9o+dswoyNNd/0Z9x/uSLgjF5w2JWz+RpXDkq4EKp3BheWxvYWTFAvN7ImJvZHkiOnsia2V5Ijp7ImVsZGVzdF9raWQiOiIwMTIwMDJkM2U0ZmZkYTNlNzZjYzI4YzhkMzVkZmY0NjdkYzdmYjkyMmUwOGM1ZTcwZDg5NWIzZjkxYTU3MGU0YWI4MTBhIiwiaG9zdCI6ImtleWJhc2UuaW8iLCJraWQiOiIwMTIwMDJkM2U0ZmZkYTNlNzZjYzI4YzhkMzVkZmY0NjdkYzdmYjkyMmUwOGM1ZTcwZDg5NWIzZjkxYTU3MGU0YWI4MTBhIiwidWlkIjoiZDNjMWViYWMyYTA0ZjYwNjIxMDIxZjIzYzNkYjc1MDAiLCJ1c2VybmFtZSI6ImNqc21pdGgifSwic2VydmljZSI6eyJob3N0bmFtZSI6ImNoYW1ldGguY29tIiwicHJvdG9jb2wiOiJodHRwczoifSwidHlwZSI6IndlYl9zZXJ2aWNlX2JpbmRpbmciLCJ2ZXJzaW9uIjoxfSwiY2xpZW50Ijp7Im5hbWUiOiJrZXliYXNlLmlvIGdvIGNsaWVudCIsInZlcnNpb24iOiIxLjAuMTYifSwiY3RpbWUiOjE0NzA4NzAwODgsImV4cGlyZV9pbiI6NTA0NTc2MDAwLCJtZXJrbGVfcm9vdCI6eyJjdGltZSI6MTQ3MDg3MDA2NSwiaGFzaCI6IjQ2NjM2NTE2ZTViNmFkNjdkMTRmYTk2OTJlNDU2Yjg4ZmJlNWFlOWZhMzVhOTNjNDIwZTRkZWQ4ZDdlZWIwYjYxNDlmNmFiODYzNTJkNzk3NDg3M2NhNzlmNjBhZGNjYWUzYjlmMTJhZDkzYWJmNGY4OWY3OGY3NjM0OTIyODNjIiwic2Vxbm8iOjU3MDAwNH0sInByZXYiOiI4YzZlMzhlMDcxOTA0NzY2ODA0YjYxN2JjNzA1MjNjN2I1NWEyMzJjNTk4NWJmMDkwMDk1MzBiM2VlYzE0ZjFjIiwic2Vxbm8iOjI4LCJ0YWciOiJzaWduYXR1cmUifaNzaWfEQMmZsKPW7Ja52QueYsMpBUAeIXTAWQ7UjmeQmby2Z2+wDvBbb0ClQ7dh952CdJe0ghlXSRXaTFKpw9hxkIvpMwuoc2lnX3R5cGUgpGhhc2iCpHR5cGUIpXZhbHVlxCCDuy/k9Mc3W3EgcRh22Mn8kubNBV8E5owRd9M56UTwcKN0YWfNAgKndmVyc2lvbgE=
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/cjsmith
+
+==================================================================

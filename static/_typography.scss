@@ -1,0 +1,127 @@
+@use "_colours";
+@use "_dimens";
+
+$tiny: var(--font-size-tiny);
+$small: var(--font-size-small);
+$regular: var(--font-size-regular);
+$large: var(--font-size-large);
+$giant: var(--font-size-giant);
+
+:root {
+  --font-size-tiny: 11pt;
+  --font-size-small: 13pt;
+  --font-size-regular: 16pt;
+  --font-size-large: 19pt;
+  --font-size-giant: 40pt;
+
+  @media (max-width: 500px) and (min-resolution: 2dppx) {
+    --font-size-tiny: 8pt;
+    --font-size-small: 9pt;
+    --font-size-regular: 12pt;
+    --font-size-large: 15pt;
+    --font-size-giant: 30pt;
+  }
+}
+
+@font-face {
+  font-family: 'Bitter';
+  src: local('Bitter Regular'), local('Bitter-Regular'), url('Bitter-Regular.woff2') format('woff2'), url('Bitter-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bitter';
+  src: local('Bitter ExtraBold'), local('Bitter-ExtraBold'), url('Bitter-ExtraBold.woff2') format('woff2'), url('Bitter-ExtraBold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Berkeley Mono';
+  src: local('Berkeley Mono'), url('BerkeleyMono-Regular.woff2') format('woff2'), url('BerkeleyMono-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-size: $regular;
+  font-family: 'Bitter', serif;
+  line-height: 1.5;
+}
+
+h2, h3, h4, h5, h6 {
+  font-family: "Berkeley Mono", monospace;
+  font-size: $regular;
+  color: colours.$text-highlight;
+  margin: dimens.$medium-space 0;
+  line-height: 1;
+
+  &:before {
+    font-family: "Berkeley Mono", monospace;
+    font-size: $regular;
+    color: colours.$accent;
+    margin-right: 0.5em;
+  }
+}
+
+h2:before { content: '#'; }
+h3:before { content: '##'; }
+h4:before { content: '###'; }
+h5:before { content: '####'; }
+h6:before { content: '#####'; }
+
+p {
+  margin: dimens.$medium-space 0;
+
+  code {
+    background-color: colours.$background-alt;
+    border-radius: dimens.$border-radius;
+    padding: 0.1em 0.5em;
+    font-family: "Berkeley Mono", monospace;
+  }
+}
+
+a {
+  color: colours.$text-highlight;
+  text-decoration: underline;
+  text-decoration-color: colours.$accent;
+  text-decoration-thickness: 4px;
+  text-decoration-skip-ink: none;
+
+  background: linear-gradient(to bottom, transparent 50%, colours.$accent 50%) top;
+  background-size: 100% 200%;
+  line-height: 1;
+
+  transition: background 1s ease-out;
+
+
+  &:hover, &:active, &:focus {
+    background-position: bottom;
+    transition-duration: 150ms;
+  }
+
+  &[href*="://"]:not([href*="://chameth.com"])::after {
+    content: '↗';
+    font-family: "Berkeley Mono", monospace;
+    color: colours.$accent;
+    font-size: $small;
+  }
+}
+
+.poem {
+  font-family: "Berkeley Mono", monospace;
+  background-color: colours.$background-alt;
+  padding: 1em;
+  margin: dimens.$medium-space 0;
+  border-radius: dimens.$border-radius;
+}
+
+.ascii-art {
+  font-family: "Berkeley Mono", monospace;
+  font-size: $tiny;
+  color: colours.$text-alt;
+}

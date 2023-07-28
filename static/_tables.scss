@@ -1,0 +1,33 @@
+@use "_colours";
+@use "_dimens";
+@use "_typography";
+
+.table-holder {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+td {
+  padding: dimens.$small-space;
+  font-size: typography.$small;
+}
+
+th {
+  border-bottom: 2px solid colours.$accent;
+  padding: 0.4em;
+  text-align: left;
+  font-weight: bold;
+  color: colours.$text-alt;
+  text-transform: uppercase;
+  font-family: "Berkeley Mono", monospace;
+  font-size: typography.$tiny;
+}
+
+tr:nth-child(2n) {
+  background-color: colours.$background-alt;
+}

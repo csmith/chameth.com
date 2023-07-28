@@ -1,0 +1,24 @@
+{
+  "Books": [
+    "Snow Crash",
+    "Dune",
+    "A Memory Called Empire"
+  ],
+  "Programming": [
+    "Go",
+    "Kotlin",
+    "Android"
+  ],
+  "Video games": [
+    "Guild Wars 2",
+    "Deep Rock Galactic",
+    "Final Fantasy XIV",
+    "Factorio"
+  ],
+  "Board games": [
+    "Pandemic",
+    "Azul",
+    "Carcassonne",
+    "7 Wonders"
+  ]
+}

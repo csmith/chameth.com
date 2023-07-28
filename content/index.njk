@@ -1,0 +1,42 @@
+---
+permalink: /index/
+layout: page.njk
+title: Sitemap
+---
+
+<h2>Site map</h2>
+
+<h3>Primary pages</h3>
+
+<ul>
+    <li><a href="/">About</a></li>
+    <li><a href="/posts/">Posts</a></li>
+    <li><a href="/projects/">Projects</a></li>
+    <li><a href="/misc/">Misc</a></li>
+    <li><a href="/index/">Sitemap</a> &larr; you are here</li>
+    <li><a href="/index.xml">RSS Feed (posts)</a></li>
+</ul>
+
+<h3>Posts</h3>
+
+<ul>
+    {% for post in collections.posts %}
+    <li><a href="{{post.data.permalink}}">{{post.data.title}}</a></li>
+    {% endfor %}
+</ul>
+
+<h3>Poems</h3>
+
+<ul>
+    {% for post in collections.poems %}
+    <li><a href="{{post.data.permalink}}">{{post.data.title}}</a></li>
+    {% endfor %}
+</ul>
+
+<h3>Snippets</h3>
+
+<ul>
+    {% for post in collections.snippets %}
+    <li><a href="/snippets/{{post.fileSlug}}/">{{post.data.group}}: {{post.data.title}}</a></li>
+    {% endfor %}
+</ul>

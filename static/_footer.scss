@@ -1,0 +1,64 @@
+@use "_colours";
+@use "_dimens";
+@use "_typography";
+
+body > footer {
+  margin-top: dimens.$large-space;
+  padding: dimens.$small-space dimens.$content-margin dimens.$small-space dimens.$content-margin;
+  background-color: colours.$background-alt;
+  border-top: 5px dotted colours.$accent;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  li p {
+    font-family: "Berkeley Mono", monospace;
+    font-size: typography.$small;
+    color: colours.$text-alt;
+  }
+
+  // Other links
+  section:nth-child(2) {
+    text-align: right;
+  }
+
+  // Licenses
+  section:nth-child(3) {
+    margin-top: dimens.$medium-space;
+    grid-column: 1 / span 2;
+    text-align: center;
+
+    @media (max-width: 500px) {
+      text-align: left;
+      p {
+        margin-bottom: dimens.$medium-space;
+      }
+    }
+
+    font-family: "Berkeley Mono", monospace;
+    font-size: typography.$tiny;
+  }
+
+  @media (max-width: 1000px) {
+    display: flex;
+    flex-direction: column;
+
+    section:nth-child(2) {
+      text-align: left;
+    }
+  }
+
+  h2 {
+    font-size: typography.$large;
+  }
+
+  ul, a, p {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: dimens.$small-space;
+  }
+}
