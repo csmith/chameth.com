@@ -15,13 +15,10 @@ permalink: "/misc/"
 <p>These are small snippets of code or other instructions that I find useful.</p>
 
 <section class="snippets">
-    <div>
     {% set group = '' %}
     {% for post in collections.sortedSnippets %}
         {% if post.data.group != group %}
             {% if group != '' %} </ul></section> {% endif %}
-            {# Horrible hack to get these roughly ordered into two columns. #}
-            {% if group < 'H' and post.data.group >= 'H' %} </div><div> {% endif %}
             {% set group = post.data.group %}
             <section>
                 <h4>{{ group }}</h4>
@@ -31,7 +28,6 @@ permalink: "/misc/"
     {% endfor %}
         </ul>
     </section>
-    </div>
 </section>
 
 <hr>
