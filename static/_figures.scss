@@ -3,7 +3,7 @@
 @use "_typography";
 
 figure {
-  margin: 0 dimens.$medium-space dimens.$small-space dimens.$medium-space;
+  margin: dimens.$medium-space dimens.$medium-space dimens.$small-space dimens.$medium-space;
   padding: dimens.$medium-space;
   border-radius: dimens.$border-radius;
   text-align: center;
@@ -30,11 +30,13 @@ figure {
     &.left {
       float: left;
       max-width: 30%;
+      margin-left: 0;
     }
 
     &.right {
       float: right;
       max-width: 30%;
+      margin-right: 0;
     }
   }
 
