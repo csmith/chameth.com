@@ -45,7 +45,6 @@ const renamer = function (original) {
 
     // Dump content in /static at the root of the output.
     if (original.startsWith('static/')) {
-        console.log(original, original.replace('static/', '/'));
         return original.replace('static/', '');
     }
     return original;
