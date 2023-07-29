@@ -124,3 +124,13 @@ a {
   font-size: $tiny;
   color: colours.$text-alt;
 }
+
+em {
+  font-style: italic;
+
+  &::before, &::after {
+    color: colours.$accent;
+    font-size: $tiny;
+    content: '_';
+  }
+}
