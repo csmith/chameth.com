@@ -36,7 +36,7 @@ title: Sitemap
 <h3>Snippets</h3>
 
 <ul>
-    {% for post in collections.snippets %}
+    {% for post in collections.sortedSnippets %}
     <li><a href="/snippets/{{post.fileSlug}}/">{{post.data.group}}: {{post.data.title}}</a></li>
     {% endfor %}
 </ul>

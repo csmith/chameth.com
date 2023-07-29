@@ -16,7 +16,7 @@ permalink: "/misc/"
 
 <section class="snippets">
     {% set group = '' %}
-        {% for post in collections.snippets %}
+        {% for post in collections.sortedSnippets %}
         {% if post.data.group != group %}
             {% if group != '' %} </ul></section> {% endif %}
             {% set group = post.data.group %}

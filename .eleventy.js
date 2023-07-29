@@ -42,4 +42,14 @@ module.exports = function (eleventyConfig) {
     Object.entries(site.transforms).forEach(([name, fn]) => {
         eleventyConfig.addTransform(name, fn);
     });
+
+    eleventyConfig.addCollection("sortedSnippets", function(collectionApi) {
+        return collectionApi.getFilteredByTag("snippets").sort(function(a, b) {
+            if (a.data.group === b.data.group) {
+                return a.data.title.localeCompare(b.data.title);
+            } else {
+                return a.data.group.localeCompare(b.data.group);
+            }
+        });
+    });
 };
