@@ -2,8 +2,8 @@
 @use "_typography";
 
 .snippets {
-  columns: 400px 2;
-  column-fill: balance;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 
   section {
     padding-top: dimens.$medium-space;
