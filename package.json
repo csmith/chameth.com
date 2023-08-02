@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "npx @11ty/eleventy",
     "serve": "npx @11ty/eleventy --serve"
@@ -20,9 +21,15 @@
   "dependencies": {
     "eleventy-plugin-rev": "^1.1.1",
     "eleventy-sass": "^2.2.3",
+    "gray-matter": "^4.0.3",
     "image-size": "^1.0.2",
     "js-yaml": "^4.1.0",
+    "liquidjs": "^10.8.4",
+    "luxon": "^3.3.0",
+    "markdown-it": "^13.0.1",
     "markdown-it-footnote": "^3.0.3",
-    "markdown-it-prism": "^2.3.0"
+    "markdown-it-prism": "^2.3.0",
+    "nunjucks": "^3.2.4",
+    "require-esm-in-cjs": "^0.1.0"
   }
 }
