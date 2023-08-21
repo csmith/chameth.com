@@ -142,7 +142,12 @@
       }
 
       em {
+        font-style: normal;
         font-weight: bold;
+
+        // The global style adds underscores around emphasis, but we don't want that here
+        &::before { display: none; }
+        &::after { display: none; }
       }
     }
 
