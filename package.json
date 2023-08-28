@@ -24,7 +24,7 @@
     "gray-matter": "^4.0.3",
     "image-size": "^1.0.2",
     "js-yaml": "^4.1.0",
-    "liquidjs": "^10.8.4",
+    "liquidjs": "^10.9.2",
     "luxon": "^3.4.0",
     "markdown-it": "^13.0.1",
     "markdown-it-footnote": "^3.0.3",
