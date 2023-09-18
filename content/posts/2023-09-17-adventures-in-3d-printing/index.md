@@ -286,7 +286,7 @@ area of 0.09πmm². Maths!
 a 200 degree hot-end and somehow burn myself on a storage device.
 
 [^6]: Well actually I printed 5 copies of their calibration piece until it was
-perfect, then printed the actual cable chain, then had to sad each of the
+perfect, then printed the actual cable chain, then had to sand each of the
 individual links because they _still_ weren't good enough. God, I hate sanding.
 
 [^7]: Or maybe I'd cave and get the newer, shinier, much more expensive MK4.
