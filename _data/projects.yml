@@ -1,4 +1,15 @@
 ---
+- name: Splendid
+  tags: [JavaScript, Svelte, Cucumber]
+  description: |
+    Webapp for playing board games online. Originally written for playing Splendor, but now aiming to support
+    a variety of games.
+  links:
+    - name: Dev instance
+      url: https://splendid.chameth.dev/
+    - name: GitHub project
+      url: https://github.com/csmith/splendid
+
 - name: Puzzad
   tags: [Go, JavaScript, Svelte, Pocketbase]
   description: |
