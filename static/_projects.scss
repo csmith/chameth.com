@@ -36,10 +36,7 @@
       padding: 0;
       display: flex;
       gap: dimens.$small-space;
-
-      @media (max-width: 500px) {
-        flex-direction: column;
-      }
+      flex-direction: column;
 
       a {
         font-family: "Berkeley Mono", monospace;
