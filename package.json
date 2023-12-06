@@ -27,7 +27,7 @@
     "liquidjs": "^10.9.3",
     "luxon": "^3.4.3",
     "markdown-it": "^13.0.2",
-    "markdown-it-footnote": "^3.0.3",
+    "markdown-it-footnote": "^4.0.0",
     "markdown-it-prism": "^2.3.0",
     "nunjucks": "^3.2.4",
     "require-esm-in-cjs": "^0.1.0"
