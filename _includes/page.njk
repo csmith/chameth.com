@@ -3,8 +3,7 @@
 <head>
     <title>{% if title %}{{ title }} &middot; Chameth.com{% else %}Chameth.com: the personal website of Chris Smith{% endif %}</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    {% set stylesheet = "/static/global.scss" | revvedOutput %}
-    <link rel="stylesheet" href="{{ stylesheet }}">
+    {% stylesheet %}
     <link rel="shortcut icon" href="/favicon.png">
     <link rel="icon" type="image/png" href="/favicon-192x192.png" sizes="192x192">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">

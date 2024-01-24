@@ -12,15 +12,13 @@
   "author": "",
   "license": "",
   "devDependencies": {
-    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy": "3.0.0-alpha.4",
     "@11ty/eleventy-plugin-rss": "^1.2.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
     "postcss": "8.4.33",
     "prettier": "3.2.4"
   },
   "dependencies": {
-    "eleventy-plugin-rev": "^2.0.0",
-    "eleventy-sass": "^2.2.4",
     "gray-matter": "^4.0.3",
     "image-size": "^1.0.2",
     "js-yaml": "^4.1.0",
@@ -30,6 +28,6 @@
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-prism": "^2.3.0",
     "nunjucks": "^3.2.4",
-    "require-esm-in-cjs": "^0.1.0"
+    "sass": "^1.70.0"
   }
 }
