@@ -24,7 +24,7 @@
     "js-yaml": "^4.1.0",
     "liquidjs": "^10.9.3",
     "luxon": "^3.4.3",
-    "markdown-it": "^13.0.2",
+    "markdown-it": "^14.0.0",
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-prism": "^2.3.0",
     "nunjucks": "^3.2.4",
