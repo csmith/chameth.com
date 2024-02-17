@@ -3,6 +3,11 @@ title: Use ES modules
 group: Eleventy
 ---
 
+{% update "2024-01-24" %}
+Eleventy 3.0 (which is in alpha at the time of writing) adds proper support for
+ES modules.
+{% endupdate %}
+
 Eleventy doesn't currently support importing ES modules, and you can't easily
 bridge the gap between CJS and ESM because ES importing is async and CJS is
 synchronous.
