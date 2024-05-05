@@ -4,5 +4,6 @@ export default [
     "content/**/*.webm",
     "content/**/*.avif",
     "content/**/*.png",
+    "content/**/*.stl",
     "static/*.*",
 ];
