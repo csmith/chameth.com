@@ -42,5 +42,9 @@ figure {
 
   figcaption {
     margin-top: dimens.$medium-space;
+
+    p {
+      margin: 0;
+    }
   }
 }
