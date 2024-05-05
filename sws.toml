@@ -111,3 +111,8 @@ kind = 301
 source = "/poem/{*}/"
 destination = "/$1/"
 kind = 301
+
+[[advanced.redirects]]
+source = "/misc/snippets"
+destination = "/snippets/"
+kind = 301

@@ -14,21 +14,8 @@ permalink: "/misc/"
 
 <p>These are small snippets of code or other instructions that I find useful.</p>
 
-<section class="snippets">
-    {% set group = '' %}
-    {% for post in collections.sortedSnippets %}
-        {% if post.data.group != group %}
-            {% if group != '' %} </ul></section> {% endif %}
-            {% set group = post.data.group %}
-            <section>
-                <h4>{{ group }}</h4>
-                <ul>
-        {% endif %}
-            <li><a href="/snippets/{{post.fileSlug}}">{{post.data.title}}</a></li>
-    {% endfor %}
-        </ul>
-    </section>
-</section>
+{% import '_snippets.njk' as snippets %}
+{{ snippets.list(collections.sortedSnippets, 'h4') }}
 
 <hr>
 

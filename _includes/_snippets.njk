@@ -1,0 +1,16 @@
+{% macro list(collection, headerLevel = 'h4') %}
+<section class="snippets">
+    {% set group = '' %}
+    {% for post in collection %}
+        {% if post.data.group != group %}
+            {% if group != '' %} </ul></section> {% endif %}
+            {% set group = post.data.group %}
+            <section>
+                <{{ headerLevel | safe }}>{{ group }}</{{ headerLevel | safe }}>
+                <ul>
+        {% endif %}
+        <li><a href="/snippets/{{post.fileSlug}}">{{post.data.title}}</a></li>
+    {% endfor %}
+    {% if group != '' %} </ul></section> {% endif %}
+</section>
+{% endmacro %}
