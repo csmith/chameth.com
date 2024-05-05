@@ -12,11 +12,11 @@
   "author": "",
   "license": "",
   "devDependencies": {
-    "@11ty/eleventy": "3.0.0-alpha.5",
+    "@11ty/eleventy": "3.0.0-alpha.10",
     "@11ty/eleventy-plugin-rss": "^1.2.0",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
-    "postcss": "8.4.33",
-    "prettier": "3.2.4"
+    "postcss": "8.4.38",
+    "prettier": "3.2.5"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
@@ -24,7 +24,7 @@
     "js-yaml": "^4.1.0",
     "liquidjs": "^10.9.3",
     "luxon": "^3.4.3",
-    "markdown-it": "^13.0.2",
+    "markdown-it": "^14.1.0",
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-prism": "^2.3.0",
     "nunjucks": "^3.2.4",
