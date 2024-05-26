@@ -52,6 +52,12 @@ body > header {
     a {
       font-family: "Berkeley Mono", monospace;
       text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 }
