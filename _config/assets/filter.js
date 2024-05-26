@@ -5,5 +5,6 @@ export default [
     "content/**/*.avif",
     "content/**/*.png",
     "content/**/*.stl",
+    "content/**/*.step",
     "static/*.*",
 ];
