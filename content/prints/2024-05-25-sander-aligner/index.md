@@ -14,6 +14,7 @@ layout: page
         <ul class="links">
             <li><a href="{{permalink}}aligner.stl">STL file</a></li>
             <li><a href="{{permalink}}aligner.step">STEP file</a></li>
+            <li><a href="https://cad.onshape.com/documents/808c5b0597174486809d5274/w/2b92e783fb2130b757ac42ed/e/2b4647ceb09165a048ae269b?renderMode=0&uiState=6653a4eff200ea0f2fb90185">Onshape document</a></li>
         </ul>
     </div>
 </section>
