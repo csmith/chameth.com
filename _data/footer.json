@@ -1,8 +1,8 @@
 [
   {
-    "link": "/index.xml",
-    "title": "RSS feed",
-    "description": "Subscribe to new posts"
+    "link": "/contact/",
+    "title": "Get in touch",
+    "description": "Send me a message"
   },
   {
     "link": "https://github.com/csmith",
@@ -13,5 +13,15 @@
     "link": "https://lunarian.uk",
     "title": "Lunarian Limited",
     "description": "My software development company"
+  },
+  {
+    "link": "https://ionian.design",
+    "title": "Ionian Design",
+    "description": "Buy physical things I've made"
+  },
+  {
+    "link": "https://ko-fi.com/csmith",
+    "title": "Buy me a coffee",
+    "description": "Say thank you in the form of caffeine"
   }
 ]
