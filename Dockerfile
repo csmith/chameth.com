@@ -9,7 +9,7 @@ RUN set -eux; \
     rm -rf node_modules;
 
 # Step 2 - host with SWS
-FROM ghcr.io/static-web-server/static-web-server:2.31.1 AS sws
+FROM ghcr.io/static-web-server/static-web-server:2.32.1 AS sws
 COPY --from=node /tmp/site/_site /site
 ENV SERVER_CONFIG_FILE=/sws.toml
 ADD sws.toml /sws.toml
