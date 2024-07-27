@@ -171,7 +171,7 @@ someone else had made.[^7] About seven versions later, I have some boards which
 I think look and feel great. It's 3D printed in two halves, then has a laminated
 2D print sandwiched in the middle for all the markings and artwork.
 
-As well as the player mats, I 3D printed a some boxes, card holders, and
+As well as the player mats, I 3D printed some boxes, card holders, and
 so on, but have since replaced them with an insert from [Folded Space](https://www.foldedspace.com/).
 These are made of foam, and are perfectly sized to the game box and all the
 components in it. I could have eventually got to that point with 3D prints, but
