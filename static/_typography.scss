@@ -76,13 +76,13 @@ h6:before { content: '#####'; }
 
 p {
   margin: dimens.$medium-space 0;
+}
 
-  code {
-    background-color: colours.$background-alt;
-    border-radius: dimens.$border-radius;
-    padding: 0.1em 0.5em;
-    font-family: "Berkeley Mono", monospace;
-  }
+p code, li code {
+  background-color: colours.$background-alt;
+  border-radius: dimens.$border-radius;
+  padding: 0.1em 0.5em;
+  font-family: "Berkeley Mono", monospace;
 }
 
 a {
