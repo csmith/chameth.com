@@ -28,15 +28,15 @@ body > footer {
     grid-column: 1 / span 2;
     text-align: center;
 
+    font-family: "Berkeley Mono", monospace;
+    font-size: typography.$tiny;
+
     @media (max-width: 500px) {
       text-align: left;
       p {
         margin-bottom: dimens.$medium-space;
       }
     }
-
-    font-family: "Berkeley Mono", monospace;
-    font-size: typography.$tiny;
   }
 
   @media (max-width: 1000px) {

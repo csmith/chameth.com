@@ -40,6 +40,14 @@
 .tcg-outer {
   float: right;
 
+  display: inline-block;
+  border: 16px solid colours.$accent;
+  border-radius: dimens.$border-radius;
+  box-shadow: 20px 20px 5px black;
+  transform: rotate(4deg) translateY(40px);
+  margin-left: dimens.$medium-space;
+  margin-bottom: dimens.$medium-space;
+
   @media (max-width: 1200px) {
     float: none;
     margin-bottom: dimens.$large-space;
@@ -48,14 +56,6 @@
   @media (max-width: 800px) {
     transform: rotate(0deg);
   }
-
-  display: inline-block;
-  border: 16px solid colours.$accent;
-  border-radius: dimens.$border-radius;
-  box-shadow: 20px 20px 5px black;
-  transform: rotate(4deg) translateY(40px);
-  margin-left: dimens.$medium-space;
-  margin-bottom: dimens.$medium-space;
 
   @media (max-width: 500px) {
     margin-left: 0;
