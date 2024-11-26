@@ -10,6 +10,12 @@
     <link rel="alternate" type="application/atom+xml" title="RSS feed" href="/index.xml">
     <link rel="canonical" href="{{ page.url | absoluteUrl('https://chameth.com/') }}"/>
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    {% if opengraph %}
+    <meta property="og:title" content="{{ opengraph.title }}" />
+    <meta property="og:type" content="{{ opengraph.type }}" />
+    <meta property="og:url" content="{{ opengraph.url | absoluteUrl('https://chameth.com/') }}" />
+    <meta property="og:image" content="{{ opengraph.image | absoluteUrl('https://chameth.com/') }}" />
+    {% endif %}
 </head>
 <body>
 {% include '_header.njk' %}
