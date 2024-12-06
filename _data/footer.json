@@ -5,11 +5,6 @@
     "description": "Send me a message"
   },
   {
-    "link": "https://github.com/csmith",
-    "title": "@csmith on GitHub",
-    "description": "My open-source projects"
-  },
-  {
     "link": "https://lunarian.uk",
     "title": "Lunarian Limited",
     "description": "My software development company"
@@ -18,10 +13,5 @@
     "link": "https://ionian.design",
     "title": "Ionian Design",
     "description": "Buy physical things I've made"
-  },
-  {
-    "link": "https://ko-fi.com/csmith",
-    "title": "Buy me a coffee",
-    "description": "Say thank you in the form of caffeine"
   }
 ]

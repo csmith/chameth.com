@@ -61,4 +61,30 @@ body > footer {
   li {
     margin-bottom: dimens.$small-space;
   }
+
+  ul.icons {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    gap: 25px;
+
+    a {
+      background: none;
+
+      &::after {
+        display: none;
+      }
+    }
+
+    svg {
+      width: 48px;
+      height: 48px;
+      fill: colours.$text;
+      transition: fill 150ms ease-out;
+
+      &:hover {
+        fill: colours.$link;
+      }
+    }
+  }
 }
