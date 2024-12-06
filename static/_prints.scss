@@ -1,4 +1,4 @@
-@import "_colours";
+@use "_colours";
 
 .print-list {
   display: flex;
@@ -35,7 +35,7 @@ section.print {
     justify-self: end;
 
     &:first-child {
-      border: 1px solid $accent;
+      border: 1px solid colours.$accent;
       border-radius: 5px;
       justify-self: start;
     }
@@ -64,7 +64,7 @@ section.print {
 
       &[href*=".stl"]::after, &[href*=".step"]::after {
         content: '↓';
-        color: $accent;
+        color: colours.$accent;
       }
     }
   }
