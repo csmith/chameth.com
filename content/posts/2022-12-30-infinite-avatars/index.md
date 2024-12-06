@@ -202,6 +202,12 @@ visit you might get a unique, never-been-seen before version of me. The code for
 generating and serving is [available on GitHub](https://github.com/csmith/avatargen)
 if you're interested or want to replicate this for yourself.
 
+{% update "2024-12-06" %}
+After almost two years, the novelty of infinite avatars has worn off and I've
+retired the avatar generator on [chameth.com](https://chameth.com/), going back to a plain old
+static avatar.
+{% endupdate %}
+
 To finish off, I ran off a batch of 200 avatars and have selected the most
 interesting ones:
 

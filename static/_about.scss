@@ -41,7 +41,7 @@
   float: right;
 
   display: inline-block;
-  border: 16px solid colours.$accent;
+  border: 12px solid colours.$accent;
   border-radius: dimens.$border-radius;
   box-shadow: 20px 20px 5px black;
   transform: rotate(4deg) translateY(40px);
@@ -63,8 +63,30 @@
     box-shadow: 10px 10px 5px black;
   }
 
+  &::before {
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    right: -12px;
+    bottom: -12px;
+    content: ' ';
+    border-radius: dimens.$border-radius;
+
+    transform: translateZ(1.41px);
+    overflow: hidden;
+
+    background-image: radial-gradient(
+                    farthest-corner circle at 300px 400px,
+                    hsla(0, 0%, 100%, 0.8) 10%,
+                    hsla(0, 0%, 100%, 0.65) 20%,
+                    hsla(0, 0%, 0%, 0.5) 90%
+    );
+
+    mix-blend-mode: overlay;
+  }
+
   .tcg-inner {
-    width: 360px;
+    width: 280px;
     margin: -4px;
     background-color: colours.$background-alt;
     border-radius: dimens.$border-radius;
@@ -80,37 +102,15 @@
       width: 280px;
     }
 
-    &::before {
-      position: absolute;
-      top: -4px;
-      left: -4px;
-      right: -4px;
-      bottom: -4px;
-      content: ' ';
-      border-radius: dimens.$border-radius;
-
-      transform: translateZ(1.41px);
-      overflow: hidden;
-
-      background-image: radial-gradient(
-                      farthest-corner circle at 300px 400px,
-                      hsla(0, 0%, 100%, 0.8) 10%,
-                      hsla(0, 0%, 100%, 0.65) 20%,
-                      hsla(0, 0%, 0%, 0.5) 90%
-      );
-
-      mix-blend-mode: overlay;
-    }
-
     img {
       width: 100%;
-      border-bottom: 3px solid colours.$accent;
+      border-bottom: 6px solid colours.$accent;
     }
 
     .tcg-properties {
       width: 100%;
       display: grid;
-      grid-template-columns: auto 1fr auto auto;
+      grid-template-columns: auto 1fr;
       padding: 10px;
       grid-column-gap: dimens.$small-space;
       align-items: baseline;
@@ -125,19 +125,16 @@
       margin: 0 10px;
       // Safari doesn't like to calculate the width properly by itself...?
       max-width: calc(100% - 20px);
+      border-bottom: 0;
 
       td {
         border: 0;
         padding: 4px;
+        font-size: typography.$tiny;
 
         &:first-child {
           // Types
           text-align: center;
-        }
-
-        &:last-child {
-          // Damage
-          font-size: typography.$regular;
         }
       }
 
@@ -153,11 +150,13 @@
 
     footer {
       width: 100%;
-      padding: 10px 10px 5px 10px;
-      font-size: typography.$small;
+      border-top: 2px solid colours.$accent;
+      margin-top: 10px;
+      padding: 5px 10px 5px 10px;
+      font-size: typography.$tiny;
       font-style: italic;
       display: flex;
-      justify-content: space-between;
+      justify-content: right;
     }
   }
 }
