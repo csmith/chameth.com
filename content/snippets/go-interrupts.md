@@ -7,8 +7,7 @@ Make a channel, and have it notified when a signal occurred. The main thread can
 
 ```go
 c := make(chan os.Signal, 1)
-signal.Notify(c, os.Interrupt)
-signal.Notify(c, syscall.SIGTERM)
+signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
 
 // Wait for a signal
 <-c
