@@ -47,4 +47,9 @@ figure {
       margin: 0;
     }
   }
+
+  &.full {
+    margin-top: dimens.$medium-space;
+    margin-bottom: dimens.$medium-space;
+  }
 }

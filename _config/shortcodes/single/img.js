@@ -17,11 +17,13 @@ export default function (caption) {
         '        <source srcset="{{ baseName }}.webp" type="image/webp">' +
         '        <img src="{{ src }}" alt="{{ name }}" loading="lazy" width="{{ size.width }}" height="{{ size.height }}">' +
         '    </picture>' +
+        '    <figcaption>{{ caption }}</figcaption>' +
         '</figure>',
         {
             baseName,
             src: resource.src,
             name: resource.name,
+            caption: resource.title ?? resource.name,
             size,
         },
     );
