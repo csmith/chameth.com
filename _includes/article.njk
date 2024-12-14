@@ -1,13 +1,17 @@
 ---
 layout: page.njk
 ---
-<article>
+<article class="h-entry">
     <header>
-        <h2>{{ title }}</h2>
-        <p class="date">Published on {{ date | dateFormat }}</p>
+        <h2 class="p-name">{{ title }}</h2>
+        <p class="date">Published on
+            <time class="dt-published" datetime="{{ date | isoDateFormat }}">{{ date | dateFormat }}</time>
+        </p>
     </header>
 
-    {{ content | safe }}
+    <div class="e-content">
+        {{ content | safe }}
+    </div>
 
     <hr>
 
@@ -15,4 +19,12 @@ layout: page.njk
         Have feedback? Spotted a mistake? Drop me <a href="/contact/">an e-mail</a>
         or a <a href="https://bsky.app/intent/compose?text=@chameth.com">message on BlueSky</a>.
     </p>
+
+    <section hidden>
+        <div class="p-author">
+            {% include '_hcard.njk' %}
+        </div>
+
+        <a class="p-url" href="{{ page.url | absoluteUrl('https://chameth.com/') }}"></a>
+    </section>
 </article>
