@@ -21,9 +21,8 @@ layout: page.njk
     </p>
 
     <section hidden>
-        <div class="p-author">
-            {% include '_hcard.njk' %}
-        </div>
+        {% set hcardTags = "p-author" %}
+        {% include '_hcard.njk' %}
 
         <a class="p-url" href="{{ page.url | absoluteUrl('https://chameth.com/') }}"></a>
     </section>
