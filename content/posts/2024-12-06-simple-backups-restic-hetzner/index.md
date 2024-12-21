@@ -63,7 +63,7 @@ as is traffic within the `eu-central` region (where all my servers are). That
 quota is only awarded when you pay the "base price", though, which is €4.99 a
 month. So basically it's €5 a month for 1TB of storage and enough egress to
 fully restore every single byte. That's better value than any VPS I can find,
-much cheaper tham Amazon S3, and about the same as
+much cheaper than Amazon S3, and about the same as
 [Backblaze B2](https://www.backblaze.com/cloud-storage).
 
 ### Getting them to work together
