@@ -1,12 +1,11 @@
 @use "_colours";
-@use "_dimens";
 @use "_typography";
 
 .projects {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-gap: dimens.$large-space;
-  margin-top: dimens.$large-space;
+  grid-gap: var(--large-space);
+  margin-top: var(--large-space);
 
   .project {
     display: flex;
@@ -35,7 +34,7 @@
       margin: 0;
       padding: 0;
       display: flex;
-      gap: dimens.$small-space;
+      gap: var(--small-space);
       flex-direction: column;
 
       a {

@@ -1,5 +1,4 @@
 @use "_colours";
-@use "_dimens";
 @use "_typography";
 
 blockquote {
@@ -10,11 +9,11 @@ blockquote {
 
 aside.update {
   background-color: colours.$background-alt;
-  border-radius: dimens.$border-radius;
-  padding: dimens.$medium-space;
+  border-radius: var(--border-radius);
+  padding: var(--medium-space);
   border: 3px solid colours.$accent;
   box-shadow: 0 0 20px colours.$accent;
-  margin: dimens.$medium-space 0;
+  margin: var(--medium-space) 0;
 
   ins {
     text-decoration: none;
@@ -30,10 +29,10 @@ aside.update {
     color: colours.$text-alt;
     font-size: typography.$tiny;
     margin-top: 0;
-    margin-bottom: dimens.$small-space;
+    margin-bottom: var(--small-space);
 
     & + p {
-      margin-top: dimens.$small-space;
+      margin-top: var(--small-space);
     }
   }
 

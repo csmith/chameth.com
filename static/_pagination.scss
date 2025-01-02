@@ -1,18 +1,17 @@
 @use "_colours";
-@use "_dimens";
 
 nav ol {
   display: flex;
   list-style-type: none;
   justify-content: center;
-  gap: dimens.$medium-space;
+  gap: var(--medium-space);
   padding: 0;
-  margin: dimens.$medium-space 0 0 0;
+  margin: var(--medium-space) 0 0 0;
 
   @media (max-width: 800px) {
     flex-direction: column;
     align-items: flex-start;
-    gap: dimens.$small-space;
+    gap: var(--small-space);
   }
 
   a[aria-current] {
@@ -21,7 +20,7 @@ nav ol {
 }
 
 nav.readmore {
-  margin-top: dimens.$small-space;
+  margin-top: var(--small-space);
 
   a {
     font-family: "Berkeley Mono", monospace;
@@ -31,6 +30,6 @@ nav.readmore {
 
 .excerpt {
   border-bottom: 2px solid colours.$accent;
-  margin-bottom: dimens.$large-space;
-  padding-bottom: dimens.$large-space;
+  margin-bottom: var(--large-space);
+  padding-bottom: var(--large-space);
 }

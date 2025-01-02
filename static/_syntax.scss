@@ -6,7 +6,6 @@
  */
 
 @use "_colours";
-@use "_dimens";
 @use "_typography";
 
 code[class*="language-"],
@@ -33,10 +32,10 @@ pre[class*="language-"] {
 
 /* Code blocks */
 pre[class*="language-"] {
-    padding: dimens.$medium-space;
-    margin: dimens.$medium-space 0;
+    padding: var(--medium-space);
+    margin: var(--medium-space) 0;
     overflow: auto;
-    border-radius: dimens.$border-radius;
+    border-radius: var(--border-radius);
 }
 
 :not(pre) > code[class*="language-"],

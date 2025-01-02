@@ -1,5 +1,4 @@
 @use "_colours";
-@use "_dimens";
 
 $tiny: var(--font-size-tiny);
 $small: var(--font-size-small);
@@ -57,7 +56,7 @@ h2, h3, h4, h5, h6 {
   font-family: "Berkeley Mono", monospace;
   font-size: $regular;
   color: colours.$text-highlight;
-  margin: dimens.$medium-space 0;
+  margin: var(--medium-space) 0;
   line-height: 1;
 
   &:before {
@@ -75,12 +74,12 @@ h5:before { content: '####'; }
 h6:before { content: '#####'; }
 
 p {
-  margin: dimens.$medium-space 0;
+  margin: var(--medium-space) 0;
 }
 
 p code, li code {
   background-color: colours.$background-alt;
-  border-radius: dimens.$border-radius;
+  border-radius: var(--border-radius);
   padding: 0.1em 0.5em;
   font-family: "Berkeley Mono", monospace;
 }
@@ -115,8 +114,8 @@ a {
   font-family: "Berkeley Mono", monospace;
   background-color: colours.$background-alt;
   padding: 1em;
-  margin: dimens.$medium-space 0;
-  border-radius: dimens.$border-radius;
+  margin: var(--medium-space) 0;
+  border-radius: var(--border-radius);
 }
 
 .ascii-art {

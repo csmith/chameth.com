@@ -1,5 +1,4 @@
 @use "_colours";
-@use "_dimens";
 @use "_typography";
 
 .about {
@@ -12,8 +11,8 @@
 
   &>:last-child {
     flex: 100%;
-    margin-right: dimens.$small-space;
-    padding-top: dimens.$small-space;
+    margin-right: var(--small-space);
+    padding-top: var(--small-space);
 
     @media (max-width: 500px) {
       margin-right: 0;
@@ -32,7 +31,7 @@
     .interests {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      grid-row-gap: dimens.$small-space;
+      grid-row-gap: var(--small-space);
     }
   }
 }
@@ -42,15 +41,15 @@
 
   display: inline-block;
   border: 12px solid colours.$accent;
-  border-radius: dimens.$border-radius;
+  border-radius: var(--border-radius);
   box-shadow: 20px 20px 5px black;
   transform: rotate(4deg) translateY(40px);
-  margin-left: dimens.$medium-space;
-  margin-bottom: dimens.$medium-space;
+  margin-left: var(--medium-space);
+  margin-bottom: var(--medium-space);
 
   @media (max-width: 1200px) {
     float: none;
-    margin-bottom: dimens.$large-space;
+    margin-bottom: var(--large-space);
   }
 
   @media (max-width: 800px) {
@@ -70,7 +69,7 @@
     right: -12px;
     bottom: -12px;
     content: ' ';
-    border-radius: dimens.$border-radius;
+    border-radius: var(--border-radius);
 
     transform: translateZ(1.41px);
     overflow: hidden;
@@ -89,7 +88,7 @@
     width: 280px;
     margin: -4px;
     background-color: colours.$background-alt;
-    border-radius: dimens.$border-radius;
+    border-radius: var(--border-radius);
     overflow: hidden;
 
     display: flex;
@@ -112,7 +111,7 @@
       display: grid;
       grid-template-columns: auto 1fr;
       padding: 10px;
-      grid-column-gap: dimens.$small-space;
+      grid-column-gap: var(--small-space);
       align-items: baseline;
 
       dt {

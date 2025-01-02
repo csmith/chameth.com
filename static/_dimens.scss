@@ -1,13 +1,6 @@
-$border-radius: 10px;
-
-$small-space: var(--small-space);
-$medium-space: var(--medium-space);
-$large-space: var(--large-space);
-
-$content-width: var(--content-width);
-$content-margin: var(--content-margin);
-
 :root {
+  --border-radius: 10px;
+
   --small-space: 0.5em;
   --medium-space: 1.5em;
   --large-space: 5em;

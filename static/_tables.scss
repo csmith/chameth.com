@@ -1,12 +1,11 @@
 @use "_colours";
-@use "_dimens";
 @use "_typography";
 
 .table-holder {
   width: 100%;
   max-width: 100%;
   overflow-x: auto;
-  margin: dimens.$medium-space 0;
+  margin: var(--medium-space) 0;
 }
 
 table {
@@ -15,7 +14,7 @@ table {
 }
 
 td {
-  padding: dimens.$small-space;
+  padding: var(--small-space);
   font-size: typography.$small;
 }
 

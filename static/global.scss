@@ -29,7 +29,7 @@ body {
 }
 
 main {
-  width: dimens.$content-width;
+  width: var(--content-width);
   margin: 0 auto;
   flex-grow: 1;
 }
@@ -37,7 +37,7 @@ main {
 hr {
   border: 0;
   border-top: 5px solid colours.$accent;
-  margin: dimens.$medium-space 0;
+  margin: var(--medium-space) 0;
 }
 
 ol {

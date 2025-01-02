@@ -1,10 +1,9 @@
 @use "_colours";
-@use "_dimens";
 @use "_typography";
 
 body > footer {
-  margin-top: dimens.$large-space;
-  padding: dimens.$small-space dimens.$content-margin dimens.$small-space dimens.$content-margin;
+  margin-top: var(--large-space);
+  padding: var(--small-space) var(--content-margin) var(--small-space) var(--content-margin);
   background-color: colours.$background-alt;
   border-top: 5px dotted colours.$accent;
 
@@ -24,7 +23,7 @@ body > footer {
 
   // Licenses
   section:nth-child(3) {
-    margin-top: dimens.$medium-space;
+    margin-top: var(--medium-space);
     grid-column: 1 / span 2;
     text-align: center;
 
@@ -34,7 +33,7 @@ body > footer {
     @media (max-width: 500px) {
       text-align: left;
       p {
-        margin-bottom: dimens.$medium-space;
+        margin-bottom: var(--medium-space);
       }
     }
   }
@@ -59,7 +58,7 @@ body > footer {
   }
 
   li {
-    margin-bottom: dimens.$small-space;
+    margin-bottom: var(--small-space);
   }
 
   ul.icons {

@@ -1,5 +1,4 @@
 @use "_colours";
-@use "_dimens";
 @use "_typography";
 
 article h2 {
@@ -7,7 +6,7 @@ article h2 {
 }
 
 .date {
-  margin: dimens.$small-space 0 dimens.$medium-space 0;
+  margin: var(--small-space) 0 var(--medium-space) 0;
   color: colours.$text-alt;
   padding-top: 0;
   font-size: typography.$tiny;
