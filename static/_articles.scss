@@ -1,4 +1,3 @@
-@use "_colours";
 @use "_typography";
 
 article h2 {
@@ -7,7 +6,7 @@ article h2 {
 
 .date {
   margin: var(--small-space) 0 var(--medium-space) 0;
-  color: colours.$text-alt;
+  color: var(--text-alt-colour);
   padding-top: 0;
   font-size: typography.$tiny;
   font-family: "Berkeley Mono", monospace;

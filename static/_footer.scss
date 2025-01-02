@@ -1,11 +1,10 @@
-@use "_colours";
 @use "_typography";
 
 body > footer {
   margin-top: var(--large-space);
   padding: var(--small-space) var(--content-margin) var(--small-space) var(--content-margin);
-  background-color: colours.$background-alt;
-  border-top: 5px dotted colours.$accent;
+  background-color: var(--background-alt-colour);
+  border-top: 5px dotted var(--accent-colour);
 
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -13,7 +12,7 @@ body > footer {
   li p {
     font-family: "Berkeley Mono", monospace;
     font-size: typography.$small;
-    color: colours.$text-alt;
+    color: var(--text-alt-colour);
   }
 
   // Other links
@@ -78,11 +77,11 @@ body > footer {
     svg {
       width: 48px;
       height: 48px;
-      fill: colours.$text;
+      fill: var(--text-colour);
       transition: fill 150ms ease-out;
 
       &:hover {
-        fill: colours.$link;
+        fill: var(--link-colour);
       }
     }
   }

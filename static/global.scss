@@ -19,8 +19,8 @@
 @use "_typography";
 
 body {
-  background-color: colours.$background;
-  color: colours.$text;
+  background-color: var(--background-colour);
+  color: var(--text-colour);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -36,7 +36,7 @@ main {
 
 hr {
   border: 0;
-  border-top: 5px solid colours.$accent;
+  border-top: 5px solid var(--accent-colour);
   margin: var(--medium-space) 0;
 }
 

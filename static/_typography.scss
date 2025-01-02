@@ -1,5 +1,3 @@
-@use "_colours";
-
 $tiny: var(--font-size-tiny);
 $small: var(--font-size-small);
 $regular: var(--font-size-regular);
@@ -55,14 +53,14 @@ body {
 h2, h3, h4, h5, h6 {
   font-family: "Berkeley Mono", monospace;
   font-size: $regular;
-  color: colours.$text-highlight;
+  color: var(--text-highlight-colour);
   margin: var(--medium-space) 0;
   line-height: 1;
 
   &:before {
     font-family: "Berkeley Mono", monospace;
     font-size: $regular;
-    color: colours.$accent;
+    color: var(--accent-colour);
     margin-right: 0.5em;
   }
 }
@@ -78,20 +76,20 @@ p {
 }
 
 p code, li code {
-  background-color: colours.$background-alt;
+  background-color: var(--background-alt-colour);
   border-radius: var(--border-radius);
   padding: 0.1em 0.5em;
   font-family: "Berkeley Mono", monospace;
 }
 
 a {
-  color: colours.$text-highlight;
+  color: var(--text-highlight-colour);
   text-decoration: underline;
-  text-decoration-color: colours.$accent;
+  text-decoration-color: var(--accent-colour);
   text-decoration-thickness: 4px;
   text-decoration-skip-ink: none;
 
-  background: linear-gradient(to bottom, transparent 50%, colours.$accent 50%) top;
+  background: linear-gradient(to bottom, transparent 50%, var(--accent-colour) 50%) top;
   background-size: 100% 200%;
   line-height: 1;
 
@@ -106,13 +104,13 @@ a {
   &[href*="://"]:not([href*="://chameth.com"])::after {
     content: '↗';
     font-family: "Berkeley Mono", monospace;
-    color: colours.$accent;
+    color: var(--accent-colour);
   }
 }
 
 .poem {
   font-family: "Berkeley Mono", monospace;
-  background-color: colours.$background-alt;
+  background-color: var(--background-alt-colour);
   padding: 1em;
   margin: var(--medium-space) 0;
   border-radius: var(--border-radius);
@@ -121,14 +119,14 @@ a {
 .ascii-art {
   font-family: "Berkeley Mono", monospace;
   font-size: $tiny;
-  color: colours.$text-alt;
+  color: var(--text-alt-colour);
 }
 
 em {
   font-style: italic;
 
   &::before, &::after {
-    color: colours.$accent;
+    color: var(--accent-colour);
     font-size: $tiny;
     content: '_';
   }

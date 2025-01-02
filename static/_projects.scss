@@ -1,4 +1,3 @@
-@use "_colours";
 @use "_typography";
 
 .projects {
@@ -20,7 +19,7 @@
       margin-top: 0;
       font-family: "Berkeley Mono", monospace;
       text-transform: uppercase;
-      color: colours.$text-alt;
+      color: var(--text-alt-colour);
       font-size: typography.$tiny;
     }
 

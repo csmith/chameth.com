@@ -1,4 +1,3 @@
-@use "_colours";
 @use "_typography";
 
 figure {
@@ -6,13 +5,13 @@ figure {
   padding: var(--medium-space);
   border-radius: var(--border-radius);
   text-align: center;
-  background-color: colours.$background-alt;
+  background-color: var(--background-alt-colour);
   max-width: 100%;
   font-family: "Berkeley Mono", monospace;
   font-size: typography.$tiny;
   line-height: 1;
   text-transform: uppercase;
-  color: colours.$text-alt;
+  color: var(--text-alt-colour);
 
   img, video {
     max-width: 100%;

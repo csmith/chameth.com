@@ -5,7 +5,6 @@
  * Ported for PrismJS by Albert Vallverdu [@byverdu]
  */
 
-@use "_colours";
 @use "_typography";
 
 code[class*="language-"],
@@ -40,7 +39,7 @@ pre[class*="language-"] {
 
 :not(pre) > code[class*="language-"],
 pre[class*="language-"] {
-    background: colours.$background-alt;
+    background: var(--background-alt-colour);
 }
 
 /* Inline code */

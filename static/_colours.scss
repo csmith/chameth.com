@@ -1,7 +1,9 @@
-$accent: #3c658d;
-$background: #15151A;
-$background-alt: #202026;
-$text: #d0d0dA;
-$text-highlight: #efefff;
-$text-alt: #90909A;
-$link: #7099c4;
+:root {
+  --accent-colour: #3c658d;
+  --background-colour: #15151A;
+  --background-alt-colour: #202026;
+  --text-colour: #d0d0dA;
+  --text-highlight-colour: #efefff;
+  --text-alt-colour: #90909A;
+  --link-colour: #7099c4;
+}
