@@ -51,7 +51,7 @@ ul {
 }
 
 .footnote-ref {
-  font-size: typography.$tiny;
+  font-size: var(--font-size-tiny);
   vertical-align: super;
   padding: 0.2em;
   a {

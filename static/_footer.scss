@@ -11,7 +11,7 @@ body > footer {
 
   li p {
     font-family: "Berkeley Mono", monospace;
-    font-size: typography.$small;
+    font-size: var(--font-size-small);
     color: var(--text-alt-colour);
   }
 
@@ -27,7 +27,7 @@ body > footer {
     text-align: center;
 
     font-family: "Berkeley Mono", monospace;
-    font-size: typography.$tiny;
+    font-size: var(--font-size-tiny);
 
     @media (max-width: 500px) {
       text-align: left;
@@ -47,7 +47,7 @@ body > footer {
   }
 
   h2 {
-    font-size: typography.$large;
+    font-size: var(--font-size-large);
   }
 
   ul, a, p {

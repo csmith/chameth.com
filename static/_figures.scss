@@ -1,5 +1,3 @@
-@use "_typography";
-
 figure {
   margin: var(--medium-space) var(--medium-space) var(--small-space) var(--medium-space);
   padding: var(--medium-space);
@@ -8,7 +6,7 @@ figure {
   background-color: var(--background-alt-colour);
   max-width: 100%;
   font-family: "Berkeley Mono", monospace;
-  font-size: typography.$tiny;
+  font-size: var(--font-size-tiny);
   line-height: 1;
   text-transform: uppercase;
   color: var(--text-alt-colour);

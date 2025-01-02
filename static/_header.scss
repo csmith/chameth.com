@@ -1,5 +1,3 @@
-@use "_typography";
-
 body > header {
   padding: var(--small-space) 0;
   width: var(--content-width);
@@ -28,14 +26,14 @@ body > header {
     text-transform: uppercase;
 
     .prelude {
-      font-size: typography.$small;
+      font-size: var(--font-size-small);
       line-height: 1;
       color: var(--text-alt-colour);
       text-decoration: none;
     }
 
     .title {
-      font-size: typography.$giant;
+      font-size: var(--font-size-giant);
       line-height: 1;
     }
 

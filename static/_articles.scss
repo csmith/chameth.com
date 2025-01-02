@@ -1,5 +1,3 @@
-@use "_typography";
-
 article h2 {
   margin-bottom: 0;
 }
@@ -8,7 +6,7 @@ article h2 {
   margin: var(--small-space) 0 var(--medium-space) 0;
   color: var(--text-alt-colour);
   padding-top: 0;
-  font-size: typography.$tiny;
+  font-size: var(--font-size-tiny);
   font-family: "Berkeley Mono", monospace;
   text-transform: uppercase;
 

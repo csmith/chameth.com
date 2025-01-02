@@ -1,5 +1,3 @@
-@use "_typography";
-
 .projects {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -20,7 +18,7 @@
       font-family: "Berkeley Mono", monospace;
       text-transform: uppercase;
       color: var(--text-alt-colour);
-      font-size: typography.$tiny;
+      font-size: var(--font-size-tiny);
     }
 
     p.description {
@@ -39,7 +37,7 @@
       a {
         font-family: "Berkeley Mono", monospace;
         text-transform: uppercase;
-        font-size: typography.$small;
+        font-size: var(--font-size-small);
       }
     }
   }

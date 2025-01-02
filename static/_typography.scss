@@ -1,9 +1,3 @@
-$tiny: var(--font-size-tiny);
-$small: var(--font-size-small);
-$regular: var(--font-size-regular);
-$large: var(--font-size-large);
-$giant: var(--font-size-giant);
-
 :root {
   --font-size-tiny: 11pt;
   --font-size-small: 13pt;
@@ -45,21 +39,21 @@ $giant: var(--font-size-giant);
 }
 
 body {
-  font-size: $regular;
+  font-size: var(--font-size-regular);
   font-family: 'Bitter', serif;
   line-height: 1.5;
 }
 
 h2, h3, h4, h5, h6 {
   font-family: "Berkeley Mono", monospace;
-  font-size: $regular;
+  font-size: var(--font-size-regular);
   color: var(--text-highlight-colour);
   margin: var(--medium-space) 0;
   line-height: 1;
 
   &:before {
     font-family: "Berkeley Mono", monospace;
-    font-size: $regular;
+    font-size: var(--font-size-regular);
     color: var(--accent-colour);
     margin-right: 0.5em;
   }
@@ -118,7 +112,7 @@ a {
 
 .ascii-art {
   font-family: "Berkeley Mono", monospace;
-  font-size: $tiny;
+  font-size: var(--font-size-tiny);
   color: var(--text-alt-colour);
 }
 
@@ -127,7 +121,7 @@ em {
 
   &::before, &::after {
     color: var(--accent-colour);
-    font-size: $tiny;
+    font-size: var(--font-size-tiny);
     content: '_';
   }
 }

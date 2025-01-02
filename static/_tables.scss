@@ -1,5 +1,3 @@
-@use "_typography";
-
 .table-holder {
   width: 100%;
   max-width: 100%;
@@ -14,7 +12,7 @@ table {
 
 td {
   padding: var(--small-space);
-  font-size: typography.$small;
+  font-size: var(--font-size-small);
 }
 
 th {
@@ -25,7 +23,7 @@ th {
   color: var(--text-alt-colour);
   text-transform: uppercase;
   font-family: "Berkeley Mono", monospace;
-  font-size: typography.$tiny;
+  font-size: var(--font-size-tiny);
 }
 
 tr:nth-child(2n) {

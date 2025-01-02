@@ -1,5 +1,3 @@
-@use "_typography";
-
 .snippets {
   columns: 400px 2;
   column-fill: balance;
@@ -17,7 +15,7 @@
 
   a {
     font-family: "Berkeley Mono", monospace;
-    font-size: typography.$small;
+    font-size: var(--font-size-small);
     text-decoration-thickness: 1px;
   }
 }

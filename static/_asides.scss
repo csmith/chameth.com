@@ -1,9 +1,7 @@
-@use "_typography";
-
 blockquote {
   border-left: 10px solid var(--accent-colour);
   padding-left: 15px;
-  font-size: typography.$large;
+  font-size: var(--font-size-large);
 }
 
 aside.update {
@@ -26,7 +24,7 @@ aside.update {
 
     text-transform: uppercase;
     color: var(--text-alt-colour);
-    font-size: typography.$tiny;
+    font-size: var(--font-size-tiny);
     margin-top: 0;
     margin-bottom: var(--small-space);
 
