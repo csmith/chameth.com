@@ -1,5 +1,5 @@
 # Step 1 - add content and build with 11ty
-FROM node:23.6.1 AS node
+FROM node:23.7.0 AS node
 ADD . /tmp/site
 ENV LANG=C.UTF-8
 RUN set -eux; \
