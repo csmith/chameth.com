@@ -92,23 +92,39 @@ correctly:
 ```shell
 #!/bin/sh
 
+# The password restic will use to encrypt your data. You should generate
+# something nice and secure.
 export RESTIC_PASSWORD=repo-password
+
+# The path to the repository where restic will save the backup. In our case
+# this takes the form `s3:<endpoint>/<bucket>`. Your endpoint might be different
+# to mine depending on the region your bucket is in.
 export RESTIC_REPOSITORY=s3:hel1.your-objectstorage.com/bucket-name
+
+# The access and secret key generated in the 'S3 credentials' section of the
+# Hetzner Cloud Console
 export AWS_ACCESS_KEY_ID=hetzner-access-key-id
 export AWS_SECRET_ACCESS_KEY=hetzner-access-key
 
+# Pass any arguments on to the restic command, along with the magic
+# `s3.bucket-lookup` option we need to resolve the S3 URL properly.
 exec restic -o s3.bucket-lookup=dns "$@"
 ```
 
 Then in the backup script I just alias `restic` to use the script:
 
 ```shell
-#!/bin/sh
+#!/bin/bash
 
 set -eu
 
+# This means any time we use `restic` below, we'll actually execute our special
+# script which supplies all the env vars and arguments needed to find the
+# repository. Make sure the path matches where you saved the script!
 alias restic='~/.bin/restic'
 
+# Actually do the backup. Each directory in the list below will be backed up
+# separately.
 dirs=(
 	"/some/path/to/backup/"
 	"/some/other/path/"
@@ -119,6 +135,8 @@ do
 	(cd $i && restic --verbose backup .)
 done
 
+# Prune our snapshots. You can tweak the numbers here. Run with `--dry-run` to
+# see what effect any changes would have before actually committing to them. 
 restic forget --keep-daily 7 --keep-weekly 10 --keep-monthly 24 --keep-yearly 10
 ```
 
@@ -131,6 +149,36 @@ If it wasn't for the S3 URL issues, the whole thing would've probably taken
 me about half an hour. That's including setting up the object storage,
 installing Restic, and so on. It's painfully easy. Why didn't I do this three
 years ago?!
+
+### Addendum: a step-by-step guide
+
+{% update "2025-03-01" %}
+This section was added after the original article was published, following some
+helpful feedback. Let me know if you have any problem with these instructions!
+{% endupdate %}
+
+If you want to do this yourself, here's a quick step-by-step guide:
+
+1. Log in to the [Hetzner Cloud Console](https://console.hetzner.cloud), and
+   create a project.
+2. On the "Object Storage" tab, create a new bucket. Note the name and the
+   endpoint.
+3. On the "Security" tab, go to "S3 Credentials" and generate new credentials.
+   Note down the access key and the secret key.
+4. Copy the first shell script above, fill in the password (you can pick!),
+   endpoint, bucket name, access key and secret key.
+5. Run the script with the `init` argument (e.g. `~/.bin/restic init`). This
+   will create a new repository, and only needs to be done once even if you
+   backup multiple machines.
+6. Copy the second shell script above, making sure the `restic` alias points
+   at the script you saved in step 4. Change the list of directories to
+   whatever you want to backup.
+7. Schedule the script to be run automatically, using crontab or systemd timers
+   or however you prefer.
+
+To check everything is working, you can use the `snapshots` subcommand to see
+a list of saved snapshots. You might also want to try to restore a snapshot
+using the `restore` subcommand.
 
 [^1]: I'm not trying to be a language snob, but given the choice between two
 otherwise equal projects one in Go and one in Python, I'll take the Go one.
