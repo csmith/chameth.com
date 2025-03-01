@@ -37,8 +37,6 @@ wouldn't miss often if they were kept in the backpack. Building on these I've
 created a little travel toolkit that contains everything I might want (and
 more) while away.
 
-<!--more-->
-
 ## The base
 
 The biggest challenge I had before was finding a screwdriver set. I have an
@@ -51,6 +49,8 @@ more chunky work. I finally found one in the form of a
 features over the normal Tool-Check PLUS are a fancy fabric case and a 152mm
 bit extender; but it also comes with a much different set of bits, which is
 why I picked it up.
+
+<!--more-->
 
 Here's a comparison
 
