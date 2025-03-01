@@ -2,22 +2,32 @@
   "Books": [
     "Snow Crash",
     "Dune",
-    "A Memory Called Empire"
+    "A Memory Called Empire",
+    "Dungeon Crawler Carl"
   ],
   "Programming": [
     "Go",
     "Kotlin",
     "Android"
   ],
-  "Video games": [
-    "Final Fantasy XIV",
-    "Factorio"
-  ],
   "Board games": [
     "Cartographers",
     "Obsession",
     "Terraforming Mars",
     "Iberia",
-    "Fluxx"
+    "Fluxx",
+    "Lovecraft Letter"
+  ],
+  "Films": [
+    "Easy A",
+    "Hackers",
+    "The Matrix",
+    "Everything Everywhere All at Once",
+    "Hamilton",
+    "Waitress"
+  ],
+  "Video games": [
+    "Final Fantasy XIV",
+    "Factorio"
   ]
 }
