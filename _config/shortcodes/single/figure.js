@@ -1,12 +1,12 @@
-import sizeOf from 'image-size';
+import { imageSizeFromFile } from 'image-size/fromFile';
 import path from 'path';
 import njk from "../../libraries/nunjucks.js";
 import {readFrontMatter} from "../../_lib/frontmatter.js";
 
-export default function (_class, caption) {
+export default async function (_class, caption) {
     const data = readFrontMatter(this.page.inputPath)
     const resource = data.resources.find((r) => r.name === caption)
-    const size = sizeOf(path.join(path.dirname(this.page.inputPath), resource.src));
+    const size = await imageSizeFromFile(path.join(path.dirname(this.page.inputPath), resource.src));
     const baseName = resource.src.replace(/\.(jpg|png)$/, '');
 
     return njk.renderString(
