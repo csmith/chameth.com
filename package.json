@@ -15,7 +15,7 @@
     "@11ty/eleventy": "3.0.0",
     "@11ty/eleventy-plugin-rss": "^2.0.3",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0",
-    "postcss": "8.5.1",
+    "postcss": "8.5.3",
     "prettier": "3.5.2"
   },
   "dependencies": {
