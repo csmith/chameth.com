@@ -15,9 +15,17 @@
       margin-right: 0;
     }
 
+    p:first-child {
+      margin-top: var(--small-space);
+      margin-bottom: var(--small-space);
+      font-size: var(--font-size-large);
+      line-height: 1.8em;
+    }
+
     .drop {
       color: var(--text-highlight-colour);
       font-weight: 800;
+      font-size: var(--font-size-xlarge);
     }
 
     li {
@@ -82,7 +90,7 @@
   }
 
   .tcg-inner {
-    width: 280px;
+    width: 300px;
     margin: -4px;
     background-color: var(--background-alt-colour);
     border-radius: var(--border-radius);
@@ -94,10 +102,6 @@
 
     font-size: var(--font-size-tiny);
 
-    @media (max-width: 500px) {
-      width: 280px;
-    }
-
     img {
       width: 100%;
       border-bottom: 6px solid var(--accent-colour);
@@ -106,7 +110,7 @@
     .tcg-properties {
       width: 100%;
       display: grid;
-      grid-template-columns: auto 1fr;
+      grid-template-columns: auto 1fr auto 1fr;
       padding: 10px;
       grid-column-gap: var(--small-space);
       align-items: baseline;
