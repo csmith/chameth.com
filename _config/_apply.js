@@ -8,6 +8,7 @@ import applyFilters from './filters/_apply.js'
 import applyLibraries from './libraries/_apply.js'
 import applyShortcodes from './shortcodes/_apply.js'
 import applyTransforms from './transforms/_apply.js'
+import applyWatches from './watches/_apply.js'
 
 export default function (eleventyConfig) {
     applyLibraries(eleventyConfig);
@@ -21,4 +22,5 @@ export default function (eleventyConfig) {
     applyFrontmatter(eleventyConfig);
     applyShortcodes(eleventyConfig);
     applyTransforms(eleventyConfig);
+    applyWatches(eleventyConfig);
 }
