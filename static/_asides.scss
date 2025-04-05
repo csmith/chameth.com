@@ -18,6 +18,7 @@ aside.update {
 
   h5 {
     &::before {
+      font-size: var(--font-size-tiny);
       content: '';
       margin: 0;
     }
