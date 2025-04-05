@@ -4,6 +4,9 @@ layout: page.njk
 title: Things I Use
 
 resources:
+  - src: terra.png
+    name: Fractal Design Terra Case
+    title: Fractcal Design's Terra Case 
   - src: monitor.png
     name: Alienware AW3423DWF monitor
     title: The oh-so beautiful Alienware AW3423DWF QD-OLED monitor
@@ -27,41 +30,66 @@ In the vein of [uses this](https://usesthis.com/) and following on from my
 post about [how I get things done](/how-i-get-things-done/), this is a
 list of things I use that I'll try to keep up-to-date.
 
-I've linked to product pages where they still exist, but few companies bother
-keeping pages around for historical products and just leave a load of link rot
-in their place instead.
-
-Last updated: 12th December 2024
+Last updated: 5th April 2025
 
 ### Computer hardware
 
-{% figure "right" "Alienware AW3423DWF monitor" %}
+I built a new PC in March 2025. I use it for both work and gaming. It travels
+with me to LAN events, so it's as small as I can make it. The build is:
 
-- Dell G15 Special Edition Laptop
-  - Intel i7-12700H processor
-  - NVIDIA GeForce RTX 3060 graphics card
-  - 2x32GB DDR5 RAM (upgraded)
-  - 2TB Gen4 SSD (upgraded)
+| Component    | Product                                                                                         | Specs                             |
+|--------------|-------------------------------------------------------------------------------------------------|-----------------------------------|
+| Case         | [Fractal Design Terra](https://www.fractal-design.com/products/cases/terra/terra/terra-silver/) | Silver                            |
+| Processor    | AMD Ryzen 7 9800X3D                                                                             | 8-core, 104MB cache, up to 5.2GHz |
+| Cooler       | Thermalright AXP90 X47 Full                                                                     |                                   |
+| Graphics     | Gigabyte Radeon RX 9070XT                                                                       | PCI-E 5, 16GB GDDR6, 3060MHz      |
+| Memory       | Corsair Vengeance                                                                               | 64GB, 6600MHz, CL32               |
+| Storage      | Crucial T705 NVMe SSD                                                                           | 2TB, Gen 5                        |
+| Motherboard  | Gigabyte B850I Aorus Pro                                                                        |                                   |
+| Power supply | Cooler Master V750 SFX                                                                          | Fully modular                     |
+
+{% figure "right" "Fractal Design Terra Case" %}
+
+Previously I was using a Dell G15 Special Edition laptop, with an NVIDIA GeForce
+RTX 3060. This was handy while I was travelling more, but the 3060 was
+struggling and the inability to upgrade the major components was annoying.
+
+This is the first computer I've ever built with an AMD processor and graphics
+cards. All my old ones have been Intel and NVIDIA builds, but it feels like both
+companies have made major missteps recently while AMD is doing very good things.
+
+Despite the small form factor, the build was straight forward. The Terra
+is a nicely designed case, providing lots of access that make up for the tiny
+volume you have to work in.
+
+Along with the PC, I use:
+
 - [Alienware AW3423DWF](https://www.dell.com/en-uk/shop/alienware-34-curved-qd-oled-gaming-monitor-aw3423dwf/apd/210-bfrq/monitors-monitor-accessories) 34-inch QD-OLED monitor
 - [Melifo curved light bar](https://www.amazon.co.uk/gp/product/B09FHMPFW1/)
 - Logitech Brio webcam
 - [Durgod K320 keyboard](https://www.durgod.com/product/k320-space-gray/)
   - One with Cherry MX Silent Red switches for not annoying people
-  - One with Cherry MX Blues for good typing experiences and/or annoying people
+  - One with Cherry MX Blues for good typing experiences
 - [Zowie EC1-C wired mouse](https://zowie.benq.eu/en-uk/mouse/ec1-c.html)
 - [HyperX Cloud Alpha Wireless headset](https://uk.hyperx.com/products/hyperx-cloud-alpha-wireless)
-- [KLIM Wind laptop cooling pad](https://www.amazon.co.uk/gp/product/B07D37QWXS/)
 - [Secretlab TITAN Evo 2022 Series chair](https://secretlab.co.uk/products/titan-evo-2022-series)
+- [Nanuk 935 hard case](https://nanuk.com/products/nanuk-935) for transport
 
-When it's time for an upgrade I'll probably switch back to a real desktop
-computer instead of a laptop. I don't use it as a laptop — it gets a screen,
-keyboard and mouse attached wherever I am — so there's not much point dealing
-with the drawbacks of the form factor.
+{% figure "right" "Alienware AW3423DWF monitor" %}
 
-Two things to call out: the Alienware monitor is _gorgeous_. QD OLED is an
-amazing display technology and just makes everything pop; secondly, the
-Cloud Alpha Wireless headphones have an amazing battery life (we're talking
-weeks of near constant use).
+The Alienware monitor is _gorgeous_. QD-OLED is an amazing display technology
+and just makes everything pop. I went to a LAN event where someone had one of
+these monitors and within weeks four of us had purchased our own.
+
+The Cloud Alpha Wireless headphones have an amazing battery life. We're talking
+weeks of near constant use. Whoever optimised the power draw on them to get such
+a good battery life should get a medal.
+
+The Nanuk case makes it easy to cart a PC around with me (as opposed to a
+laptop that just goes into a backpack). It fits the PC, keyboard, mouse, headset
+and cables. I'm hoping to get a slim monitor that will fit as well, so it can
+provide a complete LAN setup in one box. Nanuk provide full 3D models for all
+their cases, which is great if you might want to 3D print things to fit in them.
 
 ### Other hardware
 
@@ -76,6 +104,81 @@ the company that makes money by shoving adverts down my throat.
 
 I would've gone with an older iPad, but the 10th gen was the first with a real
 USB connector instead of lightning.
+
+### Software and services
+
+#### General
+
+{% figure "right" "The Arch Linux logo" %}
+
+- [Arch Linux](https://archlinux.org/) on the desktop
+- [Fastmail](https://www.fastmail.com) for e-mail, calendar and contacts
+- [Todoist](https://www.todoist.com/) for task tracking
+- [Logseq](https://www.logseq.com/) for notes
+- [Firefox](https://www.mozilla.org/en-GB/firefox/new/) for web browsing
+  - [uBlock Origin](https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/) for ad blocking/privacy
+  - [Stylus](https://addons.mozilla.org/en-US/firefox/addon/styl-us/) for overriding stylesheets
+- [Kagi](https://kagi.com/) for web search
+- [You Need A Budget](https://www.ynab.com/) for budgeting
+- [FreeAgent](https://www.freeagent.com/) for work accounts
+- [Tauon](https://tauonmusicbox.rocks/) for playing music
+  - [Last.fm](https://last.fm/) for tracking plays and recommendations
+- [Bitwarden](https://bitwarden.com/) for passwords
+- [HexChat](https://hexchat.github.io/) for IRC
+  - [Soju](https://soju.im/) as a bouncer
+  - [Ergo](https://ergo.chat/about) for an internal ircd
+- [Discord](https://discord.com/) for voice chat and people who don't use IRC
+- [Bluesky](https://bsky.app) for social media-y things
+- [Miniflux](https://miniflux.app/) for feed reading
+
+I prefer self-hosted and open source where possible for services, but there's
+a lot of cases where that's not feasible for one reason or another.
+
+#### Making things
+
+- [Gimp](https://www.gimp.org/) for image editing
+- [DaVinci Resolve](https://www.blackmagicdesign.com/products/davinciresolve) for video editing
+- [Onshape](https://www.onshape.com/en/) for CAD
+- [Aseprite](https://www.aseprite.org/) for occasional  pixel editing
+- [Inkscape](https://inkscape.org/) for occasional vector editing
+- [Krita](https://krita.org/en/) for some rare digital drawing
+
+#### Development and sysadmin-y things
+
+{% img "Screenshot of IntelliJ IDEA while editing this page" %}
+
+- [Tailscale](https://tailscale.com/) for intra-machine communication
+- [NextDNS](https://nextdns.io/) for DNS (and a load of ad blocking)
+- [IntelliJ IDEA](https://www.jetbrains.com/idea/) for basically all code editing
+  - [Darcula Darker](https://plugins.jetbrains.com/plugin/12692-darcula-darker-theme) theme
+- [Sublime Text](https://www.sublimetext.com/) for lighter text editing
+- [Kitty](https://sw.kovidgoyal.net/kitty/) terminal emulator
+  - [Zsh](https://www.zsh.org/) shell
+  - [Oh My Zsh](https://ohmyz.sh/) for configuration
+- [GitHub](https://github.com/) for git hosting, CI, issues, etc
+- [Hetzner](https://www.hetzner.com/) for dedicated servers, VPSs, and some "cloud" things
+- [Restic](https://restic.net/) for backups
+- [11ty](https://www.11ty.dev/) for static websites (including this one!)
+- [Svelte](https://svelte.dev/) if I can't avoid client-side JavaScript
+- [Docker](https://www.docker.com/) for running anything on servers
+  - [Compose](https://docs.docker.com/compose/) for configuring/orchestrating
+
+This list could probably go on forever. I'll refrain from listing programming
+languages, libraries, frameworks, etc.
+
+#### Games
+
+{% figure "right" "Allplay board game bag, in blue" %}
+
+- [Steam](https://store.steampowered.com/) for video games
+- [BoardGameGeek](https://boardgamegeek.com/) for storing data and talking about board games
+- [Board Game Arena](https://boardgamearena.com/) for playing board games online
+- [Board Game Stats](https://www.bgstatsapp.com/) for recording plays and other information
+
+I won't really bother with video games on other platforms, aside from the occasional
+free-standing MMORPG. Steam works amazingly on Linux, is generally not
+user-hostile like a lot of other places, and Valve have done great things
+for making games actually work.
 
 ### Tools
 
@@ -112,82 +215,7 @@ they're good and to keep a consistent battery system), Wera for anything
 screwdriver adjacent, Engineer for anything delicate, and Knipex for anything
 that falls through the gaps.
 
-## Software and services
-
-### General
-
-{% figure "right" "The Arch Linux logo" %}
-
-- [Arch Linux](https://archlinux.org/) on the desktop
-- [Fastmail](https://www.fastmail.com) for e-mail, calendar and contacts
-- [Todoist](https://www.todoist.com/) for task tracking
-- [Logseq](https://www.logseq.com/) for notes
-- [Firefox](https://www.mozilla.org/en-GB/firefox/new/) for web browsing
-  - [uBlock Origin](https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/) for ad blocking/privacy
-  - [Stylus](https://addons.mozilla.org/en-US/firefox/addon/styl-us/) for overriding stylesheets
-- [Kagi](https://kagi.com/) for web search
-- [You Need A Budget](https://www.ynab.com/) for budgeting
-- [FreeAgent](https://www.freeagent.com/) for work accounts
-- [Tauon](https://tauonmusicbox.rocks/) for playing music
-  - [Last.fm](https://last.fm/) for tracking plays and recommendations
-- [Bitwarden](https://bitwarden.com/) for passwords
-- [HexChat](https://hexchat.github.io/) for IRC
-  - [Soju](https://soju.im/) as a bouncer
-  - [Ergo](https://ergo.chat/about) for an internal ircd
-- [Discord](https://discord.com/) for voice chat and people who don't use IRC
-- [Bluesky](https://bsky.app) for social media-y things
-- [Miniflux](https://miniflux.app/) for feed reading
-
-I prefer self-hosted and open source where possible for services, but there's
-a lot of cases where that's not feasible for one reason or another.
-
-### Making things
-
-- [Gimp](https://www.gimp.org/) for image editing
-- [DaVinci Resolve](https://www.blackmagicdesign.com/products/davinciresolve) for video editing
-- [Onshape](https://www.onshape.com/en/) for CAD
-- [Aseprite](https://www.aseprite.org/) for occasional  pixel editing
-- [Inkscape](https://inkscape.org/) for occasional vector editing
-- [Krita](https://krita.org/en/) for some rare digital drawing
-
-### Development and sysadmin-y things
-
-{% img "Screenshot of IntelliJ IDEA while editing this page" %}
-
-- [Tailscale](https://tailscale.com/) for intra-machine communication
-- [NextDNS](https://nextdns.io/) for DNS (and a load of ad blocking)
-- [IntelliJ IDEA](https://www.jetbrains.com/idea/) for basically all code editing
-  - [Darcula Darker](https://plugins.jetbrains.com/plugin/12692-darcula-darker-theme) theme
-- [Sublime Text](https://www.sublimetext.com/) for lighter text editing
-- [Kitty](https://sw.kovidgoyal.net/kitty/) terminal emulator
-  - [Zsh](https://www.zsh.org/) shell
-  - [Oh My Zsh](https://ohmyz.sh/) for configuration
-- [GitHub](https://github.com/) for git hosting, CI, issues, etc
-- [Hetzner](https://www.hetzner.com/) for dedicated servers, VPSs, and some "cloud" things
-- [Restic](https://restic.net/) for backups
-- [11ty](https://www.11ty.dev/) for static websites (including this one!)
-- [Svelte](https://svelte.dev/) if I can't avoid client-side JavaScript
-- [Docker](https://www.docker.com/) for running anything on servers
-  - [Compose](https://docs.docker.com/compose/) for configuring/orchestrating
-
-This list could probably go on forever. I'll refrain from listing programming
-languages, libraries, frameworks, etc.
-
-### Games
-
-{% figure "right" "Allplay board game bag, in blue" %}
-
-- [Steam](https://store.steampowered.com/) for video games
-- [BoardGameGeek](https://boardgamegeek.com/) for storing data and talking about board games
-- [Board Game Arena](https://boardgamearena.com/) for playing board games online
-- [Board Game Stats](https://www.bgstatsapp.com/) for recording plays and other information
-
-I won't really bother with video games on other platforms, aside from the occasional
-free-standing MMORPG. Steam works amazingly on Linux, is generally not
-user-hostile like a lot of other places, and Valve have done great things
-for making games actually work.
-
-## Miscellaneous
+### Miscellaneous
 
 - [Berkeley Mono Typeface](https://berkeleygraphics.com/typefaces/berkeley-mono/) anywhere I need monospace fonts
 - [Allplay Board Game Bag](https://www.allplay.com/board-game-bags/premium/) for, shockingly, carrying board games
