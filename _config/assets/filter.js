@@ -6,5 +6,5 @@ export default [
     "content/**/*.png",
     "content/**/*.stl",
     "content/**/*.step",
-    "static/*.*",
+    "static/**",
 ];
