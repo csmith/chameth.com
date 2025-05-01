@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
-    "image-size": "^2.0.1",
+    "image-size": "^2.0.2",
     "js-yaml": "^4.1.0",
     "liquidjs": "^10.21.0",
     "luxon": "^3.6.1",
