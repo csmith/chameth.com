@@ -116,3 +116,8 @@ kind = 301
 source = "/misc/snippets/"
 destination = "/snippets/"
 kind = 301
+
+[[advanced.redirects]]
+source = "/feed.xml"
+destination = "/index.xml"
+kind = 301
