@@ -12,9 +12,7 @@
   ],
   "Board games": [
     "Cartographers",
-    "Obsession",
     "Terraforming Mars",
-    "Iberia",
     "Fluxx",
     "Lovecraft Letter"
   ],
@@ -22,12 +20,12 @@
     "Easy A",
     "Hackers",
     "The Matrix",
-    "Everything Everywhere All at Once",
-    "Hamilton",
-    "Waitress"
+    "Everything Everywhere All at Once"
   ],
   "Video games": [
+    "Warframe",
     "Final Fantasy XIV",
-    "Factorio"
+    "Factorio",
+    "Rocket League"
   ]
 }
