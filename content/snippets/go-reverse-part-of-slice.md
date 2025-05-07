@@ -1,5 +1,5 @@
 ---
-title: Reverse Part of a slice
+title: Reverse part of a slice
 group: Go
 ---
 

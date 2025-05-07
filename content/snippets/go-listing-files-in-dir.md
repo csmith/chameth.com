@@ -1,5 +1,5 @@
 ---
-title: Listing Files in a directory
+title: Listing files in a directory
 group: Go
 ---
 
