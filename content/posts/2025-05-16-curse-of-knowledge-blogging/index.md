@@ -30,6 +30,8 @@ for hours, piecing together scraps of information, using all kinds of specialist
 knowledge, and as soon as you're finished it all seems so _basic_ why would
 anyone want to read about that?
 
+<!--more-->
+
 ## Other mental obstacles
 
 Of course, nothing involving people is as simple as having one cause and an
