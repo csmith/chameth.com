@@ -7,7 +7,7 @@ root = "/site"
 cache-control-headers = true
 compression = true
 
-log-level = "info"
+log-level = "warn"
 page404 = "/site/404.html"
 
 directory-listing = false
