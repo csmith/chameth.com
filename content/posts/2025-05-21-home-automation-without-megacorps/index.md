@@ -46,7 +46,7 @@ something you just post a message back. It's incredibly lightweight, but
 supports a huge array of devices out of the box. And as it's just using MQTT,
 it's trivial to integrate with other software or build on top of.
 
-<!-- more -->
+<!--more-->
 
 I know a lot of people building out this kind of home automation use 
 [Home Assistant](https://www.home-assistant.io/), but I don't get on with it
