@@ -6,7 +6,6 @@ root = "/site"
 
 cache-control-headers = true
 compression = true
-security-headers = true
 
 log-level = "warn"
 page404 = "/site/404.html"
@@ -16,6 +15,13 @@ log-remote-address = false
 redirect-trailing-slash = true
 
 [advanced]
+
+[[advanced.headers]]
+source = "*"
+[advanced.headers.headers]
+X-Content-Type-Options = "nosniff"
+Content-Security-Policy = "frame-ancestors 'self'"
+Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
 
 [[advanced.redirects]]
 source = "{**}/index.html"
