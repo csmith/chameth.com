@@ -5,7 +5,7 @@
   --medium-space: 1.5em;
   --large-space: 5em;
 
-  --content-width: min(1200px, calc(100vw - 2 * var(--large-space)));
+  --content-width: min(1600px, calc(100vw - 2 * var(--large-space)));
   --content-margin: calc((100vw - var(--content-width)) / 2);
 
   @media (max-width: 1200px) {
