@@ -11,31 +11,36 @@ opengraph:
 <section class="about">
     {% include '_trading_card.njk' %}
     <div>
-        <p>
+        <div class="intro">
             <span class="drop">Hello!</span> I'm Chris, a software developer from the UK. That's me over in the picture.
             My <code>$dayjob</code> generally involves Android app development, but I also
-            have an excessive collection of <a href="/projects">side projects</a>. Outside of programming, I enjoy video
-            games, reading, puzzle hunts, DIY, board games, films, escape rooms, and tinkering with electronics.
-            Some of my favourites and/or current picks include:
-        </p>
-
-        <div class="interests">
-            {% for category, entries in interests %}
-            <section>
-                <h3>{{category}}</h3>
-                <ul>
-                    {% for i in entries %}
-                    <li>{{i}}</li>
-                    {% endfor %}
-                </ul>
-            </section>
-            {% endfor %}
+            have an excessive collection of <a href="/projects">side projects</a>. Outside of
+            <div class="expandy"><span tabindex="0">programming</span><div class="popup"><div>My current languages of choice: <ul>{% for i in interests['Programming']%}<li>{{i}}</li>{% endfor %}</ul></div></div></div>, I enjoy
+            <div class="expandy"><span tabindex="0">video games</span><div class="popup"><div>Recent picks: <ul>{% for i in interests['Video games']%}<li>{{i}}</li>{% endfor %}</ul></div></div></div>,
+            <div class="expandy"><span tabindex="0">reading</span><div class="popup"><div>Some favourites: <ul>{% for i in interests['Books']%}<li>{{i}}</li>{% endfor %}</ul></div></div></div>,
+            puzzle hunts, DIY,
+            <div class="expandy"><span tabindex="0">board games</span><div class="popup"><div>Some picks: <ul>{% for i in interests['Board games']%}<li>{{i}}</li>{% endfor %}</ul></div></div></div>,
+            <div class="expandy"><span tabindex="0">films</span><div class="popup"><div>Favourites: <ul>{% for i in interests['Films']%}<li>{{i}}</li>{% endfor %}</ul></div></div></div>,
+            escape rooms, and tinkering with electronics.
         </div>
 
         <p>
             This website houses <a href="/posts">my blog</a> and <a href="/misc">some other random bits and bobs</a>.
-            There's a full <a href="/index/">site map</a> if you want a quick overview of what's here.
+            There's a full <a href="/index/">site map</a> if you want a quick overview of what's here. Here are
+            my latest blog posts:
         </p>
+
+        <section class="recent-posts">
+            {% for post in collections.posts | reverse | head(3) %}
+            <article>
+                {% if post.data.opengraph.image %}
+                <a href="{{post.url}}"><img src="{{post.data.opengraph.image}}" alt="Lead image for {{post.data.title}}"></a>
+                {% endif %}
+                <h2><a href="{{post.url}}">{{ post.data.title }}</a></h2>
+                <p>{{ post.page | summary | safe }}</p>
+            </article>
+            {% endfor %}
+        </section>
 
     </div>
 </section>

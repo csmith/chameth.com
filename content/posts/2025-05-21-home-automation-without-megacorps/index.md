@@ -16,7 +16,7 @@ opengraph:
   title: "Home Automation Without the Megacorps · Chameth.com"
   type: article
   url: /home-automation-without-megacorps/
-  image: /home-automation-without-megacorps/zigbee-map.jpg
+  image: /home-automation-without-megacorps/zigbee-map.png
 ---
 
 I first experimented with home automation in 2016, by picking up a Samsung

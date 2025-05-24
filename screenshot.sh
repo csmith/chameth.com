@@ -9,7 +9,7 @@ cp -a . "$SITE_COPY"
 rm -rf "$SITE_COPY/node_modules"
 
 # Build the site 
-docker run --rm \
+podman run --rm \
   -v "$SITE_COPY:/site:U" \
   --entrypoint /bin/sh \
   ghcr.io/puppeteer/puppeteer:latest \
@@ -22,7 +22,7 @@ docker run --rm \
 
 # Run puppeteer to take the screenshot. This runs as the puppeteer user
 # as that's where the puppeteer stuff pre-installed.
-docker run --rm \
+podman run --rm \
   -v "$SITE_COPY:/site:U" \
   -i \
   --cap-add=SYS_ADMIN \
