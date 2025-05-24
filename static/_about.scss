@@ -6,7 +6,7 @@
     text-align: left;
   }
 
-  &>:last-child {
+  & > :last-child {
     flex: 100%;
     margin-right: var(--small-space);
     padding-top: var(--small-space);
@@ -42,11 +42,8 @@
 
 .tcg-outer {
   float: right;
+  position: relative;
 
-  display: inline-block;
-  border: 12px solid var(--accent-colour);
-  border-radius: var(--border-radius);
-  box-shadow: 20px 20px 5px black;
   transform: rotate(4deg) translateY(40px);
   margin-left: var(--medium-space);
   margin-bottom: var(--medium-space);
@@ -63,29 +60,87 @@
   @media (max-width: 500px) {
     margin-left: 0;
     margin-bottom: 0;
-    box-shadow: 10px 10px 5px black;
   }
 
-  &::before {
+  .tcg-front {
+    transform: rotateY(0deg);
+  }
+
+  .tcg-back {
     position: absolute;
-    top: -12px;
-    left: -12px;
-    right: -12px;
-    bottom: -12px;
-    content: ' ';
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotateY(180deg);
+    background-color: var(--accent-colour);
+
+    .tcg-back-emboss {
+      position: absolute;
+      font-size: var(--font-size-xlarge);
+      top: 30%;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: bolder;
+      color: color-mix(in srgb, var(--accent-colour), black 20%);
+    }
+
+    .tcg-back-hello {
+      position: absolute;
+      margin: 0;
+      bottom: 0;
+      right: 0;
+      font-size: var(--font-size-tiny);
+      color: color-mix(in srgb, var(--accent-colour), black 20%);
+    }
+  }
+
+  .tcg-flip {
+    transform-style: preserve-3d;
+    transition: transform 800ms 400ms;
+  }
+
+  &:hover .tcg-flip {
+    transform: rotateY(180deg);
+  }
+
+  .tcg-front, .tcg-back {
+    // Firefox doesn't do anti-aliasing in a 3D context, which looks terrible
+    // as the card is rotated a bit. Adding a transparent outline somehow
+    // fixes it. https://stackoverflow.com/a/9333891
+    outline: 1px solid transparent;
+    border: 12px solid var(--accent-colour);
     border-radius: var(--border-radius);
+    box-shadow: 20px 20px 5px black;
+    backface-visibility: hidden;
 
-    transform: translateZ(1.41px);
-    overflow: hidden;
+    @media (max-width: 500px) {
+      box-shadow: 10px 10px 5px black;
+    }
 
-    background-image: radial-gradient(
-                    farthest-corner circle at 300px 400px,
-                    hsla(0, 0%, 100%, 0.8) 10%,
-                    hsla(0, 0%, 100%, 0.65) 20%,
-                    hsla(0, 0%, 0%, 0.5) 90%
-    );
+    &::before {
+      position: absolute;
+      top: -12px;
+      left: -12px;
+      right: -12px;
+      bottom: -12px;
+      content: ' ';
+      border-radius: var(--border-radius);
 
-    mix-blend-mode: overlay;
+      transform: translateZ(1.41px);
+      overflow: hidden;
+
+      background-image: radial-gradient(
+                      farthest-corner circle at 300px 400px,
+                      hsla(0, 0%, 100%, 0.8) 10%,
+                      hsla(0, 0%, 100%, 0.65) 20%,
+                      hsla(0, 0%, 0%, 0.5) 90%
+      );
+
+      mix-blend-mode: overlay;
+    }
   }
 
   .tcg-inner {
@@ -142,8 +197,13 @@
         font-weight: bold;
 
         // The global style adds underscores around emphasis, but we don't want that here
-        &::before { display: none; }
-        &::after { display: none; }
+        &::before {
+          display: none;
+        }
+
+        &::after {
+          display: none;
+        }
       }
     }
 
