@@ -168,8 +168,6 @@ languages, libraries, frameworks, etc.
 
 #### Games
 
-{% figure "right" "Allplay board game bag, in blue" %}
-
 - [Steam](https://store.steampowered.com/) for video games
 - [BoardGameGeek](https://boardgamegeek.com/) for storing data and talking about board games
 - [Board Game Arena](https://boardgamearena.com/) for playing board games online
@@ -209,6 +207,8 @@ for making games actually work.
 - [Knipex automatic insulation stripper](https://www.knipex.com/en-uk/products/wire-strippers-and-stripping-tools/automatic-insulation-stripper/automatic-insulation-stripper/1262180)
 - [Milwauke fastback utility knife](https://www.milwaukeetool.eu/en-eu/fastback-flip-utility-knife/)
 - [Nankadf bench power supply](https://www.amazon.co.uk/gp/product/B09C8LWV9W/)
+
+{% figure "right" "Allplay board game bag, in blue" %}
 
 My preference for tools is basically Makita for power tools (both because
 they're good and to keep a consistent battery system), Wera for anything
