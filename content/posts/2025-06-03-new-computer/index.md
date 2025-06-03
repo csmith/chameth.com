@@ -84,13 +84,12 @@ with the sides closed…
 
 With the diminutive size of the case and all the components crammed in,
 there's actually no room left over for case fans. The PSU, GPU and CPU all have
-fans attached, but that's it. There's basically no room left over for one. There
-are stories online of people having heat issues, but thankfully everything seems
-pretty happy in my setup. The components all draw in air from the sides, and the
-hot air passively vents out the top. If I keep the CPU under maximum load for a 
-while then it starts to thermal throttle slightly, but the only time I've
-actually managed that is when compiling a kernel. Why was I compiling a kernel,
-you ask? Well, we'll come to that.
+fans attached, but that's it. There are stories online of people having heat
+issues, but thankfully everything seems pretty happy in my setup. The components
+all draw in air from the sides, and the hot air passively vents out the top. If
+I keep the CPU under maximum load for a while then it starts to thermal throttle
+slightly, but the only time I've actually managed that is when compiling a
+kernel. Why was I compiling a kernel, you ask? Well, we'll come to that.
 
 ### But does it Linux?
 
