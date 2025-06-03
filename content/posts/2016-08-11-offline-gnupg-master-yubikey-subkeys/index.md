@@ -2,7 +2,7 @@
 date: 2016-08-11
 title: Creating an offline GnuPG master key with Yubikey-stored subkeys
 description: How to use an aircapped computer, a large dose of paranoia, an ironkey, and some yubikeys to create a new GPG key and subkeys.
-area: security
+tags: [security]
 permalink: /offline-gnupg-master-yubikey-subkeys/
 
 resources:

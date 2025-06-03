@@ -2,7 +2,7 @@
 date: 2019-10-21
 title: Obfuscating Kotlin code with ProGuard
 description: In which Kotlin tries to be helpful, and we smite it
-area: Android
+tags: [android, development]
 permalink: /obfuscating-kotlin-proguard/
 
 resources:

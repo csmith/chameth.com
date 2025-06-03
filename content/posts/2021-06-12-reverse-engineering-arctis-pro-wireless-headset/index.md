@@ -2,7 +2,7 @@
 date: 2021-06-12
 title: Reverse engineering an Arctis Pro Wireless Headset
 description: In which we go from "is it on or not?" to "can it play gifs?"
-area: reverse-engineering
+tags: [hardware, reverse-engineering]
 permalink: /reverse-engineering-arctis-pro-wireless-headset/
 
 resources:
@@ -23,6 +23,12 @@ resources:
   name: Headset receiver displaying a custom Hello World message
 - src: nyan.webm
   name: Video of receiver playing Nyan cat gif
+
+opengraph:
+      title: "Reverse engineering an Arctis Pro Wireless Headset · Chameth.com"
+      type: article
+      url: /reverse-engineering-arctis-pro-wireless-headset/
+      image: /reverse-engineering-arctis-pro-wireless-headset/headset.png
 ---
 
 {% figure "left" "Boxed SteelSeries Arctis Pro Wireless Headset" %}

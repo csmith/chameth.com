@@ -1,8 +1,8 @@
 ---
 date: 2017-12-17
 title: DNS-over-TLS on the EdgeRouter Lite
-description: Installing and configuring Unbound on an Edgerouter Lite to enable encrypoted DNS requests.
-area: security
+description: Installing and configuring Unbound on an Edgerouter Lite to enable encrypted DNS requests.
+tags: [security, sysadmin]
 permalink: /dns-over-tls-on-edgerouter-lite/
 
 resources:
@@ -14,7 +14,7 @@ resources:
 
 {% figure "left" "An EdgeRouter Lite" %}
 
-DNS-over-TLS is a fairly recent specificiation described in
+DNS-over-TLS is a fairly recent specification described in
 [RFC7858](https://tools.ietf.org/html/rfc7858), which enables DNS clients to
 communicate with servers over a TLS (encrypted) connection instead of requests
 and responses being sent in plain text. I won't ramble on about why it's a good

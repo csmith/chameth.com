@@ -2,6 +2,8 @@
     <article>
         {% if post.data.opengraph.image %}
         <img src="{{post.data.opengraph.image}}" alt="Lead image for {{post.data.title}}">
+        {% else %}
+        <div class="placeholder">???</div>
         {% endif %}
         <h3>{{ post.data.title }}</h3>
         <p>{{ post.page | summary | safe }}</p>

@@ -1,6 +1,7 @@
 ---
 date: 2024-09-01
 title: How I Get Things Done
+tags: [productivity, personal]
 permalink: /how-i-get-things-done/
 ---
 

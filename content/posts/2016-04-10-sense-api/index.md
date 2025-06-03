@@ -2,7 +2,7 @@
 date: 2016-04-10
 title: Reverse engineering the Sense API
 description: How to retrieve data from a Hello Sense without using the official apps.
-area: REST APIs
+tags: [hardware, reverse-engineering]
 permalink: /sense-api/
 
 resources:
@@ -11,6 +11,12 @@ resources:
     title: A Sense unit and its two pillow sensors
     params:
       default: true
+
+opengraph:
+  title: "Reverse engineering the Sense API · Chameth.com"
+  type: article
+  url: /sense-api/
+  image: /sense-api/sense.jpg
 ---
 
 {% figure "right" "A Sense unit and its two pillow sensors" %}

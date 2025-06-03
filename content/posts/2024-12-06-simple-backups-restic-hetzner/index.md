@@ -2,6 +2,7 @@
 date: 2024-12-06
 title: Simple backups with Restic and Hetzner Cloud
 permalink: /simple-backups-restic-hetzner/
+tags: [sysadmin, backup]
 resources:
   - src: restic.png
     name: The Restic logo — a gopher with two umbrellas.

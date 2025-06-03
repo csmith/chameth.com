@@ -2,7 +2,7 @@
 date: 2016-05-21
 title: Automatic reverse proxying with Docker and nginx
 description: Automatically retrieve certificates from Let's Encrypt and configure an SSL-terminating reverse proxy based on running containers.
-area: Docker
+tags: [docker, self-hosting, sysadmin]
 permalink: /docker-automatic-nginx-proxy/
 
 resources:

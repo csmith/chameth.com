@@ -2,7 +2,7 @@
 date: 2020-04-26
 title: How to break everything by fuzz testing
 description: Or "I'm sorry, I didn't mean to take down your service"
-area: testing
+tags: [development, testing]
 permalink: /break-everything-fuzz-testing/
 
 resources:

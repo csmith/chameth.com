@@ -2,7 +2,7 @@
 date: 2022-12-30
 title: Generating infinite avatars
 description: Why pay for an AI generator when you could build your own?
-area: machine-learning
+tags: [development, ai]
 permalink: /infinite-avatars/
 resources:
 - src: unique.jpg
@@ -19,6 +19,12 @@ resources:
 - src: avatars.jpg
   name: A grid of Standard Diffusion produced avatars of the author
   title: A selection of avatars produced by the generator
+
+opengraph:
+      title: "Generating infinite avatars · Chameth.com"
+      type: article
+      url: /infinite-avatars/
+      image: /infinite-avatars/avatars.jpg
 ---
 
 {% figure "right" "A computer render of the author, with a \"UNIQUE LIMITED EDITION\" badge" %}

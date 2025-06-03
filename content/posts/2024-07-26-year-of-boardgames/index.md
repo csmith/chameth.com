@@ -2,6 +2,7 @@
 date: 2024-07-26
 title: "A year of boardgames"
 permalink: /a-year-of-boardgames/
+tags: [boardgames, personal]
 resources:
   - src: ticket-to-ride.jpg
     name: "A picture of the board from Ticket to Ride: Europe"
@@ -24,6 +25,11 @@ resources:
   - src: fluxx.jpg
     name: "A game of Star Trek mega-Fluxx, with three transporter cards in play"
     title: "Star Trek mega-Fluxx"
+opengraph:
+  title: "A year of boardgames · Chameth.com"
+  type: article
+  url: /a-year-of-boardgames/
+  image: /a-year-of-boardgames/pandemic.jpg
 ---
 
 I realised the other day that it's a little over a year since I started building

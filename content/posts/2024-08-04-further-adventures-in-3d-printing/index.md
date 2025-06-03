@@ -2,6 +2,7 @@
 date: 2024-08-04
 title: Further adventures in 3D printing
 permalink: /further-adventures-in-3d-printing/
+tags: [printing]
 resources:
  - src: p1s.png
    name: Marketing image of the Bambu Labs P1S
@@ -9,6 +10,11 @@ resources:
  - src: comparison.png
    name: A side-by-side comparison of printing time on the P1S and SV06. The P1S prints 8 objects at higher quality than the SV06 prints 3.
    title: P1S vs SV06.
+opengraph:
+  title: "Further adventures in 3D printing · Chameth.com"
+  type: article
+  url: /further-adventures-in-3d-printing/
+  image: /further-adventures-in-3d-printing/p1s.png
 ---
 
 {%figure "right" "Marketing image of the Bambu Labs P1S" %}

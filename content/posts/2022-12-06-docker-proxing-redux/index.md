@@ -1,8 +1,8 @@
 ---
 date: 2022-12-06
 title: Docker reverse proxying, redux
-description: Guest starring musl, as the evil villain
-area: docker
+description: In which I reinvent everything for reasons.
+tags: [docker, self-hosting, sysadmin, opinion]
 permalink: /docker-proxying-redux/
 ---
 

@@ -2,6 +2,7 @@
 date: 2023-09-17
 title: Adventures in 3D printing
 permalink: /adventures-in-3d-printing/
+tags: [printing]
 resources:
  - src: sv06.jpg
    name: Marketing image of the Sovol SV06
@@ -24,6 +25,11 @@ resources:
  - src: backbone.jpg
    name: A sagging cable, and a reinforced cable.
    title: It feels like I own a 3D printer to print parts for my 3D printer...
+opengraph:
+  title: "Adventures in 3D printing · Chameth.com"
+  type: article
+  url: /adventures-in-3d-printing/
+  image: /adventures-in-3d-printing/sv06.jpg
 ---
 
 {%figure "right" "Marketing image of the Sovol SV06" %}

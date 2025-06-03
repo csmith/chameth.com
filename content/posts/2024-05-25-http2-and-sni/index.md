@@ -2,6 +2,7 @@
 date: 2024-05-25
 title: "HTTP/2 and TLS Server Name Indication"
 permalink: /http2-and-sni/
+tags: [networking, debugging, research]
 ---
 
 I was recently alerted to a bug in [Centauri](https://github.com/csmith/centauri),

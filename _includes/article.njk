@@ -13,12 +13,27 @@ layout: page.njk
         {{ content | safe }}
     </div>
 
-    <hr>
+    <hr class="end-of-post">
 
+    <section>
+    <h3>What do you think?</h3>
     <p>
         Have feedback? Spotted a mistake? Drop me <a href="/contact/">an e-mail</a>
         or a <a href="https://bsky.app/intent/compose?text=@chameth.com">message on BlueSky</a>.
     </p>
+    </section>
+
+    {% set rel = collections.posts | related(tags) %}
+    {% if rel | length > 0 %}
+    <section>
+        <h3>Related posts</h3>
+        <div class="post-links">
+            {% asyncEach post in rel | head(3) %}
+                {% include '_post_link.njk' %}
+            {% endeach %}
+        </div>
+    </section>
+    {% endif %}
 
     <section hidden>
         {% set hcardTags = "p-author" %}

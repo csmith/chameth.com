@@ -2,7 +2,7 @@
 date: 2016-05-02
 title: Monitoring power draw with WeMo Insight Switches
 description: Using SOAP requests to get raw data, and rrdtool to produce graphs.
-area: data analysis
+tags: [hardware, home-automation, reverse-engineering]
 permalink: /monitoring-power-with-wemo/
 
 resources:
@@ -14,6 +14,12 @@ resources:
     name: Graph of power usage over a day
   - src: desk-1w.png
     name: Graph of power usage over a week
+
+opengraph:
+  title: "Monitoring power draw with WeMo Insight Switches · Chameth.com"
+  type: article
+  url: /monitoring-power-with-wemo/
+  image: /monitoring-power-with-wemo/switch.jpg
 ---
 
 {% figure "left" "A WeMo Insight Switch" %}
