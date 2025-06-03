@@ -1,20 +1,25 @@
 .post-links {
-  display: grid;
+  display: flex;
   gap: var(--medium-space);
-  grid-template-columns: 1fr 1fr 1fr;
+  flex-direction: row;
 
-  @media (max-width: 800px) {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
+  @media (max-width: 1200px) {
+    flex-direction: column;
   }
 
   .post-link {
+    flex-basis: 200px;
+    flex-grow: 1;
     text-decoration: none;
     background-color: var(--background-alt-colour);
-    border-radius: var(--border-radius);
-    padding: var(--small-space);
+    padding: calc(var(--small-space) + 25px) var(--small-space);
+    mask: radial-gradient(33.54px at 50% 45px, #000 99%, #0000 101%) calc(50% - 30px) 0/60px 51% repeat-x,
+    radial-gradient(33.54px at 50% -30px, #0000 99%, #000 101%) 50% 15px/60px calc(51% - 15px) repeat-x,
+    radial-gradient(33.54px at 50% calc(100% - 45px), #000 99%, #0000 101%) calc(50% - 30px) 100%/60px 51% repeat-x,
+    radial-gradient(33.54px at 50% calc(100% + 30px), #0000 99%, #000 101%) 50% calc(100% - 15px)/60px calc(51% - 15px) repeat-x;
 
     article {
+      z-index: 2;
       display: grid;
       grid-template-columns: 1fr;
       grid-template-rows: 200px auto;
@@ -30,11 +35,11 @@
       }
 
       .placeholder {
-        background-color: color-mix(in srgb,  var(--accent-colour), black 40%);
+        background-color: color-mix(in srgb, var(--accent-colour), black 40%);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: color-mix(in srgb,  var(--accent-colour), black 30%);
+        color: color-mix(in srgb, var(--accent-colour), black 30%);
         font-size: var(--font-size-giant);
         padding-bottom: 1em;
       }

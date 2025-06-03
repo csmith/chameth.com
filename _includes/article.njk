@@ -28,7 +28,7 @@ layout: page.njk
     <section>
         <h3>Related posts</h3>
         <div class="post-links">
-            {% asyncEach post in rel | head(3) %}
+            {% asyncEach post in rel | head(4) %}
                 {% include '_post_link.njk' %}
             {% endeach %}
         </div>
