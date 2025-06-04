@@ -19,7 +19,7 @@
     radial-gradient(33.54px at 50% calc(100% + 30px), #0000 99%, #000 101%) 50% calc(100% - 15px)/60px calc(51% - 15px) repeat-x;
 
     &:hover {
-      animation: wavey 1s steps(120) infinite forwards 150ms;
+      animation: wavey 1s linear infinite forwards 150ms;
     }
 
     @keyframes wavey {
