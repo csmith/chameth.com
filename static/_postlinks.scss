@@ -18,6 +18,15 @@
     radial-gradient(33.54px at 50% calc(100% - 45px), #000 99%, #0000 101%) calc(50% - 30px) 100%/60px 51% repeat-x,
     radial-gradient(33.54px at 50% calc(100% + 30px), #0000 99%, #000 101%) 50% calc(100% - 15px)/60px calc(51% - 15px) repeat-x;
 
+    &:hover {
+      animation: wavey 1s steps(120) infinite forwards 150ms;
+    }
+
+    @keyframes wavey {
+      0% { mask-position: calc(50% - 30px) 0, calc(50%) 15px, calc(50% - 30px) 100%, calc(50%) calc(100% - 15px); }
+      100% { mask-position: calc(50% + 30px) 0, calc(50% + 60px) 15px, calc(50% + 30px) 100%, calc(50% + 60px) calc(100% - 15px); }
+    }
+
     article {
       z-index: 2;
       display: grid;
