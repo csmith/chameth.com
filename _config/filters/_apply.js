@@ -4,6 +4,7 @@ import excerpt from "./excerpt.js";
 import summary from "./summary.js";
 import head from "./head.js";
 import related from "./related.js";
+import yearsSince from "./yearssince.js";
 
 export default function (eleventyConfig) {
     eleventyConfig.addFilter("isoDateFormat", isoDateFormat);
@@ -12,4 +13,5 @@ export default function (eleventyConfig) {
     eleventyConfig.addFilter("summary", summary);
     eleventyConfig.addFilter("head", head);
     eleventyConfig.addFilter("related", related);
+    eleventyConfig.addFilter("yearsSince", yearsSince);
 };

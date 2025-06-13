@@ -50,3 +50,17 @@ aside.sidenote {
     }
   }
 }
+
+aside.old-post-warning {
+  margin: var(--small-space) 0;
+  background: repeating-linear-gradient(-45deg, var(--accent-colour) 0, var(--accent-colour) 10px, var(--background-alt-colour) 10px, var(--background-alt-colour) 20px);
+  padding: 10px;
+  border-radius: var(--border-radius);
+
+  p {
+    background: var(--background-alt-colour);
+    margin: 0;
+    padding: var(--medium-space);
+    border-radius: var(--border-radius);
+  }
+}

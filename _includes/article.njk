@@ -9,6 +9,18 @@ layout: page.njk
         </p>
     </header>
 
+    {% set yearsOld = date | yearsSince %}
+    {% if yearsOld >= 5 %}
+    <aside class="old-post-warning">
+        <p>
+            Warning: this post is over {{ yearsOld }} years old and might be out of date.
+            Technology, society and my opinions may have shifted in the time since.
+            Instructions may no longer make sense, software may no longer be available, etc.
+            Caveat lector.
+        </p>
+    </aside>
+    {% endif %}
+
     <div class="e-content">
         {{ content | safe }}
     </div>
@@ -16,11 +28,11 @@ layout: page.njk
     <hr class="end-of-post">
 
     <section>
-    <h3>What do you think?</h3>
-    <p>
-        Have feedback? Spotted a mistake? Drop me <a href="/contact/">an e-mail</a>
-        or a <a href="https://bsky.app/intent/compose?text=@chameth.com">message on BlueSky</a>.
-    </p>
+        <h3>What do you think?</h3>
+        <p>
+            Have feedback? Spotted a mistake? Drop me <a href="/contact/">an e-mail</a>
+            or a <a href="https://bsky.app/intent/compose?text=@chameth.com">message on BlueSky</a>.
+        </p>
     </section>
 
     {% set rel = collections.posts | related(tags) %}
@@ -29,7 +41,7 @@ layout: page.njk
         <h3>Related posts</h3>
         <div class="post-links">
             {% asyncEach post in rel | head(4) %}
-                {% include '_post_link.njk' %}
+            {% include '_post_link.njk' %}
             {% endeach %}
         </div>
     </section>
