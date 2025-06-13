@@ -10,6 +10,8 @@ figure {
   line-height: 1;
   text-transform: uppercase;
   color: var(--text-alt-colour);
+  position: relative;
+  z-index: 1;
 
   img, video {
     max-width: 100%;

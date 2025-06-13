@@ -1,7 +1,37 @@
 blockquote {
-  border-left: 10px solid var(--accent-colour);
-  padding-left: 15px;
-  font-size: var(--font-size-large);
+  padding: var(--small-space) calc(var(--content-margin) + var(--medium-space));
+  background-color: var(--background-alt-colour);
+  border-radius: 0;
+  margin: 0 calc(-1 * var(--content-margin));
+  width: 100vw;
+  position: relative;
+
+  &::before {
+    position: absolute;
+    top: var(--medium-space);
+    left: var(--content-margin);
+    content: '“';
+    display: block;
+    color: var(--accent-colour);
+    font-size: var(--font-size-giant);
+    line-height: var(--font-size-giant);
+  }
+
+  &::after {
+    position: absolute;
+    bottom: 0;
+    right: var(--content-margin);
+    content: '”';
+    display: block;
+    color: var(--accent-colour);
+    font-size: var(--font-size-giant);
+    line-height: var(--font-size-giant);
+  }
+
+  p {
+    margin-left: calc(var(--small-space) + 2ex);
+    margin-right: calc(var(--small-space) + 2ex);
+  }
 }
 
 aside.update {
