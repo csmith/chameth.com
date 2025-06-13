@@ -35,6 +35,7 @@ blockquote {
 }
 
 aside.update {
+  clear: both;
   background-color: var(--background-alt-colour);
   border-radius: var(--border-radius);
   padding: var(--medium-space);

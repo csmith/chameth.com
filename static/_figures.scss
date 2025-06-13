@@ -30,6 +30,7 @@ figure {
       max-width: 30%;
       margin-left: 0;
       transform: rotate(-2deg);
+      margin-right: calc(var(--medium-space) * 1.5);
 
       img, video {
         transform: rotate(1.5deg);
@@ -41,6 +42,7 @@ figure {
       max-width: 30%;
       margin-right: 0;
       transform: rotate(2deg);
+      margin-left: calc(var(--medium-space) * 1.5);
 
       img, video {
         transform: rotate(-1.5deg);
@@ -49,6 +51,7 @@ figure {
 
     &.left, &.right {
       box-shadow: -5px 5px 10px var(--background-colour);
+      margin-bottom: var(--medium-space);
     }
   }
 
