@@ -44,6 +44,10 @@ figure {
         transform: rotate(-1.5deg);
       }
     }
+
+    &.left, &.right {
+      box-shadow: -5px 5px 10px var(--background-colour);
+    }
   }
 
   figcaption {
