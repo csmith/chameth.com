@@ -34,7 +34,7 @@ in the space of minutes or hours. So when Bambu Labs reduced the price of the
 [P1S](https://uk.store.bambulab.com/products/p1s) --- a printer generally regarded
 as about as trouble free as you can get --- to £522 including shipping, I splurged on one.
 
-## Concerns
+### Concerns
 
 I make it sound like that was an easy decision, but I actually ummed and ahed
 a lot before pulling the trigger. I had a lot of objections to a Bambu Labs
@@ -75,7 +75,7 @@ which was _double_ the price and didn't come with an enclosure. To add an
 enclosure kit would have made it £800 more expensive than the P1S, and I just
 can't justify that.
 
-## Experience
+### Experience
 
 The initial setup of the P1S was a breeze. While the SV06 shipped in parts, the
 P1S came fully assembled and just needed some packaging and retaining screws
@@ -117,7 +117,7 @@ moving back and forth. It also presumably makes the kinematics a lot easier
 as the mass of the moving parts is constant, instead of gradually becoming
 heavier as more and more plastic gets added.
 
-## The only failures
+### The only failures
 
 I've only had a handful of failures since getting the P1S. I had one weird
 issue where the slicer decided to print some parts extremely slowly, and the
@@ -144,7 +144,7 @@ I tried a print with the top propped open and everything worked smoothly again.
 In hindsight all these clogging issues happened when it was particularly hot
 and humid outside, which was probably a factor.
 
-## Summary
+### Summary
 
 Upgrading to the P1S has made the 3D printer feel more like a tool and less like
 an additional ongoing project. The speed increase continues to amaze me, as

@@ -9,7 +9,7 @@ I always quite like reading about how other people _do things_. What software
 or hardware they use, or how they manage reminders, todo lists, and so on.
 I've never actually written about how I do any of that, though. So here it is!
 
-## Productivity
+### Productivity
 
 In the past I've fallen victim to the idea of there being One True Productivity
 System that would solve all my problems and make me amazing at getting things
@@ -34,7 +34,7 @@ uncomfortable. I deal with those in a few ways:
 
 <!--more-->
 
-### Todoist
+#### Todoist
 
 In the past I've gone through a lot of different todo systems, once again
 hunting for one that will fix all my problems etc[^1]. In the end I always ended
@@ -72,7 +72,7 @@ I do a few things to help me manage tasks and keep track of things:
   GitHub pull requests. The Todoist API is nice and straight forward, and
   hooking it up to things is trivial.
 
-## Other desktop software
+### Other desktop software
 
 For notes I use [Logseq](https://logseq.com/), and I just put whatever I need
 to write under today's note and rely on search or tags to find it again when
@@ -114,7 +114,7 @@ work. I don't think there's much else to note there.
 
 Oh, I use [Arch](https://archlinux.org/), by the way.
 
-## Infrastructure
+### Infrastructure
 
 This is the hodge-podge of things that support my computer usage but sit outside
 the actual computer. In no particular order…
@@ -165,7 +165,7 @@ to make sure things that should be running on my servers actually are. If it
 fails checks it sends a notification to my phone using [Pushover](https://pushover.net/),
 and a message to a channel on my private IRC server (running [Ergo](https://github.com/ergochat/ergo/)).
 
-## Hardware
+### Hardware
 
 For the last two years I've used a laptop as my main computer[^5]. It's a Dell G15
 Special Edition. After some upgrades its specs are:
@@ -231,7 +231,7 @@ My daily-driver phone is an [iPhone 15 Pro](https://www.apple.com/uk/iphone-15-p
 but I have a bunch of Android devices kicking around for work purposes. I read
 nearly every day on a [Kindle Paperwhite Signature Edition](https://www.amazon.co.uk/gp/product/B08N2QK2TG/).
 
-## Money and work
+### Money and work
 
 I use [You Need A Budget](https://www.ynab.com/) for figuring out how much money
 I can spend on what, and making sure I have enough put aside for bills and taxes

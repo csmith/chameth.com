@@ -48,7 +48,7 @@ my own if I could.
 
 <!--more-->
 
-## Load Cells 101
+### Load Cells 101
 
 {%figure "right" "Product picture of a load cell and amplifier" %}
 
@@ -73,7 +73,7 @@ voltage, and two for the output. On the other end it takes a 5V input, ground,
 and then has two pins to deal with the onward communication: one for a clock
 signal, and one for data. We'll get back to that later!
 
-## Early prototyping
+### Early prototyping
 
 {%figure "left" "Prototype weight sensor built on a breadboard" %}
 
@@ -118,7 +118,7 @@ factor to turn the raw reading into a weight. I worked these out by putting
 a known weight on the business end of the load cell, and then hard-coding the
 numbers.
 
-## An interruption to deal with interrupts
+### An interruption to deal with interrupts
 
 One thing I noticed with the MicroPython libraries for the HX711 is that they
 relied on polling the data pin to see if there was any data to read. The way
@@ -150,7 +150,7 @@ at an inopportune time you could mess up a reading, but the reading 100ms after
 would be fine. So my code spends most of the time idle, which translates to very
 little power draw.
 
-## User experience
+### User experience
 
 While prototyping I was using some standard small push buttons to navigate the
 user interface I was creating. I soon realised that if I needed to enter
@@ -185,7 +185,7 @@ the scale you simply rotate the encoder until the right weight is displayed
 on the screen. Pressing the encoder saves the value to flash as with the other
 modes.
 
-## Putting it together
+### Putting it together
 
 {%figure "right" "Components mounted onto a protoboard" %}
 
@@ -226,7 +226,7 @@ With all of this done, I invented a complicated mounting system to keep it
 attached to the printer. Any resemblance to blue painters' tape is entirely
 coincidental.
 
-## Bill of materials and sources
+### Bill of materials and sources
 
 Here are the major components that I ended up using:
 

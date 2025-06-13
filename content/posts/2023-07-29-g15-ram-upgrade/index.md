@@ -40,7 +40,7 @@ the small Electron wrapper will just respawn it.
 
 <!--more-->
 
-## Can it be upgraded or not?
+### Can it be upgraded or not?
 
 The obvious solution to not having enough RAM is to add more RAM. A quick look
 in the manual showed this might not be possible, though. The manual includes
@@ -63,7 +63,7 @@ out a Dell forum thread where a couple of people claim to have successfully
 installed dual-channel 32GB modules. Since the alternative was getting an
 entire new PC after only a year, I decided to give it a go.
 
-## The upgrade attempt
+### The upgrade attempt
 
 I ordered a pair of Crucial 32GB DDR5-4800 SODIMMs, and after they turned up
 dismantled the laptop. The G15 comes apart pretty normally: there are uncovered
@@ -78,7 +78,7 @@ The first thing I saw was this:
 Not one but two labels that indicate it will only accept 8GB or 16GB modules.
 Oh well, what's the worst that can happen?
 
-## Oops?
+### Oops?
 
 I dutifully installed the new modules, reconnected the battery and put the
 case back together. I pressed the power button, and… nothing. None of the
@@ -102,7 +102,7 @@ I opened the laptop up, and looked around for the CMOS battery. There wasn't
 one. Turns out they don't exist any more. I left the main battery disconnected
 for a while to see if it would help, and it didn't.
 
-## Unexpected success
+### Unexpected success
 
 I started to get worried: if I couldn't fix this, I wouldn't be able to
 work until I got a new PC, and that wasn't really in my budget at the minute.

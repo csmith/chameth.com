@@ -33,7 +33,7 @@ anyone want to read about that?
 
 <!--more-->
 
-## Other mental obstacles
+### Other mental obstacles
 
 Of course, nothing involving people is as simple as having one cause and an
 obvious solution. Even when I get over the "it's too basic" road bump, there
@@ -53,7 +53,7 @@ Put all these things into a cauldron, add a lizard's leg and howlet's wing,
 mix it all up, and you get a brain that despises the idea of blogging about
 anything. Great.
 
-## Dealing
+### Dealing
 
 So, now the problem is well-defined, what do we do about it? Clearly I am the
 best person to be offering this advice, given it's been four months since my
@@ -74,7 +74,7 @@ interesting even if my brain doesn't agree" check), and occasionally when the
 stars align I'll feel like plucking one off the list and turning thoughts into
 words.
 
-## A call to action
+### A call to action
 
 If you've got a blog and haven't written anything recently because you "don't
 do anything interesting", go write something! I promise that someone will be

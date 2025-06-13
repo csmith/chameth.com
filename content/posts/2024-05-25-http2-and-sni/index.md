@@ -17,7 +17,7 @@ though and eventually managed to figure out some exact reproduction steps.
 
 <!--more-->
 
-## A brief overview of Centauri and SNI
+### A brief overview of Centauri and SNI
 
 Centauri originally only proxied HTTPS requests[^1]. When it receives a HTTPS
 request, it first looks at the Server Name Indication (or SNI) field in the
@@ -33,7 +33,7 @@ proxy it on. The HTTP request itself contains a `Host` header which identifies
 which host the request is for, but that will always be the same as the SNI
 field… or so I thought.
 
-## HTTP connection reuse
+### HTTP connection reuse
 
 When accessing a website, your browser will request dozens of resources in a
 short space of time: the webpage itself, some stylesheets, maybe some scripts,
@@ -58,7 +58,7 @@ for the other domain. However, HTTP/2 expands this slightly:
 > client would perform when forming a new TLS connection for the host \
 > in the URI.
 
-## Putting it all together
+### Putting it all together
 
 The reproduction steps that Shane figured out involved visiting sites hosted
 on two subdomains. The first site to be visited got "stuck" and subsequent

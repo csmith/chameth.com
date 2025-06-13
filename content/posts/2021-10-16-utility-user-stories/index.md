@@ -45,7 +45,7 @@ This just says "Refactor the JobFactory". If you wrote that in a ticket you'd pr
 feel bad for not describing it very well, but somehow when it's dressed up as a user
 story it feels more valuable.
 
-## Does the user really want that?
+### Does the user really want that?
 
 One thing that really irks me about user stories is that it lets you twist your
 business objectives into sounding like they're the user's idea: the story becomes
@@ -70,7 +70,7 @@ not strictly in the interests of users[^1]. When written up like this it becomes
 painfully disingenuous, though. Despite writing a user story that starts with
 the words "As a user", you're not really putting yourself in the user's shoes.
 
-## Who even is the user?
+### Who even is the user?
 
 One of the big benefits of user stories comes from using _personas_
 to describe users. It's also one of the things that's rarely actually done, at
@@ -119,7 +119,7 @@ both types of user --- maybe adding it as an option, or doing some fancy machine
 learning, etc. The conversation is now focused around the users, rather than
 steamrolling over them to reach a business objective.
 
-## You're holding it wrong
+### You're holding it wrong
 
 The problems I've described are not a problem with user stories _per se_, but
 rather common issues with how they're used. But there's only so many times you

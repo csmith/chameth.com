@@ -38,7 +38,7 @@ wouldn't miss often if they were kept in the backpack. Building on these I've
 created a little travel toolkit that contains everything I might want (and
 more) while away.
 
-## The base
+### The base
 
 The biggest challenge I had before was finding a screwdriver set. I have an
 [iFixit Mako](https://www.ifixit.com/products/mako-driver-kit-64-precision-bits)
@@ -81,13 +81,13 @@ The other core part of the toolkit is the bag. I had a UGREEN "travel accessory"
 bag hanging around unused, and noticed it was almost the exact right size for
 the Tool-Check. Now, how many other tools could I stuff in there?
 
-## All the tools
+### All the tools
 
 {%img "The contents of my toolkit, spread out on a mat" %}
 
 The kit can be broken down into a few sections:
 
-### Screwdriving
+#### Screwdriving
 
 * The aforementioned Wera Tool-Check
 * Its 152mm bit extender
@@ -95,7 +95,7 @@ The kit can be broken down into a few sections:
 I've talked enough about this already, I think, so I'll spare you any additional
 commentary on screwdrivers and bits.
 
-### Splitting, gripping and cutting
+#### Splitting, gripping and cutting
 
 * Engineer tweezers
 * Engineer mini snips
@@ -110,7 +110,7 @@ and the spudgers are handy for getting inside laptops and other devices. The
 pliers are less useful, but they're one of those things where when you _do_
 need them there aren't any good alternatives.
 
-### Sewing
+#### Sewing
 
 * Two needles
 * Some black thread
@@ -120,7 +120,7 @@ You never know when you're going to rip a seam in something. I find the clips a
 lot less fiddly than using pins for keeping material in place when I'm trying to
 sew.
 
-### Computering
+#### Computering
 
 * Retractable ethernet cable
 * RJ45 coupler
@@ -135,7 +135,7 @@ I can boot from the thumb drive into an Arch environment, and from there
 reinstall my laptop from scratch if needed. There's enough space left over so
 it can be used to transfer files as well.
 
-### Miscellaneousing
+#### Miscellaneousing
 
 * Fabric tape measure
 * Spirit level
@@ -147,7 +147,7 @@ I'm almost certain I won't use the spirit level, but it's tiny and I had a spare
 so it went in. Everything else is just in the "generally handy to have"
 category.
 
-## Putting it all together
+### Putting it all together
 
 {%figure "right" "The complete toolkit" %}
 

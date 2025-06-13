@@ -40,7 +40,7 @@ from Amazon for £199.99[^1], which is a model commonly recommended for beginner
 About three weeks later, I think I've finally finished fixing all the problems
 the printer has, and thought I'd document them.
 
-## Setup and out of the box performance
+### Setup and out of the box performance
 
 The setup of the printer itself was straight forward. Most parts are
 assembled, you just have to bolt the frame together, bolt the various parts to
@@ -69,7 +69,7 @@ pre-sliced and ready to print. It came out looking good:
 
 {%img "A white 'Benchy' sat on the 3D printer bed"%} 
 
-## The noise. Oh god, the noise.
+### The noise. Oh god, the noise.
 
 I set about printing a few more things, but the noise of the machine quickly
 got to me. It sits approximately 80cm from my ear, and between the fans and the
@@ -95,7 +95,7 @@ messy, but not actually that difficult. It doesn't seem like the kind of thing
 you should have to do on a brand-new machine, but I guess you get what you pay
 for.
 
-## Speeeeeeed
+### Speeeeeeed
 
 3D printers are slow. The SV06 is not one of the faster ones. One simple way
 to increase the print speed is to change out the nozzle. The SV06 comes with a
@@ -115,7 +115,7 @@ the way up to your hand.
 With the new nozzle in place, the printer was noticeably faster. I didn't notice
 any difference in print quality, either.
 
-## SD cards are not fun
+### SD cards are not fun
 
 Up until this point, my process for printing anything was to slice it on the
 computer, export the gcode file to an SD card, turn around and walk over to
@@ -146,7 +146,7 @@ on the SD card[^5]. Apparently if you break SD cards in a certain way, they can
 short out and get _very_ hot. Fun! Maybe I shouldn't have been using the
 no-brand card that came with the printer…
 
-## What do we do with a drunken bed?
+### What do we do with a drunken bed?
 
 I continued printing bits and bobs, but was starting to notice a new issue:
 if I was printing multiple copies of the same object, those on the right
@@ -185,7 +185,7 @@ There's only so much you can do when you only have five screws to adjust, but
 I'm pretty happy the variance is now under 0.15mm. That's definitely in the
 "good enough" range that the bed leveling algorithm can compensate for.
 
-## Whoops
+### Whoops
 
 So, about that "totally and utterly uneventful adjusting" I did. To get at the
 screws that hold the bed in place, you have to remove the thin sheet that acts
@@ -215,7 +215,7 @@ were saying that dish soap magically fixed issues that IPA couldn't. I took
 the plate to the kitchen, gave it a wash, and the next print went down
 perfectly.
 
-## Growing a backbone
+### Growing a backbone
 
 For a blissful period of about four days the printer was chugging along
 perfectly with no issues. Then it started making a weird noise. In a display
@@ -240,7 +240,7 @@ If you can't see it: in the first image the cable is sagging and actually
 ends up below the print bed. The individual links of the cable chain limit
 its freedom of movement, stopping it sagging.
 
-## The end?
+### The end?
 
 Once again the printer is printing properly again. I'm sure there will be
 more problems, but hopefully I get at least a week or so before anything else

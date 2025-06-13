@@ -36,7 +36,7 @@ I realised the other day that it's a little over a year since I started building
 out a collection of board games[^1], and thought it'd be fun to go through the
 collection and what I think about the games in hindsight.
 
-## The beginning
+### The beginning
 
 {% figure "right" "A picture of the board from Ticket to Ride: Europe" %}
 
@@ -62,7 +62,7 @@ they both fall into a weird little gap for me. While I enjoy the games, I don't
 like playing them with certain groups[^3], but I don't love them enough to
 prioritise them over other games when playing with other groups.
 
-## Pandemic
+### Pandemic
 
 {% figure "left" "The box of Pandemic" %}
 
@@ -89,7 +89,7 @@ which plays similarly but is a bit quicker and smaller. I've also recently
 ordered [Iberia](https://boardgamegeek.com/boardgame/198928/iberia), but it
 hasn't materialised yet.
 
-## More gateway games
+### More gateway games
 
 {% figure "right" "The box of The Quacks of Quedlinburg" %}
 
@@ -123,7 +123,7 @@ which lets you get better cards and further discounts, and so on. I love that
 kind of positive feedback loop in video games, and I apparently love it in
 board games as well.
 
-## Terraforming Mars
+### Terraforming Mars
 
 {% figure "left" "Terraforming Mars board, covered with tiles and player cubes" %}
 
@@ -188,7 +188,7 @@ more protected against wear and tear, you can now shuffle the deck just by
 gently mashing stacks of cards together. It makes shuffling so easy I now sleeve
 basically all my games as I hate having to riffle shuffle unsleeved cards.
 
-## Marrakech and HeroQuest
+### Marrakech and HeroQuest
 
 Later in the year I bought [Marrakech](https://boardgamegeek.com/boardgame/29223/marrakech)
 after playing a giant version of it at a games expo. It sits somewhere between
@@ -210,7 +210,7 @@ people: one to DM, and four to control the four heroes. But if you've got five p
 who want to play a dungeon crawler why aren't you just playing D&D or a similar TTRPG?
 I'll probably sell this at some point.
 
-## Party games
+### Party games
 
 {% figure "left" "Codenames components" %}
 
@@ -242,7 +242,7 @@ time filler. I've also played [Lovecraft Letter](https://boardgamegeek.com/board
 which adds a lot more complexity and was great fun, but is sadly out of print
 and I haven't been able to find a copy at a sensible price.
 
-## Fluxx
+### Fluxx
 
 {% figure "right" "A game of Star Trek mega-Fluxx, with three transporter cards in play" %}
 
@@ -270,7 +270,7 @@ the cards from each series use a different font and the weird people that can't
 identify Star Trek series based on uniform variations seem happy enough relying
 on that.
 
-## Future
+### Future
 
 A few more months have passed since then, and my collection is still growing.
 Board game stores have summer sales, it turns out! If my physical wallet was

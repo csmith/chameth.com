@@ -28,7 +28,7 @@ failing completely would be a disaster for me, but it would certainly be a pain.
 This week I finally got around to doing something, and it ended up being a lot
 more straight forward than my previous forays into backup-land.
 
-## Restic
+### Restic
 
 After soliciting a few opinions, the choice of backup software came down to
 either [Borg](https://www.borgbackup.org/) or [Restic](https://restic.net/).
