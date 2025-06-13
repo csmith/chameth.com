@@ -27,7 +27,11 @@ nav.readmore {
 }
 
 .excerpt {
-  border-bottom: 2px solid var(--accent-colour);
-  margin-bottom: var(--large-space);
-  padding-bottom: var(--large-space);
+  &::after {
+    margin: var(--large-space) calc(-1 * var(--content-margin));
+    width: 100vw;
+    display: block;
+    content: "";
+    border-bottom: 2px solid var(--accent-colour);
+  }
 }

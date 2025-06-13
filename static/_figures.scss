@@ -27,12 +27,22 @@ figure {
       float: left;
       max-width: 30%;
       margin-left: 0;
+      transform: rotate(-2deg);
+
+      img, video {
+        transform: rotate(1.5deg);
+      }
     }
 
     &.right {
       float: right;
       max-width: 30%;
       margin-right: 0;
+      transform: rotate(2deg);
+
+      img, video {
+        transform: rotate(-1.5deg);
+      }
     }
   }
 
@@ -45,7 +55,9 @@ figure {
   }
 
   &.full {
-    margin-top: var(--medium-space);
-    margin-bottom: var(--medium-space);
+    margin: var(--medium-space) calc(-1 * var(--content-margin));
+    width: 100vw;
+    max-width: 100vw;
+    border-radius: 0;
   }
 }

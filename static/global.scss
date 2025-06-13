@@ -38,7 +38,8 @@ main {
 hr {
   border: 0;
   border-top: 5px solid var(--accent-colour);
-  margin: var(--medium-space) 0;
+  margin: var(--large-space) calc(-1 * var(--content-margin));
+  width: 100vw;
 }
 
 ol {

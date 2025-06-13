@@ -29,10 +29,11 @@ pre[class*="language-"] {
 
 /* Code blocks */
 pre[class*="language-"] {
-    padding: var(--medium-space);
-    margin: var(--medium-space) 0;
+    margin: var(--medium-space) calc(-1 * var(--content-margin));
     overflow: auto;
-    border-radius: var(--border-radius);
+    border-radius: 0;
+    width: 100vw;
+    padding: var(--medium-space) calc(var(--content-margin) + var(--medium-space));
 }
 
 :not(pre) > code[class*="language-"],

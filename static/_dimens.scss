@@ -1,23 +1,23 @@
 :root {
   --border-radius: 10px;
 
-  --small-space: 0.5em;
-  --medium-space: 1.5em;
-  --large-space: 5em;
+  --small-space: 0.5rem;
+  --medium-space: 1.5rem;
+  --large-space: 5rem;
 
   --content-width: min(1600px, calc(100vw - 2 * var(--large-space)));
   --content-margin: calc((100vw - var(--content-width)) / 2);
 
   @media (max-width: 1200px) {
-    --small-space: 0.5em;
-    --medium-space: 1.2em;
-    --large-space: 4em;
+    --small-space: 0.5rem;
+    --medium-space: 1.2rem;
+    --large-space: 4rem;
   }
 
   @media (max-width: 800px) {
-    --small-space: 0.4em;
-    --medium-space: 1em;
-    --large-space: 2em;
+    --small-space: 0.4rem;
+    --medium-space: 1rem;
+    --large-space: 2rem;
   }
 
   @media (max-width: 500px) {
