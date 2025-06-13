@@ -1,10 +1,15 @@
 @use "_typography";
 
-body > footer {
+.footer-wave {
+  display: block;
   margin-top: var(--large-space);
+  height: 60px;
+}
+
+body > footer {
+  margin-top: 0;
   padding: var(--small-space) var(--content-margin) var(--small-space) var(--content-margin);
   background-color: var(--background-alt-colour);
-  border-top: 5px dotted var(--accent-colour);
 
   display: grid;
   grid-template-columns: 1fr 1fr;
