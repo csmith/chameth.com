@@ -35,4 +35,10 @@ nav.readmore {
     border-bottom: 2px solid var(--accent-colour);
     clear: both;
   }
+
+  @media (min-width: 1200px) {
+    p.date + figure.right {
+      margin-top: calc(-1 * (var(--font-size-large) + var(--font-size-tiny) + var(--medium-space)));
+    }
+  }
 }
