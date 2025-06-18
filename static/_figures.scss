@@ -28,7 +28,7 @@ figure {
     &.left {
       float: left;
       max-width: 30%;
-      margin-left: 0;
+      margin-left: calc(-1 * clamp(0px, var(--content-margin), 50px));
       transform: rotate(-2deg);
       margin-right: calc(var(--medium-space) * 1.5);
 
@@ -40,7 +40,7 @@ figure {
     &.right {
       float: right;
       max-width: 30%;
-      margin-right: 0;
+      margin-right: calc(-1 * clamp(0px, var(--content-margin), 50px));
       transform: rotate(2deg);
       margin-left: calc(var(--medium-space) * 1.5);
 
@@ -50,8 +50,31 @@ figure {
     }
 
     &.left, &.right {
+      position: relative;
       box-shadow: -5px 5px 10px var(--background-colour);
       margin-bottom: var(--medium-space);
+
+      &::before, &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        left: calc(50% - 50px);
+        width: 100px;
+        height: 40px;
+        background-color: var(--accent-colour);
+        opacity: 0.15;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      &::before {
+        top: -20px;
+        transform: rotate(4deg);
+      }
+
+      &::after {
+        bottom: -20px;
+        transform: rotate(-8deg);
+      }
     }
   }
 
