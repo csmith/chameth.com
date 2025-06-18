@@ -43,8 +43,8 @@ main {
 hr {
   border: 0;
   border-top: 5px solid var(--accent-colour);
-  margin: var(--large-space) calc(-1 * var(--content-margin));
-  width: 100vw;
+  margin: var(--large-space) 0;
+  width: 100%;
 }
 
 ol {
