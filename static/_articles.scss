@@ -23,3 +23,9 @@ hr.end-of-post {
   height: var(--medium-space);
   background: repeating-linear-gradient(-45deg, var(--accent-colour) 0, var(--accent-colour) 10px, transparent 10px, transparent 20px);
 }
+
+@media (min-width: 1200px) {
+  .e-content figure.right:first-child {
+    margin-top: calc(-1 * (var(--font-size-xlarge) + var(--font-size-tiny) + var(--medium-space)));
+  }
+}
