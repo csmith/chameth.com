@@ -2,7 +2,7 @@
   --border-radius: 10px;
 
   --small-space: 0.5rem;
-  --medium-space: 1.5rem;
+  --medium-space: 2.5rem;
   --large-space: 5rem;
 
   --content-width: min(1600px, calc(100vw - 2 * var(--large-space)));
@@ -10,7 +10,7 @@
 
   @media (max-width: 1200px) {
     --small-space: 0.5rem;
-    --medium-space: 1.2rem;
+    --medium-space: 2rem;
     --large-space: 4rem;
   }
 
