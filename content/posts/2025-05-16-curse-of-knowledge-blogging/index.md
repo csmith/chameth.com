@@ -2,7 +2,7 @@
 date: 2025-05-16
 title: The Curse of Knowledge and Blogging
 permalink: /curse-of-knowledge-blogging/
-tags: [opinion, blogging]
+tags: [opinion, blogging, cognition]
 resources:
   - src: ideas.jpg
     name: Photo of a sign reading "YOUR IDEAS MATTER … Write them down :)"
