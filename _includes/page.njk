@@ -14,7 +14,9 @@
     <meta property="og:title" content="{{ opengraph.title }}" />
     <meta property="og:type" content="{{ opengraph.type }}" />
     <meta property="og:url" content="{{ opengraph.url | absoluteUrl('https://chameth.com/') }}" />
+    {% if opengraph.image %}
     <meta property="og:image" content="{{ opengraph.image | absoluteUrl('https://chameth.com/') }}" />
+    {% endif %}
     {% endif %}
     <script defer src="https://u.c5h.io/script.js" data-website-id="347648d8-8953-4291-832d-a6040127a43e"></script>
 </head>
