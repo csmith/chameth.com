@@ -1,10 +1,19 @@
-<a href="{{post.url}}" class="post-link">
+<a class="post-link" href="{{post.url}}">
     <article>
-        {% if post.data.opengraph.image %}
-        <img src="{{post.data.opengraph.image}}" alt="Lead image for {{post.data.title}}">
-        {% else %}
-        <div class="placeholder">???</div>
-        {% endif %}
+        <div class="img-holder">
+            {% if post.data.opengraph.image %}
+            <img alt="Lead image for {{post.data.title}}" src="{{post.data.opengraph.image}}">
+            {% else %}
+            <div aria-hidden="true" class="placeholder">
+                <div>
+                    ????????????????<br>
+                    ?????????<span>?</span>??????<br>
+                    ????????????????<br>
+                    ????????????????<br>
+                </div>
+            </div>
+            {% endif %}
+        </div>
         <h3>{{ post.data.title }}</h3>
         <p>{{ post.page | summary | safe }}</p>
     </article>
