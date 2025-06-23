@@ -49,14 +49,14 @@ aside.update {
 
   h5 {
     &::before {
-      font-size: var(--font-size-tiny);
+      font-size: var(--font-size-large);
       content: '';
       margin: 0;
     }
 
     text-transform: uppercase;
     color: var(--text-alt-colour);
-    font-size: var(--font-size-tiny);
+    font-size: var(--font-size-large);
     margin-top: 0;
     margin-bottom: var(--small-space);
 
