@@ -32,6 +32,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Chris Hand';
+  src: url('ChrisHand-Regular.woff2') format('woff2'), url('ChrisHand-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   font-size: var(--font-size-regular);
   font-family: 'IBM Plex Sans', serif;
@@ -39,15 +47,15 @@ body {
 }
 
 h2, h3, h4, h5, h6 {
-  font-family: "Berkeley Mono", monospace;
-  font-size: var(--font-size-xlarge);
+  font-family: "Chris Hand", sans-serif;
+  font-size: var(--font-size-giant);
   color: var(--text-highlight-colour);
   margin: var(--medium-space) 0;
   line-height: 1;
 
   &:before {
-    font-family: "Berkeley Mono", monospace;
-    font-size: var(--font-size-xlarge);
+    font-family: "Chris Hand", sans-serif;
+    font-size: var(--font-size-giant);
     color: var(--accent-colour);
     margin-right: 0.5em;
   }

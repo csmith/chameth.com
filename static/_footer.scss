@@ -52,7 +52,11 @@ body > footer {
   }
 
   h2 {
-    font-size: var(--font-size-large);
+    font-size: var(--font-size-xlarge);
+
+    &::before {
+      font-size: var(--font-size-xlarge);
+    }
   }
 
   ul, a, p {
