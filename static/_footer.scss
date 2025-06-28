@@ -54,8 +54,30 @@ body > footer {
   h2 {
     font-size: var(--font-size-xlarge);
 
+    &:has(a) {
+      display: flex;
+    }
+
     &::before {
       font-size: var(--font-size-xlarge);
+    }
+
+    a {
+      color: var(--accent-colour);
+      border: 1px solid var(--accent-colour);
+      display: inline-block;
+      box-sizing: content-box;
+      height: 24px;
+      width: 24px;
+      padding: 2px;
+      border-radius: 4px;
+      margin-left: calc(var(--medium-space)/2);
+      background-color: var(--background-colour);
+      transition: background-position 300ms ease-in-out, color 300ms ease-in-out;
+
+      &:hover, &:active, &:focus {
+        color: var(--text-highlight-colour);
+      }
     }
   }
 
