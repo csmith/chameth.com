@@ -59,3 +59,10 @@ nav.readmore {
     }
   }
 }
+
+.sitemap time {
+  color: var(--text-alt-colour);
+  font-family: "Berkeley Mono", monospace;
+  font-size: var(--font-size-tiny);
+  padding-left: var(--small-space);
+}

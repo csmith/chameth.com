@@ -22,17 +22,17 @@ title: Sitemap
 
 <h3>Posts</h3>
 
-<ul>
+<ul class="sitemap">
     {% for post in collections.posts %}
-    <li><a href="{{post.data.permalink}}">{{post.data.title}}</a></li>
+    <li><a href="{{post.data.permalink}}">{{post.data.title}}</a> <time datetime="{{ post.data.date | isoDateFormat }}">{{ post.data.date | dateFormat }}</time></li>
     {% endfor %}
 </ul>
 
 <h3>Poems</h3>
 
-<ul>
+<ul class="sitemap">
     {% for post in collections.poems %}
-    <li><a href="{{post.data.permalink}}">{{post.data.title}}</a></li>
+    <li><a href="{{post.data.permalink}}">{{post.data.title}}</a> <time datetime="{{ post.data.date | isoDateFormat }}">{{ post.data.date | dateFormat }}</time></li>
     {% endfor %}
 </ul>
 
