@@ -9,6 +9,16 @@ pagination:
   reverse: true
 ---
 
+<section class="pages-intro">
+    <p>
+        Here are all the blog posts I've written, starting with the most recent.
+        If you're looking for something in particular, you can see all the titles
+        on one page in the <a href="/index/">site map</a>.
+        If you want to stay up-to-date with what I'm writing, you can subscribe
+        to the <a href="/index.xml">RSS feed</a> in your favourite feed reader.
+    </p>
+</section>
+
 {% for post in posts %}
 <article class="excerpt">
     <h2>{{ post.data.title }}</h2>

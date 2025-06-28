@@ -26,6 +26,23 @@ nav.readmore {
   }
 }
 
+.pages-intro {
+  p {
+    background: var(--background-alt-colour);
+    border-radius: var(--border-radius);
+    padding: var(--medium-space);
+  }
+
+  &::after {
+    margin: var(--large-space) calc(-1 * var(--content-margin));
+    width: 100vw;
+    display: block;
+    content: "";
+    border-bottom: 2px solid var(--accent-colour);
+    clear: both;
+  }
+}
+
 .excerpt {
   &::after {
     margin: var(--large-space) calc(-1 * var(--content-margin));
