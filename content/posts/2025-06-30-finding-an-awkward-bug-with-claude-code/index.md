@@ -428,7 +428,7 @@ shibboleth:
 
 ### Fourth time lucky
 
-I'm going to include a piece of the thinking here because it amused be so much:
+I'm going to include a piece of the thinking here because it amused me so much:
 
 ```text
 ✻ Thinking…
