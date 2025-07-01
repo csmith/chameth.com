@@ -12,7 +12,7 @@
   "author": "",
   "license": "",
   "devDependencies": {
-    "@11ty/eleventy": "3.1.0",
+    "@11ty/eleventy": "3.1.2",
     "@11ty/eleventy-plugin-rss": "^2.0.4",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.1",
     "postcss": "8.5.4",
