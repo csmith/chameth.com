@@ -28,6 +28,6 @@
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-prism": "^3.0.0",
     "nunjucks": "^3.2.4",
-    "sass": "^1.89.1"
+    "sass": "^1.89.2"
   }
 }
