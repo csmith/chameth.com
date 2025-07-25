@@ -23,6 +23,11 @@
       &::before {
         display: none;
       }
+
+      svg {
+        width: 48px;
+        height: 48px;
+      }
     }
 
     p {
