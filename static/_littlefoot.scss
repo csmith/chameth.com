@@ -102,6 +102,18 @@
   p {
     margin: 0;
   }
+
+  em::before, em::after {
+    display: none;
+  }
+
+  a {
+    text-decoration: underline;
+
+    &::after {
+      display: none;
+    }
+  }
 }
 
 .is-scrollable {
