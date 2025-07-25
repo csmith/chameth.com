@@ -26,7 +26,7 @@ service entirely. Why? There's a bunch of reasons.
 
 Let's talk about the money first. Spotify launched at £9.99/month, and stayed
 that way for over a decade. Then in 2023 it went up to £10.99/month. That's
-probably fair: the economy is in the toilet, and they haven't changed their
+probably fair: the economy was in the toilet, and they haven't changed their
 price in so long. Then in 2024 they upped it again to £11.99/month. Hmm.
 The service they were providing me didn't improve in that time. I didn't want
 audiobooks in my music player, I didn't want an AI DJ that spouted inane
@@ -200,8 +200,8 @@ age where they were around as I was growing up. I knew a couple of their big
 hits but younger-me wasn't that into rock[^14], so I didn't pay them much
 attention. Then I caught Up From the Bottom on the radio, and from there
 ended up buying and listening to all of From Zero. It's an amazing album.
-Emptiness Machine has become my favourite song: not only is it a great tune,
-performed well, it's also an amazing introduction to a new era for the band
+The Emptiness Machine has become my favourite song: not only is it a great tune,
+performed well, it's also a fantastic introduction to a new era for the band
 and to Emily Armstrong as the new vocalist. The rest of the album then builds
 on it to show off what they can do.
 
