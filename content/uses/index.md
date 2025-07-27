@@ -6,7 +6,7 @@ title: Things I Use
 resources:
   - src: terra.png
     name: Fractal Design Terra Case
-    title: Fractcal Design's Terra Case 
+    title: Fractal Design's Terra Case
   - src: monitor.png
     name: Alienware AW3423DWF monitor
     title: The oh-so beautiful Alienware AW3423DWF QD-OLED monitor
@@ -30,7 +30,7 @@ In the vein of [uses this](https://usesthis.com/) and following on from my
 post about [how I get things done](/how-i-get-things-done/), this is a
 list of things I use that I'll try to keep up-to-date.
 
-Last updated: 5th April 2025
+Last updated: 27th July 2025
 
 ### Computer hardware
 
@@ -41,7 +41,7 @@ with me to LAN events, so it's as small as I can make it. The build is:
 |--------------|-------------------------------------------------------------------------------------------------|-----------------------------------|
 | Case         | [Fractal Design Terra](https://www.fractal-design.com/products/cases/terra/terra/terra-silver/) | Silver                            |
 | Processor    | AMD Ryzen 7 9800X3D                                                                             | 8-core, 104MB cache, up to 5.2GHz |
-| Cooler       | Thermalright AXP90 X47 Full                                                                     |                                   |
+| Cooler       | Thermalright AXP90 X47 Full                                                                     | Fan replaced with a Noctua NF-A9  |
 | Graphics     | Gigabyte Radeon RX 9070XT                                                                       | PCI-E 5, 16GB GDDR6, 3060MHz      |
 | Memory       | Corsair Vengeance                                                                               | 64GB, 6600MHz, CL32               |
 | Storage      | Crucial T705 NVMe SSD                                                                           | 2TB, Gen 5                        |
@@ -94,16 +94,16 @@ their cases, which is great if you might want to 3D print things to fit in them.
 ### Other hardware
 
 - iPhone 15 Pro
-- iPad 10th generation
-- [Xiaomi Smart Band 7](https://www.mi.com/uk/product/xiaomi-smart-band-7/) for tracking and alarms
+- Apple Watch 10
 - [Kindle Paperwhite signature edition](https://www.amazon.co.uk/gp/product/B08N2QK2TG/) for reading
 
 I don't really like Apple's walled garden, but [as I've written before](/apple-google-aligned-incentives/)
 I'd rather go with the company that makes money by producing shiny phones, than
 the company that makes money by shoving adverts down my throat.
 
-I would've gone with an older iPad, but the 10th gen was the first with a real
-USB connector instead of lightning.
+I've owned a couple of iPads over time, but they inevitably tend to just sit
+gathering dust on a shelf. I'm generally either at a computer, or in a
+situation where I don't want to be carrying/using a larger device.
 
 ### Software and services
 
@@ -124,7 +124,7 @@ USB connector instead of lightning.
 - [Tauon](https://tauonmusicbox.rocks/) for playing music
   - [Last.fm](https://last.fm/) for tracking plays and recommendations
 - [Bitwarden](https://bitwarden.com/) for passwords
-- [HexChat](https://hexchat.github.io/) for IRC
+- [Tithon](https://github.com/greboid/tithon) for IRC
   - [Soju](https://soju.im/) as a bouncer
   - [Ergo](https://ergo.chat/about) for an internal ircd
 - [Discord](https://discord.com/) for voice chat and people who don't use IRC
@@ -137,17 +137,17 @@ a lot of cases where that's not feasible for one reason or another.
 #### Making things
 
 - [Gimp](https://www.gimp.org/) for image editing
-- [DaVinci Resolve](https://www.blackmagicdesign.com/products/davinciresolve) for video editing
+- [Inkscape](https://inkscape.org/) for vector image editing
 - [Onshape](https://www.onshape.com/en/) for CAD
+- [DaVinci Resolve](https://www.blackmagicdesign.com/products/davinciresolve) for occasional video editing
 - [Aseprite](https://www.aseprite.org/) for occasional  pixel editing
-- [Inkscape](https://inkscape.org/) for occasional vector editing
 - [Krita](https://krita.org/en/) for some rare digital drawing
 
 #### Development and sysadmin-y things
 
 {% img "Screenshot of IntelliJ IDEA while editing this page" %}
 
-- [Tailscale](https://tailscale.com/) for intra-machine communication
+- [Tailscale](https://tailscale.com/) for intra-machine communication (see [How I use Tailscale](/how-i-use-tailscale/))
 - [NextDNS](https://nextdns.io/) for DNS (and a load of ad blocking)
 - [IntelliJ IDEA](https://www.jetbrains.com/idea/) for basically all code editing
   - [Darcula Darker](https://plugins.jetbrains.com/plugin/12692-darcula-darker-theme) theme
@@ -201,7 +201,7 @@ for making games actually work.
   - [Bit-Check 30 Impaktor 1](https://products.wera.de/en/bits_holders_adaptors_and_sets_bit_sets_bit-checks_impaktor_bit-check_30_impaktor_1.html) for use with the impact driver
   - [Kraftform Kompakt 30](https://products.wera.de/en/kraftform_kompakt_kraftform_kompakt_60_62_kk_60_torque.html) for manual driving
     - With a [816 RA ratchet handle](https://products.wera.de/en/kraftform_kompakt_kraftform_kompakt_with_ratchet_function_fine_tooth_system_for_precision_work_816_ra.html)
-  - [Tool-Check plus Tool Rebel Edition](https://toolrebels.de/en/products/wera-tool-rebel-tool-check-plus-tr-edition) as the base of a travel tool kit
+  - [Tool-Check plus Tool Rebel Edition](https://toolrebels.de/en/products/wera-tool-rebel-tool-check-plus-tr-edition) as the base of my [travel tool kit](/travel-toolkit/)
   - [Hex-plus allen key set](https://products.wera.de/en/new_products_2024_l-keys_950_9_hex-plus_multicolour_3.html) for dealing with hexagons
 - [Knipex Cobra pliers](https://www.knipex.com/en-uk/products/pipe-wrenches-and-water-pump-pliers/knipex-cobra-high-tech-water-pump-pliers/knipex-cobra-high-tech-water-pump-pliers/8701125)
 - [Knipex automatic insulation stripper](https://www.knipex.com/en-uk/products/wire-strippers-and-stripping-tools/automatic-insulation-stripper/automatic-insulation-stripper/1262180)
