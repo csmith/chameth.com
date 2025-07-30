@@ -70,6 +70,48 @@ aside.update {
   }
 }
 
+aside.warning {
+  clear: both;
+  background-image: repeating-linear-gradient(-45deg,red 0, red 10px, white 10px, white 20px, red 20px);
+  border-radius: var(--border-radius);
+  padding: 10px;
+  box-shadow: 0 0 20px var(--accent-colour);
+  margin: var(--medium-space) 0;
+  color: black;
+
+  & > div {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: var(--border-radius);
+    width: 100%;
+    padding: calc(var(--medium-space) / 2);
+
+    h5 {
+      &::before {
+        font-size: var(--font-size-large);
+        content: '⚠';
+        margin: 0;
+        color: inherit;
+      }
+
+      color: inherit;
+      text-transform: uppercase;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: var(--font-size-large);
+      margin-top: 0;
+      margin-bottom: var(--small-space);
+
+      & + p {
+        margin-top: var(--small-space);
+      }
+    }
+
+    *:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
 aside.sidenote {
   border-left: 10px solid var(--background-alt-colour);
   padding-left: 15px;
