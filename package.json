@@ -23,7 +23,7 @@
     "image-size": "^2.0.2",
     "js-yaml": "^4.1.0",
     "liquidjs": "^10.21.1",
-    "luxon": "^3.6.1",
+    "luxon": "^3.7.1",
     "markdown-it": "^14.1.0",
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-prism": "^3.0.0",
