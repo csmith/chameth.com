@@ -146,7 +146,7 @@ Tailscale-User-Profile-Pic: https://example.com/photo.jpg
 
 A lot of software has support for accepting login credentials provided by a
 reverse proxy, which is basically what's happening here. For example, I run
-a Grafana instance that's only exposed over Tailscale. It's config (set
+a Grafana instance that's only exposed over Tailscale. Its config (set
 in environment variables) is:
 
 ```yaml
