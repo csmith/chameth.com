@@ -57,7 +57,7 @@
   transform: var(--popover-transform);
   transition: var(--popover-transition);
   width: var(--popover-width);
-  z-index: 1;
+  z-index: 99999;
 
   &.is-above {
     bottom: 0;
