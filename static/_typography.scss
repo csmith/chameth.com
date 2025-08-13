@@ -59,6 +59,17 @@ h2, h3, h4, h5, h6 {
     color: var(--accent-colour);
     margin-right: 0.5em;
   }
+
+  a {
+    background: none;
+    text-decoration-skip-ink: auto;
+    transition: text-decoration-color 200ms ease-in-out;
+    text-decoration-color: var(--text-alt-colour);
+
+    &:hover, &:focus, &:active {
+      text-decoration-color: var(--accent-colour);
+    }
+  }
 }
 
 h2:before { content: '#'; }
