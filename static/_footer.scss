@@ -63,6 +63,7 @@ body > footer {
     }
 
     a {
+      font-size: var(--font-size-xlarge);
       color: var(--accent-colour);
       border: 1px solid var(--accent-colour);
       display: inline-block;

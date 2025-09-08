@@ -57,7 +57,7 @@ h2, h3, h4, h5, h6 {
     font-family: "Chris Hand", sans-serif;
     font-size: var(--font-size-giant);
     color: var(--accent-colour);
-    margin-right: 0.5em;
+    margin-right: 0.25em;
   }
 
   a {
@@ -68,6 +68,17 @@ h2, h3, h4, h5, h6 {
 
     &:hover, &:focus, &:active {
       text-decoration-color: var(--accent-colour);
+    }
+  }
+
+  // Sometimes nicely formatting the page will cause whitespace to creep in
+  // between the heading and the link, which ends up being visible. Hack around
+  // that.
+  &:has(a) {
+    font-size: 0;
+
+    a {
+      font-size: var(--font-size-giant);
     }
   }
 }
