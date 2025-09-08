@@ -91,7 +91,7 @@ definitely could use it to build a font like this if you had much more patience
 than me. I'd had enough of death-by-a-thousand-paper-cuts though.
 
 I briefly tried Inkscape's built-in support for making an SVG font. It annoyed
-me a lot less, but it's fiddly: it seemed like each font had to be a single
+me a lot less, but it's fiddly: it seemed like each glyph had to be a single
 path, so you had to convert the glyphs to paths, then merge them correctly.
 If you merge them incorrectly then the wrong bits of your letters end up
 filled (like the inside of the 'B'). Path manipulation is getting towards the
@@ -100,7 +100,7 @@ for each letter that had more than a single stroke. I didn't fancy doing that
 for every letter.
 
 I'm usually a big advocate of open source, but this was one of those painful
-times where it feels like it just falls short. Clunky, painful UI and processes
+times when it feels like it just falls short. Clunky, painful UI and processes
 where commercial tools just let you get on with your work.
 
 ### You can exchange money for goods and services
@@ -198,7 +198,7 @@ They e-mailed me an exported copy! It's a JSON file with the properties of each
 glyph and a base64 encoded image. Not only can I re-upload this to Calligraphr
 if I resubscribe, I can probably hook something up to edit it should I ever
 need to. I'm blown away by how pro-user Calligraphr's business practices are.
-They're up-front about pricing, don't try and get you stuck on an auto-renewing
+They're up-front about pricing, don't try to get you stuck on an auto-renewing
 subscription, and automatically export your data. It's like a breath of fresh
 air compared to the barrage of dark patterns that other websites foist on us.
 If you want to make this kind of font, I'd definitely recommend them just
