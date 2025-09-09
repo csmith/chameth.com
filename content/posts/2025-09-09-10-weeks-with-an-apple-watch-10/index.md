@@ -107,6 +107,13 @@ happened had it remained undetected? Probably nothing good. Also, go check your
 blood pressure! It's simple to do and simple to treat if there is an issue,
 but so many people are walking around with hypertension and not even realising.
 
+{% update "2025-09-09" %}
+Just a couple of hours after I published this post, Apple announced that they're
+adding hypertension notifications in the new Series 11 watch. It looks like
+it will also be supported in Series 9 and Series 10 watches. They expect it to
+notify more than one million people of unknown hypertension in the first year.
+{% endupdate %}
+
 ### Building gates in the walled garden
 
 Even though the watch is arguably a life-saver, not everything is rosy.
