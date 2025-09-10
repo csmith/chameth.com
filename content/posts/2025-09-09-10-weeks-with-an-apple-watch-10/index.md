@@ -133,7 +133,7 @@ in a database and can do whatever I want with it![^6]
 Another tool that's more useful on the watch itself is Apple Shortcuts. This
 is their no-code "if-this-then-that"-type thing. You can make automations or
 shortcuts that run a number of tasks. I have a whole slew of them I access
-via a complication on my watch face: one which prompts for input and adds an
+via a complication[^7] on my watch face: one which prompts for input and adds an
 item to my to-do list (swiping to write letters is surprisingly not horrible),
 one which lets me select from a bunch of pre-written ones ("charge kindle",
 "take laundry out in 1 hour", type things), one to log my weight into Apple
@@ -146,7 +146,7 @@ feature for me. Anything I can't do on the watch itself, I can just farm off
 to a web server and connect it up with a shortcut. No need to learn Swift or
 pay Apple for the privilege of being a developer! For a lot of things, like
 controlling the blinds or adding to-do items, I already had a HTTP endpoint
-available and exposed over Tailscale[^7]. Adding it to the watch was just a case
+available and exposed over Tailscale[^8]. Adding it to the watch was just a case
 of entering the right things in the Shortcuts app.
 
 ### Daily nitty-gritty
@@ -179,10 +179,10 @@ a peasant watch like a Series 10. Annoyingly, there's not one that does
 exactly what I want: a plain analogue clock with an inset date and four
 complication slots around the outside. Instead I have to use one of the slots
 to show the date. There are third-party watchfaces, but they have issues.
-Firstly, there's no actual API for making watchfaces[^8], so what they do is
+Firstly, there's no actual API for making watchfaces[^9], so what they do is
 bodge it horribly by using a photo background that has fake widgets on it.
 On top of that they're almost universally subscription-based. Again, no
-thanks[^9].
+thanks[^10].
 
 The issue I had with the Smart Band triggering when I was sleeping is solved
 trivially on an Apple Watch, by virtue of it having a physical button in the
@@ -246,14 +246,16 @@ have a problem with sodium!
 [^6]: This mainly looks like drawing graphs that are slightly different to
 the graphs in the Apple Health graphs, for reasons I'm not sure I can explain.
 Making graphs is fun, OK?
-[^7]: Tailscale actually causes me some problems here: everything works fine
+[^7]: Complications are basically just home screen widgets, but with a fancy
+name because they're on a watch.
+[^8]: Tailscale actually causes me some problems here: everything works fine
 when the watch is connected to my phone, as the phone handles the Tailscale
 part, but if I'm not carrying my phone the watch will try to connect over
 WiFi directly and doesn't understand anything about Tailscale. It happens
 infrequently enough that I'll just live with it; it's not much worse than
 having no signal on a phone.
-[^8]: Yay walled gardens…
-[^9]: I don't object to subscribing to things in general, but it has to be
+[^9]: Yay walled gardens…
+[^10]: I don't object to subscribing to things in general, but it has to be
 something that's worth the ongoing cost and offers something in return for
 the subscription. A watchface doesn't need enough ongoing maintenance to
 justify subscribing to it, it's just a cash grab.
