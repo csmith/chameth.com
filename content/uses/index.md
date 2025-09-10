@@ -30,7 +30,7 @@ In the vein of [uses this](https://usesthis.com/) and following on from my
 post about [how I get things done](/how-i-get-things-done/), this is a
 list of things I use that I'll try to keep up-to-date.
 
-Last updated: 27th July 2025
+Last updated: 10th September 2025
 
 ### Computer hardware
 
@@ -94,7 +94,7 @@ their cases, which is great if you might want to 3D print things to fit in them.
 ### Other hardware
 
 - iPhone 15 Pro
-- Apple Watch 10
+- Apple Watch 10 (see [10 weeks with the Apple Watch 10](/10-weeks-with-an-apple-watch-10/))
 - [Kindle Paperwhite signature edition](https://www.amazon.co.uk/gp/product/B08N2QK2TG/) for reading
 
 I don't really like Apple's walled garden, but [as I've written before](/apple-google-aligned-incentives/)
@@ -114,15 +114,18 @@ situation where I don't want to be carrying/using a larger device.
 - [Arch Linux](https://archlinux.org/) on the desktop
 - [Fastmail](https://www.fastmail.com) for e-mail, calendar and contacts
 - [Todoist](https://www.todoist.com/) for task tracking
-- [Logseq](https://www.logseq.com/) for notes
+- [Obsidian](https://obsidian.md/) for notes
 - [Firefox](https://www.mozilla.org/en-GB/firefox/new/) for web browsing
   - [uBlock Origin](https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/) for ad blocking/privacy
   - [Stylus](https://addons.mozilla.org/en-US/firefox/addon/styl-us/) for overriding stylesheets
 - [Kagi](https://kagi.com/) for web search
 - [You Need A Budget](https://www.ynab.com/) for budgeting
 - [FreeAgent](https://www.freeagent.com/) for work accounts
-- [Tauon](https://tauonmusicbox.rocks/) for playing music
-  - [Last.fm](https://last.fm/) for tracking plays and recommendations
+- [Navidrome](https://www.navidrome.org/) for hosting music
+  - [Beets](https://beets.io/) for organising it
+  - [Feishin](https://github.com/jeffvli/feishin) for desktop playback
+  - [Arpeggi](https://old.reddit.com/r/arpeggiApp/) for iOS playback
+  - [Last.fm](https://last.fm/) and [ListenBrainz](https://listenbrainz.org/) for tracking plays and recommendations
 - [Bitwarden](https://bitwarden.com/) for passwords
 - [Tithon](https://github.com/greboid/tithon) for IRC
   - [Soju](https://soju.im/) as a bouncer
@@ -131,7 +134,7 @@ situation where I don't want to be carrying/using a larger device.
 - [Bluesky](https://bsky.app) for social media-y things
 - [Miniflux](https://miniflux.app/) for feed reading
 
-I prefer self-hosted and open source where possible for services, but there's
+I prefer self-hosted and open source where possible for services, but there are
 a lot of cases where that's not feasible for one reason or another.
 
 #### Making things
@@ -162,6 +165,8 @@ a lot of cases where that's not feasible for one reason or another.
 - [Svelte](https://svelte.dev/) if I can't avoid client-side JavaScript
 - [Docker](https://www.docker.com/) for running anything on servers
   - [Compose](https://docs.docker.com/compose/) for configuring/orchestrating
+- [Claude Code](https://www.anthropic.com/claude-code) for LLM assistance in
+  certain projects
 
 This list could probably go on forever. I'll refrain from listing programming
 languages, libraries, frameworks, etc.
@@ -182,21 +187,28 @@ for making games actually work.
 
 {% figure "right" "Makita DTD157 impact driver" %}
 
+#### Powered
+
 - [Bambu Lab P1S 3D Printer](https://uk.store.bambulab.com/products/p1s)
 - [Epson EcoTank ET-1810](https://www.epson.co.uk/en_GB/products/printers/inkjet/consumer/p/30174)
 - [Pinecil v2 soldering iron](https://pine64.com/product/pinecil-smart-mini-portable-soldering-iron/)
   - With [Tips for heated inserts from CNCKitchen](https://cnckitchen.store/products/ts100-101-adapter-tips-set-m2-x-m3-m4-m5-m6-1-4-m8-100-lead-and-cadmium-free)
-- Various [Engineer](https://www.engineertools-jp.com/) hand tools, including:
-  - [SS-02 solder sucker](https://www.engineertools-jp.com/ss02)
-  - [PTZ-51 ceramic-tipped tweezers](https://www.engineertools-jp.com/ptz51)
-  - [NS-04 micro snips](https://www.engineertools-jp.com/ns030406)
-  - [PZ-58 screw removal pliers](https://www.engineertools-jp.com/pz58)
 - [Makita](https://www.makitauk.com/) LXT power tools:
   - [DTD157 impact driver](https://www.makitauk.com/product/dtd157.html)
   - [DHP484 combi drill](https://www.makitauk.com/product/dhp484.html)
   - [DBO180 random orbit sander](https://www.makitauk.com/product/dbo180.html)
 - [Ryobi RGL18-0 hot glue gun](https://uk.ryobitools.eu/power-tools/speciality-tools/glue-guns/rgl18/rgl18-0/)
   - [Badapter MAK-RYO battery adapter](https://www.amazon.co.uk/dp/B0BZZRGMV9)
+- [Nankadf bench power supply](https://www.amazon.co.uk/gp/product/B09C8LWV9W/)
+- [WOLFBOX MF100 compressed air duster](https://www.amazon.co.uk/dp/B0DHNG4DL8)
+
+#### Hand operated
+
+- Various [Engineer](https://www.engineertools-jp.com/) hand tools, including:
+    - [SS-02 solder sucker](https://www.engineertools-jp.com/ss02)
+    - [PTZ-51 ceramic-tipped tweezers](https://www.engineertools-jp.com/ptz51)
+    - [NS-04 micro snips](https://www.engineertools-jp.com/ns030406)
+    - [PZ-58 screw removal pliers](https://www.engineertools-jp.com/pz58)
 - [Wera](https://www-uk.wera.de/en/) screwdrivers and other tools, including:
   - [Bit-Check 30 Impaktor 1](https://products.wera.de/en/bits_holders_adaptors_and_sets_bit_sets_bit-checks_impaktor_bit-check_30_impaktor_1.html) for use with the impact driver
   - [Kraftform Kompakt 30](https://products.wera.de/en/kraftform_kompakt_kraftform_kompakt_60_62_kk_60_torque.html) for manual driving
@@ -204,9 +216,9 @@ for making games actually work.
   - [Tool-Check plus Tool Rebel Edition](https://toolrebels.de/en/products/wera-tool-rebel-tool-check-plus-tr-edition) as the base of my [travel tool kit](/travel-toolkit/)
   - [Hex-plus allen key set](https://products.wera.de/en/new_products_2024_l-keys_950_9_hex-plus_multicolour_3.html) for dealing with hexagons
 - [Knipex Cobra pliers](https://www.knipex.com/en-uk/products/pipe-wrenches-and-water-pump-pliers/knipex-cobra-high-tech-water-pump-pliers/knipex-cobra-high-tech-water-pump-pliers/8701125)
-- [Knipex automatic insulation stripper](https://www.knipex.com/en-uk/products/wire-strippers-and-stripping-tools/automatic-insulation-stripper/automatic-insulation-stripper/1262180)
+- [JOKARI 30900 all-round wire stripper](https://www.amazon.co.uk/dp/B00JF4BIPI)
 - [Milwauke fastback utility knife](https://www.milwaukeetool.eu/en-eu/fastback-flip-utility-knife/)
-- [Nankadf bench power supply](https://www.amazon.co.uk/gp/product/B09C8LWV9W/)
+- [Omnifixo](https://omnifixo.com/en-gb) for holding things
 
 {% figure "right" "Allplay board game bag, in blue" %}
 
