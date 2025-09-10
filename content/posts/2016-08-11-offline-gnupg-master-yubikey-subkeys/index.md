@@ -12,6 +12,7 @@ resources:
       default: true
   - src: wisdom_of_the_ancients.png
     name: "XKCD: Wisdom of the Ancients"
+    title: '<a href="https://xkcd.com/979/">XKCD #979: Wisdom of the ancients</a>'
 ---
 
 {% figure "right" "A pair of Yubikeys" %}
@@ -105,10 +106,7 @@ followed the instructions at the end of Simon's guide to import my public key an
 of the subkeys on the Yubikey. After that [Enigmail](https://www.enigmail.net/index.php/en/)
 was able to sign and encrypt e-mail in Thunderbird.
 
-<figure class="left">
-  {% img "XKCD: Wisdom of the Ancients" %}
-  <figcaption><a href="https://xkcd.com/979/">XKCD #979: Wisdom of the ancients</a></figcaption>
-</figure>
+{% figure "left" "XKCD: Wisdom of the Ancients" %}
 
 Next up, I enabled PuTTy support and started the GPG agent, as documented over on
 [Yubico's site](https://developers.yubico.com/PGP/SSH_authentication/Windows.html). This allows

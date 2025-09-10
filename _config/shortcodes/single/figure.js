@@ -16,7 +16,7 @@ export default async function (_class, caption) {
         '        <source srcset="{{ prefix }}{{ baseName }}.webp" type="image/webp">' +
         '        <img src="{{ prefix }}{{ src }}" alt="{{ name }}" loading="lazy" width="{{ size.width }}" height="{{ size.height }}">' +
         '    </picture>' +
-        '    <figcaption>{{ caption }}</figcaption>' +
+        '    <figcaption>{{ caption | safe }}</figcaption>' +
         '</figure>',
         {
             _class,
