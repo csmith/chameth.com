@@ -127,3 +127,8 @@ kind = 301
 source = "/feed.xml"
 destination = "/index.xml"
 kind = 301
+
+[[advanced.redirects]]
+source = "/16402FE2.txt"
+destination = "/pgp/"
+kind = 301
