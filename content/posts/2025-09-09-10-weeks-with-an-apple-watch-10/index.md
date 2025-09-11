@@ -177,7 +177,7 @@ Watchfaces aren't quite so delightful. There's a limited number of built-in
 ones, and some are "exclusive" to the Ultra Series, and you can't use them on
 a peasant watch like a Series 10. Annoyingly, there's not one that does
 exactly what I want: a plain analogue clock with an inset date and four
-complication slots around the outside. Instead I have to use one of the slots
+complication slots around the outside. Instead, I have to use one of the slots
 to show the date. There are third-party watchfaces, but they have issues.
 Firstly, there's no actual API for making watchfaces[^9], so what they do is
 bodge it horribly by using a photo background that has fake widgets on it.
@@ -230,8 +230,8 @@ though!
 way from my brain into text.
 [^2]: Exercise for the sake of exercising just seems so overwhelmingly
 tedious and boring to me. And other types of exercise generally require
-social interaction, co-ordinating with people, and so on.
-[^3]: Who decided to use "millimeters of mercury displaced" as a unit? You
+social interaction, coordinating with people, and so on.
+[^3]: Who decided to use "millimetres of mercury displaced" as a unit? You
 can't just put random chemical symbols in units! That's not how this works!
 [^4]: Blood pressure readings have two parts: systolic (the pressure when the
 heart is beating) and diastolic (the pressure between those beats). They're

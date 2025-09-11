@@ -68,7 +68,7 @@ Here are the rough steps I went through with FontForge:
 6. Find the "Import" option in the File menu. Hope it's for a single glyph not
    the whole font.
 7. A file picker opens. Again it's all a bit off from normal desktop
-   conventions. Try to resize it, and just get blank gray space at the bottom.
+   conventions. Try to resize it, and just get blank grey space at the bottom.
 8. Type the absolute path I want to go to in the text field.
 9. Get a dialog saying "Not a bdf file /home/chris/etc". Press OK.
 10. Get a dialog saying "Could not find a bitmap font in". Press OK.
