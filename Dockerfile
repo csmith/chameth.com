@@ -1,11 +1,11 @@
 # Step 1 - add content and build with 11ty
-FROM node:24.8.0 AS node
+FROM oven/bun AS node
 ADD . /tmp/site
 ENV LANG=C.UTF-8
 RUN set -eux; \
     cd /tmp/site; \
-    npm install; \
-    npm run build; \
+    bun install; \
+    bun run build; \
     rm -rf node_modules;
 
 # Step 2 - host with SWS
