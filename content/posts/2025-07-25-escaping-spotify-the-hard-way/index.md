@@ -3,6 +3,7 @@ date: 2025-07-25
 title: "Escaping Spotify the hard way"
 permalink: /escaping-spotify-the-hard-way/
 tags: [music, personal, opinion]
+format: long
 resources:
   - src: wall-e.jpg
     name: "Still from WALL-E, showing two overweight people on floating beds, mindlessly consuming media"

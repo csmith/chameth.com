@@ -3,6 +3,7 @@ date: 2016-04-10
 title: Reverse engineering the Sense API
 description: How to retrieve data from a Hello Sense without using the official apps.
 tags: [hardware, reverse-engineering]
+format: long
 permalink: /sense-api/
 
 resources:

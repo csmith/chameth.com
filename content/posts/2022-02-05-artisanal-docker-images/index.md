@@ -3,6 +3,7 @@ date: 2022-02-05
 title: Artisanal Docker images
 description: When off-the-shell just isn't good enough
 tags: [docker]
+format: long
 permalink: /artisanal-docker-images/
 
 resources:

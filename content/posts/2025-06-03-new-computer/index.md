@@ -3,6 +3,7 @@ date: 2025-06-03
 title: Building a new Computer
 permalink: /building-a-new-computer/
 tags: [hardware, computer, personal]
+format: long
 resources:
   - src: finished.jpg
     name: A small form factor PC sat on a desk, with a pen propped up in front of it for scale. It's about 1.5 pens tall. The case is silver, with a wooden panel at the bottom.

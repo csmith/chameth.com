@@ -3,6 +3,7 @@ date: 2024-07-26
 title: "A year of boardgames"
 permalink: /a-year-of-boardgames/
 tags: [boardgames, personal]
+format: long
 resources:
   - src: ticket-to-ride.jpg
     name: "A picture of the board from Ticket to Ride: Europe"

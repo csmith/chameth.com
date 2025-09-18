@@ -3,6 +3,7 @@ date: 2022-02-18
 title: Reproducible Builds and Docker Images
 description: How hard can it be...?
 tags: [docker, security]
+format: long
 permalink: /reproducible-builds-docker-images/
 
 resources:

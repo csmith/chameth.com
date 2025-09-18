@@ -3,6 +3,7 @@ date: 2025-07-30
 title: "Fixing a loud PSU fan without dying"
 permalink: /fixing-a-loud-psu-fan-without-dying/
 tags: [hardware, computer]
+format: long
 resources:
   - src: fans.jpg
     name: "Two fans side by side on a mouse mat: a black fan with a short power connector, and a beige-and-brown fan with transparent solder seals over the joins in its power connector. The mouse mat has a shiny patch near the solder seals."

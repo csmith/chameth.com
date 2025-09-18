@@ -3,6 +3,7 @@ date: 2024-08-04
 title: Further adventures in 3D printing
 permalink: /further-adventures-in-3d-printing/
 tags: [printing]
+format: long
 resources:
  - src: p1s.png
    name: Marketing image of the Bambu Labs P1S

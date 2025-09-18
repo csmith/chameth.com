@@ -3,6 +3,7 @@ date: 2025-06-22
 title: "The Ethics of LLMs"
 permalink: /the-ethics-of-llms/
 tags: [opinion, personal, ai]
+format: long
 opengraph:
   title: "The Ethics of LLMs · Chameth.com"
   type: article

@@ -3,6 +3,7 @@ date: 2020-03-01
 title: An introduction to containers
 description: You already know a lot more than you think
 tags: [docker, research]
+format: long
 permalink: /intro-to-containers/
 
 resources:

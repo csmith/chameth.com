@@ -3,6 +3,7 @@ date: 2025-06-30
 title: "Finding an awkward bug with Claude Code"
 permalink: /finding-an-awkward-bug-with-claude-code/
 tags: [development, ai, debugging]
+format: long
 resources:
   - src: confidence.png
     name: "Composite screenshot of 11 different Claude responses that are all very confident at having found the bug"

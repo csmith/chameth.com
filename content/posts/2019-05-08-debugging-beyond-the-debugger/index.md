@@ -3,6 +3,7 @@ date: 2019-05-08
 title: Debugging beyond the debugger
 description: What happens when your usual approach fails you?
 tags: [docker, sysadmin, debugging]
+format: long
 permalink: /debugging-beyond-the-debugger/
 
 resources:

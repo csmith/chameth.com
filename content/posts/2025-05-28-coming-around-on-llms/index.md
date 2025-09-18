@@ -3,6 +3,7 @@ date: 2025-05-28
 title: Coming around on LLMs
 permalink: /coming-around-on-llms/
 tags: [opinion, ai, development]
+format: long
 resources:
   - src: claude-hello.png
     name: A screenshot of the Claude web UI with the prompt 'Say "Hello!"'. The response is "Hello!" 

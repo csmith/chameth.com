@@ -3,6 +3,7 @@ date: 2022-12-30
 title: Generating infinite avatars
 description: Why pay for an AI generator when you could build your own?
 tags: [development, ai]
+format: long
 permalink: /infinite-avatars/
 resources:
 - src: unique.jpg

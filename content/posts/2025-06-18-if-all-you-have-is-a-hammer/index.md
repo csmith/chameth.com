@@ -3,6 +3,7 @@ date: 2025-06-18
 title: "If all you have is a hammer…"
 permalink: /if-all-you-have-is-a-hammer/
 tags: [opinion, personal, cognition]
+format: long
 resources:
   - src: hammer.jpg
     name: "Closeup photo of a well-used hammer with a wooden handle"

@@ -3,6 +3,7 @@ date: 2025-06-11
 title: "An app can be a ready meal"
 permalink: /an-app-can-be-a-ready-meal/
 tags: [personal, development, ai]
+format: long
 resources:
   - src: readymeal.jpg
     name: "A spaghetti carbonara ready meal, fresh out the microwave"

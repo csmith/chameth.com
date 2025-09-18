@@ -2,6 +2,7 @@
 date: 2024-05-25
 title: "HTTP/2 and TLS Server Name Indication"
 permalink: /http2-and-sni/
+format: long
 tags: [networking, debugging, research]
 ---
 

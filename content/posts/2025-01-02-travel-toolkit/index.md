@@ -3,6 +3,7 @@ date: 2025-01-02
 title: Building a travel toolkit
 permalink: /travel-toolkit/
 tags: [personal, making]
+format: long
 resources:
   - src: bag.png
     name: UGREEN Travel Accessories Bag

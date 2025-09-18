@@ -3,6 +3,7 @@ date: 2016-10-18
 title: Shoring up SSHd configuration
 description: Tools and suggestions for improving the security of SSHd by disabling weak algorithms and modern config tweaks.
 tags: [security, sysadmin]
+format: long
 permalink: /shoring-up-sshd/
 
 resources:

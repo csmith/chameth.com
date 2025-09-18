@@ -3,6 +3,7 @@ date: 2021-06-12
 title: Reverse engineering an Arctis Pro Wireless Headset
 description: In which we go from "is it on or not?" to "can it play gifs?"
 tags: [hardware, reverse-engineering]
+format: long
 permalink: /reverse-engineering-arctis-pro-wireless-headset/
 
 resources:

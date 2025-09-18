@@ -3,6 +3,7 @@ date: 2025-09-09
 title: "10 Weeks with an Apple Watch 10"
 permalink: /10-weeks-with-an-apple-watch-10/
 tags: [hardware, personal, health]
+format: long
 resources:
   - src: watch.jpg
     name: "An Apple Watch 10 being worn, with a blue analogue clock on the display, and icons/data shown in the corners"

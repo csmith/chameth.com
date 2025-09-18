@@ -3,6 +3,7 @@ date: 2025-07-16
 title: "How tech companies failed to build the Star Trek computer"
 permalink: /how-tech-companies-failed-to-build-the-star-trek-computer/
 tags: [opinion, ai]
+format: long
 resources:
   - src: enterprise-computer-room.jpg
     name: "Still from an episode of Star Trek: The Next Generation, with various characters stood around in a computer core room"

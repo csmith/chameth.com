@@ -3,6 +3,7 @@ date: 2025-05-21
 title: Home Automation Without the Megacorps
 permalink: /home-automation-without-megacorps/
 tags: [self-hosting, home-automation]
+format: long
 resources:
   - src: zigbee-map.png
     name: A "map" showing how Zigbee devices connect to one another 

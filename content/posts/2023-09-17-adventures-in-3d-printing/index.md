@@ -3,6 +3,7 @@ date: 2023-09-17
 title: Adventures in 3D printing
 permalink: /adventures-in-3d-printing/
 tags: [printing]
+format: long
 resources:
  - src: sv06.jpg
    name: Marketing image of the Sovol SV06

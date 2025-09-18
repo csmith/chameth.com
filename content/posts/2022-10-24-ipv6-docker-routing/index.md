@@ -3,6 +3,7 @@ date: 2022-10-24
 title: Adventures in IPv6 routing in Docker
 description: Guest starring musl, as the evil villain
 tags: [docker, networks, research]
+format: long
 permalink: /ipv6-docker-routing/
 ---
 

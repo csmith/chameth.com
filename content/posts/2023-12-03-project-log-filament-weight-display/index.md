@@ -3,6 +3,7 @@ date: 2023-12-03
 title: "Project log: Filament weight display"
 permalink: /filament-weight-display/
 tags: [printing, electronics, making]
+format: long
 resources:
   - src: finished.jpg
     name: Filament weight display

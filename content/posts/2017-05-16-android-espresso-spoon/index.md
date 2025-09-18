@@ -3,6 +3,7 @@ date: 2017-05-16
 title: Android testing with Espresso and Spoon
 description: Automatically running Android UI tests, reducing flakeyness, and getting useful debugging information back on failure.
 tags: [android, testing]
+format: long
 permalink: /android-espresso-spoon/
 
 resources:

@@ -3,6 +3,7 @@ date: 2023-07-29
 title: Upgrading the RAM in a Dell G15 laptop
 permalink: /g15-ram-upgrade/
 tags: [hardware, computer]
+format: long
 resources:
 - src: g15.png
   name: An open Dell G15 laptop

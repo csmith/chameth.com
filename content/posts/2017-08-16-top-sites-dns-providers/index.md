@@ -3,6 +3,7 @@ date: 2017-08-16
 title: A look at the DNS habits of the top 100k websites
 description: An analysis of the DNS providers and resilience of the top 100,000 websites.
 tags: [research, networks]
+format: long
 permalink: /top-sites-dns-providers/
 
 resources:

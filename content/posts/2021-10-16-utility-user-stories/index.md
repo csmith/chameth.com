@@ -3,6 +3,7 @@ date: 2021-10-16
 title: On the utility of user stories
 description: As a website visitor I want to read this post so that I have read the post
 tags: [development, opinion]
+format: long
 permalink: /utility-user-stories/
 
 resources:

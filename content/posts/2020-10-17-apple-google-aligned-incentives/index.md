@@ -3,6 +3,7 @@ date: 2020-10-17
 title: Apple, Google and aligned incentives
 description: Why I switched from Android to iOS after over a decade
 tags: [opinion]
+format: long
 permalink: /apple-google-aligned-incentives/
 
 resources:

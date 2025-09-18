@@ -3,6 +3,7 @@ date: 2025-06-25
 title: "How I use Tailscale"
 permalink: /how-i-use-tailscale/
 tags: [personal, networking, self-hosting]
+format: long
 resources:
   - src: logo.png
     name: "The Tailscale logo: a 3x3 grid of dots, with the middle row and bottom middle dot in white, forming a T shape"

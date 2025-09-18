@@ -3,6 +3,7 @@ date: 2022-12-06
 title: Docker reverse proxying, redux
 description: In which I reinvent everything for reasons.
 tags: [docker, self-hosting, sysadmin, opinion]
+format: long
 permalink: /docker-proxying-redux/
 ---
 

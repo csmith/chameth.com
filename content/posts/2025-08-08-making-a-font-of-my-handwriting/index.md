@@ -3,6 +3,7 @@ date: 2025-08-08
 title: "Making a font of my handwriting"
 permalink: /making-a-font-of-my-handwriting/
 tags: [personal, website]
+format: long
 resources:
   - src: template.jpg
     name: "Eight scanned template sheets, filled in with handwritten letters and ligatures"
