@@ -1,5 +1,5 @@
 # Step 1 - add content and build with 11ty
-FROM oven/bun AS node
+FROM oven/bun:1.2.22 AS bun
 ADD . /tmp/site
 ENV LANG=C.UTF-8
 RUN set -eux; \
@@ -8,8 +8,16 @@ RUN set -eux; \
     bun run build; \
     rm -rf node_modules;
 
-# Step 2 - host with SWS
-FROM ghcr.io/static-web-server/static-web-server:2.38.1 AS sws
-COPY --from=node /tmp/site/_site /site
-ENV SERVER_CONFIG_FILE=/sws.toml
-ADD sws.toml /sws.toml
+# Step 2 - build server
+FROM golang:1.25.1 AS go
+WORKDIR /usr/src/app
+ADD go.mod go.sum cmd /usr/src/app/
+RUN CGO_ENABLED=0 go build -v -o /serve ./...
+
+# Step 3 - combine
+FROM ghcr.io/greboid/dockerbase/nonroot:1.20250803.0
+COPY --from=bun /tmp/site/_site /site
+COPY --from=go /serve /serve
+ENV PORT=8080 \
+    FILES=/site
+ENTRYPOINT ["/serve"]
