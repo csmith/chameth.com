@@ -41,7 +41,19 @@ func main() {
 				middleware.ErrorHandler(
 					middleware.WithErrorHandler(http.StatusNotFound, http.HandlerFunc(handleNotFound)),
 				),
-				middleware.CacheControl(),
+				middleware.CacheControl(
+					middleware.WithCacheTimes(map[string]time.Duration{
+						"application/*":    time.Hour * 24 * 365,
+						"application/xml":  time.Hour,
+						"application/json": time.Duration(0),
+						"audio/*":          time.Hour * 24 * 365,
+						"font/*":           time.Hour * 24 * 365,
+						"image/*":          time.Hour * 24 * 365,
+						"text/*":           time.Hour,
+						"text/css":         time.Hour * 24 * 365,
+						"video/*":          time.Hour * 24 * 365,
+					}),
+				),
 				middleware.Compress(),
 				middleware.Headers(
 					middleware.WithHeader("X-Content-Type-Options", "nosniff"),
