@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "npx @11ty/eleventy",
+    "watch": "npx @11ty/eleventy --watch",
     "serve": "npx @11ty/eleventy --serve"
   },
   "keywords": [],

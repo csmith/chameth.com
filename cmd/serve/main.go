@@ -6,7 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,6 +16,7 @@ import (
 
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
+	"github.com/csmith/slogflags"
 )
 
 var (
@@ -25,8 +26,10 @@ var (
 
 func main() {
 	envflag.Parse()
+	_ = slogflags.Logger(slogflags.WithSetDefault(true))
 
 	mux := http.NewServeMux()
+	mux.Handle("POST /api/contact", http.HandlerFunc(handleContactForm))
 	mux.Handle("/", http.FileServer(http.Dir(*files)))
 
 	server := &http.Server{
@@ -68,9 +71,10 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("Listening on http://0.0.0.0:%d/", *port)
+		slog.Info(fmt.Sprintf("Listening on http://0.0.0.0:%d/", *port))
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("listen: %s\n", err)
+			slog.Error("Failed to listen", "error", err)
+			panic(err)
 		}
 	}()
 
@@ -81,7 +85,8 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	if err := server.Shutdown(ctx); err != nil {
-		log.Fatal("Forced shutdown:", err)
+		slog.Error("Failed to shutdown HTTP server", "error", err)
+		panic(err)
 	}
 }
 

@@ -1,8 +1,78 @@
-iframe#contact {
-  width: 100%;
-  height: 500px;
-}
+[data-contact] {
+  position: relative;
 
-p.disclaimer {
-  font-size: var(--font-size-tiny);
+  .loading, .result {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    span {
+      width: 48px;
+      height: 48px;
+      border: 5px solid var(--accent-colour);
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
+
+    p {
+      background-color: var(--accent-colour);
+      padding: var(--medium-space);
+      color: var(--text-colour);
+      text-align: center;
+      border-radius: var(--border-radius);
+    }
+
+    @keyframes rotation {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
+
+  &:has(.loading) form, &:has(.result) form {
+    opacity: 0.5;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--small-space);
+    transition: opacity 200ms ease-in-out;
+
+    input, textarea {
+      font-size: var(--font-size-small);
+      background-color: var(--background-alt-colour);
+      color: var(--text-colour);
+      border: 1px solid var(--accent-colour);
+      border-radius: 2px;
+      padding: var(--small-space);
+    }
+
+    textarea {
+      min-height: 200px;
+      resize: vertical;
+    }
+
+    button {
+      font-size: var(--font-size-small);
+      background-color: var(--accent-colour);
+      color: var(--text-colour);
+      border: 0;
+      text-transform: uppercase;
+      padding: var(--small-space);
+      border-radius: 2px;
+      cursor: pointer;
+    }
+  }
 }
