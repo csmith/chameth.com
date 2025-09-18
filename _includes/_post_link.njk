@@ -2,7 +2,13 @@
     <article>
         <div class="img-holder">
             {% if post.data.opengraph.image %}
-            <img alt="Lead image for {{post.data.title}}" src="{{post.data.opengraph.image}}">
+            <picture>
+                {% set baseNameRegex = r/\.(jpg|png)$/ %}
+                {% set baseName = post.data.opengraph.image.replace(baseNameRegex, '') %}
+                <source srcset="{{baseName}}.avif" type="image/avif">
+                <source srcset="{{baseName}}.webp" type="image/webp">
+                <img src="{{post.data.opengraph.image}}" alt="Lead image for {{post.data.title}}">
+            </picture>
             {% else %}
             <div aria-hidden="true" class="placeholder">
                 <div>
