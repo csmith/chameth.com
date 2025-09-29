@@ -1,5 +1,5 @@
 # Step 1 - add content and build with 11ty
-FROM oven/bun:1.2.22 AS bun
+FROM oven/bun:1.2.23 AS bun
 ADD . /tmp/site
 ENV LANG=C.UTF-8
 RUN set -eux; \
