@@ -13,14 +13,15 @@ export default async function (caption) {
     return njk.renderString(
         '<figure class="full">' +
         '    <picture>' +
-        '        <source srcset="{{ baseName }}.avif" type="image/avif">' +
-        '        <source srcset="{{ baseName }}.webp" type="image/webp">' +
-        '        <img src="{{ src }}" alt="{{ name }}" loading="lazy" width="{{ size.width }}" height="{{ size.height }}">' +
+        '        <source srcset="{{ prefix }}{{ baseName }}.avif" type="image/avif">' +
+        '        <source srcset="{{ prefix }}{{ baseName }}.webp" type="image/webp">' +
+        '        <img src="{{ prefix }}{{ src }}" alt="{{ name }}" loading="lazy" width="{{ size.width }}" height="{{ size.height }}">' +
         '    </picture>' +
         '    <figcaption>{{ caption }}</figcaption>' +
         '</figure>',
         {
             baseName,
+            prefix: this.page.url,
             src: resource.src,
             name: resource.name,
             caption: resource.title ?? resource.name,
