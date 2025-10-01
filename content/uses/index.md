@@ -30,7 +30,7 @@ In the vein of [uses this](https://usesthis.com/) and following on from my
 post about [how I get things done](/how-i-get-things-done/), this is a
 list of things I use that I'll try to keep up-to-date.
 
-Last updated: 10th September 2025
+Last updated: 1st October 2025
 
 ### Computer hardware
 
@@ -71,7 +71,8 @@ Along with the PC, I use:
   - One with Cherry MX Silent Red switches for not annoying people
   - One with Cherry MX Blues for good typing experiences
 - [Zowie EC1-C wired mouse](https://zowie.benq.eu/en-uk/mouse/ec1-c.html)
-- [HyperX Cloud Alpha Wireless headset](https://uk.hyperx.com/products/hyperx-cloud-alpha-wireless)
+- [beyerdynamic DT 770 PRO](https://europe.beyerdynamic.com/p/dt-770-pro-80-ohm) headphones
+  - via a [MOONDROP DAWN Pro DAC](https://moondroplab.com/en/products/dawn-pro)
 - [Secretlab TITAN Evo 2022 Series chair](https://secretlab.co.uk/products/titan-evo-2022-series)
 - [Nanuk 935 hard case](https://nanuk.com/products/nanuk-935) for transport
 
@@ -96,6 +97,8 @@ their cases, which is great if you might want to 3D print things to fit in them.
 - iPhone 15 Pro
 - Apple Watch 10 (see [10 weeks with the Apple Watch 10](/10-weeks-with-an-apple-watch-10/))
 - [Kindle Paperwhite signature edition](https://www.amazon.co.uk/gp/product/B08N2QK2TG/) for reading
+- [Bang & Olufsen Beosound A1](https://www.bang-olufsen.com/en/us/speakers/beosound-a1) for playing music out loud
+- [Beats Flex Wireless earbuds](https://www.beatsbydre.com/earbuds/beats-flex) for playing music when out and about
 
 I don't really like Apple's walled garden, but [as I've written before](/apple-google-aligned-incentives/)
 I'd rather go with the company that makes money by producing shiny phones, than
@@ -127,9 +130,10 @@ situation where I don't want to be carrying/using a larger device.
   - [Arpeggi](https://old.reddit.com/r/arpeggiApp/) for iOS playback
   - [Last.fm](https://last.fm/) and [ListenBrainz](https://listenbrainz.org/) for tracking plays and recommendations
 - [Bitwarden](https://bitwarden.com/) for passwords
-- [Tithon](https://github.com/greboid/tithon) for IRC
+- [Halloy](https://halloy.chat/) for IRC on the desktop
   - [Soju](https://soju.im/) as a bouncer
   - [Ergo](https://ergo.chat/about) for an internal ircd
+  - [Goguma](https://codeberg.org/emersion/goguma/) for IRC on the go
 - [Discord](https://discord.com/) for voice chat and people who don't use IRC
 - [Bluesky](https://bsky.app) for social media-y things
 - [Miniflux](https://miniflux.app/) for feed reading
@@ -165,8 +169,7 @@ a lot of cases where that's not feasible for one reason or another.
 - [Svelte](https://svelte.dev/) if I can't avoid client-side JavaScript
 - [Docker](https://www.docker.com/) for running anything on servers
   - [Compose](https://docs.docker.com/compose/) for configuring/orchestrating
-- [Claude Code](https://www.anthropic.com/claude-code) for LLM assistance in
-  certain projects
+- [Claude Code](https://www.anthropic.com/claude-code) for LLM assistance in certain projects
 
 This list could probably go on forever. I'll refrain from listing programming
 languages, libraries, frameworks, etc.
