@@ -211,8 +211,9 @@ able to (theoretically) SSH into my desktop computer unchallenged? Tailscale
 allows you to do more advanced ACLs by applying tags to devices. I dutifully
 created a bunch of tags, and went through and tagged every device: `user`, `server`,
 `app`, `container`, and so on. This, it turns out, was a mistake. I could no
-longer SSH to anywhere. If I'd read the docs properly, I might have noticed how
-they describe tags:
+longer SSH to anywhere. If I'd read
+[the docs](https://tailscale.com/kb/1068/tags) properly, I might have noticed
+how they describe tags:
 
 > Tailscale tags are how you authenticate and identify non-user devices, such as
 > servers and ephemeral nodes. They serve two primary purposes: to provide an
