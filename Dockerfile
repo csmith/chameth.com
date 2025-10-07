@@ -9,7 +9,7 @@ RUN set -eux; \
     rm -rf node_modules;
 
 # Step 2 - build server
-FROM golang:1.25.1 AS go
+FROM golang:1.25.2 AS go
 WORKDIR /usr/src/app
 ADD go.mod go.sum cmd /usr/src/app/
 RUN CGO_ENABLED=0 go build -v -o /serve ./...
