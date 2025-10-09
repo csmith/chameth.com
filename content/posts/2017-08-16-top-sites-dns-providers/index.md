@@ -9,12 +9,13 @@ permalink: /top-sites-dns-providers/
 resources:
   - src: providers.png
     name: Graph showing popularity of DNS providers across sites grouped by position
-    params:
-      default: true
   - src: resilience.png
     name: Graph showing use of resilience techniques by site position
   - src: provider-pairings.png
     name: Chart showing frequency of pairings of top providers
+
+opengraph:
+  image: /top-sites-dns-providers/providers.png
 ---
 
 I was thinking about switching DNS providers recently, and found myself

@@ -9,9 +9,6 @@ resources:
     name: Photo of a sign reading "YOUR IDEAS MATTER … Write them down :)"
     title: Finding a picture to go with a blog post about blog post ideas is hard, OK?
 opengraph:
-  title: "The Curse of Knowledge and Blogging · Chameth.com"
-  type: article
-  url: /curse-of-knowledge-blogging/
   image: /curse-of-knowledge-blogging/ideas.jpg
 ---
 

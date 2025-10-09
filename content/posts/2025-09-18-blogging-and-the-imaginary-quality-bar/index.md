@@ -4,6 +4,8 @@ title: "Blogging and the Imaginary Quality Bar"
 permalink: /blogging-and-the-imaginary-quality-bar/
 tags: [personal, website]
 format: short
+opengraph:
+  image: /blogging-and-the-imaginary-quality-bar/wordcloud.png
 ---
 
 Recently I realised that I've developed a self-imposed quality bar for blog

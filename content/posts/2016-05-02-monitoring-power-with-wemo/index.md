@@ -9,17 +9,12 @@ permalink: /monitoring-power-with-wemo/
 resources:
   - src: switch.jpg
     name: A WeMo Insight Switch
-    params:
-      default: true
   - src: desk-1d.png
     name: Graph of power usage over a day
   - src: desk-1w.png
     name: Graph of power usage over a week
 
 opengraph:
-  title: "Monitoring power draw with WeMo Insight Switches · Chameth.com"
-  type: article
-  url: /monitoring-power-with-wemo/
   image: /monitoring-power-with-wemo/switch.jpg
 ---
 

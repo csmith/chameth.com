@@ -9,8 +9,9 @@ permalink: /dns-over-tls-on-edgerouter-lite/
 resources:
   - src: edgerouter.jpg
     name: An EdgeRouter Lite
-    params:
-      default: true
+
+opengraph:
+  image: /dns-over-tls-on-edgerouter-lite/edgerouter.jpg
 ---
 
 {% figure "left" "An EdgeRouter Lite" %}

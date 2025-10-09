@@ -5,9 +5,7 @@ permalink: /the-ethics-of-llms/
 tags: [opinion, personal, ai]
 format: long
 opengraph:
-  title: "The Ethics of LLMs · Chameth.com"
-  type: article
-  url: /the-ethics-of-llms/
+  image: /the-ethics-of-llms/wordcloud.png
 ---
 
 I've written about LLMs a few times recently, carefully dodging the issue of

@@ -5,6 +5,9 @@ description: In which I reinvent everything for reasons.
 tags: [docker, self-hosting, sysadmin, opinion]
 format: long
 permalink: /docker-proxying-redux/
+
+opengraph:
+  image: /docker-proxying-redux/wordcloud.png
 ---
 
 Six years ago, [I described](https://chameth.com/docker-automatic-nginx-proxy/)

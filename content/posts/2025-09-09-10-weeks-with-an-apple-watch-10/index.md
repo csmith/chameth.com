@@ -12,9 +12,6 @@ resources:
     name: "A graph showing sleep phases over time. There's a noticeable transition form patchy data to more smooth data."
     title: "Sleep data; spot when I swapped devices!"
 opengraph:
-  title: "10 Weeks with an Apple Watch 10 · Chameth.com"
-  type: article
-  url: /10-weeks-with-an-apple-watch-10/
   image: /10-weeks-with-an-apple-watch-10/watch.jpg
 ---
 

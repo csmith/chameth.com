@@ -12,9 +12,6 @@ resources:
    name: A side-by-side comparison of printing time on the P1S and SV06. The P1S prints 8 objects at higher quality than the SV06 prints 3.
    title: P1S vs SV06.
 opengraph:
-  title: "Further adventures in 3D printing · Chameth.com"
-  type: article
-  url: /further-adventures-in-3d-printing/
   image: /further-adventures-in-3d-printing/p1s.png
 ---
 

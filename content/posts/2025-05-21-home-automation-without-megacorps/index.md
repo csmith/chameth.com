@@ -15,9 +15,6 @@ resources:
     name: A graph of room temperature, slowly rising to 23.5 degrees, then sharply dropping to 19, rising to 20, dropping to 19 again, etc
     title: A graph of room temperature, showing the effect of the fan being turned on and off
 opengraph:
-  title: "Home Automation Without the Megacorps · Chameth.com"
-  type: article
-  url: /home-automation-without-megacorps/
   image: /home-automation-without-megacorps/zigbee-map.png
 ---
 

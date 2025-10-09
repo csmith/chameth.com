@@ -9,9 +9,6 @@ resources:
     name: "Closeup photo of a well-used hammer with a wooden handle"
     title: "This, dear reader, is a hammer. It is almost entirely irrelevant to the article. Enjoy."
 opengraph:
-  title: "If all you have is a hammer… · Chameth.com"
-  type: article
-  url: /if-all-you-have-is-a-hammer/
   image: /if-all-you-have-is-a-hammer/hammer.jpg
 ---
 

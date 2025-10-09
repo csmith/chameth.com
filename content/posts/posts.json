@@ -1,4 +1,7 @@
 {
   "layout": "article.njk",
-  "tags": ["posts"]
+  "tags": ["posts"],
+  "opengraph": {
+    "type": "article"
+  }
 }

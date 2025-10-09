@@ -9,9 +9,6 @@ resources:
     name: "Still from an episode of Star Trek: The Next Generation, with various characters stood around in a computer core room"
     title: "A computer core room on the Enterprise-D"
 opengraph:
-  title: "How tech companies failed to build the Star Trek computer · Chameth.com"
-  type: article
-  url: /how-tech-companies-failed-to-build-the-star-trek-computer/
   image: /how-tech-companies-failed-to-build-the-star-trek-computer/enterprise-computer-room.jpg
 ---
 

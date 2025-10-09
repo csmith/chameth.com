@@ -10,11 +10,12 @@ resources:
   - src: htc-dream.jpg
     name: White HTC Dream mobile phone
     title: The HTC Dream, the first phone released running Android.
-    params:
-      default: true
   - src: pixels.jpg
     name: Pixel and Pixel XL phones
     title: The Pixel and Pixel XL
+
+opengraph:
+  image: /apple-google-aligned-incentives/htc-dream.jpg
 ---
 
 {% figure "right" "White HTC Dream mobile phone" %}

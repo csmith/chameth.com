@@ -9,10 +9,11 @@ permalink: /over-the-top-optimisations-in-nim/
 resources:
   - src: advent-of-code.png
     name: Christmas Tree from Advent of Code 2005
-    params:
-      default: true
   - src: logo.jpg
     name: The Nim logo
+
+opengraph:
+  image: /over-the-top-optimisations-in-nim/advent-of-code.png
 ---
 
 {% figure "right" "Christmas Tree from Advent of Code 2005" %}

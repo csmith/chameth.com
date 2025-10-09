@@ -12,9 +12,6 @@ resources:
     name: "Screenshot of Tauon music player. There are playlist tabs on top, and album art for 1989 (Taylor's Version) on the right. Most of the screen is a track listing, and all the tracks are by Taylor Swift."
     title: "Tauon, showing off a wide range of different music in my library."
 opengraph:
-  title: "Escaping Spotify the hard way · Chameth.com"
-  type: article
-  url: /escaping-spotify-the-hard-way/
   image: /escaping-spotify-the-hard-way/tauon.png
 ---
 

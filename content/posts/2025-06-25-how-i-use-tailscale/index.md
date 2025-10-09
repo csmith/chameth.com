@@ -15,9 +15,6 @@ resources:
     name: "Screenshots of the Tailscale/KeyCloak login flow: (1) The Tailscale login form (2) The KeyCloak login form"
     title: "Logging in to Tailscale with KeyCloak as an OIDC provider"
 opengraph:
-  title: "How I use Tailscale · Chameth.com"
-  type: article
-  url: /how-i-use-tailscale/
   image: /how-i-use-tailscale/logo.png
 ---
 

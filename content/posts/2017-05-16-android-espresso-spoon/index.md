@@ -9,10 +9,11 @@ permalink: /android-espresso-spoon/
 resources:
   - src: spoon-espresso.png
     name: Spoon output details, showing a screenshot captured of the failure
-    params:
-      default: true
   - src: spoon.png
     name: Spoon output summary, showing results of 171 tests run on 3 devices
+
+opengraph:
+  image: /android-espresso-spoon/spoon-espresso.png
 ---
 
 I've been spending some time recently setting up automated testing for our

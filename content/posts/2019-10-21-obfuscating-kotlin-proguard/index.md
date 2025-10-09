@@ -9,11 +9,12 @@ permalink: /obfuscating-kotlin-proguard/
 resources:
   - src: obfuscated.png
     name: Obfuscated code viewed in Android Studio
-    params:
-      default: true
   - src: kotlin-proguard.png
     name: Kotlin and Proguard logos
     title: Kotlin + Proguard = fun
+
+opengraph:
+  image: /obfuscating-kotlin-proguard/obfuscated.png
 ---
 
 {% figure "left" "Kotlin and Proguard logos" %}

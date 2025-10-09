@@ -12,12 +12,12 @@ rm -rf "$SITE_COPY/node_modules"
 podman run --rm \
   -v "$SITE_COPY:/site:U" \
   --entrypoint /bin/sh \
-  ghcr.io/puppeteer/puppeteer:latest \
+  oven/bun:latest \
   -c '
     set -eux
     cd /site
-    npm ci
-    npm run build
+    bun ci
+    bun run build
     '
 
 # Run puppeteer to take the screenshot. This runs as the puppeteer user

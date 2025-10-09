@@ -12,9 +12,6 @@ resources:
     name: "A hand-written line of text saying 'Hello World! This is Chris Hand' above the same line of text in the Chris Hand font"
     title: "My handwriting vs my handwriting font"
 opengraph:
-  title: "Making a font of my handwriting · Chameth.com"
-  type: article
-  url: /making-a-font-of-my-handwriting/
   image: /making-a-font-of-my-handwriting/template.jpg
 ---
 

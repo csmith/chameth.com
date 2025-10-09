@@ -10,8 +10,9 @@ resources:
 - src: dependency.png
   name: Comic showing all modern digital infrastructure is built upon one project by a random person in Nebraska
   title: "XKCD 2347: Dependency"
-  params:
-    default: true
+
+opengraph:
+  image: /reproducible-builds-docker-images/dependency.png
 ---
 
 {% figure "left" "Comic showing all modern digital infrastructure is built upon one project by a random person in Nebraska" %}

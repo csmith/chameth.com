@@ -4,6 +4,9 @@ title: How I Get Things Done
 tags: [productivity, personal]
 format: long
 permalink: /how-i-get-things-done/
+
+opengraph:
+  image: /how-i-get-things-done/wordcloud.png
 ---
 
 I always quite like reading about how other people _do things_. What software

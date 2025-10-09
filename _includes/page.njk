@@ -12,14 +12,10 @@
     <link rel="alternate" type="application/atom+xml" title="RSS feed (short format posts)" href="/short.xml">
     <link rel="canonical" href="{{ page.url | absoluteUrl('https://chameth.com/') }}"/>
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    {% if opengraph %}
-    <meta property="og:title" content="{{ opengraph.title }}" />
-    <meta property="og:type" content="{{ opengraph.type }}" />
-    <meta property="og:url" content="{{ opengraph.url | absoluteUrl('https://chameth.com/') }}" />
-    {% if opengraph.image %}
-    <meta property="og:image" content="{{ opengraph.image | absoluteUrl('https://chameth.com/') }}" />
-    {% endif %}
-    {% endif %}
+    <meta property="og:title" content="{% if title %}{{ title }} &middot; Chameth.com{% else %}Chameth.com: the personal website of Chris Smith{% endif %}" />
+    <meta property="og:url" content="{{ page.url | absoluteUrl('https://chameth.com/') }}" />
+    {% if opengraph and opengraph.type %}<meta property="og:type" content="{{ opengraph.type }}" />{% endif %}
+    {% if opengraph and opengraph.image %}<meta property="og:image" content="{{ opengraph.image | absoluteUrl('https://chameth.com/') }}" />{% endif %}
     <link rel="preconnect" href="https://u.c5h.io">
     <script defer src="https://u.c5h.io/script.js" data-website-id="347648d8-8953-4291-832d-a6040127a43e"></script>
     <script defer src="/contact.js"></script>

@@ -15,9 +15,6 @@ resources:
     name: "A comparison screenshot. On the left are four albums, with their unaltered artwork. Some are different aspect ratios. On the right are the same four albums, but the art work is now consistently rendered as though its in a jewel case."
     title: "Album art, before and after jewelcase is applied"
 opengraph:
-  title: "Further Adventures in Music Organisation · Chameth.com"
-  type: article
-  url: /further-adventures-in-music-organisation/
   image: /further-adventures-in-music-organisation/feishin.jpg
 ---
 

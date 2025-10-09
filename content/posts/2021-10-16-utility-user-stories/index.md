@@ -9,6 +9,9 @@ permalink: /utility-user-stories/
 resources:
 - src: google-trends-story-persona.png
   name: Graph showing relative search frequency for user stories against user personas
+  
+opengraph:
+  image: /utility-user-stories/google-trends-story-persona.png
 ---
 
 User stories are a staple of most agile methodologies. You'd be hard-pressed to find

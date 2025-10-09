@@ -9,9 +9,6 @@ resources:
     name: The Restic logo — a gopher with two umbrellas.
     title: Restic's mascot, who's dual-wielding umbrellas to save you from a rainy day.
 opengraph:
-  title: "Simple backups with Restic and Hetzner Cloud · Chameth.com"
-  type: article
-  url: /simple-backups-restic-hetzner/
   image: /simple-backups-restic-hetzner/restic.png
 ---
 

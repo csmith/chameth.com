@@ -10,10 +10,11 @@ resources:
 - src: artisanal-containers.jpg
   name: Shelf showing a variety of artisanal containers
   title: Artisanal containers...
-  params:
-    default: true
 - src: doijanky.png
   name: An 'official' Docker Hub image pushed by user 'doijanky'
+
+opengraph:
+  image: /artisanal-docker-images/artisanal-containers.jpg
 ---
 
 {% figure "right" "Shelf showing a variety of artisanal containers" %}

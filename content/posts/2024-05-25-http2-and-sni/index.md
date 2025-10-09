@@ -4,6 +4,9 @@ title: "HTTP/2 and TLS Server Name Indication"
 permalink: /http2-and-sni/
 format: long
 tags: [networking, debugging, research]
+
+opengraph:
+  image: /http2-and-sni/wordcloud.png
 ---
 
 I was recently alerted to a bug in [Centauri](https://github.com/csmith/centauri),

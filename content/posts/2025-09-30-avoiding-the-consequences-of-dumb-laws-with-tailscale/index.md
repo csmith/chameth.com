@@ -8,6 +8,8 @@ resources:
   - src: apps.png
     name: "Screenshot of the app section in the Tailscale admin console. It shows a table with two entries: 'reddit' and 'bluesky'. Each entry has a list of domain names like '*.reddit.com, *.reddit.it'."
     title: "App configuration in the Tailscale admin console"
+opengraph:
+  image: /avoiding-the-consequences-of-dumb-laws-with-tailscale/apps.png
 ---
 
 More and more sites are implementing privacy-invading age checks or just

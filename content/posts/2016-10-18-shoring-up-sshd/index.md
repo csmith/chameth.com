@@ -9,10 +9,11 @@ permalink: /shoring-up-sshd/
 resources:
   - src: openssh.png
     name: The OpenSSH project logo
-    params:
-      default: true
   - src: ssh-audit-github.png
     name: Output of ssh-audit pointing at GitHub's SSH servers
+
+opengraph:
+  image: /shoring-up-sshd/openssh.png
 ---
 
 I recently came across a useful tool on GitHub called

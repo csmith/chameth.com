@@ -10,8 +10,6 @@ resources:
 - src: headset.png
   name: Boxed SteelSeries Arctis Pro Wireless Headset
   title: The Arctis Pro Wireless Headset.
-  params:
-    default: true
 - src: wireshark1.png
   name: Wireshark, showing a packet capture of a SET_REPORT request from the host to the headset
 - src: wireshark2.png
@@ -26,10 +24,7 @@ resources:
   name: Video of receiver playing Nyan cat gif
 
 opengraph:
-      title: "Reverse engineering an Arctis Pro Wireless Headset · Chameth.com"
-      type: article
-      url: /reverse-engineering-arctis-pro-wireless-headset/
-      image: /reverse-engineering-arctis-pro-wireless-headset/headset.png
+  image: /reverse-engineering-arctis-pro-wireless-headset/headset.png
 ---
 
 {% figure "left" "Boxed SteelSeries Arctis Pro Wireless Headset" %}

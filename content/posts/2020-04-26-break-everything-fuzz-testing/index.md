@@ -10,8 +10,9 @@ resources:
   - src: chimp.jpg
     name: Chimp sat at a typewriter
     title: Fuzz testing is a bit like the infinite monkey theorem, but instead of Shakespeare you get crashes.
-    params:
-      default: true
+
+opengraph:
+  image: /break-everything-fuzz-testing/chimp.jpg
 ---
 
 {% figure "left" "Chimp sat at a typewriter" %}

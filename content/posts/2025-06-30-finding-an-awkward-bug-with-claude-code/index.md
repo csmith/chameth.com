@@ -9,9 +9,6 @@ resources:
     name: "Composite screenshot of 11 different Claude responses that are all very confident at having found the bug"
     title: "The many times Claude thought it was right…"
 opengraph:
-  title: "Finding an awkward bug with Claude Code · Chameth.com"
-  type: article
-  url: /finding-an-awkward-bug-with-claude-code/
   image: /finding-an-awkward-bug-with-claude-code/confidence.png
 ---
 

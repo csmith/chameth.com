@@ -21,10 +21,7 @@ resources:
     name: 3D printed spool holder with embedded load cell
     title: The load cell mounted as part of a spool holder on the printer.
 opengraph:
-      title: "Project log: Filament weight display · Chameth.com"
-      type: article
-      url: /filament-weight-display/
-      image: /filament-weight-display/finished.jpg
+  image: /filament-weight-display/finished.jpg
 ---
 
 {%figure "left" "Filament weight display" %}

@@ -12,9 +12,6 @@ resources:
     name: A screenshot of claude-code. I ask it for the permalink for the latest post, and it gives a wrong answer. After prompting it again it gets it right.
     title: A simple example of a claude-code session
 opengraph:
-  title: "Coming around on LLMs · Chameth.com"
-  type: article
-  url: /coming-around-on-llms/
   image: /coming-around-on-llms/code-session.png
 ---
 

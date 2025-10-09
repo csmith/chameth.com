@@ -10,8 +10,9 @@ resources:
   - src: containers.jpg
     name: Containers in port
     title: So. Many. Containers.
-    params:
-      default: true
+
+opengraph:
+  image: /intro-to-containers/containers.jpg
 ---
 
 {% figure "right" "Containers in port" %}

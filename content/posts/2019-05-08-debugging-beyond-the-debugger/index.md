@@ -9,11 +9,12 @@ permalink: /debugging-beyond-the-debugger/
 resources:
   - src: strace.png
     name: Output from running curl under strace
-    params:
-      default: true
   - src: tools.jpg
     name: Collection of tools hanging on a wall
     title: Real-life debugging tools
+
+opengraph:
+  image: /debugging-beyond-the-debugger/strace.png
 ---
 
 {% figure "right" "Collection of tools hanging on a wall" %}

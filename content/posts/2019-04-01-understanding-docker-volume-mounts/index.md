@@ -9,6 +9,9 @@ permalink: /understanding-docker-volume-mounts/
 resources:
   - src: logo.png
     name: The Docker project logo
+
+opengraph:
+  image: /understanding-docker-volume-mounts/logo.png
 ---
 
 {% figure "left" "The Docker project logo" %}

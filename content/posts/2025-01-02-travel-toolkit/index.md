@@ -15,9 +15,6 @@ resources:
     name: The complete toolkit
     title: The nicely-organised side of the toolkit
 opengraph:
-  title: "Building a travel tookit · Chameth.com"
-  type: article
-  url: /travel-toolkit/
   image: /travel-toolkit/contents.jpg
 ---
 

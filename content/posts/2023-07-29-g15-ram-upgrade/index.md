@@ -14,9 +14,6 @@ resources:
   name: The G15 motherboard, with a large "DDR5 8G/16G Only" label, and a smaller "DIMM B DDR5 8G/16G" label next to a SODIMM slot
   title: The G15 motherboard adamantly proclaiming that it doesn't want 32GB SODIMMs
 opengraph:
-  title: "Upgrading the RAM in a Dell G15 laptop · Chameth.com"
-  type: article
-  url: /g15-ram-upgrade/
   image: /g15-ram-upgrade/motherboard.jpg
 ---
 

@@ -15,9 +15,6 @@ resources:
     name: An open flight case, with the PC slotted in surrounded by foam. A keyboard sits below it, and various accessories on the side with 3D-printed supports.
     title: Travel mode, engage!
 opengraph:
-  title: "Building a new Computer · Chameth.com"
-  type: article
-  url: /building-a-new-computer/
   image: /building-a-new-computer/finished.jpg
 ---
 

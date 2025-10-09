@@ -19,9 +19,6 @@ resources:
   - src: after.mp3
     name: "Audio sample from the new fan"
 opengraph:
-  title: "Fixing a loud PSU fan without dying · Chameth.com"
-  type: article
-  url: /fixing-a-loud-psu-fan-without-dying/
   image: /fixing-a-loud-psu-fan-without-dying/installed.jpg
 ---
 

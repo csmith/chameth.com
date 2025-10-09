@@ -9,11 +9,12 @@ permalink: /offline-gnupg-master-yubikey-subkeys/
 resources:
   - src: keys.png
     name: A pair of Yubikeys
-    params:
-      default: true
   - src: wisdom_of_the_ancients.png
     name: "XKCD: Wisdom of the Ancients"
     title: '<a href="https://xkcd.com/979/">XKCD #979: Wisdom of the ancients</a>'
+
+opengraph:
+  image: /offline-gnupg-master-yubikey-subkeys/keys.png
 ---
 
 {% figure "right" "A pair of Yubikeys" %}

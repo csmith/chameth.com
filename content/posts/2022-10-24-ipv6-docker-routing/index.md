@@ -5,6 +5,9 @@ description: Guest starring musl, as the evil villain
 tags: [docker, networks, research]
 format: long
 permalink: /ipv6-docker-routing/
+
+opengraph:
+  image: /ipv6-docker-routing/wordcloud.png
 ---
 
 One of the biggest flaws in Docker's design is that it wasn't created with IPv6 in mind. Out of the box Docker assigns

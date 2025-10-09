@@ -9,10 +9,11 @@ permalink: /docker-automatic-nginx-proxy/
 resources:
   - src: reverse-proxy.png
     name: Diagram showing components of a reverse proxy implementation
-    params:
-      default: true
   - src: logo.png
     name: The Docker project logo
+
+opengraph:
+  image: /docker-automatic-nginx-proxy/reverse-proxy.png
 ---
 
 {% figure "right" "The Docker project logo" %}

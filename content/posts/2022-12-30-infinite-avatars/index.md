@@ -22,10 +22,7 @@ resources:
   title: A selection of avatars produced by the generator
 
 opengraph:
-      title: "Generating infinite avatars · Chameth.com"
-      type: article
-      url: /infinite-avatars/
-      image: /infinite-avatars/avatars.jpg
+  image: /infinite-avatars/avatars.jpg
 ---
 
 {% figure "right" "A computer render of the author, with a \"UNIQUE LIMITED EDITION\" badge" %}

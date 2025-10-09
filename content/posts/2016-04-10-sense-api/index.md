@@ -10,13 +10,8 @@ resources:
   - src: sense.jpg
     name: A Sense unit and its two pillow sensors
     title: A Sense unit and its two pillow sensors
-    params:
-      default: true
 
 opengraph:
-  title: "Reverse engineering the Sense API · Chameth.com"
-  type: article
-  url: /sense-api/
   image: /sense-api/sense.jpg
 ---
 

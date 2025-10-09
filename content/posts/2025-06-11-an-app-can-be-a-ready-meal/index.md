@@ -12,9 +12,6 @@ resources:
     name: "'Is It Worth the Time?' comic from XKCD. A table of 'How often you do the task' vs 'How much time you shave off', with values showing how long you can work on making a task more efficient before spending more time than you save."
     title: "XKCD 1205"
 opengraph:
-  title: "An app can be a ready meal · Chameth.com"
-  type: article
-  url: /an-app-can-be-a-ready-meal/
   image: /an-app-can-be-a-ready-meal/readymeal.jpg
 ---
 

@@ -5,8 +5,8 @@
             <picture>
                 {% set baseNameRegex = r/\.(jpg|png)$/ %}
                 {% set baseName = post.data.opengraph.image.replace(baseNameRegex, '') %}
-                <source srcset="{{baseName}}.avif" type="image/avif">
-                <source srcset="{{baseName}}.webp" type="image/webp">
+                {% if "{{baseName}}.avif" | exists %}<source srcset="{{baseName}}.avif" type="image/avif">{% endif %}
+                {% if "{{baseName}}.webp" | exists %}<source srcset="{{baseName}}.webp" type="image/webp">{% endif %}
                 <img src="{{post.data.opengraph.image}}" alt="Lead image for {{post.data.title}}">
             </picture>
             {% else %}

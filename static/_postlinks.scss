@@ -6,103 +6,109 @@
   @media (max-width: 1200px) {
     flex-direction: column;
   }
+}
 
-  .post-link {
-    flex-basis: 200px;
-    flex-grow: 1;
-    text-decoration: none;
-    background-color: var(--background-alt-colour);
-    padding: calc(var(--small-space) + 25px) var(--small-space);
-    mask: radial-gradient(33.54px at 50% 45px, #000 99%, #0000 101%) calc(50% - 30px) 0/60px 51% repeat-x,
-    radial-gradient(33.54px at 50% -30px, #0000 99%, #000 101%) 50% 15px/60px calc(51% - 15px) repeat-x,
-    radial-gradient(33.54px at 50% calc(100% - 45px), #000 99%, #0000 101%) calc(50% - 30px) 100%/60px 51% repeat-x,
-    radial-gradient(33.54px at 50% calc(100% + 30px), #0000 99%, #000 101%) 50% calc(100% - 15px)/60px calc(51% - 15px) repeat-x;
+.post-catalogue {
+  display: grid;
+  gap: var(--medium-space);
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+}
 
-    &:hover {
-      animation: wavey 1s linear infinite forwards 150ms;
+.post-link {
+  flex-basis: 200px;
+  flex-grow: 1;
+  text-decoration: none;
+  background-color: var(--background-alt-colour);
+  padding: calc(var(--small-space) + 25px) var(--small-space);
+  mask: radial-gradient(33.54px at 50% 45px, #000 99%, #0000 101%) calc(50% - 30px) 0/60px 51% repeat-x,
+  radial-gradient(33.54px at 50% -30px, #0000 99%, #000 101%) 50% 15px/60px calc(51% - 15px) repeat-x,
+  radial-gradient(33.54px at 50% calc(100% - 45px), #000 99%, #0000 101%) calc(50% - 30px) 100%/60px 51% repeat-x,
+  radial-gradient(33.54px at 50% calc(100% + 30px), #0000 99%, #000 101%) 50% calc(100% - 15px)/60px calc(51% - 15px) repeat-x;
 
-      .img-holder img, .img-holder .placeholder {
-        transform: scale(1.1);
+  &:hover {
+    animation: wavey 1s linear infinite forwards 150ms;
+
+    .img-holder img, .img-holder .placeholder {
+      transform: scale(1.1);
+    }
+  }
+
+  @keyframes wavey {
+    0% { mask-position: calc(50% - 30px) 0, calc(50%) 15px, calc(50% - 30px) 100%, calc(50%) calc(100% - 15px); }
+    100% { mask-position: calc(50% + 30px) 0, calc(50% + 60px) 15px, calc(50% + 30px) 100%, calc(50% + 60px) calc(100% - 15px); }
+  }
+
+  article {
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 200px auto;
+    gap: var(--small-space);
+
+    .img-holder {
+      grid-row: 1;
+      grid-column: 1;
+      width: 100%;
+      height: 200px;
+      overflow: hidden;
+    }
+
+    img, .placeholder {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 300ms ease-in-out;
+    }
+
+    .placeholder {
+      background-color: color-mix(in srgb, var(--accent-colour), black 40%);
+      color: color-mix(in srgb, var(--accent-colour), black 30%);
+      font-size: var(--font-size-giant);
+      padding-bottom: 1em;
+      overflow: hidden;
+
+      div {
+        font-size: 60px;
+        transform: rotate(10deg) translateX(-20px) translateY(-30px);
+        white-space: nowrap;
+
+        span {
+          display: inline-block;
+          transform: rotate(180deg) translateY(-4px);
+          color: color-mix(in srgb, var(--accent-colour), black 48%);
+        }
       }
     }
 
-    @keyframes wavey {
-      0% { mask-position: calc(50% - 30px) 0, calc(50%) 15px, calc(50% - 30px) 100%, calc(50%) calc(100% - 15px); }
-      100% { mask-position: calc(50% + 30px) 0, calc(50% + 60px) 15px, calc(50% + 30px) 100%, calc(50% + 60px) calc(100% - 15px); }
+    h3 {
+      z-index: 1;
+      grid-row: 1;
+      grid-column: 1;
+      margin: 0;
+      padding: var(--small-space);
+      font-size: var(--font-size-xlarge);
+      font-weight: bold;
+      line-height: 1em;
+      align-self: end;
+      box-sizing: content-box;
+      max-height: 2em;
+      overflow: hidden;
+      background-color: color-mix(in srgb, var(--background-alt-colour) 80%, transparent);
+
+      &::before {
+        display: none;
+      }
     }
 
-    article {
-      z-index: 2;
-      display: grid;
-      grid-template-columns: 1fr;
-      grid-template-rows: 200px auto;
-      gap: var(--small-space);
-
-      .img-holder {
-        grid-row: 1;
-        grid-column: 1;
-        width: 100%;
-        height: 200px;
-        overflow: hidden;
-      }
-
-      img, .placeholder {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 300ms ease-in-out;
-      }
-
-      .placeholder {
-        background-color: color-mix(in srgb, var(--accent-colour), black 40%);
-        color: color-mix(in srgb, var(--accent-colour), black 30%);
-        font-size: var(--font-size-giant);
-        padding-bottom: 1em;
-        overflow: hidden;
-
-        div {
-          font-size: 60px;
-          transform: rotate(10deg) translateX(-20px) translateY(-30px);
-          white-space: nowrap;
-
-          span {
-            display: inline-block;
-            transform: rotate(180deg) translateY(-4px);
-            color: color-mix(in srgb, var(--accent-colour), black 48%);
-          }
-        }
-      }
-
-      h3 {
-        z-index: 1;
-        grid-row: 1;
-        grid-column: 1;
-        margin: 0;
-        padding: var(--small-space);
-        font-size: var(--font-size-xlarge);
-        font-weight: bold;
-        line-height: 1em;
-        align-self: end;
-        box-sizing: content-box;
-        height: 2em;
-        overflow: hidden;
-        background-color: color-mix(in srgb, var(--background-alt-colour) 80%, transparent);
-
-        &::before {
-          display: none;
-        }
-      }
-
-      p {
-        position: relative;
-        margin: 0;
-        padding: 0;
-        height: calc(5 * 1.2em);
-        overflow: hidden;
-        line-height: 1.2em;
-        mask: linear-gradient(#000 0% 0%) top/100% calc(100% - 1.2em) no-repeat,
-        linear-gradient(to left, #0000, #000 50%) bottom / 100% 1em no-repeat;
-      }
+    p {
+      position: relative;
+      margin: 0;
+      padding: 0;
+      height: calc(5 * 1.2em);
+      overflow: hidden;
+      line-height: 1.2em;
+      mask: linear-gradient(#000 0% 0%) top/100% calc(100% - 1.2em) no-repeat,
+      linear-gradient(to left, #0000, #000 50%) bottom / 100% 1em no-repeat;
     }
   }
 }

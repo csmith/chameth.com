@@ -9,8 +9,9 @@ permalink: /why-you-should-be-using-https/
 resources:
   - src: https-everywhere.jpg
     name: The EFF's HTTPS Everywhere logo
-    params:
-      default: true
+
+opengraph:
+  image: /why-you-should-be-using-https/https-everywhere.jpg
 ---
 
 {% figure "left" "The EFF's HTTPS Everywhere logo" %}

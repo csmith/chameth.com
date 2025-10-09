@@ -27,9 +27,6 @@ resources:
    name: A sagging cable, and a reinforced cable.
    title: It feels like I own a 3D printer to print parts for my 3D printer...
 opengraph:
-  title: "Adventures in 3D printing · Chameth.com"
-  type: article
-  url: /adventures-in-3d-printing/
   image: /adventures-in-3d-printing/sv06.jpg
 ---
 

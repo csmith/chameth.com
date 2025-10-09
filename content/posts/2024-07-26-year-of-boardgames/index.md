@@ -27,9 +27,6 @@ resources:
     name: "A game of Star Trek mega-Fluxx, with three transporter cards in play"
     title: "Star Trek mega-Fluxx"
 opengraph:
-  title: "A year of boardgames · Chameth.com"
-  type: article
-  url: /a-year-of-boardgames/
   image: /a-year-of-boardgames/pandemic.jpg
 ---
 
