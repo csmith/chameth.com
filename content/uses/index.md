@@ -82,10 +82,6 @@ The Alienware monitor is _gorgeous_. QD-OLED is an amazing display technology
 and just makes everything pop. I went to a LAN event where someone had one of
 these monitors and within weeks four of us had purchased our own.
 
-The Cloud Alpha Wireless headphones have an amazing battery life. We're talking
-weeks of near constant use. Whoever optimised the power draw on them to get such
-a good battery life should get a medal.
-
 The Nanuk case makes it easy to cart a PC around with me (as opposed to a
 laptop that just goes into a backpack). It fits the PC, keyboard, mouse, headset
 and cables. I'm hoping to get a slim monitor that will fit as well, so it can
