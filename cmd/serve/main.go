@@ -28,8 +28,15 @@ func main() {
 	envflag.Parse()
 	_ = slogflags.Logger(slogflags.WithSetDefault(true))
 
+	if err := updateStylesheet(); err != nil {
+		slog.Error("Failed to update stylesheet", "error", err)
+		os.Exit(1)
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("POST /api/contact", http.HandlerFunc(handleContactForm))
+	mux.Handle("GET /assets/", serveAssets())
+	mux.Handle("GET /assets/stylesheets/", serveStylesheet())
 	mux.Handle("/", http.FileServer(http.Dir(*files)))
 
 	server := &http.Server{

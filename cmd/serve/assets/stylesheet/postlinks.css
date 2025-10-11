@@ -14,6 +14,11 @@
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
 }
 
+@keyframes wavey {
+    0% { mask-position: calc(50% - 30px) 0, calc(50%) 15px, calc(50% - 30px) 100%, calc(50%) calc(100% - 15px); }
+    100% { mask-position: calc(50% + 30px) 0, calc(50% + 60px) 15px, calc(50% + 30px) 100%, calc(50% + 60px) calc(100% - 15px); }
+}
+
 .post-link {
   flex-basis: 200px;
   flex-grow: 1;
@@ -31,11 +36,6 @@
     .img-holder img, .img-holder .placeholder {
       transform: scale(1.1);
     }
-  }
-
-  @keyframes wavey {
-    0% { mask-position: calc(50% - 30px) 0, calc(50%) 15px, calc(50% - 30px) 100%, calc(50%) calc(100% - 15px); }
-    100% { mask-position: calc(50% + 30px) 0, calc(50% + 60px) 15px, calc(50% + 30px) 100%, calc(50% + 60px) calc(100% - 15px); }
   }
 
   article {

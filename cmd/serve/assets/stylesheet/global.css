@@ -1,25 +1,3 @@
-@use "_reset";
-
-@use "_colours";
-@use "_dimens";
-
-@use "_about";
-@use "_articles";
-@use "_asides";
-@use "_contact";
-@use "_figures";
-@use "_footer";
-@use "_header";
-@use "_littlefoot";
-@use "_pagination";
-@use "_postlinks";
-@use "_prints";
-@use "_projects";
-@use "_snippets";
-@use "_syntax";
-@use "_tables";
-@use "_typography";
-
 body {
   background-color: var(--background-colour);
   color: var(--text-colour);
@@ -29,9 +7,9 @@ body {
   min-height: 100vh;
   min-width: 100vw;
 
-  // In chromium, 100vw includes the space taken by the vertical scrollbar, so
-  // having any content that's 100vw wide will cause horizontal scrolling.
-  // There's no good way to fix this, AFAICT. So just hide the overflow.
+  /* In chromium, 100vw includes the space taken by the vertical scrollbar, so
+     having any content that's 100vw wide will cause horizontal scrolling.
+     There's no good way to fix this, AFAICT. So just hide the overflow. */
   overflow-x: hidden;
 }
 
