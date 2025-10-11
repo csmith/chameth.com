@@ -13,7 +13,7 @@ body > header {
   }
 
   & > a {
-    // Safari underlines block level elements within an A...
+    /* Safari underlines block level elements within an A... */
     text-decoration: none;
   }
 

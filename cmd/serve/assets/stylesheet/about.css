@@ -1,5 +1,5 @@
 .about {
-  // Centers the trading card when it's not floated
+  /* Centers the trading card when it's not floated */
   text-align: center;
 
   * {
@@ -110,9 +110,9 @@
   }
 
   .tcg-front, .tcg-back {
-    // Firefox doesn't do anti-aliasing in a 3D context, which looks terrible
-    // as the card is rotated a bit. Adding a transparent outline somehow
-    // fixes it. https://stackoverflow.com/a/9333891
+    /* Firefox doesn't do anti-aliasing in a 3D context, which looks terrible
+       as the card is rotated a bit. Adding a transparent outline somehow
+       fixes it. https://stackoverflow.com/a/9333891 */
     outline: 1px solid transparent;
     border: 12px solid var(--accent-colour);
     border-radius: var(--border-radius);
@@ -180,7 +180,7 @@
 
     .tcg-skills {
       margin: 0 10px;
-      // Safari doesn't like to calculate the width properly by itself...?
+      /* Safari doesn't like to calculate the width properly by itself...? */
       max-width: calc(100% - 20px);
       border-bottom: 0;
 
@@ -199,7 +199,7 @@
         font-style: normal;
         font-weight: bold;
 
-        // The global style adds underscores around emphasis, but we don't want that here
+        /* The global style adds underscores around emphasis, but we don't want that here */
         &::before {
           display: none;
         }
