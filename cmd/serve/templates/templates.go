@@ -7,7 +7,9 @@ import (
 	"log/slog"
 	"strings"
 
+	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/yuin/goldmark"
+	highlighting "github.com/yuin/goldmark-highlighting/v2"
 	"github.com/yuin/goldmark/extension"
 )
 
@@ -15,7 +17,19 @@ import (
 var templates embed.FS
 
 var md = goldmark.New(
-	goldmark.WithExtensions(extension.Typographer),
+	goldmark.WithExtensions(
+		extension.Typographer,
+		extension.Table,
+		extension.Strikethrough,
+		extension.Linkify,
+		extension.Footnote,
+		highlighting.NewHighlighting(
+			highlighting.WithFormatOptions(
+				chromahtml.WithClasses(true),
+				chromahtml.ClassPrefix("chroma-"),
+			),
+		),
+	),
 )
 
 var funcMap = template.FuncMap{
@@ -26,7 +40,7 @@ var funcMap = template.FuncMap{
 		var buf bytes.Buffer
 		if err := md.Convert([]byte(s), &buf); err != nil {
 			slog.Error("failed to convert markdown", "error", err)
-			return template.HTML("")
+			return ""
 		}
 		return template.HTML(buf.String())
 	},

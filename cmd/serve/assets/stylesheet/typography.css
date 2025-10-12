@@ -70,17 +70,6 @@ h2, h3, h4, h5, h6 {
       text-decoration-color: var(--accent-colour);
     }
   }
-
-  /* Sometimes nicely formatting the page will cause whitespace to creep in
-     between the heading and the link, which ends up being visible. Hack around
-     that. */
-  &:has(a) {
-    font-size: 0;
-
-    a {
-      font-size: var(--font-size-giant);
-    }
-  }
 }
 
 h2:before { content: '#'; }

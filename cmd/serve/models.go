@@ -10,3 +10,10 @@ type Poem struct {
 	Published time.Time `db:"published"`
 	Modified  time.Time `db:"modified"`
 }
+
+type Snippet struct {
+	Slug    string `db:"slug"`
+	Title   string `db:"title"`
+	Topic   string `db:"topic"`
+	Content string `db:"content"`
+}

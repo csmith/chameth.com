@@ -67,6 +67,8 @@ func handleContent(w http.ResponseWriter, r *http.Request) {
 	switch contentType {
 	case "poem":
 		handlePoem(w, r)
+	case "snippet":
+		handleSnippet(w, r)
 	default:
 		// In the future this will be a 404, but for now fall back to 11ty rendered content
 		http.FileServer(http.Dir(*files)).ServeHTTP(w, r)
@@ -78,6 +80,11 @@ func handlePoem(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("Failed to find poem by slug", "error", err, "path", r.URL.Path)
 		handleServerError(w, r)
+		return
+	}
+
+	if poem.Slug != r.URL.Path {
+		http.Redirect(w, r, poem.Slug, http.StatusPermanentRedirect)
 		return
 	}
 
@@ -104,5 +111,36 @@ func handlePoem(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		slog.Error("Failed to render poem template", "error", err, "path", r.URL.Path)
+	}
+}
+
+func handleSnippet(w http.ResponseWriter, r *http.Request) {
+	snippet, err := getSnippetBySlug(r.URL.Path)
+	if err != nil {
+		slog.Error("Failed to find snippet by slug", "error", err, "path", r.URL.Path)
+		handleServerError(w, r)
+		return
+	}
+
+	if snippet.Slug != r.URL.Path {
+		http.Redirect(w, r, snippet.Slug, http.StatusPermanentRedirect)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderSnippet(w, templates.SnippetData{
+		SnippetTitle:   snippet.Title,
+		SnippetGroup:   snippet.Topic,
+		SnippetContent: snippet.Content,
+		PageData: templates.PageData{
+			Title:        fmt.Sprintf("%s · Chameth.com", snippet.Title),
+			Stylesheet:   compiledSheetPath,
+			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", snippet.Slug),
+			RecentPosts:  recentPosts,
+		},
+	})
+	if err != nil {
+		slog.Error("Failed to render snippet template", "error", err, "path", r.URL.Path)
 	}
 }

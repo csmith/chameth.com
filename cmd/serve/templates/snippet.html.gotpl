@@ -1,0 +1,9 @@
+{{/* gotype: github.com/csmith/chameth.com/cmd/serve/templates.SnippetData*/}}
+{{define "content"}}
+    <article>
+        <header>
+            <h2><a href="/snippets/">Snippets</a> &raquo; {{ .SnippetGroup }} &raquo; {{ .SnippetTitle }}</h2>
+        </header>
+        {{ .SnippetContent | markdown }}
+    </article>
+{{end}}
