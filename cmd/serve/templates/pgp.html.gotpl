@@ -1,0 +1,12 @@
+{{/* gotype: github.com/csmith/chameth.com/cmd/serve/templates.PGPData*/}}
+{{define "content"}}
+<h2>PGP information</h2>
+<p>
+    This page used to list my PGP key fingerprint and other information. In the years it was listed, I’ve received
+    exactly no benefit from publishing it, and a moderate amount of inconvenience.
+</p>
+<p>
+    If you need to send me something securely then <a href="/contact/">get in touch</a>, and we can mutually agree
+    on one of the many modern communication platforms with good security and privacy guarantees.
+</p>
+{{end}}}

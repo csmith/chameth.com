@@ -5,12 +5,10 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"syscall"
 	"time"
 
@@ -33,10 +31,16 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err := loadRecentPosts(); err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		os.Exit(1)
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("POST /api/contact", http.HandlerFunc(handleContactForm))
 	mux.Handle("GET /assets/", serveAssets())
 	mux.Handle("GET /assets/stylesheets/", serveStylesheet())
+	mux.Handle("GET /pgp/", http.HandlerFunc(handlePGP))
 	mux.Handle("/", http.FileServer(http.Dir(*files)))
 
 	server := &http.Server{
@@ -95,15 +99,4 @@ func main() {
 		slog.Error("Failed to shutdown HTTP server", "error", err)
 		panic(err)
 	}
-}
-
-func handleNotFound(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(http.StatusNotFound)
-	f, err := os.Open(filepath.Join(*files, "404.html"))
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-	io.Copy(w, f)
 }
