@@ -131,6 +131,7 @@ a {
   padding: 1em;
   margin: var(--medium-space) 0;
   border-radius: var(--border-radius);
+  white-space: preserve-spaces;
 }
 
 .ascii-art {

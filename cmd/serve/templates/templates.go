@@ -20,12 +20,7 @@ var md = goldmark.New(
 
 var funcMap = template.FuncMap{
 	"lines": func(s string) []string {
-		lines := strings.Split(s, "\n")
-		result := make([]string, 0, len(lines))
-		for _, line := range lines {
-			result = append(result, strings.TrimSpace(line))
-		}
-		return result
+		return strings.Split(s, "\n")
 	},
 	"markdown": func(s string) template.HTML {
 		var buf bytes.Buffer

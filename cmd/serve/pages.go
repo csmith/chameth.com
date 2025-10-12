@@ -91,7 +91,7 @@ func handlePoem(w http.ResponseWriter, r *http.Request) {
 			ArticleSummary: poem.Poem,
 			ArticleDate: templates.ArticleDate{
 				Iso:         poem.Published.Format("2006-01-02"),
-				Friendly:    poem.Published.Format("2 Jan 2006"),
+				Friendly:    poem.Published.Format("Jan 2, 2006"),
 				ShowWarning: false,
 			},
 			PageData: templates.PageData{
