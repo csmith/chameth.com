@@ -6,11 +6,14 @@ import (
 )
 
 var notFoundTemplate = template.Must(
-	template.ParseFS(
-		templates,
-		"page.html.gotpl",
-		"notfound.html.gotpl",
-	),
+	template.
+		New("page.html.gotpl").
+		Funcs(funcMap).
+		ParseFS(
+			templates,
+			"page.html.gotpl",
+			"notfound.html.gotpl",
+		),
 )
 
 type NotFoundData struct {

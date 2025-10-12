@@ -26,6 +26,11 @@ func main() {
 	envflag.Parse()
 	_ = slogflags.Logger(slogflags.WithSetDefault(true))
 
+	if err := initDatabase(); err != nil {
+		slog.Error("Failed to initialize database", "error", err)
+		os.Exit(1)
+	}
+
 	if err := updateStylesheet(); err != nil {
 		slog.Error("Failed to update stylesheet", "error", err)
 		os.Exit(1)
@@ -41,7 +46,7 @@ func main() {
 	mux.Handle("GET /assets/", serveAssets())
 	mux.Handle("GET /assets/stylesheets/", serveStylesheet())
 	mux.Handle("GET /pgp/", http.HandlerFunc(handlePGP))
-	mux.Handle("/", http.FileServer(http.Dir(*files)))
+	mux.Handle("/", http.HandlerFunc(handleContent))
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", *port),

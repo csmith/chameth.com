@@ -6,3 +6,6 @@
 
 # Random backup files
 *~
+
+# Postgres data
+/.postgres

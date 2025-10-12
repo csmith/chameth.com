@@ -6,11 +6,14 @@ import (
 )
 
 var pgpTemplate = template.Must(
-	template.ParseFS(
-		templates,
-		"page.html.gotpl",
-		"pgp.html.gotpl",
-	),
+	template.
+		New("page.html.gotpl").
+		Funcs(funcMap).
+		ParseFS(
+			templates,
+			"page.html.gotpl",
+			"pgp.html.gotpl",
+		),
 )
 
 type PGPData struct {

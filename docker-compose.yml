@@ -1,0 +1,10 @@
+services:
+  database:
+    image: 'postgres:18-alpine'
+    user: '1000'
+    ports:
+      - "127.0.0.1:15433:5432"
+    environment:
+      POSTGRES_PASSWORD: "devDB123123"
+    volumes:
+      - .postgres:/var/lib/postgresql
