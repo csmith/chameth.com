@@ -13,7 +13,7 @@ FROM golang:1.25.2 AS go
 WORKDIR /usr/src/app
 ADD go.mod go.sum /usr/src/app/
 ADD cmd /usr/src/app/cmd
-RUN CGO_ENABLED=0 go build -v -o /serve ./cmd/serve/...
+RUN CGO_ENABLED=0 go build -v -o /serve ./cmd/serve
 
 # Step 3 - combine
 FROM ghcr.io/greboid/dockerbase/nonroot:1.20250803.0
