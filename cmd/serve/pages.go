@@ -144,3 +144,35 @@ func handleSnippet(w http.ResponseWriter, r *http.Request) {
 		slog.Error("Failed to render snippet template", "error", err, "path", r.URL.Path)
 	}
 }
+
+func handleSnippetsList(w http.ResponseWriter, r *http.Request) {
+	snippets, err := getAllSnippets()
+	if err != nil {
+		slog.Error("Failed to get all snippets", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	var groups []templates.SnippetGroup
+	for _, snippet := range snippets {
+		if len(groups) == 0 || groups[len(groups)-1].Name != snippet.Topic {
+			groups = append(groups, templates.SnippetGroup{Name: snippet.Topic})
+		}
+		groups[len(groups)-1].Snippets = append(groups[len(groups)-1].Snippets, templates.SnippetDetails{
+			Name: snippet.Title,
+			Slug: snippet.Slug,
+		})
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderSnippets(w, templates.SnippetsData{
+		SnippetGroups: groups,
+		PageData: templates.PageData{
+			Title:        "Snippets · Chameth.com",
+			Stylesheet:   compiledSheetPath,
+			CanonicalUrl: "https://chameth.com/snippets/",
+			RecentPosts:  recentPosts,
+		},
+	})
+}

@@ -1,0 +1,19 @@
+{{/* gotype: github.com/csmith/chameth.com/cmd/serve/templates.SnippetsData*/}}
+{{define "content"}}
+<h2>Snippets / How-tos</h2>
+
+<p>These are small snippets of code or other instructions that I find useful.</p>
+
+<section class="snippets">
+    {{ range .SnippetGroups -}}
+        <section>
+            <h3>{{ .Name }}</h3>
+            <ul>
+                {{ range .Snippets -}}
+                    <li><a href="{{.Slug}}">{{.Name}}</a></li>
+                {{- end }}
+            </ul>
+        </section>
+    {{- end }}
+</section>
+{{end}}
