@@ -70,6 +70,8 @@ func handleContent(w http.ResponseWriter, r *http.Request) {
 		handlePoem(w, r)
 	case "snippet":
 		handleSnippet(w, r)
+	case "media":
+		handleMedia(w, r)
 	default:
 		// In the future this will be a 404, but for now fall back to 11ty rendered content
 		http.FileServer(http.Dir(*files)).ServeHTTP(w, r)
@@ -224,4 +226,18 @@ func handleProjectsList(w http.ResponseWriter, r *http.Request) {
 			RecentPosts:  recentPosts,
 		},
 	})
+}
+
+func handleMedia(w http.ResponseWriter, r *http.Request) {
+	m, err := getMediaBySlug(r.URL.Path)
+	if err != nil {
+		slog.Error("Failed to find media by slug", "error", err, "path", r.URL.Path)
+		handleServerError(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", m.ContentType)
+	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(m.Data)
 }

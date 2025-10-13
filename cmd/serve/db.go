@@ -117,3 +117,19 @@ func getProjectsInSection(sectionID int) ([]Project, error) {
 	}
 	return projects, nil
 }
+
+// getMediaBySlug returns media for the given slug.
+// Returns nil if no media is found with that slug.
+func getMediaBySlug(slug string) (*Media, error) {
+	var media Media
+	err := db.Get(&media, `
+		SELECT m.id, m.content_type, m.original_filename, m.data
+		FROM media m
+		JOIN media_relations mr ON m.id = mr.media_id
+		WHERE mr.slug = $1
+	`, slug)
+	if err != nil {
+		return nil, err
+	}
+	return &media, nil
+}

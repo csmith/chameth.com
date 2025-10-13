@@ -33,3 +33,20 @@ type Project struct {
 	Pinned      bool   `db:"pinned"`
 	Description string `db:"description"`
 }
+
+type Media struct {
+	ID               int    `db:"id"`
+	ContentType      string `db:"content_type"`
+	OriginalFilename string `db:"original_filename"`
+	Data             []byte `db:"data"`
+}
+
+type MediaRelation struct {
+	Slug        string `db:"slug"`
+	MediaID     int    `db:"media_id"`
+	Description string `db:"description"`
+	Caption     string `db:"caption"`
+	Role        string `db:"role"`
+	EntityType  string `db:"entity_type"`
+	EntityID    int    `db:"entity_id"`
+}
