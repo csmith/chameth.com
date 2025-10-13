@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log/slog"
 	"net/http"
 
@@ -172,6 +173,54 @@ func handleSnippetsList(w http.ResponseWriter, r *http.Request) {
 			Title:        "Snippets · Chameth.com",
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: "https://chameth.com/snippets/",
+			RecentPosts:  recentPosts,
+		},
+	})
+}
+
+func handleProjectsList(w http.ResponseWriter, r *http.Request) {
+	sections, err := getAllProjectSections()
+	if err != nil {
+		slog.Error("Failed to get all project sections", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	var groups []templates.ProjectGroup
+	for _, section := range sections {
+		var projectDetails []templates.ProjectDetails
+
+		projects, err := getProjectsInSection(section.ID)
+		if err != nil {
+			slog.Error("Failed to get projects in section", "section", section.ID, "error", err)
+			handleServerError(w, r)
+			return
+		}
+
+		for _, project := range projects {
+			projectDetails = append(projectDetails, templates.ProjectDetails{
+				Name:        project.Name,
+				Pinned:      project.Pinned,
+				Icon:        template.HTML(project.Icon),
+				Description: project.Description,
+			})
+		}
+
+		groups = append(groups, templates.ProjectGroup{
+			Name:        section.Name,
+			Description: section.Description,
+			Projects:    projectDetails,
+		})
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderProjects(w, templates.ProjectsData{
+		ProjectGroups: groups,
+		PageData: templates.PageData{
+			Title:        "Projects · Chameth.com",
+			Stylesheet:   compiledSheetPath,
+			CanonicalUrl: "https://chameth.com/projects/",
 			RecentPosts:  recentPosts,
 		},
 	})
