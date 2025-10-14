@@ -1,0 +1,14 @@
+CREATE TABLE prints
+(
+    id          INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name        VARCHAR NOT NULL,
+    description TEXT    NOT NULL
+);
+
+CREATE TABLE prints_links
+(
+    id       INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    print_id INTEGER NOT NULL REFERENCES prints (id) ON DELETE CASCADE,
+    name     VARCHAR NOT NULL,
+    address  VARCHAR NOT NULL
+);

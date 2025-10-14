@@ -133,3 +133,37 @@ func getMediaBySlug(slug string) (*Media, error) {
 	}
 	return &media, nil
 }
+
+// getAllPrints returns all prints ordered by name.
+func getAllPrints() ([]Print, error) {
+	var prints []Print
+	err := db.Select(&prints, "SELECT id, name, description FROM prints ORDER BY name")
+	if err != nil {
+		return nil, err
+	}
+	return prints, nil
+}
+
+// getPrintLinks returns all links for a given print ID.
+func getPrintLinks(printID int) ([]PrintLink, error) {
+	var links []PrintLink
+	err := db.Select(&links, "SELECT id, print_id, name, address FROM prints_links WHERE print_id = $1", printID)
+	if err != nil {
+		return nil, err
+	}
+	return links, nil
+}
+
+// getMediaRelationsForEntity returns all media relations for a given entity type and ID.
+func getMediaRelationsForEntity(entityType string, entityID int) ([]MediaRelation, error) {
+	var relations []MediaRelation
+	err := db.Select(&relations, `
+		SELECT slug, media_id, description, caption, role, entity_type, entity_id
+		FROM media_relations
+		WHERE entity_type = $1 AND entity_id = $2
+	`, entityType, entityID)
+	if err != nil {
+		return nil, err
+	}
+	return relations, nil
+}

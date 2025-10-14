@@ -42,11 +42,24 @@ type Media struct {
 }
 
 type MediaRelation struct {
-	Slug        string `db:"slug"`
-	MediaID     int    `db:"media_id"`
+	Slug        string  `db:"slug"`
+	MediaID     int     `db:"media_id"`
+	Description *string `db:"description"`
+	Caption     *string `db:"caption"`
+	Role        string  `db:"role"`
+	EntityType  string  `db:"entity_type"`
+	EntityID    int     `db:"entity_id"`
+}
+
+type Print struct {
+	ID          int    `db:"id"`
+	Name        string `db:"name"`
 	Description string `db:"description"`
-	Caption     string `db:"caption"`
-	Role        string `db:"role"`
-	EntityType  string `db:"entity_type"`
-	EntityID    int    `db:"entity_id"`
+}
+
+type PrintLink struct {
+	ID      int    `db:"id"`
+	PrintID int    `db:"print_id"`
+	Name    string `db:"name"`
+	Address string `db:"address"`
 }

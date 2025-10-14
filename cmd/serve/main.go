@@ -46,6 +46,7 @@ func main() {
 	mux.Handle("GET /assets/", serveAssets())
 	mux.Handle("GET /assets/stylesheets/", serveStylesheet())
 	mux.Handle("GET /pgp/{$}", http.HandlerFunc(handlePGP))
+	mux.Handle("GET /prints/{$}", http.HandlerFunc(handlePrintsList))
 	mux.Handle("GET /projects/{$}", http.HandlerFunc(handleProjectsList))
 	mux.Handle("GET /snippets/{$}", http.HandlerFunc(handleSnippetsList))
 	mux.Handle("/", http.HandlerFunc(handleContent))

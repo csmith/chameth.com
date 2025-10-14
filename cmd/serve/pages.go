@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log/slog"
 	"net/http"
+	"path"
 
 	"github.com/csmith/chameth.com/cmd/serve/templates"
 )
@@ -240,4 +241,78 @@ func handleMedia(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(m.Data)
+}
+
+func handlePrintsList(w http.ResponseWriter, r *http.Request) {
+	prints, err := getAllPrints()
+	if err != nil {
+		slog.Error("Failed to get all prints", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	var printDetails []templates.PrintDetails
+	for _, p := range prints {
+		// Get links
+		links, err := getPrintLinks(p.ID)
+		if err != nil {
+			slog.Error("Failed to get print links", "print_id", p.ID, "error", err)
+			handleServerError(w, r)
+			return
+		}
+
+		var printLinks []templates.PrintLink
+		for _, link := range links {
+			printLinks = append(printLinks, templates.PrintLink{
+				Name:    link.Name,
+				Address: link.Address,
+			})
+		}
+
+		// Get media relations
+		mediaRelations, err := getMediaRelationsForEntity("print", p.ID)
+		if err != nil {
+			slog.Error("Failed to get media relations", "print_id", p.ID, "error", err)
+			handleServerError(w, r)
+			return
+		}
+
+		var renderPath, previewPath string
+		for _, mr := range mediaRelations {
+			switch mr.Role {
+			case "render":
+				renderPath = mr.Slug
+			case "preview":
+				previewPath = mr.Slug
+			case "download":
+				printLinks = append(printLinks, templates.PrintLink{
+					Name:    fmt.Sprintf("%s file", path.Ext(mr.Slug)),
+					Address: mr.Slug,
+				})
+			}
+		}
+
+		printDetails = append(printDetails, templates.PrintDetails{
+			Name:        p.Name,
+			Description: p.Description,
+			RenderPath:  renderPath,
+			PreviewPath: previewPath,
+			Links:       printLinks,
+		})
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderPrints(w, templates.PrintsData{
+		Prints: printDetails,
+		PageData: templates.PageData{
+			Title:        "3D Prints · Chameth.com",
+			Stylesheet:   compiledSheetPath,
+			CanonicalUrl: "https://chameth.com/prints/",
+			RecentPosts:  recentPosts,
+		},
+	})
+	if err != nil {
+		slog.Error("Failed to render prints template", "error", err)
+	}
 }
