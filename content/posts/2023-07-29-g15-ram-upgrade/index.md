@@ -71,7 +71,7 @@ GPU and motherboard.
 
 The first thing I saw was this:
 
-{% img "The G15 motherboard, with a large \"DDR5 8G/16G Only\" label, and a smaller \"DIMM B DDR5 8G/16G\" label next to a SODIMM slot" %}
+{% figure "full" "The G15 motherboard, with a large \"DDR5 8G/16G Only\" label, and a smaller \"DIMM B DDR5 8G/16G\" label next to a SODIMM slot" %}
 
 Not one but two labels that indicate it will only accept 8GB or 16GB modules.
 Oh well, what's the worst that can happen?

@@ -75,7 +75,7 @@ making any changes, showing you a side-by-side diff of what it's doing and
 allowing you to provide feedback. If I had to design a way to interact with
 a coding agent from scratch, I can't think of many things I'd improve.
 
-{% img "A screenshot of claude-code. I ask it for the permalink for the latest post, and it gives a wrong answer. After prompting it again it gets it right." %}
+{% figure "full" "A screenshot of claude-code. I ask it for the permalink for the latest post, and it gives a wrong answer. After prompting it again it gets it right." %}
 
 The power in `claude-code` versus just using the web UI is that it can use
 tools. It can query `git`, run `grep` commands, even use `sed` if it wants to

@@ -88,7 +88,7 @@ understand it all.
 
 In the end I decided to roll my own solution. Here's a high-level overview of how it all works:
 
-{% img "Diagram showing components of a reverse proxy implementation" %}
+{% figure "full" "Diagram showing components of a reverse proxy implementation" %}
 
 As you probably noticed, there are quite a few containers involved. Each one performs a small,
 well-defined task, and its output can easily be inspected in either a volume or a database. I

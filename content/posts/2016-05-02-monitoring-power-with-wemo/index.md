@@ -195,14 +195,14 @@ The big block of `CDEF`/`CDEF`/`AREA` parameters creates a series of area plots 
 according to the power level. They're in descending order so the smaller areas are drawn on top of
 the larger layers. This results in a graph that looks like this:
 
-{% img "Graph of power usage over a day" %}
+{% figure "full" "Graph of power usage over a day" %}
 
 This graph shows the total power for all the things plugged in at my desk. You can see the idle
 power draw is around 60W. When I'm using the computer it jumps up to around 130W, and when the
 computer is under heavy load (playing games, for example) it goes up even further to the 200W mark.
 With a couple of small tweaks to the rrdtool command, I also have a graph showing the entire week:
 
-{% img "Graph of power usage over a week" %}
+{% figure "full" "Graph of power usage over a week" %}
 
 The two huge spikes near the start of the data are caused by a heater under my desk. They're also
 one of the main reasons I chose to plot the graphs with a logarithmic scale. With a linear scale

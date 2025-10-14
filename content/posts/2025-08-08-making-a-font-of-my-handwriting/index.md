@@ -118,7 +118,7 @@ scan them in. It does some magical processing to extract the glyphs, provides
 tools to tidy them up, align them, etc, and then produces a TTF file for you.
 You can see some of my completed templates here:
 
-{% img "Eight scanned template sheets, filled in with handwritten letters and ligatures" %}
+{% figure "full" "Eight scanned template sheets, filled in with handwritten letters and ligatures" %}
 
 Calligraphr has a nice UI to generate the templates, allowing you to select
 which glyphs to include. I added the "minimal English", "basic punctuation"
@@ -181,7 +181,7 @@ If you're viewing this post on my website[^1], you can see the font in the
 headers, captions, and a few other places. Here's how it compares to my actual
 handwriting:
 
-{% img "A hand-written line of text saying 'Hello World! This is Chris Hand' above the same line of text in the Chris Hand font" %}
+{% figure "full" "A hand-written line of text saying 'Hello World! This is Chris Hand' above the same line of text in the Chris Hand font" %}
 
 It's not close enough to forge documents, but I think it definitely gets
 across my style, and that's exactly what I wanted. It's surprisingly legible

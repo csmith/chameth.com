@@ -29,7 +29,7 @@ just warnings and failures:
 
 <!--more-->
 
-{% img "Output of ssh-audit pointing at GitHub's SSH servers" %}
+{% figure "full" "Output of ssh-audit pointing at GitHub's SSH servers" %}
 
 GitHub's a bit of a special case, as they're trying to cope with scores of
 developers pushing code: they can't disable weaker algorithms without also

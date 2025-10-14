@@ -58,7 +58,7 @@ Spoon produces HTML reports, showing the status of each test run on each device.
 We have the report output folder collected as a build artefact, so the reports
 can be seen right from the build server:
 
-{% img "Spoon output summary, showing results of 171 tests run on 3 devices" %}
+{% figure "full" "Spoon output summary, showing results of 171 tests run on 3 devices" %}
 
 ### Flake-free UI testing with Espresso
 
@@ -169,7 +169,7 @@ Espresso's original handler so that it can output its debugging information
 and fail the test. The Spoon runner automatically picks up the screenshot and
 adds it to the report:
 
-{% img "Spoon output details, showing a screenshot captured of the failure" %}
+{% figure "full" "Spoon output details, showing a screenshot captured of the failure" %}
 
 Having the screenshot, error message and logs all presented in a clean UI
 makes debugging failures much, much easier than searching through a huge build

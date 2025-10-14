@@ -39,6 +39,8 @@ type Media struct {
 	ContentType      string `db:"content_type"`
 	OriginalFilename string `db:"original_filename"`
 	Data             []byte `db:"data"`
+	Width            *int   `db:"width"`
+	Height           *int   `db:"height"`
 }
 
 type MediaRelation struct {
@@ -49,6 +51,11 @@ type MediaRelation struct {
 	Role        string  `db:"role"`
 	EntityType  string  `db:"entity_type"`
 	EntityID    int     `db:"entity_id"`
+}
+
+type MediaRelationWithDetails struct {
+	MediaRelation
+	Media
 }
 
 type Print struct {

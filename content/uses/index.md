@@ -148,7 +148,7 @@ a lot of cases where that's not feasible for one reason or another.
 
 #### Development and sysadmin-y things
 
-{% img "Screenshot of IntelliJ IDEA while editing this page" %}
+{% figure "full" "Screenshot of IntelliJ IDEA while editing this page" %}
 
 - [Tailscale](https://tailscale.com/) for intra-machine communication (see [How I use Tailscale](/how-i-use-tailscale/))
 - [NextDNS](https://nextdns.io/) for DNS (and a load of ad blocking)

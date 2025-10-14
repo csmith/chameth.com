@@ -59,7 +59,7 @@ Route 53.
 This graph shows the relative frequency of some of the big providers for
 sites in different positions in the top 100,000 list:
 
-{% img "Graph showing popularity of DNS providers across sites grouped by position" %}
+{% figure "full" "Graph showing popularity of DNS providers across sites grouped by position" %}
 
 There are a few interesting transitions that can be seen here. The very large
 sites tend to manage their own DNS, as can be seen with the large
@@ -93,14 +93,14 @@ namesevers under multiple TLDs.
 As you would expect, the use of these techniques tend to be more common with
 the higher ranking sites:
 
-{% img "Graph showing use of resilience techniques by site position" %}
+{% figure "full" "Graph showing use of resilience techniques by site position" %}
 
 #### Most popular pairings
 
 Of those sites that do use multiple providers, there are some fairly common
 pairings:
 
-{% img "Chart showing frequency of pairings of top providers" %}
+{% figure "full" "Chart showing frequency of pairings of top providers" %}
 
 Dyn is obviously frequently paired with a number of providers. In fact, of all
 the top 100k sites using Dyn 40% also use a different provider. They're second

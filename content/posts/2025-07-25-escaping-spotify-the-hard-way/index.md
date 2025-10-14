@@ -147,7 +147,7 @@ With all this talk about buying and sorting music, I almost forgot about the
 most important bit: listening! I use [Tauon](https://tauonmusicbox.rocks/),
 and it looks like this:
 
-{% img "Screenshot of Tauon music player. There are playlist tabs on top, and album art for 1989 (Taylor's Version) on the right. Most of the screen is a track listing, and all the tracks are by Taylor Swift." %}
+{% figure "full" "Screenshot of Tauon music player. There are playlist tabs on top, and album art for 1989 (Taylor's Version) on the right. Most of the screen is a track listing, and all the tracks are by Taylor Swift." %}
 
 I tried a bunch of different music players, but Tauon hits the sweet spot of
 being simple enough to use but capable enough in the right places. I

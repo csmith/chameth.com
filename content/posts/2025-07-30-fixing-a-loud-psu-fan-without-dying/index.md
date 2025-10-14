@@ -128,7 +128,7 @@ the blue and green wires off near the hub so they wouldn't be in the way, then
 cut the yellow and black wires down to length, and attached the JST connector
 with a solder seal:
 
-{% img "Two fans side by side on a mouse mat: a black fan with a short power connector, and a beige-and-brown fan with transparent solder seals over the joins in its power connector. The mouse mat has a shiny patch near the solder seals." %}
+{% figure "full" "Two fans side by side on a mouse mat: a black fan with a short power connector, and a beige-and-brown fan with transparent solder seals over the joins in its power connector. The mouse mat has a shiny patch near the solder seals." %}
 
 In the process I discovered my mouse mat doesn't like being hit with a heat gun.
 Whoops. The solder seals are great: the solder in the center melts to form an
@@ -145,7 +145,7 @@ until it hits a certain temperature. I figured putting it under load would
 probably heat it up, so ran a graphics benchmark a few times. Eventually the
 fan spun up. Huzzah.
 
-{% img "Computer with the side panel removed, with a Noctua fan visibly spinning inside the PSU, next to another Noctua fan spinning above the CPU." %}
+{% figure "full" "Computer with the side panel removed, with a Noctua fan visibly spinning inside the PSU, next to another Noctua fan spinning above the CPU." %}
 
 ### Peace at last
 
@@ -172,7 +172,7 @@ stark a difference as in person, but it's still noticeable.
 
 And if you couldn't hear it, here's a visual representation:
 
-{% img "Side-by-side comparison of the audio spectrum of the old fan and the new fan. The old fan makes a reasonable amount of noise across a lot of frequencies, the new one is concentrated at very low frequencies." %}
+{% figure "full" "Side-by-side comparison of the audio spectrum of the old fan and the new fan. The old fan makes a reasonable amount of noise across a lot of frequencies, the new one is concentrated at very low frequencies." %}
 
 The whole upgrade took about an hour (less time than writing this post about
 it!), and I even managed to avoid killing myself.

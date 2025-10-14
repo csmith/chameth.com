@@ -155,12 +155,15 @@ func getPrintLinks(printID int) ([]PrintLink, error) {
 }
 
 // getMediaRelationsForEntity returns all media relations for a given entity type and ID.
-func getMediaRelationsForEntity(entityType string, entityID int) ([]MediaRelation, error) {
-	var relations []MediaRelation
+func getMediaRelationsForEntity(entityType string, entityID int) ([]MediaRelationWithDetails, error) {
+	var relations []MediaRelationWithDetails
 	err := db.Select(&relations, `
-		SELECT slug, media_id, description, caption, role, entity_type, entity_id
-		FROM media_relations
-		WHERE entity_type = $1 AND entity_id = $2
+		SELECT
+			mr.slug, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id,
+			m.id, m.content_type, m.original_filename, m.width, m.height
+		FROM media_relations mr
+		JOIN media m ON mr.media_id = m.id
+		WHERE mr.entity_type = $1 AND mr.entity_id = $2
 	`, entityType, entityID)
 	if err != nil {
 		return nil, err

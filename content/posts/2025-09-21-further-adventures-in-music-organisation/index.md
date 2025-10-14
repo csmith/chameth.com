@@ -98,7 +98,7 @@ pleasingly simple and easy to understand.
 
 Here's what it looks like when importing some new music:
 
-{% img "Screenshot of beets output when importing an album. It shows the source folder in blue, the matched metadata information in white with green highlights, the MusicBrainz URL, then a listing of all tracks" %}
+{% figure "full" "Screenshot of beets output when importing an album. It shows the source folder in blue, the matched metadata information in white with green highlights, the MusicBrainz URL, then a listing of all tracks" %}
 
 If it doesn't get a perfect match then it shows the closest matches, and
 summarises what's different about them (missing tracks, different names,
@@ -134,7 +134,7 @@ levels tricky, and getting media keys working is a pain. Thankfully there
 are loads of Subsonic clients. I've tried several, but eventually settled on
 [Feishin](https://github.com/jeffvli/feishin) on the desktop. It's very pretty:
 
-{% img "A screenshot of Feishin. On the left side of the screen is the album art (Love, Drugs & Misery by Eva Under Fire), with the track, album, artist, year and file format below it. On the right hand side is a tabbed panel, currently showing 'Up Next' which shows a queue of music. At the bottom is a standard player interface with play/pause/skip/etc buttons." %}
+{% figure "full" "A screenshot of Feishin. On the left side of the screen is the album art (Love, Drugs & Misery by Eva Under Fire), with the track, album, artist, year and file format below it. On the right hand side is a tabbed panel, currently showing 'Up Next' which shows a queue of music. At the bottom is a standard player interface with play/pause/skip/etc buttons." %}
 
 What attracted me to it, though, was its built-in support for Navidrome's smart
 playlists. These aren't even properly exposed in Navidrome's web UI yet, but
@@ -200,7 +200,7 @@ the colours, rounding the corners, and tweaking the edges so it looks a bit more
 real. I don't know why[^4], but every time I see the effect it gives me a little
 spark of joy.
 
-{% img "A comparison screenshot. On the left are four albums, with their unaltered artwork. Some are different aspect ratios. On the right are the same four albums, but the art work is now consistently rendered as though its in a jewel case." %}
+{% figure "full" "A comparison screenshot. On the left are four albums, with their unaltered artwork. Some are different aspect ratios. On the right are the same four albums, but the art work is now consistently rendered as though its in a jewel case." %}
 
 The other project is [BASS](https://github.com/csmith/bass), a tool that uses
 the Subsonic API to grab information about my music catalogue, and then

@@ -58,7 +58,7 @@ After setting up WireShark and making it record only the headset's HID connectio
 became apparent that the software was sending three different requests each second, over and
 over again:
 
-{% img "Wireshark, showing a packet capture of a SET_REPORT request from the host to the headset" %}
+{% figure "full" "Wireshark, showing a packet capture of a SET_REPORT request from the host to the headset" %}
 
 The packets we're interested in are the `SET_REPORT Request` frames sent from the host to the
 device. Wireshark understands the HID protocol, so it nicely shows us the raw HID data; in the
@@ -68,7 +68,7 @@ of data is being requested.
 
 The responses to these requests come back in an `URB_INTERRUPT in` frame:
 
-{% img "Wireshark, showing a packet capture of the headset's response to the earlier request" %}
+{% figure "full" "Wireshark, showing a packet capture of the headset's response to the earlier request" %}
 
 So the answer to our first request appears to be `0x04`. The second response is `0x0402` and the third is `0x04` again.
 The first thing I tried doing was popping the spare battery out of the charger. The response to the `0x42AA` request
@@ -91,7 +91,7 @@ and `0x02` for off, but I'm happy enough to label it as "device status" and move
 
 The software allows you to tweak a bunch of different settings:
 
-{% img "SteelSeries Good Game software, showing the advanced headset settings" %}
+{% figure "full" "SteelSeries Good Game software, showing the advanced headset settings" %}
 
 I went through each one and fiddled with all the values, recording the requests in WireShark as I did so. It turns
 out the protocol is very simplistic - the wire protocol directly corresponds to the UI elements in the software (or
@@ -127,13 +127,13 @@ increasing a bit at a time every second. After the first few seconds, I saw a li
 the left of the screen; had I just got the axes the wrong way around? After the first eight pixels lit up, though, they
 jumped over to the next column. The actual addressing scheme looks something like this:
 
-{% img "Diagram of how pixels are addressed on the receiver's OLED display" %}
+{% figure "full" "Diagram of how pixels are addressed on the receiver's OLED display" %}
 
 So the first 140 bytes given the pixels for the first 8 rows, the next 140 bytes fill in the 8 rows below that, and
 so on and so forth. Armed with this information I wrote a simple program to read an image and output it to the
 display:
 
-{% img "Headset receiver displaying a custom Hello World message" %}
+{% figure "full" "Headset receiver displaying a custom Hello World message" %}
 
 At this point I was thinking about trying to get Doom rendering on the screen, but I couldn't find anything nicely
 hackable that would let me grab the output and pass it on to the receiver. Instead, I decided to try a GIF decoder

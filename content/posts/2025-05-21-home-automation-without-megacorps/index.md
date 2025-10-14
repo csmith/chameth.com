@@ -96,7 +96,7 @@ together to create a mesh network, so you don't have to worry about network
 repeaters or signal strength like you do with Wi-Fi networks. z2m even makes
 a map showing the connections:
 
-{% img "A \"map\" showing how Zigbee devices connect to one another" %}
+{% figure "full" "A \"map\" showing how Zigbee devices connect to one another" %}
 
 ### Some interesting automations
 
