@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"path"
+	"strings"
 
 	"github.com/csmith/chameth.com/cmd/serve/templates"
 )
@@ -92,11 +93,18 @@ func handlePoem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	renderedComments, err := RenderMarkdown(poem.Notes)
+	if err != nil {
+		slog.Error("Failed to render markdown for poem comments", "poem", poem.Title, "error", err)
+		handleServerError(w, r)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderPoem(w, templates.PoemData{
-		Poem:     poem.Poem,
-		Comments: poem.Notes,
+		Poem:     strings.Split(poem.Poem, "\n"),
+		Comments: renderedComments,
 		ArticleData: templates.ArticleData{
 			ArticleTitle:   poem.Title,
 			ArticleSummary: poem.Poem,
@@ -131,12 +139,19 @@ func handleSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	renderedContent, err := RenderMarkdown(snippet.Content)
+	if err != nil {
+		slog.Error("Failed to render markdown for snippet content", "snippet", snippet.Title, "error", err)
+		handleServerError(w, r)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderSnippet(w, templates.SnippetData{
 		SnippetTitle:   snippet.Title,
 		SnippetGroup:   snippet.Topic,
-		SnippetContent: snippet.Content,
+		SnippetContent: renderedContent,
 		PageData: templates.PageData{
 			Title:        fmt.Sprintf("%s · Chameth.com", snippet.Title),
 			Stylesheet:   compiledSheetPath,
@@ -201,11 +216,17 @@ func handleProjectsList(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for _, project := range projects {
+			renderedDesc, err := RenderMarkdown(project.Description)
+			if err != nil {
+				slog.Error("Failed to render markdown for project description", "project", project.Name, "error", err)
+				handleServerError(w, r)
+				return
+			}
 			projectDetails = append(projectDetails, templates.ProjectDetails{
 				Name:        project.Name,
 				Pinned:      project.Pinned,
 				Icon:        template.HTML(project.Icon),
-				Description: project.Description,
+				Description: renderedDesc,
 			})
 		}
 

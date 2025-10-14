@@ -1,6 +1,6 @@
 {{/* gotype: github.com/csmith/chameth.com/cmd/serve/templates.PoemData*/}}
 {{define "article"}}
-    <section class="poem">{{range lines .Poem}}{{.}}<br>{{end}}</section>
+    <section class="poem">{{range .Poem}}{{.}}<br>{{end}}</section>
 
-    {{.Comments | markdown}}
+    {{.Comments}}
 {{end}}

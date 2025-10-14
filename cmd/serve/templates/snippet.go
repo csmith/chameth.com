@@ -8,7 +8,6 @@ import (
 var snippetTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
-		Funcs(funcMap).
 		ParseFS(
 			templates,
 			"page.html.gotpl",
@@ -20,7 +19,7 @@ type SnippetData struct {
 	PageData
 	SnippetTitle   string
 	SnippetGroup   string
-	SnippetContent string
+	SnippetContent template.HTML
 }
 
 func RenderSnippet(w http.ResponseWriter, snippet SnippetData) error {

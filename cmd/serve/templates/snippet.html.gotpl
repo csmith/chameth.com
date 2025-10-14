@@ -4,6 +4,6 @@
         <header>
             <h2><a href="/snippets/">Snippets</a> &raquo; {{ .SnippetGroup }} &raquo; {{ .SnippetTitle }}</h2>
         </header>
-        {{ .SnippetContent | markdown }}
+        {{ .SnippetContent }}
     </article>
 {{end}}

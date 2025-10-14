@@ -8,7 +8,6 @@ import (
 var poemTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
-		Funcs(funcMap).
 		ParseFS(
 			templates,
 			"page.html.gotpl",
@@ -19,8 +18,8 @@ var poemTemplate = template.Must(
 
 type PoemData struct {
 	ArticleData
-	Poem     string
-	Comments string
+	Poem     []string
+	Comments template.HTML
 }
 
 func RenderPoem(w io.Writer, poem PoemData) error {

@@ -8,7 +8,6 @@ import (
 var serverErrorTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
-		Funcs(funcMap).
 		ParseFS(
 			templates,
 			"page.html.gotpl",

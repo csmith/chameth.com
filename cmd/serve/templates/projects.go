@@ -8,7 +8,6 @@ import (
 var projectsTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
-		Funcs(funcMap).
 		ParseFS(
 			templates,
 			"page.html.gotpl",
@@ -31,7 +30,7 @@ type ProjectDetails struct {
 	Name        string
 	Pinned      bool
 	Icon        template.HTML
-	Description string
+	Description template.HTML
 }
 
 func RenderProjects(w io.Writer, projectsData ProjectsData) error {

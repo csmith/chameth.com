@@ -31,7 +31,7 @@
                         {{- end }}
                     </h4>
 
-                    {{ .Description | markdown }}
+                    {{ .Description }}
                 </section>
             {{- end }}
         </div>
