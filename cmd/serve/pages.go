@@ -43,22 +43,6 @@ func handleServerError(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handlePGP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	err := templates.RenderPGP(w, templates.PGPData{
-		PageData: templates.PageData{
-			Title:        "PGP information · Chameth.com",
-			CanonicalUrl: "https://chameth.com/pgp/",
-			Stylesheet:   compiledSheetPath,
-			RecentPosts:  recentPosts,
-		},
-	})
-	if err != nil {
-		slog.Error("Failed to render pgp template", "error", err)
-	}
-}
-
 func handleContent(w http.ResponseWriter, r *http.Request) {
 	contentType, err := findContentBySlug(r.URL.Path)
 	if err != nil {
@@ -72,6 +56,8 @@ func handleContent(w http.ResponseWriter, r *http.Request) {
 		handlePoem(w, r)
 	case "snippet":
 		handleSnippet(w, r)
+	case "staticpage":
+		handleStaticPage(w, r)
 	case "media":
 		handleMedia(w, r)
 	default:
@@ -161,6 +147,60 @@ func handleSnippet(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		slog.Error("Failed to render snippet template", "error", err, "path", r.URL.Path)
+	}
+}
+
+func handleStaticPage(w http.ResponseWriter, r *http.Request) {
+	page, err := getStaticPageBySlug(r.URL.Path)
+	if err != nil {
+		slog.Error("Failed to find static page by slug", "error", err, "path", r.URL.Path)
+		handleServerError(w, r)
+		return
+	}
+
+	if page.Slug != r.URL.Path {
+		http.Redirect(w, r, page.Slug, http.StatusPermanentRedirect)
+		return
+	}
+
+	// Get media relations for this page
+	mediaRelations, err := getMediaRelationsForEntity("staticpage", page.ID)
+	if err != nil {
+		slog.Error("Failed to get media relations", "page_id", page.ID, "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	// Process shortcodes first
+	contentWithShortcodes, err := RenderShortCodes(page.Content, mediaRelations)
+	if err != nil {
+		slog.Error("Failed to render shortcodes for static page content", "page", page.Title, "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	// Then render markdown
+	renderedContent, err := RenderMarkdown(contentWithShortcodes)
+	if err != nil {
+		slog.Error("Failed to render markdown for static page content", "page", page.Title, "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderStaticPage(w, templates.StaticPageData{
+		StaticTitle:   page.Title,
+		StaticContent: renderedContent,
+		PageData: templates.PageData{
+			Title:        fmt.Sprintf("%s · Chameth.com", page.Title),
+			Stylesheet:   compiledSheetPath,
+			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", page.Slug),
+			RecentPosts:  recentPosts,
+		},
+	})
+	if err != nil {
+		slog.Error("Failed to render static page template", "error", err, "path", r.URL.Path)
 	}
 }
 

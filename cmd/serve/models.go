@@ -18,6 +18,13 @@ type Snippet struct {
 	Content string `db:"content"`
 }
 
+type StaticPage struct {
+	ID      int    `db:"id"`
+	Slug    string `db:"slug"`
+	Title   string `db:"title"`
+	Content string `db:"content"`
+}
+
 type ProjectSection struct {
 	ID          int    `db:"id"`
 	Name        string `db:"name"`
