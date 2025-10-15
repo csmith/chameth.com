@@ -340,7 +340,11 @@ func handlePrintsList(w http.ResponseWriter, r *http.Request) {
 
 		var renderPath, previewPath string
 		for _, mr := range mediaRelations {
-			switch mr.Role {
+			if mr.Role == nil {
+				continue
+			}
+
+			switch *mr.Role {
 			case "render":
 				renderPath = mr.Slug
 			case "preview":

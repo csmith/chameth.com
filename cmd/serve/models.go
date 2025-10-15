@@ -55,7 +55,7 @@ type MediaRelation struct {
 	MediaID     int     `db:"media_id"`
 	Description *string `db:"description"`
 	Caption     *string `db:"caption"`
-	Role        string  `db:"role"`
+	Role        *string `db:"role"`
 	EntityType  string  `db:"entity_type"`
 	EntityID    int     `db:"entity_id"`
 }
