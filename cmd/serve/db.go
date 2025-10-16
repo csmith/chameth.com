@@ -212,8 +212,8 @@ func getPostBySlug(slug string) (*Post, error) {
 	return &post.Post, nil
 }
 
-// getAllPosts returns all posts ordered by date descending.
-func getAllPosts() ([]Post, error) {
+// getRecentPosts returns the N most recent posts.
+func getRecentPosts(limit int) ([]Post, error) {
 	type postRow struct {
 		Post
 		TagsJSON []byte `db:"tags"`
@@ -221,10 +221,11 @@ func getAllPosts() ([]Post, error) {
 
 	var rows []postRow
 	err := db.Select(&rows, `
-		SELECT id, slug, title, content, date, format, tags
+		SELECT id, slug, title, date, format, tags
 		FROM posts
 		ORDER BY date DESC
-	`)
+		LIMIT $1
+	`, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -243,8 +244,8 @@ func getAllPosts() ([]Post, error) {
 	return posts, nil
 }
 
-// getRecentPosts returns the N most recent posts.
-func getRecentPosts(limit int) ([]Post, error) {
+// getRecentPosts returns the N most recent posts with full content.
+func getRecentPostsWithContent(limit int) ([]Post, error) {
 	type postRow struct {
 		Post
 		TagsJSON []byte `db:"tags"`
@@ -252,11 +253,44 @@ func getRecentPosts(limit int) ([]Post, error) {
 
 	var rows []postRow
 	err := db.Select(&rows, `
-		SELECT id, slug, title, date, format, tags
+		SELECT id, slug, title, date, format, tags, content
 		FROM posts
 		ORDER BY date DESC
 		LIMIT $1
 	`, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	var posts []Post
+	for _, row := range rows {
+		// Unmarshal tags from JSONB
+		if len(row.TagsJSON) > 0 {
+			if err := json.Unmarshal(row.TagsJSON, &row.Tags); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal tags: %w", err)
+			}
+		}
+		posts = append(posts, row.Post)
+	}
+
+	return posts, nil
+}
+
+// getRecentPostsWithContentByFormat returns the N most recent posts with full content filtered by format.
+func getRecentPostsWithContentByFormat(limit int, format string) ([]Post, error) {
+	type postRow struct {
+		Post
+		TagsJSON []byte `db:"tags"`
+	}
+
+	var rows []postRow
+	err := db.Select(&rows, `
+		SELECT id, slug, title, date, format, tags, content
+		FROM posts
+		WHERE format = $1
+		ORDER BY date DESC
+		LIMIT $2
+	`, format, limit)
 	if err != nil {
 		return nil, err
 	}
