@@ -42,7 +42,7 @@
                 <h3>Related posts</h3>
                 <div class="post-links">
                 {{ range .RelatedPosts -}}
-                    {{/* TODO */}}
+                    {{template "postlink.html.gotpl" .}}
                 {{ end }}
                 </div>
             </section>

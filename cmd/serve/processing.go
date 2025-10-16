@@ -157,7 +157,7 @@ func renderAudio(input string, media []MediaRelationWithDetails) (string, error)
 	res := input
 	audios := audioRegexp.FindAllStringSubmatch(input, -1)
 	for _, audio := range audios {
-		description := audio[1]
+		description := strings.ReplaceAll(audio[1], `\\"`, `"`)
 
 		// Find the media relation with matching description
 		var mediaRelation *MediaRelationWithDetails
@@ -195,7 +195,7 @@ func renderVideo(input string, media []MediaRelationWithDetails) (string, error)
 	res := input
 	videos := videoRegexp.FindAllStringSubmatch(input, -1)
 	for _, video := range videos {
-		description := video[1]
+		description := strings.ReplaceAll(video[1], `\\"`, `"`)
 
 		// Find the media relation with matching description
 		var mediaRelation *MediaRelationWithDetails
@@ -227,8 +227,8 @@ func renderFigure(input string, media []MediaRelationWithDetails) (string, error
 	res := input
 	figures := figureRegexp.FindAllStringSubmatch(input, -1)
 	for _, figure := range figures {
-		class := figure[1]
-		description := figure[2]
+		class := strings.ReplaceAll(figure[1], `\\"`, `"`)
+		description := strings.ReplaceAll(figure[2], `\\"`, `"`)
 
 		// Find all media relations with matching description
 		var matchingMedia []MediaRelationWithDetails
@@ -295,4 +295,24 @@ func renderFigure(input string, media []MediaRelationWithDetails) (string, error
 		res = strings.Replace(res, figure[0], replacement, 1)
 	}
 	return res, nil
+}
+
+// RenderContent renders content (shortcodes + markdown to HTML) for any entity type.
+func RenderContent(entityType string, entityID int, content string) (template.HTML, error) {
+	mediaRelations, err := getMediaRelationsForEntity(entityType, entityID)
+	if err != nil {
+		return "", fmt.Errorf("failed to get media relations: %w", err)
+	}
+
+	contentWithShortcodes, err := RenderShortCodes(content, mediaRelations)
+	if err != nil {
+		return "", fmt.Errorf("failed to render shortcodes: %w", err)
+	}
+
+	renderedContent, err := RenderMarkdown(contentWithShortcodes)
+	if err != nil {
+		return "", fmt.Errorf("failed to render markdown: %w", err)
+	}
+
+	return renderedContent, nil
 }

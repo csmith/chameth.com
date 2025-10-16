@@ -13,6 +13,7 @@ var poemTemplate = template.Must(
 			"page.html.gotpl",
 			"article.html.gotpl",
 			"poem.html.gotpl",
+			"includes/postlink.html.gotpl",
 		),
 )
 

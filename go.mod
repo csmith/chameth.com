@@ -22,6 +22,7 @@ require (
 	github.com/dlclark/regexp2 v1.7.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/pgvector/pgvector-go v0.3.0 // indirect
 )
 
 require (

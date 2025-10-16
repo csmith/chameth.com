@@ -1,11 +1,13 @@
 package templates
 
+import "github.com/csmith/chameth.com/cmd/serve/templates/includes"
+
 type ArticleData struct {
 	PageData
 	ArticleTitle   string
 	ArticleSummary string
 	ArticleDate    ArticleDate
-	RelatedPosts   []string // TODO
+	RelatedPosts   []includes.PostLinkData
 }
 
 type ArticleDate struct {

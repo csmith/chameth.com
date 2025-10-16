@@ -184,6 +184,55 @@ func getMediaRelationsForEntity(entityType string, entityID int) ([]MediaRelatio
 	return relations, nil
 }
 
+// getOpenGraphImageForEntity returns the OpenGraph image slug for a given entity, or empty string if none exists.
+func getOpenGraphImageForEntity(entityType string, entityID int) (string, error) {
+	var slug string
+	err := db.Get(&slug, `
+		SELECT mr.slug
+		FROM media_relations mr
+		WHERE mr.entity_type = $1 AND mr.entity_id = $2 AND mr.role = 'opengraph'
+		LIMIT 1
+	`, entityType, entityID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", nil
+		}
+		return "", err
+	}
+	return slug, nil
+}
+
+// MediaImageVariant represents a media image with its URL and content type
+type MediaImageVariant struct {
+	Slug        string `db:"slug"`
+	ContentType string `db:"content_type"`
+}
+
+// getOpenGraphImageVariantsForEntity returns the OpenGraph image and all its variants for a given entity.
+// Returns the primary OG image first, followed by all variants (webp, avif, etc.)
+// Returns empty slice if no OG image exists.
+func getOpenGraphImageVariantsForEntity(entityType string, entityID int) ([]MediaImageVariant, error) {
+	var variants []MediaImageVariant
+	err := db.Select(&variants, `
+		SELECT mr.slug, m.content_type
+		FROM media_relations mr
+		JOIN media m ON mr.media_id = m.id
+		WHERE mr.entity_type = $1 AND mr.entity_id = $2 AND mr.role = 'opengraph'
+		UNION ALL
+		SELECT mr2.slug, m2.content_type
+		FROM media_relations mr
+		JOIN media m ON mr.media_id = m.id
+		JOIN media m2 ON m2.parent_media_id = m.id
+		JOIN media_relations mr2 ON mr2.media_id = m2.id
+		WHERE mr.entity_type = $1 AND mr.entity_id = $2 AND mr.role = 'opengraph'
+		  AND mr2.entity_type = $1 AND mr2.entity_id = $2
+	`, entityType, entityID)
+	if err != nil {
+		return nil, err
+	}
+	return variants, nil
+}
+
 // getPostBySlug returns a post for the given slug.
 // It handles cases where the slug may or may not have a trailing slash.
 // Returns nil if no post is found with that slug.

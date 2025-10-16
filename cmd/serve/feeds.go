@@ -40,26 +40,10 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 
 	var feedItems []templates.FeedItem
 	for _, post := range posts {
-		// Get media relations for this post
-		mediaRelations, err := getMediaRelationsForEntity("post", post.ID)
+		// Render content (shortcodes + markdown)
+		renderedContent, err := RenderContent("post", post.ID, post.Content)
 		if err != nil {
-			slog.Error("Failed to get media relations for feed", "post_id", post.ID, "error", err)
-			handleServerError(w, r)
-			return
-		}
-
-		// Process shortcodes first
-		contentWithShortcodes, err := RenderShortCodes(post.Content, mediaRelations)
-		if err != nil {
-			slog.Error("Failed to render shortcodes for feed", "post", post.Title, "error", err)
-			handleServerError(w, r)
-			return
-		}
-
-		// Then render markdown
-		renderedContent, err := RenderMarkdown(contentWithShortcodes)
-		if err != nil {
-			slog.Error("Failed to render markdown for feed", "post", post.Title, "error", err)
+			slog.Error("Failed to render post content for feed", "post", post.Title, "error", err)
 			handleServerError(w, r)
 			return
 		}

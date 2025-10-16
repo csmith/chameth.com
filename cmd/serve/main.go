@@ -36,6 +36,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Start updating post embeddings in the background
+	go func() {
+		ctx := context.Background()
+		UpdateAllPostEmbeddings(ctx, db.DB)
+	}()
+
 	mux := http.NewServeMux()
 	mux.Handle("POST /api/contact", http.HandlerFunc(handleContactForm))
 	mux.Handle("GET /assets/", serveAssets())

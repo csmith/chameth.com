@@ -192,26 +192,10 @@ func handleStaticPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get media relations for this page
-	mediaRelations, err := getMediaRelationsForEntity("staticpage", page.ID)
+	// Render content (shortcodes + markdown)
+	renderedContent, err := RenderContent("staticpage", page.ID, page.Content)
 	if err != nil {
-		slog.Error("Failed to get media relations", "page_id", page.ID, "error", err)
-		handleServerError(w, r)
-		return
-	}
-
-	// Process shortcodes first
-	contentWithShortcodes, err := RenderShortCodes(page.Content, mediaRelations)
-	if err != nil {
-		slog.Error("Failed to render shortcodes for static page content", "page", page.Title, "error", err)
-		handleServerError(w, r)
-		return
-	}
-
-	// Then render markdown
-	renderedContent, err := RenderMarkdown(contentWithShortcodes)
-	if err != nil {
-		slog.Error("Failed to render markdown for static page content", "page", page.Title, "error", err)
+		slog.Error("Failed to render static page content", "page", page.Title, "error", err)
 		handleServerError(w, r)
 		return
 	}
@@ -253,26 +237,10 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get media relations for this post
-	mediaRelations, err := getMediaRelationsForEntity("post", post.ID)
+	// Render content (shortcodes + markdown)
+	renderedContent, err := RenderContent("post", post.ID, post.Content)
 	if err != nil {
-		slog.Error("Failed to get media relations", "post_id", post.ID, "error", err)
-		handleServerError(w, r)
-		return
-	}
-
-	// Process shortcodes first
-	contentWithShortcodes, err := RenderShortCodes(post.Content, mediaRelations)
-	if err != nil {
-		slog.Error("Failed to render shortcodes for post content", "post", post.Title, "error", err)
-		handleServerError(w, r)
-		return
-	}
-
-	// Then render markdown
-	renderedContent, err := RenderMarkdown(contentWithShortcodes)
-	if err != nil {
-		slog.Error("Failed to render markdown for post content", "post", post.Title, "error", err)
+		slog.Error("Failed to render post content", "post", post.Title, "error", err)
 		handleServerError(w, r)
 		return
 	}
@@ -287,13 +255,19 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 		summary = summary[:200] + "..."
 	}
 
-	// Find OpenGraph image
+	// Get OpenGraph image
 	var ogImage string
-	for _, mr := range mediaRelations {
-		if mr.Role != nil && *mr.Role == "opengraph" {
-			ogImage = fmt.Sprintf("https://chameth.com%s", mr.Slug)
-			break
-		}
+	ogSlug, err := getOpenGraphImageForEntity("post", post.ID)
+	if err == nil && ogSlug != "" {
+		ogImage = fmt.Sprintf("https://chameth.com%s", ogSlug)
+	}
+
+	// Get related posts
+	relatedPosts, err := GetRelatedPosts(r.Context(), db.DB, post.ID)
+	if err != nil {
+		slog.Error("Failed to get related posts", "post_id", post.ID, "error", err)
+		// Continue without related posts rather than erroring
+		relatedPosts = nil
 	}
 
 	recent, err := recentPosts()
@@ -318,6 +292,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 				ShowWarning: showWarning,
 				YearsOld:    yearsOld,
 			},
+			RelatedPosts: relatedPosts,
 			PageData: templates.PageData{
 				Title:        fmt.Sprintf("%s · Chameth.com", post.Title),
 				Stylesheet:   compiledSheetPath,

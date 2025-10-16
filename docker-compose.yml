@@ -1,6 +1,6 @@
 services:
   database:
-    image: 'postgres:18-alpine'
+    image: 'pgvector/pgvector:pg18'
     user: '1000'
     ports:
       - "127.0.0.1:15433:5432"
