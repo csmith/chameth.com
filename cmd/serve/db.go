@@ -147,6 +147,15 @@ func getMediaBySlug(slug string) (*Media, error) {
 	return &media, nil
 }
 
+func getAllPoems() ([]Poem, error) {
+	var res []Poem
+	err := db.Select(&res, "SELECT slug, title FROM poems ORDER BY published")
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 // getAllPrints returns all prints ordered by name.
 func getAllPrints() ([]Print, error) {
 	var prints []Print

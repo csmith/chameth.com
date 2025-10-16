@@ -508,3 +508,42 @@ func handlePrintsList(w http.ResponseWriter, r *http.Request) {
 		slog.Error("Failed to render prints template", "error", err)
 	}
 }
+
+func handleMisc(w http.ResponseWriter, r *http.Request) {
+	poems, err := getAllPoems()
+	if err != nil {
+		slog.Error("Failed to get all poems", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	var poemDetails []templates.PoemDetails
+	for _, p := range poems {
+		poemDetails = append(poemDetails, templates.PoemDetails{
+			Title: p.Title,
+			Url:   p.Slug,
+		})
+	}
+
+	recent, err := recentPosts()
+	if err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderMisc(w, templates.MiscData{
+		Poems: poemDetails,
+		PageData: templates.PageData{
+			Title:        "Misc · Chameth.com",
+			Stylesheet:   compiledSheetPath,
+			CanonicalUrl: "https://chameth.com/misc/",
+			RecentPosts:  recent,
+		},
+	})
+	if err != nil {
+		slog.Error("Failed to render misc template", "error", err)
+	}
+}
