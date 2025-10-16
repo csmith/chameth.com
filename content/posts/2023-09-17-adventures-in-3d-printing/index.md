@@ -30,7 +30,7 @@ opengraph:
   image: /adventures-in-3d-printing/sv06.jpg
 ---
 
-{%figure "right" "Marketing image of the Sovol SV06" %}
+{% figure "right" "Marketing image of the Sovol SV06" %}
 
 I'd been idly considering getting a 3D printer for a while, but have only
 recently taken the plunge. I picked up a [Sovol SV06](https://sovol3d.com/products/sovol-sv06-best-budget-3d-printer-for-beginner)
@@ -65,7 +65,7 @@ instructions walk you through the initial calibration, which consists of:
 After that's done, the included SD card has the standard "Benchy" model on it,
 pre-sliced and ready to print. It came out looking good:
 
-{%img "A white 'Benchy' sat on the 3D printer bed"%} 
+{% figure "full" "A white 'Benchy' sat on the 3D printer bed"%} 
 
 ### The noise. Oh god, the noise.
 
@@ -156,7 +156,7 @@ I ran through all the troubleshooting steps I could think of, including a
 foray into custom firmware with different bed levelling abilities, but nothing
 seemed to help. Another OctoPrint plugin later and I could see the problem:
 
-{%img "A visualisation of the bed mesh, showing a variation of 0.5mm."%}
+{% figure "full" "A visualisation of the bed mesh, showing a variation of 0.5mm."%}
 
 The orientation of the graphic is a bit confusing, but you can see how the
 right hand side of the bed is significantly higher than the left. There's a
@@ -165,7 +165,7 @@ even with the auto bed levelling. I spoke to Sovol support, and eventually they
 suggested disassembling the print bed and measuring the aluminium spacers that
 hold the bed. Sure enough, they were all different heights:
 
-{%img "Five aluminium spacers, each a different height."%}
+{% figure "full" "Five aluminium spacers, each a different height."%}
 
 There's a 0.13mm variance in their heights, which doesn't account for the 0.5mm
 seen in the bed mesh, but it's a good starting point. Rather than go back and
@@ -177,7 +177,7 @@ height.
 After five or six rounds of totally and utterly uneventful adjusting and
 re-leveling, I got to this point:
 
-{%img "A visualisation of the bed mesh, showing a variation of 0.1mm."%}
+{% figure "full" "A visualisation of the bed mesh, showing a variation of 0.1mm."%}
 
 There's only so much you can do when you only have five screws to adjust, but
 I'm pretty happy the variance is now under 0.15mm. That's definitely in the
@@ -198,7 +198,7 @@ decent speed and ended up at a rather nasty angle.
 
 I checked over the extruder and found the heat break had bent:
 
-{%img "A heat break that has bent."%}
+{% figure "full" "A heat break that has bent."%}
 
 I tried printing with it as-is, but the filament came out too thin and at
 an angle, which made the print go about as well as you'd expect. I ordered
@@ -232,7 +232,7 @@ a replacement for that one.
 
 The difference is rather pronounced:
 
-{%img "A sagging cable, and a reinforced cable."%}
+{% figure "full" "A sagging cable, and a reinforced cable."%}
 
 If you can't see it: in the first image the cable is sagging and actually
 ends up below the print bed. The individual links of the cable chain limit

@@ -119,13 +119,13 @@ organisation I wanted to use. Even if I was logged in to GitHub, it still shows
 the permission page every time. It's not a dealbreaker, but it's definitely
 not smooth. This is what it looks like:
 
-{%img "Screenshots of the Tailscale/GitHub login flow: (1) The Tailscale login form (2) The GitHub login form (3) GitHub permissions screen (4) Tailscale tailnet selection screen"%}
+{% figure "full" "Screenshots of the Tailscale/GitHub login flow: (1) The Tailscale login form (2) The GitHub login form (3) GitHub permissions screen (4) Tailscale tailnet selection screen"%}
 
 Tailscale have since added the ability to sign in with a custom OIDC provider,
 so I set up a [KeyCloak](https://www.keycloak.org/) instance, and my login flow
 now looks like this:
 
-{%img "Screenshots of the Tailscale/KeyCloak login flow: (1) The Tailscale login form (2) The KeyCloak login form" %}
+{% figure "full" "Screenshots of the Tailscale/KeyCloak login flow: (1) The Tailscale login form (2) The KeyCloak login form" %}
 
 It's a significantly shorter flow, and because KeyCloak is entirely under my
 control I can configure how long I stay logged in for. It also reduces my

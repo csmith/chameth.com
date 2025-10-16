@@ -18,7 +18,7 @@ opengraph:
   image: /travel-toolkit/contents.jpg
 ---
 
-{%figure "left" "UGREEN Travel Accessories Bag" %}
+{% figure "left" "UGREEN Travel Accessories Bag" %}
 
 For a while now, whenever I've traveled anywhere I've dumped a selection of tools
 into my backpack just in case I need them. Originally this was mostly focused
@@ -81,7 +81,7 @@ the Tool-Check. Now, how many other tools could I stuff in there?
 
 ### All the tools
 
-{%img "The contents of my toolkit, spread out on a mat" %}
+{% figure "full" "The contents of my toolkit, spread out on a mat" %}
 
 The kit can be broken down into a few sections:
 
@@ -147,7 +147,7 @@ category.
 
 ### Putting it all together
 
-{%figure "right" "The complete toolkit" %}
+{% figure "right" "The complete toolkit" %}
 
 The Tool-Check PLUS fits almost perfectly into one side of the UGREEN bag,
 leaving a little wiggle room along the side for the longer parts like spudgers.

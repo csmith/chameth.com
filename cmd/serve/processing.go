@@ -173,7 +173,7 @@ func renderAudio(input string, media []MediaRelationWithDetails) (string, error)
 		}
 
 		caption := description
-		if mediaRelation.Caption != nil {
+		if mediaRelation.Caption != nil && *mediaRelation.Caption != "" {
 			caption = *mediaRelation.Caption
 		}
 
@@ -270,7 +270,7 @@ func renderFigure(input string, media []MediaRelationWithDetails) (string, error
 		}
 
 		caption := description
-		if primaryMedia.Caption != nil {
+		if primaryMedia.Caption != nil && *primaryMedia.Caption != "" {
 			caption = *primaryMedia.Caption
 		}
 

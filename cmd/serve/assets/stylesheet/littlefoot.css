@@ -188,7 +188,7 @@
 }
 
 @media not print {
-  .footnote-ref.littlefoot--print {
+  .littlefoot--print {
     display: none;
   }
 }

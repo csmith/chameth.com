@@ -24,7 +24,7 @@ opengraph:
   image: /filament-weight-display/finished.jpg
 ---
 
-{%figure "left" "Filament weight display" %}
+{% figure "left" "Filament weight display" %}
 
 One problem[^1] I have when 3D printing is that it's hard to gauge whether
 there's enough filament left on a roll to complete a print. Sometimes it's
@@ -48,7 +48,7 @@ my own if I could.
 
 ### Load Cells 101
 
-{%figure "right" "Product picture of a load cell and amplifier" %}
+{% figure "right" "Product picture of a load cell and amplifier" %}
 
 At the heart of the project is a load cell. It turns out these are the things
 that do the lifting in most electronic scales. They're basically a carefully
@@ -73,7 +73,7 @@ signal, and one for data. We'll get back to that later!
 
 ### Early prototyping
 
-{%figure "left" "Prototype weight sensor built on a breadboard" %}
+{% figure "left" "Prototype weight sensor built on a breadboard" %}
 
 I decided early on to base the project around an RP2040-based board, as I had
 previous experience with them and they're cheap and easy to get hold of. I
@@ -185,7 +185,7 @@ modes.
 
 ### Putting it together
 
-{%figure "right" "Components mounted onto a protoboard" %}
+{% figure "right" "Components mounted onto a protoboard" %}
 
 The final step was to assemble everything in a way where it would be usable,
 and wires wouldn't keep falling out whenever you looked at it. I found some
@@ -218,7 +218,7 @@ painters' tape). I was originally going to do something fancy with bearings,
 but settled on the easier option of a spool holder which uses the same threading
 as the original, so it slots straight in:
 
-{%img "3D printed spool holder with embedded load cell" %}
+{% figure "full" "3D printed spool holder with embedded load cell" %}
 
 With all of this done, I invented a complicated mounting system to keep it
 attached to the printer. Any resemblance to blue painters' tape is entirely

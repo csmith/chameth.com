@@ -134,7 +134,7 @@ to get the rough temperature outside. It can then turn the fan on if the room is
 too hot, and outside is cool enough to make a difference (there's no point in
 blowing hotter air in!).
 
-{%figure "left" "A graph of room temperature, slowly rising to 23.5 degrees, then sharply dropping to 19, rising to 20, dropping to 19 again, etc" %}
+{% figure "left" "A graph of room temperature, slowly rising to 23.5 degrees, then sharply dropping to 19, rising to 20, dropping to 19 again, etc" %}
 
 I don't want it to do that all the time though. The room doesn't need to be
 cooled if I'm not around. There are various Zigbee presence sensors you can get,

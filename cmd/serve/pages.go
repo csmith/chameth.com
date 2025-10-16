@@ -13,14 +13,20 @@ import (
 )
 
 func handleNotFound(w http.ResponseWriter, r *http.Request) {
+	recent, err := recentPosts()
+	if err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		recent = nil
+	}
+
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusNotFound)
-	err := templates.RenderNotFound(w, templates.NotFoundData{
+	err = templates.RenderNotFound(w, templates.NotFoundData{
 		PageData: templates.PageData{
 			Title:       "Not found · Chameth.com",
 			Stylesheet:  compiledSheetPath,
-			RecentPosts: recentPosts,
+			RecentPosts: recent,
 		},
 	})
 	if err != nil {
@@ -29,14 +35,20 @@ func handleNotFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleServerError(w http.ResponseWriter, r *http.Request) {
+	recent, err := recentPosts()
+	if err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		recent = nil
+	}
+
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusInternalServerError)
-	err := templates.RenderServerError(w, templates.ServerErrorData{
+	err = templates.RenderServerError(w, templates.ServerErrorData{
 		PageData: templates.PageData{
 			Title:       "Server error · Chameth.com",
 			Stylesheet:  compiledSheetPath,
-			RecentPosts: recentPosts,
+			RecentPosts: recent,
 		},
 	})
 	if err != nil {
@@ -89,6 +101,13 @@ func handlePoem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	recent, err := recentPosts()
+	if err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderPoem(w, templates.PoemData{
@@ -106,7 +125,7 @@ func handlePoem(w http.ResponseWriter, r *http.Request) {
 				Title:        fmt.Sprintf("%s · Chameth.com", poem.Title),
 				Stylesheet:   compiledSheetPath,
 				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", poem.Slug),
-				RecentPosts:  recentPosts,
+				RecentPosts:  recent,
 			},
 		},
 	})
@@ -135,6 +154,13 @@ func handleSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	recent, err := recentPosts()
+	if err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderSnippet(w, templates.SnippetData{
@@ -145,7 +171,7 @@ func handleSnippet(w http.ResponseWriter, r *http.Request) {
 			Title:        fmt.Sprintf("%s · Chameth.com", snippet.Title),
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", snippet.Slug),
-			RecentPosts:  recentPosts,
+			RecentPosts:  recent,
 		},
 	})
 	if err != nil {
@@ -190,6 +216,13 @@ func handleStaticPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	recent, err := recentPosts()
+	if err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderStaticPage(w, templates.StaticPageData{
@@ -199,7 +232,7 @@ func handleStaticPage(w http.ResponseWriter, r *http.Request) {
 			Title:        fmt.Sprintf("%s · Chameth.com", page.Title),
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", page.Slug),
-			RecentPosts:  recentPosts,
+			RecentPosts:  recent,
 		},
 	})
 	if err != nil {
@@ -254,6 +287,22 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 		summary = summary[:200] + "..."
 	}
 
+	// Find OpenGraph image
+	var ogImage string
+	for _, mr := range mediaRelations {
+		if mr.Role != nil && *mr.Role == "opengraph" {
+			ogImage = fmt.Sprintf("https://chameth.com%s", mr.Slug)
+			break
+		}
+	}
+
+	recent, err := recentPosts()
+	if err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderPost(w, templates.PostData{
@@ -273,7 +322,11 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 				Title:        fmt.Sprintf("%s · Chameth.com", post.Title),
 				Stylesheet:   compiledSheetPath,
 				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", post.Slug),
-				RecentPosts:  recentPosts,
+				OpenGraph: templates.OpenGraphHeaders{
+					Image: ogImage,
+					Type:  "article",
+				},
+				RecentPosts: recent,
 			},
 		},
 	})
@@ -301,6 +354,13 @@ func handleSnippetsList(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	recent, err := recentPosts()
+	if err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderSnippets(w, templates.SnippetsData{
@@ -309,7 +369,7 @@ func handleSnippetsList(w http.ResponseWriter, r *http.Request) {
 			Title:        "Snippets · Chameth.com",
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: "https://chameth.com/snippets/",
-			RecentPosts:  recentPosts,
+			RecentPosts:  recent,
 		},
 	})
 }
@@ -355,6 +415,13 @@ func handleProjectsList(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	recent, err := recentPosts()
+	if err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderProjects(w, templates.ProjectsData{
@@ -363,7 +430,7 @@ func handleProjectsList(w http.ResponseWriter, r *http.Request) {
 			Title:        "Projects · Chameth.com",
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: "https://chameth.com/projects/",
-			RecentPosts:  recentPosts,
+			RecentPosts:  recent,
 		},
 	})
 }
@@ -444,6 +511,13 @@ func handlePrintsList(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	recent, err := recentPosts()
+	if err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderPrints(w, templates.PrintsData{
@@ -452,7 +526,7 @@ func handlePrintsList(w http.ResponseWriter, r *http.Request) {
 			Title:        "3D Prints · Chameth.com",
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: "https://chameth.com/prints/",
-			RecentPosts:  recentPosts,
+			RecentPosts:  recent,
 		},
 	})
 	if err != nil {

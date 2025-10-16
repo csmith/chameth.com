@@ -31,7 +31,7 @@ node). You can safely ignore all references to 'SaaS apps' in their docs.
 
 I create a custom app connector, and give it the domains to be included:
 
-{%img "Screenshot of the app section in the Tailscale admin console. It shows a table with two entries: 'reddit' and 'bluesky'. Each entry has a list of domain names like '*.reddit.com, *.reddit.it'." %}
+{% figure "full" "Screenshot of the app section in the Tailscale admin console. It shows a table with two entries: 'reddit' and 'bluesky'. Each entry has a list of domain names like '*.reddit.com, *.reddit.it'." %}
 
 Tailscale then magically resolves those domains, and has the 'connector'
 advertise routes for them. Any client that accepts routes will start sending

@@ -12,7 +12,7 @@ opengraph:
   image: /curse-of-knowledge-blogging/ideas.jpg
 ---
 
-{%figure "right" "Photo of a sign reading \"YOUR IDEAS MATTER … Write them down :)\"" %}
+{% figure "right" "Photo of a sign reading \"YOUR IDEAS MATTER … Write them down :)\"" %}
 
 The single worst part about blogging for me is trying to come up with ideas
 for what to write about. Not because they're hard to come up with, but because

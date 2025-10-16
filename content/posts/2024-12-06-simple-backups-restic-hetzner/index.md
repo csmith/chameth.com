@@ -12,7 +12,7 @@ opengraph:
   image: /simple-backups-restic-hetzner/restic.png
 ---
 
-{%figure "right" "The Restic logo — a gopher with two umbrellas." %}
+{% figure "right" "The Restic logo — a gopher with two umbrellas." %}
 
 I have a confession: for the past few years I've not been backing up any of my
 computers. Everyone knows that you _should_ do backups, but actually getting

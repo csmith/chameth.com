@@ -15,7 +15,7 @@ opengraph:
   image: /coming-around-on-llms/code-session.png
 ---
 
-{%figure "right" "A screenshot of the Claude web UI with the prompt 'Say \"Hello!\"'. The response is \"Hello!\"" %}
+{% figure "right" "A screenshot of the Claude web UI with the prompt 'Say \"Hello!\"'. The response is \"Hello!\"" %}
 
 For a long time I've been a sceptic of LLMs and how they're being used and
 marketed. I tried ChatGPT when it first launched, and was totally underwhelmed.

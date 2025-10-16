@@ -15,7 +15,7 @@ opengraph:
   image: /further-adventures-in-3d-printing/p1s.png
 ---
 
-{%figure "right" "Marketing image of the Bambu Labs P1S" %}
+{% figure "right" "Marketing image of the Bambu Labs P1S" %}
 
 Not quite a year ago, I bought a Sovol SV06 3D printer and [wrote about](/adventures-in-3d-printing/)
 my initial experiences. At the end I joked:
@@ -100,7 +100,7 @@ previously wouldn't have even attempted on the SV06 are now 8-10 hours on the
 P1S, without even adjusting the speed or lowering the quality. Here's a
 side-by-side comparison:
 
-{%img "A side-by-side comparison of printing time on the P1S and SV06. The P1S prints 8 objects at higher quality than the SV06 prints 3."%}
+{% figure "full" "A side-by-side comparison of printing time on the P1S and SV06. The P1S prints 8 objects at higher quality than the SV06 prints 3."%}
 
 The P1S can print eight objects because of its slightly larger bed, while the
 SV06 can only manage three. The P1S is also printing at a much higher quality.

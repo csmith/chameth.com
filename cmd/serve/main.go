@@ -36,11 +36,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := loadRecentPosts(); err != nil {
-		slog.Error("Failed to load recent posts", "error", err)
-		os.Exit(1)
-	}
-
 	mux := http.NewServeMux()
 	mux.Handle("POST /api/contact", http.HandlerFunc(handleContactForm))
 	mux.Handle("GET /assets/", serveAssets())

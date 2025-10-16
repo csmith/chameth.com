@@ -4,12 +4,10 @@ import (
 	"github.com/csmith/chameth.com/cmd/serve/templates"
 )
 
-var recentPosts []templates.RecentPost
-
-func loadRecentPosts() error {
+func recentPosts() ([]templates.RecentPost, error) {
 	posts, err := getRecentPosts(4)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	var recentPostsList []templates.RecentPost
@@ -21,6 +19,5 @@ func loadRecentPosts() error {
 		})
 	}
 
-	recentPosts = recentPostsList
-	return nil
+	return recentPostsList, nil
 }
