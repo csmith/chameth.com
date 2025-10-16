@@ -1,5 +1,5 @@
 {{/* gotype: github.com/csmith/chameth.com/cmd/serve/templates/shortcodes.UpdateData*/}}
 <aside class="update">
-    <h5>Update {{ .Date }}:</h5>
-    {{ .Content }}
+  <h5>Update {{ .Date }}:</h5>
+  {{ .Content }}
 </aside>

@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"embed"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -181,4 +182,95 @@ func getMediaRelationsForEntity(entityType string, entityID int) ([]MediaRelatio
 		return nil, err
 	}
 	return relations, nil
+}
+
+// getPostBySlug returns a post for the given slug.
+// It handles cases where the slug may or may not have a trailing slash.
+// Returns nil if no post is found with that slug.
+func getPostBySlug(slug string) (*Post, error) {
+	var post struct {
+		Post
+		TagsJSON []byte `db:"tags"`
+	}
+
+	err := db.Get(&post, `
+		SELECT id, slug, title, content, date, format, tags
+		FROM posts
+		WHERE slug = $1 OR slug = $2
+	`, slug, slug+"/")
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal tags from JSONB
+	if len(post.TagsJSON) > 0 {
+		if err := json.Unmarshal(post.TagsJSON, &post.Tags); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal tags: %w", err)
+		}
+	}
+
+	return &post.Post, nil
+}
+
+// getAllPosts returns all posts ordered by date descending.
+func getAllPosts() ([]Post, error) {
+	type postRow struct {
+		Post
+		TagsJSON []byte `db:"tags"`
+	}
+
+	var rows []postRow
+	err := db.Select(&rows, `
+		SELECT id, slug, title, content, date, format, tags
+		FROM posts
+		ORDER BY date DESC
+	`)
+	if err != nil {
+		return nil, err
+	}
+
+	var posts []Post
+	for _, row := range rows {
+		// Unmarshal tags from JSONB
+		if len(row.TagsJSON) > 0 {
+			if err := json.Unmarshal(row.TagsJSON, &row.Tags); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal tags: %w", err)
+			}
+		}
+		posts = append(posts, row.Post)
+	}
+
+	return posts, nil
+}
+
+// getRecentPosts returns the N most recent posts.
+func getRecentPosts(limit int) ([]Post, error) {
+	type postRow struct {
+		Post
+		TagsJSON []byte `db:"tags"`
+	}
+
+	var rows []postRow
+	err := db.Select(&rows, `
+		SELECT id, slug, title, date, format, tags
+		FROM posts
+		ORDER BY date DESC
+		LIMIT $1
+	`, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	var posts []Post
+	for _, row := range rows {
+		// Unmarshal tags from JSONB
+		if len(row.TagsJSON) > 0 {
+			if err := json.Unmarshal(row.TagsJSON, &row.Tags); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal tags: %w", err)
+			}
+		}
+		posts = append(posts, row.Post)
+	}
+
+	return posts, nil
 }

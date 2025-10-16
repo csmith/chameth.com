@@ -1,5 +1,5 @@
 {{/* gotype: github.com/csmith/chameth.com/cmd/serve/templates/shortcodes.SideNoteData*/}}
 <aside class="sidenote">
-    <h5>Side note: {{ .Title }}</h5>
-    {{ .Content }}
+  <h5>Side note: {{ .Title }}</h5>
+  {{ .Content }}
 </aside>

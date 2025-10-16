@@ -1,8 +1,8 @@
 {{/* gotype: github.com/csmith/chameth.com/cmd/serve/templates/shortcodes.FigureData*/}}
 <figure class="{{ .Class }}">
-    <picture>
-        {{range .Sources}}<source srcset="{{ .Src }}" type="{{ .Type }}">
-        {{end}}<img src="{{ .Src }}" alt="{{ .Description }}" loading="lazy" width="{{ .Width }}" height="{{ .Height }}">
-    </picture>
-    <figcaption>{{ .Caption }}</figcaption>
+  <picture>
+      {{range .Sources}}<source srcset="{{ .Src }}" type="{{ .Type }}">
+      {{end}}<img src="{{ .Src }}" alt="{{ .Description }}" loading="lazy" width="{{ .Width }}" height="{{ .Height }}">
+  </picture>
+  <figcaption>{{ .Caption }}</figcaption>
 </figure>

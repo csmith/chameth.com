@@ -1,5 +1,5 @@
 {{/* gotype: github.com/csmith/chameth.com/cmd/serve/templates/shortcodes.AudioData*/}}
 <figure class="full">
-    <audio src="{{ .Src }}" alt="{{ .Description }}" controls></audio>
-    <figcaption>{{ .Caption }}</figcaption>
+  <audio src="{{ .Src }}" alt="{{ .Description }}" controls></audio>
+  <figcaption>{{ .Caption }}</figcaption>
 </figure>

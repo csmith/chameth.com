@@ -77,3 +77,13 @@ type PrintLink struct {
 	Name    string `db:"name"`
 	Address string `db:"address"`
 }
+
+type Post struct {
+	ID      int       `db:"id"`
+	Slug    string    `db:"slug"`
+	Title   string    `db:"title"`
+	Content string    `db:"content"`
+	Date    time.Time `db:"date"`
+	Format  string    `db:"format"`
+	Tags    []string
+}
