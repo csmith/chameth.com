@@ -78,7 +78,7 @@ func handleContent(w http.ResponseWriter, r *http.Request) {
 		handleMedia(w, r)
 	default:
 		// In the future this will be a 404, but for now fall back to 11ty rendered content
-		http.FileServer(http.Dir(*files)).ServeHTTP(w, r)
+		handleStaticAsset(w, r)
 	}
 }
 

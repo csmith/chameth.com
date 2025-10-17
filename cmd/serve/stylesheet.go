@@ -1,7 +1,6 @@
 package main
 
 import (
-	"embed"
 	"fmt"
 	"hash/crc32"
 	"io/fs"
@@ -9,10 +8,9 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
-)
 
-//go:embed assets/stylesheet/*.css
-var stylesheets embed.FS
+	"github.com/csmith/chameth.com/cmd/serve/assets"
+)
 
 var includeOrder = []string{
 	"reset.css",
@@ -43,7 +41,7 @@ var compiledSheet string
 var compiledSheetPath string
 
 func updateStylesheet() error {
-	filesystem, err := fs.Sub(stylesheets, filepath.Join("assets", "stylesheet"))
+	filesystem, err := fs.Sub(assets.Stylesheets, filepath.Join("stylesheet"))
 	if err != nil {
 		return err
 	}

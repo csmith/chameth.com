@@ -42,7 +42,6 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.Handle("POST /api/contact", http.HandlerFunc(handleContactForm))
-	mux.Handle("GET /assets/", serveAssets())
 	mux.Handle("GET /assets/stylesheets/", serveStylesheet())
 	mux.Handle("GET /index.xml", http.HandlerFunc(handleFullFeed))
 	mux.Handle("GET /short.xml", http.HandlerFunc(handleShortPostsFeed))
@@ -86,7 +85,7 @@ func main() {
 					middleware.WithHeader("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload"),
 					middleware.WithHeader("Referrer-Policy", "no-referrer-when-downgrade"),
 				),
-				middleware.Recover(),
+				// middleware.Recover(),
 				applyRedirects(),
 			),
 		)(mux),

@@ -13,8 +13,18 @@ import (
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting/v2"
 	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 )
+
+type disableCodeBlocks struct {
+}
+
+func (d *disableCodeBlocks) SetParserOption(config *parser.Config) {
+	// This relies on NewCodeBlockParser returning the same instance each
+	// call, which it does currently, but... :shrug:
+	config.BlockParsers.Remove(parser.NewCodeBlockParser())
+}
 
 var md = goldmark.New(
 	goldmark.WithExtensions(
@@ -29,6 +39,9 @@ var md = goldmark.New(
 				chromahtml.ClassPrefix("chroma-"),
 			),
 		),
+	),
+	goldmark.WithParserOptions(
+		&disableCodeBlocks{},
 	),
 	goldmark.WithRendererOptions(
 		html.WithUnsafe(),
