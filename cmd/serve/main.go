@@ -36,10 +36,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Start updating post embeddings in the background
 	go func() {
-		ctx := context.Background()
-		UpdateAllPostEmbeddings(ctx, db.DB)
+		UpdateAllPostEmbeddings(context.Background())
 	}()
 
 	mux := http.NewServeMux()
@@ -53,6 +51,7 @@ func main() {
 	mux.Handle("GET /prints/{$}", http.HandlerFunc(handlePrintsList))
 	mux.Handle("GET /projects/{$}", http.HandlerFunc(handleProjectsList))
 	mux.Handle("GET /snippets/{$}", http.HandlerFunc(handleSnippetsList))
+	mux.Handle("GET /{$}", http.HandlerFunc(handleAbout))
 	mux.Handle("/", http.HandlerFunc(handleContent))
 
 	server := &http.Server{

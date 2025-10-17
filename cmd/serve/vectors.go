@@ -3,15 +3,11 @@ package main
 import (
 	"bytes"
 	"context"
-	"database/sql"
 	"encoding/json"
 	"flag"
 	"fmt"
-	"html/template"
 	"log/slog"
 	"net/http"
-	"regexp"
-	"strings"
 
 	"github.com/csmith/chameth.com/cmd/serve/templates/includes"
 	"github.com/pgvector/pgvector-go"
@@ -22,57 +18,8 @@ var (
 	ollamaModel    = flag.String("ollama-model", "mxbai-embed-large", "Ollama embedding model")
 )
 
-// htmlTagRegex matches HTML tags
-var htmlTagRegex = regexp.MustCompile(`<[^>]*>`)
-
-// stripHTMLTags removes HTML tags from text but preserves the inner text content
-func stripHTMLTags(html string) string {
-	return htmlTagRegex.ReplaceAllString(html, "")
-}
-
-// shortcodeRegex matches all shortcode patterns
-var shortcodeRegex = regexp.MustCompile(`\{%.*?%}`)
-
-// removeShortcodes removes all shortcode tags from markdown content
-func removeShortcodes(content string) string {
-	return shortcodeRegex.ReplaceAllString(content, "")
-}
-
-var footnoteRegex = regexp.MustCompile(`\[\^[0-9]+]`)
-
-// extractFirstParagraph extracts the first paragraph from markdown content (after removing shortcodes).
-// Renders markdown to HTML first, then extracts first paragraph and strips HTML tags.
-// Returns up to 200 characters with "..." if truncated.
-func extractFirstParagraph(content string) string {
-	cleaned := footnoteRegex.ReplaceAllString(removeShortcodes(content), "")
-
-	rendered, err := RenderMarkdown(cleaned)
-	if err != nil {
-		slog.Error("Failed to render markdown for summary", "error", err)
-		// Fall back to using raw content
-		rendered = template.HTML(cleaned)
-	}
-
-	plainText := stripHTMLTags(string(rendered))
-	paragraphs := regexp.MustCompile(`\n\n+`).Split(plainText, -1)
-
-	var firstParagraph string
-	for _, p := range paragraphs {
-		trimmed := strings.TrimSpace(regexp.MustCompile(`\s+`).ReplaceAllString(p, " "))
-		if trimmed != "" {
-			firstParagraph = trimmed
-			break
-		}
-	}
-
-	if len(firstParagraph) > 200 {
-		return firstParagraph[:200] + "..."
-	}
-	return firstParagraph
-}
-
 // GenerateAndStoreEmbedding generates an embedding for a post and stores it in the database
-func GenerateAndStoreEmbedding(ctx context.Context, db *sql.DB, postSlug string) error {
+func GenerateAndStoreEmbedding(ctx context.Context, postSlug string) error {
 	type ollamaEmbeddingRequest struct {
 		Model  string `json:"model"`
 		Prompt string `json:"prompt"`
@@ -140,7 +87,7 @@ func GenerateAndStoreEmbedding(ctx context.Context, db *sql.DB, postSlug string)
 }
 
 // UpdateAllPostEmbeddings generates embeddings for all posts that don't have one
-func UpdateAllPostEmbeddings(ctx context.Context, db *sql.DB) {
+func UpdateAllPostEmbeddings(ctx context.Context) {
 	slog.Info("Starting to update post embeddings")
 
 	rows, err := db.QueryContext(ctx, "SELECT slug FROM posts WHERE embedding IS NULL ORDER BY date DESC")
@@ -173,7 +120,7 @@ func UpdateAllPostEmbeddings(ctx context.Context, db *sql.DB) {
 	for i, slug := range slugs {
 		slog.Info("Generating embedding", "progress", fmt.Sprintf("%d/%d", i+1, len(slugs)), "slug", slug)
 
-		if err := GenerateAndStoreEmbedding(ctx, db, slug); err != nil {
+		if err := GenerateAndStoreEmbedding(ctx, slug); err != nil {
 			slog.Error("Failed to generate embedding for post", "slug", slug, "error", err)
 			failureCount++
 		} else {
@@ -186,8 +133,9 @@ func UpdateAllPostEmbeddings(ctx context.Context, db *sql.DB) {
 
 // GetRelatedPosts finds posts that are semantically similar to the given post.
 // Returns up to 3 related posts, ordered by similarity (closest first).
-func GetRelatedPosts(ctx context.Context, db *sql.DB, postID int) ([]includes.PostLinkData, error) {
-	rows, err := db.QueryContext(ctx, `
+func GetRelatedPosts(ctx context.Context, postID int) ([]includes.PostLinkData, error) {
+	var posts []Post
+	err := db.SelectContext(ctx, &posts, `
 		SELECT id, slug, title, content
 		FROM posts
 		WHERE id != $1
@@ -199,38 +147,10 @@ func GetRelatedPosts(ctx context.Context, db *sql.DB, postID int) ([]includes.Po
 	if err != nil {
 		return nil, fmt.Errorf("failed to query related posts: %w", err)
 	}
-	defer rows.Close()
 
 	var relatedPosts []includes.PostLinkData
-	for rows.Next() {
-		var id int
-		var slug, title, content string
-		if err := rows.Scan(&id, &slug, &title, &content); err != nil {
-			slog.Error("Failed to scan related post", "error", err)
-			continue
-		}
-
-		// Extract first paragraph as summary
-		summary := extractFirstParagraph(content)
-
-		// Get OpenGraph image with all variants
-		imageVariants, err := getOpenGraphImageVariantsForEntity("post", id)
-		var images []includes.PostLinkImage
-		if err == nil {
-			for _, variant := range imageVariants {
-				images = append(images, includes.PostLinkImage{
-					Url:         fmt.Sprintf("https://chameth.com%s", variant.Slug),
-					ContentType: variant.ContentType,
-				})
-			}
-		}
-
-		relatedPosts = append(relatedPosts, includes.PostLinkData{
-			Url:     slug,
-			Title:   title,
-			Summary: template.HTML(summary),
-			Images:  images,
-		})
+	for _, post := range posts {
+		relatedPosts = append(relatedPosts, CreatePostLink(post))
 	}
 
 	return relatedPosts, nil

@@ -1,0 +1,74 @@
+{{/* gotype: github.com/csmith/chameth.com/cmd/serve/templates.AboutData*/}}
+{{define "content"}}
+    <section class="about">
+        <div class="tcg-outer">
+            <div class="tcg-flip">
+                <div class="tcg-front">
+                    <div class="tcg-inner">
+                        <img alt="Image of Chris, distorted with scan lines and a hologram effect" src="/avatar.webp" fetchpriority="high">
+                        <dl class="tcg-properties">
+                            <dt>Name:</dt>
+                            <dd>Chris Smith</dd>
+                            <dt>Class:</dt>
+                            <dd>Programmer</dd>
+                            <dt>Type:</dt>
+                            <dd>Human</dd>
+                            <dt>HP:</dt>
+                            <dd>929</dd>
+                        </dl>
+                        <table class="tcg-skills">
+                            <tr>
+                                <td>✪✪</td>
+                                <td><em>Yak Shave</em> After attacking, add 1d6 side project tokens to this card.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>✪✪✪</td>
+                                <td><em>Side project</em> Multiply all damage by number of side project tokens.
+                                </td>
+                            </tr>
+                        </table>
+                        <footer>
+                            <span>01/001</span>
+                        </footer>
+                    </div>
+                </div>
+                <div class="tcg-back">
+                    <p class="tcg-back-emboss">
+                        Chameth.com
+                    </p>
+                    <p class="tcg-back-hello">
+                        Hello :)
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="intro">
+                <span class="drop">Hello!</span> I'm Chris, a software developer from the UK. That's me over in the picture.
+                My <code>$dayjob</code> generally involves Android app development, but I also
+                have an excessive collection of <a href="/projects">side projects</a>. Outside of
+                <div class="expandy"><span tabindex="0">programming</span><div class="popup"><div>My current languages of choice: <ul>{{range .Interests.Languages}}<li>{{.}}</li>{{end}}</ul></div></div></div>, I enjoy
+                <div class="expandy"><span tabindex="0">video games</span><div class="popup"><div>Recent picks: <ul>{{range .Interests.VideoGames}}<li>{{.}}</li>{{end}}</ul></div></div></div>,
+                <div class="expandy"><span tabindex="0">reading</span><div class="popup"><div>Some favourites: <ul>{{range .Interests.Books}}<li>{{.}}</li>{{end}}</ul></div></div></div>,
+                puzzle hunts, DIY,
+                <div class="expandy"><span tabindex="0">board games</span><div class="popup"><div>Some picks: <ul>{{range .Interests.BoardGames}}<li>{{.}}</li>{{end}}</ul></div></div></div>,
+                <div class="expandy"><span tabindex="0">films</span><div class="popup"><div>Favourites: <ul>{{range .Interests.Films}}<li>{{.}}</li>{{end}}</ul></div></div></div>,
+                escape rooms, and tinkering with electronics.
+            </div>
+
+            <p>
+                This website houses <a href="/posts">my blog</a> and <a href="/misc">some other random bits and bobs</a>.
+                There's a full <a href="/index/">site map</a> if you want a quick overview of what's here. Here are
+                my latest blog posts:
+            </p>
+
+            <section class="recent-posts post-links">
+                {{- range .HighlightedPosts }}
+                    {{ template "postlink.html.gotpl" . }}
+                {{ end -}}
+            </section>
+        </div>
+    </section>
+{{end}}

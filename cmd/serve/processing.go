@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"log/slog"
 	"regexp"
 	"strings"
 
@@ -40,6 +41,55 @@ func RenderMarkdown(input string) (template.HTML, error) {
 		return "", err
 	}
 	return template.HTML(buf.String()), nil
+}
+
+// htmlTagRegex matches HTML tags
+var htmlTagRegex = regexp.MustCompile(`<[^>]*>`)
+
+// stripHTMLTags removes HTML tags from text but preserves the inner text content
+func stripHTMLTags(html string) string {
+	return htmlTagRegex.ReplaceAllString(html, "")
+}
+
+// shortCodeRegex matches all shortcode patterns
+var shortCodeRegex = regexp.MustCompile(`\{%.*?%}`)
+
+// removeShortCodes removes all shortcode tags from markdown content
+func removeShortCodes(content string) string {
+	return shortCodeRegex.ReplaceAllString(content, "")
+}
+
+var footnoteRegex = regexp.MustCompile(`\[\^[0-9]+]`)
+
+// extractFirstParagraph extracts the first paragraph from markdown content (after removing shortcodes).
+// Renders markdown to HTML first, then extracts first paragraph and strips HTML tags.
+// Returns up to 200 characters with "..." if truncated.
+func extractFirstParagraph(content string) string {
+	cleaned := footnoteRegex.ReplaceAllString(removeShortCodes(content), "")
+
+	rendered, err := RenderMarkdown(cleaned)
+	if err != nil {
+		slog.Error("Failed to render markdown for summary", "error", err)
+		// Fall back to using raw content
+		rendered = template.HTML(cleaned)
+	}
+
+	plainText := stripHTMLTags(string(rendered))
+	paragraphs := regexp.MustCompile(`\n\n+`).Split(plainText, -1)
+
+	var firstParagraph string
+	for _, p := range paragraphs {
+		trimmed := strings.TrimSpace(regexp.MustCompile(`\s+`).ReplaceAllString(p, " "))
+		if trimmed != "" {
+			firstParagraph = trimmed
+			break
+		}
+	}
+
+	if len(firstParagraph) > 200 {
+		return firstParagraph[:200] + "..."
+	}
+	return firstParagraph
 }
 
 var (

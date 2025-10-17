@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/csmith/chameth.com/cmd/serve/templates"
+	"github.com/csmith/chameth.com/cmd/serve/templates/includes"
 )
 
 func handleNotFound(w http.ResponseWriter, r *http.Request) {
@@ -192,7 +193,6 @@ func handleStaticPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Render content (shortcodes + markdown)
 	renderedContent, err := RenderContent("staticpage", page.ID, page.Content)
 	if err != nil {
 		slog.Error("Failed to render static page content", "page", page.Title, "error", err)
@@ -237,7 +237,6 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Render content (shortcodes + markdown)
 	renderedContent, err := RenderContent("post", post.ID, post.Content)
 	if err != nil {
 		slog.Error("Failed to render post content", "post", post.Title, "error", err)
@@ -263,7 +262,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get related posts
-	relatedPosts, err := GetRelatedPosts(r.Context(), db.DB, post.ID)
+	relatedPosts, err := GetRelatedPosts(r.Context(), post.ID)
 	if err != nil {
 		slog.Error("Failed to get related posts", "post_id", post.ID, "error", err)
 		// Continue without related posts rather than erroring
@@ -545,5 +544,76 @@ func handleMisc(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		slog.Error("Failed to render misc template", "error", err)
+	}
+}
+
+func handleAbout(w http.ResponseWriter, r *http.Request) {
+	posts, err := getRecentPostsWithContent(3)
+	if err != nil {
+		slog.Error("Failed to get recent posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	var links []includes.PostLinkData
+	for _, p := range posts {
+		links = append(links, CreatePostLink(p))
+	}
+
+	recent, err := recentPosts()
+	if err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderAbout(w, templates.AboutData{
+		HighlightedPosts: links,
+		Interests: templates.AboutInterests{
+			Books: []string{
+				"Snow Crash",
+				"Dune",
+				"A Memory Called Empire",
+				"Dungeon Crawler Carl",
+			},
+			Languages: []string{
+				"Go",
+				"Kotlin",
+				"Android",
+			},
+			BoardGames: []string{
+				"Cartographers",
+				"Terraforming Mars",
+				"Fluxx",
+				"Lovecraft Letter",
+			},
+			Films: []string{
+				"Easy A",
+				"Hackers",
+				"The Matrix",
+				"Everything Everywhere All at Once",
+			},
+			VideoGames: []string{
+				"Warframe",
+				"Final Fantasy XIV",
+				"Factorio",
+				"Rocket League",
+			},
+		},
+		PageData: templates.PageData{
+			Title:        "Chameth.com: the personal website of Chris Smith",
+			Stylesheet:   compiledSheetPath,
+			CanonicalUrl: "https://chameth.com/",
+			RecentPosts:  recent,
+			OpenGraph: templates.OpenGraphHeaders{
+				Type:  "website",
+				Image: "/screenshot.png",
+			},
+		},
+	})
+	if err != nil {
+		slog.Error("Failed to render about template", "error", err)
 	}
 }
