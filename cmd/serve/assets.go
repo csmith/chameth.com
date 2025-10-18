@@ -14,8 +14,7 @@ func handleStaticAsset(w http.ResponseWriter, r *http.Request) {
 	stat, err := fs.Stat(assets.Static, filepath.Join("static", r.URL.Path))
 	if err != nil {
 		if errors.Is(err, fs.ErrNotExist) {
-			slog.Warn("Asset not found, falling through to 11ty", "path", r.URL.Path)
-			http.FileServer(http.Dir(*files)).ServeHTTP(w, r)
+			handleNotFound(w, r)
 			return
 		}
 

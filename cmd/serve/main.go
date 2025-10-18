@@ -18,8 +18,7 @@ import (
 )
 
 var (
-	port  = flag.Int("port", 8080, "Port to listen on")
-	files = flag.String("files", "_site", "Directory to serve files from")
+	port = flag.Int("port", 8080, "Port to listen on")
 )
 
 func main() {

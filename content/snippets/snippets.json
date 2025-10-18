@@ -1,6 +1,0 @@
-{
-  "tags": ["snippets"],
-  "layout": "snippet.njk",
-  "permalink": "/snippets/{{ page.fileSlug }}/",
-  "date": "Last Modified"
-}

@@ -1,9 +1,5 @@
 /.idea
 
-# Generated content
-/_site
-/node_modules
-
 # Random backup files
 *~
 

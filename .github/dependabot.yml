@@ -4,11 +4,11 @@ updates:
     directory: /
     schedule:
       interval: daily  
-  - package-ecosystem: npm
+  - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: monthly 
-  - package-ecosystem: github-actions
+      interval: daily
+  - package-ecosystem: gomod
     directory: /
     schedule:
       interval: daily
