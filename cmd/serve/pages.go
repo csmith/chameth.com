@@ -657,3 +657,39 @@ func handleAbout(w http.ResponseWriter, r *http.Request) {
 		slog.Error("Failed to render about template", "error", err)
 	}
 }
+
+func handlePostsList(w http.ResponseWriter, r *http.Request) {
+	posts, err := getAllPostsWithContent()
+	if err != nil {
+		slog.Error("Failed to get all posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	var postLinks []includes.PostLinkData
+	for _, p := range posts {
+		postLinks = append(postLinks, CreatePostLink(p))
+	}
+
+	recent, err := recentPosts()
+	if err != nil {
+		slog.Error("Failed to load recent posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderPosts(w, templates.PostsData{
+		Posts: postLinks,
+		PageData: templates.PageData{
+			Title:        "Posts · Chameth.com",
+			Stylesheet:   compiledSheetPath,
+			CanonicalUrl: "https://chameth.com/posts/",
+			RecentPosts:  recent,
+		},
+	})
+	if err != nil {
+		slog.Error("Failed to render posts template", "error", err)
+	}
+}

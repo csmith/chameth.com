@@ -99,8 +99,8 @@ func extractFirstParagraph(content string) string {
 		}
 	}
 
-	if len(firstParagraph) > 200 {
-		return firstParagraph[:200] + "..."
+	if len(firstParagraph) > 400 {
+		return firstParagraph[:400] + "..."
 	}
 	return firstParagraph
 }

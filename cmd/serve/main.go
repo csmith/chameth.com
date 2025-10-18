@@ -46,6 +46,7 @@ func main() {
 	mux.Handle("GET /index.xml", http.HandlerFunc(handleFullFeed))
 	mux.Handle("GET /short.xml", http.HandlerFunc(handleShortPostsFeed))
 	mux.Handle("GET /long.xml", http.HandlerFunc(handleLongPostsFeed))
+	mux.Handle("GET /posts/{$}", http.HandlerFunc(handlePostsList))
 	mux.Handle("GET /prints/{$}", http.HandlerFunc(handlePrintsList))
 	mux.Handle("GET /projects/{$}", http.HandlerFunc(handleProjectsList))
 	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(handleSiteMap))

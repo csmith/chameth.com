@@ -121,6 +121,15 @@ func getAllPosts() ([]Post, error) {
 	return posts, nil
 }
 
+func getAllPostsWithContent() ([]Post, error) {
+	var posts []Post
+	err := db.Select(&posts, "SELECT id, slug, title, date, content FROM posts ORDER BY date DESC")
+	if err != nil {
+		return nil, err
+	}
+	return posts, nil
+}
+
 // getAllProjectSections returns all project sections ordered by sort.
 func getAllProjectSections() ([]ProjectSection, error) {
 	var sections []ProjectSection

@@ -41,6 +41,8 @@ var redirects = []redirect{
 	{regexp.MustCompile(`^/misc/$`), `/sitemap/`},
 	{regexp.MustCompile(`^/index/$`), `/sitemap/`},
 	{regexp.MustCompile(`^/about/$`), `/`},
+	{regexp.MustCompile(`^/posts/[0-9]+/$`), `/posts/`},
+	{regexp.MustCompile(`^/catalogue/$`), `/posts/`},
 }
 
 func applyRedirects() func(http.Handler) http.Handler {
