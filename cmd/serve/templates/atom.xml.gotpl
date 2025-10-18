@@ -12,11 +12,11 @@
     </author>
     {{- range .FeedItems }}
     <entry>
-        <title>{{ .Title }}</title>
-        <link href="{{ .Link }}"/>
+        <title>{{ .Title | escape }}</title>
+        <link href="{{ .Link | escape }}"/>
         <updated>{{ .Updated }}</updated>
-        <id>{{ .Link }}</id>
-        <content xml:lang="en" type="html">{{ .Content }}</content>
+        <id>{{ .Link | escape }}</id>
+        <content xml:lang="en" type="html">{{ .Content | escape }}</content>
     </entry>
     {{- end }}
 </feed>

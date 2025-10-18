@@ -3,15 +3,25 @@ package templates
 import (
 	"html/template"
 	"net/http"
+	textTemplate "text/template"
 )
 
-var siteMapTemplate = template.Must(
+var siteMapHtmlTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
 		ParseFS(
 			templates,
 			"page.html.gotpl",
 			"sitemap.html.gotpl",
+		),
+)
+
+var siteMapXmlTemplate = textTemplate.Must(
+	textTemplate.
+		New("sitemap.xml.gotpl").
+		ParseFS(
+			templates,
+			"sitemap.xml.gotpl",
 		),
 )
 
@@ -33,6 +43,10 @@ type ContentDate struct {
 	Friendly string
 }
 
-func RenderSiteMap(w http.ResponseWriter, data SiteMapData) error {
-	return siteMapTemplate.ExecuteTemplate(w, "page.html.gotpl", data)
+func RenderHtmlSiteMap(w http.ResponseWriter, data SiteMapData) error {
+	return siteMapHtmlTemplate.ExecuteTemplate(w, "page.html.gotpl", data)
+}
+
+func RenderXmlSiteMap(w http.ResponseWriter, data SiteMapData) error {
+	return siteMapXmlTemplate.ExecuteTemplate(w, "sitemap.xml.gotpl", data)
 }

@@ -1,13 +1,17 @@
 package templates
 
 import (
-	"html/template"
+	"html"
 	"net/http"
+	"text/template"
 )
 
 var atomTemplate = template.Must(
 	template.
 		New("atom.xml.gotpl").
+		Funcs(template.FuncMap{
+			"escape": html.EscapeString,
+		}).
 		ParseFS(
 			templates,
 			"atom.xml.gotpl",
