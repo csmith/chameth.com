@@ -508,7 +508,7 @@ func handlePrintsList(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleMisc(w http.ResponseWriter, r *http.Request) {
+func handleSiteMap(w http.ResponseWriter, r *http.Request) {
 	poems, err := getAllPoems()
 	if err != nil {
 		slog.Error("Failed to get all poems", "error", err)
@@ -516,11 +516,49 @@ func handleMisc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var poemDetails []templates.PoemDetails
+	var poemDetails []templates.ContentDetails
 	for _, p := range poems {
-		poemDetails = append(poemDetails, templates.PoemDetails{
+		poemDetails = append(poemDetails, templates.ContentDetails{
 			Title: p.Title,
 			Url:   p.Slug,
+			Date: templates.ContentDate{
+				Iso:      p.Published.Format("2006-01-02"),
+				Friendly: p.Published.Format("Jan 2, 2006"),
+			},
+		})
+	}
+
+	snippets, err := getAllSnippets()
+	if err != nil {
+		slog.Error("Failed to get all snippets", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	var snippetDetails []templates.SnippetDetails
+	for _, s := range snippets {
+		snippetDetails = append(snippetDetails, templates.SnippetDetails{
+			Slug: s.Slug,
+			Name: fmt.Sprintf("%s ➔ %s", s.Topic, s.Title),
+		})
+	}
+
+	posts, err := getAllPosts()
+	if err != nil {
+		slog.Error("Failed to get all posts", "error", err)
+		handleServerError(w, r)
+		return
+	}
+
+	var postDetails []templates.ContentDetails
+	for _, p := range posts {
+		postDetails = append(postDetails, templates.ContentDetails{
+			Title: p.Title,
+			Url:   p.Slug,
+			Date: templates.ContentDate{
+				Iso:      p.Date.Format("2006-01-02"),
+				Friendly: p.Date.Format("Jan 2, 2006"),
+			},
 		})
 	}
 
@@ -533,17 +571,19 @@ func handleMisc(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderMisc(w, templates.MiscData{
-		Poems: poemDetails,
+	err = templates.RenderSiteMap(w, templates.SiteMapData{
+		Posts:    postDetails,
+		Poems:    poemDetails,
+		Snippets: snippetDetails,
 		PageData: templates.PageData{
-			Title:        "Misc · Chameth.com",
+			Title:        "Sitemap · Chameth.com",
 			Stylesheet:   compiledSheetPath,
-			CanonicalUrl: "https://chameth.com/misc/",
+			CanonicalUrl: "https://chameth.com/sitemap/",
 			RecentPosts:  recent,
 		},
 	})
 	if err != nil {
-		slog.Error("Failed to render misc template", "error", err)
+		slog.Error("Failed to render site map template", "error", err)
 	}
 }
 

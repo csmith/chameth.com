@@ -49,6 +49,12 @@ body > header {
       font-family: "Berkeley Mono", monospace;
       text-transform: uppercase;
       white-space: nowrap;
+      text-decoration: none;
+
+      &::before {
+        content: "/";
+        color: var(--accent-colour);
+      }
     }
 
     @media (max-width: 600px) {
