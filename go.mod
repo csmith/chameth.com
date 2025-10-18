@@ -6,7 +6,7 @@ require (
 	github.com/alecthomas/chroma/v2 v2.20.0
 	github.com/anthonynsimon/bild v0.14.0
 	github.com/csmith/envflag/v2 v2.0.0
-	github.com/csmith/middleware v0.0.0-20250918114846-df5fee4070c1
+	github.com/csmith/middleware v1.0.0
 	github.com/csmith/slogflags v1.1.0
 	github.com/golang-migrate/migrate/v4 v4.19.0
 	github.com/jmoiron/sqlx v1.4.0
