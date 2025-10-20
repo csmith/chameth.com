@@ -7,6 +7,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -31,6 +32,11 @@ func initDatabase() error {
 	if err != nil {
 		return fmt.Errorf("failed to connect to database: %w", err)
 	}
+
+	db.SetMaxOpenConns(25)
+	db.SetMaxIdleConns(25)
+	db.SetConnMaxLifetime(5 * time.Minute)
+	db.SetConnMaxIdleTime(2 * time.Minute)
 
 	sourceDriver, err := iofs.New(migrationsFS, "migrations")
 	if err != nil {
