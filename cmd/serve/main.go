@@ -31,10 +31,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := updateStylesheet(); err != nil {
-		slog.Error("Failed to update stylesheet", "error", err)
-		os.Exit(1)
-	}
+	go func() {
+		for {
+			if err := updateStylesheet(); err != nil {
+				slog.Error("Failed to update stylesheet", "error", err)
+				os.Exit(1)
+			}
+			time.Sleep(time.Hour)
+		}
+	}()
 
 	go func() {
 		UpdateAllPostEmbeddings(context.Background())

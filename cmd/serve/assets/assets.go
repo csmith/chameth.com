@@ -5,5 +5,5 @@ import "embed"
 //go:embed static/* static/**/*
 var Static embed.FS
 
-//go:embed stylesheet/*.css
+//go:embed stylesheet/*.css stylesheet/moods/*.css
 var Stylesheets embed.FS

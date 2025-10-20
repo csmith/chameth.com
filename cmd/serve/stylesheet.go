@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"hash/crc32"
 	"io/fs"
@@ -8,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/csmith/chameth.com/cmd/serve/assets"
 )
@@ -37,8 +39,32 @@ var includeOrder = []string{
 	"typography.css",
 }
 
+type Mood struct {
+	include string
+	test    func(time.Time) bool
+}
+
+var moods = []Mood{
+	{
+		include: "moods/birthday.css",
+		test: func(t time.Time) bool {
+			return t.Month() == 10 && t.Day() == 22
+		},
+	},
+	{
+		include: "moods/christmas.css",
+		test: func(t time.Time) bool {
+			return t.Month() == 12
+		},
+	},
+}
+
 var compiledSheet string
 var compiledSheetPath string
+
+var (
+	styleDate = flag.String("style-datetime", "", "Date/time to fake for stylesheet generation purposes")
+)
 
 func updateStylesheet() error {
 	filesystem, err := fs.Sub(assets.Stylesheets, filepath.Join("stylesheet"))
@@ -46,14 +72,27 @@ func updateStylesheet() error {
 		return err
 	}
 
+	date := time.Now()
+	if *styleDate != "" {
+		date, _ = time.ParseInLocation("2006-01-02T15:04:05", *styleDate, date.Location())
+	}
+
+	var includes []string
+	includes = append(includes, includeOrder...)
+	for _, mood := range moods {
+		if mood.test(date) {
+			includes = append(includes, mood.include)
+		}
+	}
+
 	builder := &strings.Builder{}
-	for i := range includeOrder {
-		b, err := fs.ReadFile(filesystem, includeOrder[i])
+	for i := range includes {
+		b, err := fs.ReadFile(filesystem, includes[i])
 		if err != nil {
 			return err
 		}
 
-		builder.WriteString(fmt.Sprintf("\n\n/* =========================== %s ========================== */\n\n", includeOrder[i]))
+		builder.WriteString(fmt.Sprintf("\n\n/* =========================== %s ========================== */\n\n", includes[i]))
 		builder.Write(b)
 	}
 

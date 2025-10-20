@@ -1,0 +1,45 @@
+h1 {
+  position: relative;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 50px;
+    background-image: url('/moods/santa-hat.png');
+    position: absolute;
+    top: 0;
+    right: -30px;
+    rotate: 20deg;
+    transition: rotate 300ms ease-in-out;
+  }
+
+  &:hover {
+    &::after {
+      rotate: 30deg;
+    }
+  }
+}
+
+body {
+  background: url(/moods/snowflakes.png), url(/moods/snowflakes.png), var(--background-colour);
+  background-repeat: repeat;
+  animation: snow 30s linear infinite;
+}
+
+@keyframes snow {
+  0% {
+    background-position-x: 0, 50px;
+    background-position-y: 0, 200px;
+  }
+  25% {
+    background-position-x: -10px, 80px;
+  }
+  75% {
+    background-position-x: 10px, 20px;
+  }
+  100% {
+    background-position-x: 0, 50px;
+    background-position-y: 600px, 1400px;
+  }
+}
