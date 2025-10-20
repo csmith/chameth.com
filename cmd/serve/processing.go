@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
+	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/chameth.com/cmd/serve/templates/shortcodes"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting/v2"
@@ -114,7 +115,7 @@ var (
 	figureRegexp   = regexp.MustCompile(`\{% figure "(.*?)" "(.*?)" %}`)
 )
 
-func RenderShortCodes(input string, media []MediaRelationWithDetails) (string, error) {
+func RenderShortCodes(input string, media []db.MediaRelationWithDetails) (string, error) {
 	var res = input
 	var err error
 
@@ -216,14 +217,14 @@ func renderWarning(input string) (string, error) {
 	return res, nil
 }
 
-func renderAudio(input string, media []MediaRelationWithDetails) (string, error) {
+func renderAudio(input string, media []db.MediaRelationWithDetails) (string, error) {
 	res := input
 	audios := audioRegexp.FindAllStringSubmatch(input, -1)
 	for _, audio := range audios {
 		description := strings.ReplaceAll(audio[1], `\\"`, `"`)
 
 		// Find the media relation with matching description
-		var mediaRelation *MediaRelationWithDetails
+		var mediaRelation *db.MediaRelationWithDetails
 		for i := range media {
 			if media[i].Description != nil && *media[i].Description == description {
 				mediaRelation = &media[i]
@@ -254,14 +255,14 @@ func renderAudio(input string, media []MediaRelationWithDetails) (string, error)
 	return res, nil
 }
 
-func renderVideo(input string, media []MediaRelationWithDetails) (string, error) {
+func renderVideo(input string, media []db.MediaRelationWithDetails) (string, error) {
 	res := input
 	videos := videoRegexp.FindAllStringSubmatch(input, -1)
 	for _, video := range videos {
 		description := strings.ReplaceAll(video[1], `\\"`, `"`)
 
 		// Find the media relation with matching description
-		var mediaRelation *MediaRelationWithDetails
+		var mediaRelation *db.MediaRelationWithDetails
 		for i := range media {
 			if media[i].Description != nil && *media[i].Description == description {
 				mediaRelation = &media[i]
@@ -286,7 +287,7 @@ func renderVideo(input string, media []MediaRelationWithDetails) (string, error)
 	return res, nil
 }
 
-func renderFigure(input string, media []MediaRelationWithDetails) (string, error) {
+func renderFigure(input string, media []db.MediaRelationWithDetails) (string, error) {
 	res := input
 	figures := figureRegexp.FindAllStringSubmatch(input, -1)
 	for _, figure := range figures {
@@ -294,7 +295,7 @@ func renderFigure(input string, media []MediaRelationWithDetails) (string, error
 		description := strings.ReplaceAll(figure[2], `\\"`, `"`)
 
 		// Find all media relations with matching description
-		var matchingMedia []MediaRelationWithDetails
+		var matchingMedia []db.MediaRelationWithDetails
 		for i := range media {
 			if media[i].Description != nil && *media[i].Description == description {
 				matchingMedia = append(matchingMedia, media[i])
@@ -306,7 +307,7 @@ func renderFigure(input string, media []MediaRelationWithDetails) (string, error
 		}
 
 		// Find the primary image (jpeg or png) and build sources
-		var primaryMedia *MediaRelationWithDetails
+		var primaryMedia *db.MediaRelationWithDetails
 		var sources []shortcodes.FigureSource
 
 		for i := range matchingMedia {
@@ -362,7 +363,7 @@ func renderFigure(input string, media []MediaRelationWithDetails) (string, error
 
 // RenderContent renders content (shortcodes + markdown to HTML) for any entity type.
 func RenderContent(entityType string, entityID int, content string) (template.HTML, error) {
-	mediaRelations, err := getMediaRelationsForEntity(entityType, entityID)
+	mediaRelations, err := db.GetMediaRelationsForEntity(entityType, entityID)
 	if err != nil {
 		return "", fmt.Errorf("failed to get media relations: %w", err)
 	}

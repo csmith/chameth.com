@@ -6,12 +6,13 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/chameth.com/cmd/serve/templates"
 	"github.com/csmith/chameth.com/cmd/serve/templates/includes"
 )
 
 var recentPostsCache = NewCache(time.Minute*10, func() []templates.RecentPost {
-	posts, err := getRecentPosts(4)
+	posts, err := db.GetRecentPosts(4)
 	if err != nil {
 		slog.Error("Failed to update recent posts: %v", err)
 		return nil
@@ -34,7 +35,7 @@ func recentPosts() []templates.RecentPost {
 }
 
 var postLinksCache = NewKeyedCache(time.Hour*24, func(slug string) *includes.PostLinkData {
-	post, err := getPostBySlug(slug)
+	post, err := db.GetPostBySlug(slug)
 	if err != nil {
 		slog.Error("Failed to get post by slug: %v", err)
 		return nil
@@ -42,7 +43,7 @@ var postLinksCache = NewKeyedCache(time.Hour*24, func(slug string) *includes.Pos
 
 	summary := extractFirstParagraph(post.Content)
 
-	imageVariants, err := getOpenGraphImageVariantsForEntity("post", post.ID)
+	imageVariants, err := db.GetOpenGraphImageVariantsForEntity("post", post.ID)
 	var images []includes.PostLinkImage
 	if err == nil {
 		for _, variant := range imageVariants {

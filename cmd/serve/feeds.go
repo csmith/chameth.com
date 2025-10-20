@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/chameth.com/cmd/serve/templates"
 	"golang.org/x/net/html"
 )
@@ -23,13 +24,13 @@ func handleShortPostsFeed(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, limit int) {
-	var posts []Post
+	var posts []db.Post
 	var err error
 
 	if format == "" {
-		posts, err = getRecentPostsWithContent(limit)
+		posts, err = db.GetRecentPostsWithContent(limit)
 	} else {
-		posts, err = getRecentPostsWithContentByFormat(limit, format)
+		posts, err = db.GetRecentPostsWithContentByFormat(limit, format)
 	}
 
 	if err != nil {

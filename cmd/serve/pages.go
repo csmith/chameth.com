@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/chameth.com/cmd/serve/templates"
 	"github.com/csmith/chameth.com/cmd/serve/templates/includes"
 )
@@ -46,7 +47,7 @@ func handleServerError(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleContent(w http.ResponseWriter, r *http.Request) {
-	contentType, err := findContentBySlug(r.URL.Path)
+	contentType, err := db.FindContentBySlug(r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find content by slug", "error", err, "path", r.URL.Path)
 		handleServerError(w, r)
@@ -71,7 +72,7 @@ func handleContent(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlePoem(w http.ResponseWriter, r *http.Request) {
-	poem, err := getPoemBySlug(r.URL.Path)
+	poem, err := db.GetPoemBySlug(r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find poem by slug", "error", err, "path", r.URL.Path)
 		handleServerError(w, r)
@@ -117,7 +118,7 @@ func handlePoem(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleSnippet(w http.ResponseWriter, r *http.Request) {
-	snippet, err := getSnippetBySlug(r.URL.Path)
+	snippet, err := db.GetSnippetBySlug(r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find snippet by slug", "error", err, "path", r.URL.Path)
 		handleServerError(w, r)
@@ -155,7 +156,7 @@ func handleSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleStaticPage(w http.ResponseWriter, r *http.Request) {
-	page, err := getStaticPageBySlug(r.URL.Path)
+	page, err := db.GetStaticPageBySlug(r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find static page by slug", "error", err, "path", r.URL.Path)
 		handleServerError(w, r)
@@ -192,7 +193,7 @@ func handleStaticPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlePost(w http.ResponseWriter, r *http.Request) {
-	post, err := getPostBySlug(r.URL.Path)
+	post, err := db.GetPostBySlug(r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find post by slug", "error", err, "path", r.URL.Path)
 		handleServerError(w, r)
@@ -223,7 +224,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 
 	// Get OpenGraph image
 	var ogImage string
-	ogSlug, err := getOpenGraphImageForEntity("post", post.ID)
+	ogSlug, err := db.GetOpenGraphImageForEntity("post", post.ID)
 	if err == nil && ogSlug != "" {
 		ogImage = fmt.Sprintf("https://chameth.com%s", ogSlug)
 	}
@@ -270,7 +271,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleSnippetsList(w http.ResponseWriter, r *http.Request) {
-	snippets, err := getAllSnippets()
+	snippets, err := db.GetAllSnippets()
 	if err != nil {
 		slog.Error("Failed to get all snippets", "error", err)
 		handleServerError(w, r)
@@ -302,7 +303,7 @@ func handleSnippetsList(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleProjectsList(w http.ResponseWriter, r *http.Request) {
-	sections, err := getAllProjectSections()
+	sections, err := db.GetAllProjectSections()
 	if err != nil {
 		slog.Error("Failed to get all project sections", "error", err)
 		handleServerError(w, r)
@@ -313,7 +314,7 @@ func handleProjectsList(w http.ResponseWriter, r *http.Request) {
 	for _, section := range sections {
 		var projectDetails []templates.ProjectDetails
 
-		projects, err := getProjectsInSection(section.ID)
+		projects, err := db.GetProjectsInSection(section.ID)
 		if err != nil {
 			slog.Error("Failed to get projects in section", "section", section.ID, "error", err)
 			handleServerError(w, r)
@@ -356,7 +357,7 @@ func handleProjectsList(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleMedia(w http.ResponseWriter, r *http.Request) {
-	m, err := getMediaBySlug(r.URL.Path)
+	m, err := db.GetMediaBySlug(r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find media by slug", "error", err, "path", r.URL.Path)
 		handleServerError(w, r)
@@ -370,7 +371,7 @@ func handleMedia(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlePrintsList(w http.ResponseWriter, r *http.Request) {
-	prints, err := getAllPrints()
+	prints, err := db.GetAllPrints()
 	if err != nil {
 		slog.Error("Failed to get all prints", "error", err)
 		handleServerError(w, r)
@@ -380,7 +381,7 @@ func handlePrintsList(w http.ResponseWriter, r *http.Request) {
 	var printDetails []templates.PrintDetails
 	for _, p := range prints {
 		// Get links
-		links, err := getPrintLinks(p.ID)
+		links, err := db.GetPrintLinks(p.ID)
 		if err != nil {
 			slog.Error("Failed to get print links", "print_id", p.ID, "error", err)
 			handleServerError(w, r)
@@ -396,7 +397,7 @@ func handlePrintsList(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Get media relations
-		mediaRelations, err := getMediaRelationsForEntity("print", p.ID)
+		mediaRelations, err := db.GetMediaRelationsForEntity("print", p.ID)
 		if err != nil {
 			slog.Error("Failed to get media relations", "print_id", p.ID, "error", err)
 			handleServerError(w, r)
@@ -448,7 +449,7 @@ func handlePrintsList(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleHtmlSiteMap(w http.ResponseWriter, r *http.Request) {
-	poems, err := getAllPoems()
+	poems, err := db.GetAllPoems()
 	if err != nil {
 		slog.Error("Failed to get all poems", "error", err)
 		handleServerError(w, r)
@@ -467,7 +468,7 @@ func handleHtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	snippets, err := getAllSnippets()
+	snippets, err := db.GetAllSnippets()
 	if err != nil {
 		slog.Error("Failed to get all snippets", "error", err)
 		handleServerError(w, r)
@@ -482,7 +483,7 @@ func handleHtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	posts, err := getAllPosts()
+	posts, err := db.GetAllPosts()
 	if err != nil {
 		slog.Error("Failed to get all posts", "error", err)
 		handleServerError(w, r)
@@ -520,7 +521,7 @@ func handleHtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleXmlSiteMap(w http.ResponseWriter, r *http.Request) {
-	poems, err := getAllPoems()
+	poems, err := db.GetAllPoems()
 	if err != nil {
 		slog.Error("Failed to get all poems", "error", err)
 		handleServerError(w, r)
@@ -539,7 +540,7 @@ func handleXmlSiteMap(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	snippets, err := getAllSnippets()
+	snippets, err := db.GetAllSnippets()
 	if err != nil {
 		slog.Error("Failed to get all snippets", "error", err)
 		handleServerError(w, r)
@@ -554,7 +555,7 @@ func handleXmlSiteMap(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	posts, err := getAllPosts()
+	posts, err := db.GetAllPosts()
 	if err != nil {
 		slog.Error("Failed to get all posts", "error", err)
 		handleServerError(w, r)
@@ -645,7 +646,7 @@ func handleAbout(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlePostsList(w http.ResponseWriter, r *http.Request) {
-	posts, err := getAllPosts()
+	posts, err := db.GetAllPosts()
 	if err != nil {
 		slog.Error("Failed to get all posts", "error", err)
 		handleServerError(w, r)

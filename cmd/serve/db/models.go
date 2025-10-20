@@ -1,4 +1,4 @@
-package main
+package db
 
 import "time"
 
@@ -86,4 +86,10 @@ type Post struct {
 	Date    time.Time `db:"date"`
 	Format  string    `db:"format"`
 	Tags    []string
+}
+
+// MediaImageVariant represents a media image with its URL and content type
+type MediaImageVariant struct {
+	Slug        string `db:"slug"`
+	ContentType string `db:"content_type"`
 }

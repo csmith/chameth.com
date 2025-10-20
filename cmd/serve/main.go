@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
 	"github.com/csmith/slogflags"
@@ -25,7 +26,7 @@ func main() {
 	envflag.Parse()
 	_ = slogflags.Logger(slogflags.WithSetDefault(true))
 
-	if err := initDatabase(); err != nil {
+	if err := db.Init(); err != nil {
 		slog.Error("Failed to initialize database", "error", err)
 		os.Exit(1)
 	}

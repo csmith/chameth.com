@@ -9,6 +9,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/chameth.com/cmd/serve/templates/includes"
 	"github.com/pgvector/pgvector-go"
 )
@@ -29,7 +30,7 @@ func GenerateAndStoreEmbedding(ctx context.Context, postSlug string) error {
 		Embedding []float32 `json:"embedding"`
 	}
 
-	post, err := getPostBySlug(postSlug)
+	post, err := db.GetPostBySlug(postSlug)
 	if err != nil {
 		return fmt.Errorf("failed to get post by slug %s: %w", postSlug, err)
 	}
@@ -77,7 +78,7 @@ func GenerateAndStoreEmbedding(ctx context.Context, postSlug string) error {
 
 	embedding := pgvector.NewVector(ollamaResp.Embedding)
 
-	if err := updatePostEmbedding(postSlug, embedding); err != nil {
+	if err := db.UpdatePostEmbedding(postSlug, embedding); err != nil {
 		return err
 	}
 
@@ -89,7 +90,7 @@ func GenerateAndStoreEmbedding(ctx context.Context, postSlug string) error {
 func UpdateAllPostEmbeddings(ctx context.Context) {
 	slog.Info("Starting to update post embeddings")
 
-	slugs, err := getPostSlugsWithoutEmbeddings()
+	slugs, err := db.GetPostSlugsWithoutEmbeddings()
 	if err != nil {
 		slog.Error("Failed to query posts without embeddings", "error", err)
 		return
@@ -122,7 +123,7 @@ func UpdateAllPostEmbeddings(ctx context.Context) {
 // GetRelatedPosts finds posts that are semantically similar to the given post.
 // Returns up to 3 related posts, ordered by similarity (closest first).
 func GetRelatedPosts(postID int) ([]includes.PostLinkData, error) {
-	posts, err := getRelatedPostsByID(postID, 3)
+	posts, err := db.GetRelatedPostsByID(postID, 3)
 	if err != nil {
 		return nil, err
 	}
