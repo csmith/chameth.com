@@ -416,7 +416,7 @@ func getPostSlugsWithoutEmbeddings() ([]string, error) {
 func getRelatedPostsByID(postID int, limit int) ([]Post, error) {
 	var posts []Post
 	err := db.Select(&posts, `
-		SELECT id, slug, title, content
+		SELECT id, slug, title
 		FROM posts
 		WHERE id != $1
 		  AND embedding IS NOT NULL

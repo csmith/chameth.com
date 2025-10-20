@@ -129,7 +129,7 @@ func GetRelatedPosts(postID int) ([]includes.PostLinkData, error) {
 
 	var relatedPosts []includes.PostLinkData
 	for _, post := range posts {
-		relatedPosts = append(relatedPosts, CreatePostLink(post))
+		relatedPosts = append(relatedPosts, CreatePostLink(post.Slug))
 	}
 
 	return relatedPosts, nil

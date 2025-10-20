@@ -3,15 +3,18 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log/slog"
+	"time"
 
 	"github.com/csmith/chameth.com/cmd/serve/templates"
 	"github.com/csmith/chameth.com/cmd/serve/templates/includes"
 )
 
-func recentPosts() ([]templates.RecentPost, error) {
+var recentPostsCache = NewCache(time.Minute*10, func() []templates.RecentPost {
 	posts, err := getRecentPosts(4)
 	if err != nil {
-		return nil, err
+		slog.Error("Failed to update recent posts: %v", err)
+		return nil
 	}
 
 	var recentPostsList []templates.RecentPost
@@ -23,12 +26,20 @@ func recentPosts() ([]templates.RecentPost, error) {
 		})
 	}
 
-	return recentPostsList, nil
+	return recentPostsList
+})
+
+func recentPosts() []templates.RecentPost {
+	return *recentPostsCache.Get()
 }
 
-// CreatePostLink converts a Post to a PostLinkData with summary and images.
-// Extracts the first paragraph as a summary and fetches OpenGraph images.
-func CreatePostLink(post Post) includes.PostLinkData {
+var postLinksCache = NewKeyedCache(time.Hour*24, func(slug string) *includes.PostLinkData {
+	post, err := getPostBySlug(slug)
+	if err != nil {
+		slog.Error("Failed to get post by slug: %v", err)
+		return nil
+	}
+
 	summary := extractFirstParagraph(post.Content)
 
 	imageVariants, err := getOpenGraphImageVariantsForEntity("post", post.ID)
@@ -42,10 +53,14 @@ func CreatePostLink(post Post) includes.PostLinkData {
 		}
 	}
 
-	return includes.PostLinkData{
+	return &includes.PostLinkData{
 		Url:     post.Slug,
 		Title:   post.Title,
 		Summary: template.HTML(summary),
 		Images:  images,
 	}
+})
+
+func CreatePostLink(slug string) includes.PostLinkData {
+	return *postLinksCache.Get(slug)
 }
