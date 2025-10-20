@@ -385,3 +385,41 @@ func getRecentPostsWithContentByFormat(limit int, format string) ([]Post, error)
 
 	return posts, nil
 }
+
+// updatePostEmbedding updates the embedding for a post identified by slug.
+func updatePostEmbedding(slug string, embedding interface{}) error {
+	_, err := db.Exec("UPDATE posts SET embedding = $1 WHERE slug = $2", embedding, slug)
+	if err != nil {
+		return fmt.Errorf("failed to update embedding for post %s: %w", slug, err)
+	}
+	return nil
+}
+
+// getPostSlugsWithoutEmbeddings returns slugs of all posts that don't have embeddings.
+func getPostSlugsWithoutEmbeddings() ([]string, error) {
+	var slugs []string
+	err := db.Select(&slugs, "SELECT slug FROM posts WHERE embedding IS NULL ORDER BY date DESC")
+	if err != nil {
+		return nil, err
+	}
+	return slugs, nil
+}
+
+// getRelatedPostsByID returns posts that are semantically similar to the given post.
+// Returns up to limit posts, ordered by similarity (closest first).
+func getRelatedPostsByID(postID int, limit int) ([]Post, error) {
+	var posts []Post
+	err := db.Select(&posts, `
+		SELECT id, slug, title, content
+		FROM posts
+		WHERE id != $1
+		  AND embedding IS NOT NULL
+		  AND (SELECT embedding FROM posts WHERE id = $1) IS NOT NULL
+		ORDER BY embedding <=> (SELECT embedding FROM posts WHERE id = $1)
+		LIMIT $2
+	`, postID, limit)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query related posts: %w", err)
+	}
+	return posts, nil
+}

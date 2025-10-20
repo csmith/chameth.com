@@ -77,9 +77,8 @@ func GenerateAndStoreEmbedding(ctx context.Context, postSlug string) error {
 
 	embedding := pgvector.NewVector(ollamaResp.Embedding)
 
-	_, err = db.ExecContext(ctx, "UPDATE posts SET embedding = $1 WHERE slug = $2", embedding, postSlug)
-	if err != nil {
-		return fmt.Errorf("failed to store embedding: %w", err)
+	if err := updatePostEmbedding(postSlug, embedding); err != nil {
+		return err
 	}
 
 	slog.Info("Generated embedding for post", "slug", postSlug, "dimension", len(ollamaResp.Embedding))
@@ -90,21 +89,10 @@ func GenerateAndStoreEmbedding(ctx context.Context, postSlug string) error {
 func UpdateAllPostEmbeddings(ctx context.Context) {
 	slog.Info("Starting to update post embeddings")
 
-	rows, err := db.QueryContext(ctx, "SELECT slug FROM posts WHERE embedding IS NULL ORDER BY date DESC")
+	slugs, err := getPostSlugsWithoutEmbeddings()
 	if err != nil {
 		slog.Error("Failed to query posts without embeddings", "error", err)
 		return
-	}
-	defer rows.Close()
-
-	var slugs []string
-	for rows.Next() {
-		var slug string
-		if err := rows.Scan(&slug); err != nil {
-			slog.Error("Failed to scan post slug", "error", err)
-			continue
-		}
-		slugs = append(slugs, slug)
 	}
 
 	if len(slugs) == 0 {
@@ -133,19 +121,10 @@ func UpdateAllPostEmbeddings(ctx context.Context) {
 
 // GetRelatedPosts finds posts that are semantically similar to the given post.
 // Returns up to 3 related posts, ordered by similarity (closest first).
-func GetRelatedPosts(ctx context.Context, postID int) ([]includes.PostLinkData, error) {
-	var posts []Post
-	err := db.SelectContext(ctx, &posts, `
-		SELECT id, slug, title, content
-		FROM posts
-		WHERE id != $1
-		  AND embedding IS NOT NULL
-		  AND (SELECT embedding FROM posts WHERE id = $1) IS NOT NULL
-		ORDER BY embedding <=> (SELECT embedding FROM posts WHERE id = $1)
-		LIMIT 3
-	`, postID)
+func GetRelatedPosts(postID int) ([]includes.PostLinkData, error) {
+	posts, err := getRelatedPostsByID(postID, 3)
 	if err != nil {
-		return nil, fmt.Errorf("failed to query related posts: %w", err)
+		return nil, err
 	}
 
 	var relatedPosts []includes.PostLinkData

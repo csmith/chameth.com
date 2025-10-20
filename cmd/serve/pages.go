@@ -262,7 +262,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get related posts
-	relatedPosts, err := GetRelatedPosts(r.Context(), post.ID)
+	relatedPosts, err := GetRelatedPosts(post.ID)
 	if err != nil {
 		slog.Error("Failed to get related posts", "post_id", post.ID, "error", err)
 		// Continue without related posts rather than erroring
