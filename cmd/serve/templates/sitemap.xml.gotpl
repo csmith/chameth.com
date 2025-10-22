@@ -43,6 +43,12 @@
     </url>
 
     <url>
+        <loc>https://chameth.com/colophon/</loc>
+        <changeFreq>weekly</changeFreq>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
         <loc>https://chameth.com/index.xml</loc>
         <changeFreq>weekly</changeFreq>
         <priority>0.5</priority>
