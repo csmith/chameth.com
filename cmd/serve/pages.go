@@ -130,7 +130,7 @@ func handleSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedContent, err := RenderMarkdown(snippet.Content)
+	renderedContent, err := RenderContent("snippet", 0, snippet.Content)
 	if err != nil {
 		slog.Error("Failed to render markdown for snippet content", "snippet", snippet.Title, "error", err)
 		handleServerError(w, r)
