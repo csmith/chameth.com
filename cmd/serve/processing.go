@@ -107,12 +107,12 @@ func extractFirstParagraph(content string) string {
 }
 
 var (
-	sideNoteRegexp = regexp.MustCompile(`(?s)\{% sidenote "(.*?)" %}(.*?)\{% endsidenote %}`)
-	updateRegexp   = regexp.MustCompile(`(?s)\{% update "(.*?)" %}(.*?)\{% endupdate %}`)
-	warningRegexp  = regexp.MustCompile(`(?s)\{% warning %}(.*?)\{% endwarning %}`)
-	audioRegexp    = regexp.MustCompile(`\{% audio "(.*?)" %}`)
-	videoRegexp    = regexp.MustCompile(`\{% video "(.*?)" %}`)
-	figureRegexp   = regexp.MustCompile(`\{% figure "(.*?)" "(.*?)" %}`)
+	sideNoteRegexp = regexp.MustCompile(`(?s)\{%\s*sidenote "(.*?)"\s*%}(.*?)\{%\s*endsidenote\s*%}`)
+	updateRegexp   = regexp.MustCompile(`(?s)\{%\s*update "(.*?)"\s*%}(.*?)\{%\s*endupdate\s*%}`)
+	warningRegexp  = regexp.MustCompile(`(?s)\{%\s*warning\s*%}(.*?)\{%\s*endwarning\s*%}`)
+	audioRegexp    = regexp.MustCompile(`\{%\s*audio "(.*?)"\s*%}`)
+	videoRegexp    = regexp.MustCompile(`\{%\s*video "(.*?)"\s*%}`)
+	figureRegexp   = regexp.MustCompile(`\{%\s*figure "(.*?)" "(.*?)"\s*%}`)
 )
 
 func RenderShortCodes(input string, media []db.MediaRelationWithDetails) (string, error) {
