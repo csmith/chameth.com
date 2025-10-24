@@ -20,8 +20,10 @@ type EditPostData struct {
 	ID        int
 	Title     string
 	Slug      string
-	Published string
+	Date      string
 	Content   string
+	Format    string
+	Published bool
 }
 
 func RenderEditPost(w http.ResponseWriter, data EditPostData) error {

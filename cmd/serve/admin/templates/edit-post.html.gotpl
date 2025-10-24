@@ -5,7 +5,16 @@
     <form action="/posts/edit/{{.ID}}" method="post">
         <label>Slug: <input type="text" name="slug" value="{{.Slug}}" /></label>
         <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
-        <label>Created: <input type="text" name="created" value="{{.Published}}" /></label>
+        <label>Date: <input type="text" name="date" value="{{.Date}}" /></label>
+        <fieldset>
+            <legend>Format:</legend>
+            <label><input type="radio" name="format" value="long" {{if eq .Format "long"}}checked{{end}} /> Long</label>
+            <label><input type="radio" name="format" value="short" {{if eq .Format "short"}}checked{{end}} /> Short</label>
+        </fieldset>
+        <label>
+            <input type="checkbox" name="published" value="true" {{if .Published}}checked{{end}} />
+            Published
+        </label>
         <label>
             Content:
             <textarea name="content" id="editor">{{.Content}}</textarea>

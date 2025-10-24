@@ -92,8 +92,10 @@ func editPostHandler() func(http.ResponseWriter, *http.Request) {
 			ID:        post.ID,
 			Title:     post.Title,
 			Slug:      post.Slug,
-			Published: post.Date.Format("2006-01-02"),
+			Date:      post.Date.Format("2006-01-02"),
 			Content:   post.Content,
+			Format:    post.Format,
+			Published: post.Published,
 		}
 
 		if err := templates.RenderEditPost(w, data); err != nil {
@@ -142,9 +144,11 @@ func updatePostHandler() func(http.ResponseWriter, *http.Request) {
 		slug := r.FormValue("slug")
 		title := r.FormValue("title")
 		postContent := r.FormValue("content")
-		created := r.FormValue("created")
+		date := r.FormValue("date")
+		format := r.FormValue("format")
+		published := r.FormValue("published") == "true"
 
-		if err := db.UpdatePost(id, slug, title, postContent, created); err != nil {
+		if err := db.UpdatePost(id, slug, title, postContent, date, format, published); err != nil {
 			http.Error(w, "Failed to update post", http.StatusInternalServerError)
 			return
 		}

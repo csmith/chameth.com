@@ -56,12 +56,12 @@ func CreatePost(slug, title string) (int, error) {
 }
 
 // UpdatePost updates a post in the database.
-func UpdatePost(id int, slug, title, content string, date string) error {
+func UpdatePost(id int, slug, title, content, date, format string, published bool) error {
 	_, err := db.Exec(`
 		UPDATE posts
-		SET slug = $1, title = $2, content = $3, date = $4
-		WHERE id = $5
-	`, slug, title, content, date, id)
+		SET slug = $1, title = $2, content = $3, date = $4, format = $5, published = $6
+		WHERE id = $7
+	`, slug, title, content, date, format, published, id)
 	if err != nil {
 		return fmt.Errorf("failed to update post: %w", err)
 	}
