@@ -57,6 +57,12 @@ var moods = []Mood{
 			return t.Month() == 12
 		},
 	},
+	{
+		include: "moods/halloween.css",
+		test: func(t time.Time) bool {
+			return t.Month() == 10 && t.Day() >= 24
+		},
+	},
 }
 
 var compiledSheet string

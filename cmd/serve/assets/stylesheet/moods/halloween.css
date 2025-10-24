@@ -1,0 +1,49 @@
+h1 {
+  position: relative;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 97px;
+    height: 90px;
+    background-image: url('/moods/witch-hat.png');
+    position: absolute;
+    top: -40px;
+    right: -30px;
+    transition: rotate 300ms ease-in-out;
+  }
+
+  &:hover {
+    &::after {
+      rotate: 10deg;
+    }
+  }
+}
+
+body {
+  background: url(/moods/cobweb.png), var(--background-colour);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: 0 0;
+}
+
+body > footer {
+  position: relative;
+
+  &::before {
+    content: "";
+    display: block;
+    width: 227px;
+    height: 238px;
+    background-image: url('/moods/gravestones.png');
+    position: absolute;
+    top: -240px;
+    left: 120px;
+  }
+}
+
+@media (max-width: 2200px) {
+  body > main {
+    padding-bottom: 150px;
+  }
+}
