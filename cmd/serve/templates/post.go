@@ -21,7 +21,6 @@ type PostData struct {
 	ArticleData
 	PostContent template.HTML
 	PostFormat  string
-	PostTags    []string
 }
 
 func RenderPost(w http.ResponseWriter, post PostData) error {

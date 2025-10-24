@@ -14,7 +14,7 @@ import (
 var recentPostsCache = NewCache(time.Minute*10, func() []templates.RecentPost {
 	posts, err := db.GetRecentPosts(4)
 	if err != nil {
-		slog.Error("Failed to update recent posts: %v", err)
+		slog.Error("Failed to update recent posts", "err", err)
 		return nil
 	}
 
@@ -37,7 +37,7 @@ func recentPosts() []templates.RecentPost {
 var postLinksCache = NewKeyedCache(time.Hour*24, func(slug string) *includes.PostLinkData {
 	post, err := db.GetPostBySlug(slug)
 	if err != nil {
-		slog.Error("Failed to get post by slug: %v", err)
+		slog.Error("Failed to get post by slug", "err", err)
 		return nil
 	}
 

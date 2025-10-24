@@ -242,7 +242,6 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	err = templates.RenderPost(w, templates.PostData{
 		PostContent: renderedContent,
 		PostFormat:  post.Format,
-		PostTags:    post.Tags,
 		ArticleData: templates.ArticleData{
 			ArticleTitle:   post.Title,
 			ArticleSummary: summary,

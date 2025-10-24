@@ -85,7 +85,6 @@ type Post struct {
 	Content string    `db:"content"`
 	Date    time.Time `db:"date"`
 	Format  string    `db:"format"`
-	Tags    []string
 }
 
 // MediaImageVariant represents a media image with its URL and content type
