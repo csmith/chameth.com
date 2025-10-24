@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/csmith/chameth.com/cmd/serve/admin"
 	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
@@ -43,6 +44,13 @@ func main() {
 
 	go func() {
 		UpdateAllPostEmbeddings(context.Background())
+	}()
+
+	go func() {
+		if err := admin.Start(); err != nil {
+			slog.Error("Failed to start admin interface", "error", err)
+			os.Exit(1)
+		}
 	}()
 
 	mux := http.NewServeMux()

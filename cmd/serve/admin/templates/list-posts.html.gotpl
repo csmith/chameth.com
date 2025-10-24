@@ -1,0 +1,26 @@
+{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.ListPostsData */}}
+{{define "content"}}
+    <h2>Posts</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Slug</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Posts}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Title}}</td>
+                <td>{{.Slug}}</td>
+                <td>{{.Date}}</td>
+                <td><a href="/posts/edit/{{.ID}}">Edit</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+{{end}}

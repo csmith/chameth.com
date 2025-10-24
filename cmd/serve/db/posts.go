@@ -8,11 +8,51 @@ import (
 // GetAllPosts returns all posts without their content.
 func GetAllPosts() ([]Post, error) {
 	var posts []Post
-	err := db.Select(&posts, "SELECT slug, title, date FROM posts ORDER BY date DESC")
+	err := db.Select(&posts, "SELECT id, slug, title, date FROM posts ORDER BY date DESC")
 	if err != nil {
 		return nil, err
 	}
 	return posts, nil
+}
+
+// GetPostByID returns a post for the given ID.
+// Returns an error if no post is found with that ID.
+func GetPostByID(id int) (*Post, error) {
+	var post struct {
+		Post
+		TagsJSON []byte `db:"tags"`
+	}
+
+	err := db.Get(&post, `
+		SELECT id, slug, title, content, date, format, tags
+		FROM posts
+		WHERE id = $1
+	`, id)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal tags from JSONB
+	if len(post.TagsJSON) > 0 {
+		if err := json.Unmarshal(post.TagsJSON, &post.Tags); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal tags: %w", err)
+		}
+	}
+
+	return &post.Post, nil
+}
+
+// UpdatePost updates a post in the database.
+func UpdatePost(id int, slug, title, content string, date string) error {
+	_, err := db.Exec(`
+		UPDATE posts
+		SET slug = $1, title = $2, content = $3, date = $4
+		WHERE id = $5
+	`, slug, title, content, date, id)
+	if err != nil {
+		return fmt.Errorf("failed to update post: %w", err)
+	}
+	return nil
 }
 
 // GetPostBySlug returns a post for the given slug.

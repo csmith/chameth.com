@@ -1,0 +1,15 @@
+{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.EditPostData */}}
+{{define "content"}}
+    <h2>Edit post: {{.Title}}</h2>
+    <a href="https://chameth.com{{.Slug}}">View on chameth.com</a>
+    <form action="/posts/edit/{{.ID}}" method="post">
+        <label>Slug: <input type="text" name="slug" value="{{.Slug}}" /></label>
+        <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
+        <label>Created: <input type="text" name="created" value="{{.Published}}" /></label>
+        <label>
+            Content:
+            <textarea name="content" id="editor">{{.Content}}</textarea>
+        </label>
+        <input type="submit" />
+    </form>
+{{end}}}

@@ -1,7 +1,4 @@
 /.idea
-
-# Random backup files
-*~
-
-# Postgres data
 /.postgres
+/tsdata
+*~
