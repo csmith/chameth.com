@@ -26,24 +26,3 @@ body {
   background-attachment: fixed;
   background-position: 0 0;
 }
-
-body > footer {
-  position: relative;
-
-  &::before {
-    content: "";
-    display: block;
-    width: 227px;
-    height: 238px;
-    background-image: url('/moods/gravestones.png');
-    position: absolute;
-    top: -240px;
-    left: 120px;
-  }
-}
-
-@media (max-width: 2200px) {
-  body > main {
-    padding-bottom: 150px;
-  }
-}
