@@ -13,7 +13,7 @@ func GetAllProjectSections() ([]ProjectSection, error) {
 // GetProjectsInSection returns all projects in a section ordered by pinned (descending), then name (case-insensitive).
 func GetProjectsInSection(sectionID int) ([]Project, error) {
 	var projects []Project
-	err := db.Select(&projects, "SELECT id, section, name, icon, pinned, description FROM projects WHERE section = $1 ORDER BY pinned DESC, LOWER(name)", sectionID)
+	err := db.Select(&projects, "SELECT id, section, name, icon, pinned, description FROM projects WHERE section = $1 AND published = true ORDER BY pinned DESC, LOWER(name)", sectionID)
 	if err != nil {
 		return nil, err
 	}

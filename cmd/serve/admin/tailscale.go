@@ -49,6 +49,7 @@ func Start() error {
 	httpsMux := http.NewServeMux()
 	httpsMux.Handle("GET /assets/", http.StripPrefix("/assets/", assetsHandler()))
 	httpsMux.HandleFunc("GET /posts", listPostsHandler())
+	httpsMux.HandleFunc("POST /posts", createPostHandler())
 	httpsMux.HandleFunc("GET /posts/edit/{id}", editPostHandler())
 	httpsMux.HandleFunc("POST /posts/edit/{id}", updatePostHandler())
 

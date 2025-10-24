@@ -3,7 +3,7 @@ package db
 // GetAllPrints returns all prints ordered by name.
 func GetAllPrints() ([]Print, error) {
 	var prints []Print
-	err := db.Select(&prints, "SELECT id, name, description FROM prints ORDER BY name")
+	err := db.Select(&prints, "SELECT id, name, description FROM prints WHERE published = true ORDER BY name")
 	if err != nil {
 		return nil, err
 	}

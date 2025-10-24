@@ -7,22 +7,24 @@ type Poem struct {
 	Title     string    `db:"title"`
 	Poem      string    `db:"poem"`
 	Notes     string    `db:"notes"`
-	Published time.Time `db:"published"`
-	Modified  time.Time `db:"modified"`
+	Date      time.Time `db:"date"`
+	Published bool      `db:"published"`
 }
 
 type Snippet struct {
-	Slug    string `db:"slug"`
-	Title   string `db:"title"`
-	Topic   string `db:"topic"`
-	Content string `db:"content"`
+	Slug      string `db:"slug"`
+	Title     string `db:"title"`
+	Topic     string `db:"topic"`
+	Content   string `db:"content"`
+	Published bool   `db:"published"`
 }
 
 type StaticPage struct {
-	ID      int    `db:"id"`
-	Slug    string `db:"slug"`
-	Title   string `db:"title"`
-	Content string `db:"content"`
+	ID        int    `db:"id"`
+	Slug      string `db:"slug"`
+	Title     string `db:"title"`
+	Content   string `db:"content"`
+	Published bool   `db:"published"`
 }
 
 type ProjectSection struct {
@@ -39,6 +41,7 @@ type Project struct {
 	Icon        string `db:"icon"`
 	Pinned      bool   `db:"pinned"`
 	Description string `db:"description"`
+	Published   bool   `db:"published"`
 }
 
 type Media struct {
@@ -69,6 +72,7 @@ type Print struct {
 	ID          int    `db:"id"`
 	Name        string `db:"name"`
 	Description string `db:"description"`
+	Published   bool   `db:"published"`
 }
 
 type PrintLink struct {
@@ -79,12 +83,13 @@ type PrintLink struct {
 }
 
 type Post struct {
-	ID      int       `db:"id"`
-	Slug    string    `db:"slug"`
-	Title   string    `db:"title"`
-	Content string    `db:"content"`
-	Date    time.Time `db:"date"`
-	Format  string    `db:"format"`
+	ID        int       `db:"id"`
+	Slug      string    `db:"slug"`
+	Title     string    `db:"title"`
+	Content   string    `db:"content"`
+	Date      time.Time `db:"date"`
+	Format    string    `db:"format"`
+	Published bool      `db:"published"`
 }
 
 // MediaImageVariant represents a media image with its URL and content type

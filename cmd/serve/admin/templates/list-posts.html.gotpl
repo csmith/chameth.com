@@ -1,5 +1,35 @@
 {{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.ListPostsData */}}
 {{define "content"}}
+    <form method="POST" action="/posts">
+        <button type="submit">Create New Post</button>
+    </form>
+
+    {{if .Drafts}}
+    <h2>Drafts</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Slug</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Drafts}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Title}}</td>
+                <td>{{.Slug}}</td>
+                <td>{{.Date}}</td>
+                <td><a href="/posts/edit/{{.ID}}">Edit</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{end}}
+
     <h2>Posts</h2>
     <table>
         <thead>

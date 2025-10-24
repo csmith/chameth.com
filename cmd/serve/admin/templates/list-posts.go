@@ -17,7 +17,8 @@ var listPostsTemplate = template.Must(
 
 type ListPostsData struct {
 	PageData
-	Posts []PostSummary
+	Drafts []PostSummary
+	Posts  []PostSummary
 }
 
 type PostSummary struct {

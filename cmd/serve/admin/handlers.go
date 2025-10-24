@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/csmith/aca"
 	"github.com/csmith/chameth.com/cmd/serve/admin/assets"
 	"github.com/csmith/chameth.com/cmd/serve/admin/templates"
 	"github.com/csmith/chameth.com/cmd/serve/db"
@@ -26,10 +27,26 @@ func assetsHandler() http.Handler {
 
 func listPostsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		drafts, err := db.GetDraftPosts()
+		if err != nil {
+			http.Error(w, "Failed to retrieve draft posts", http.StatusInternalServerError)
+			return
+		}
+
 		posts, err := db.GetAllPosts()
 		if err != nil {
 			http.Error(w, "Failed to retrieve posts", http.StatusInternalServerError)
 			return
+		}
+
+		draftSummaries := make([]templates.PostSummary, len(drafts))
+		for i, post := range drafts {
+			draftSummaries[i] = templates.PostSummary{
+				ID:    post.ID,
+				Title: post.Title,
+				Slug:  post.Slug,
+				Date:  post.Date.Format("2006-01-02"),
+			}
 		}
 
 		postSummaries := make([]templates.PostSummary, len(posts))
@@ -43,7 +60,8 @@ func listPostsHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		data := templates.ListPostsData{
-			Posts: postSummaries,
+			Drafts: draftSummaries,
+			Posts:  postSummaries,
 		}
 
 		if err := templates.RenderListPosts(w, data); err != nil {
@@ -78,6 +96,29 @@ func editPostHandler() func(http.ResponseWriter, *http.Request) {
 		if err := templates.RenderEditPost(w, data); err != nil {
 			http.Error(w, "Failed to render template", http.StatusInternalServerError)
 		}
+	}
+}
+
+func createPostHandler() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Generate random adjective-color-animal name
+		gen, err := aca.NewDefaultGenerator()
+		if err != nil {
+			http.Error(w, "Failed to generate name", http.StatusInternalServerError)
+			return
+		}
+		name := gen.Generate()
+		slug := fmt.Sprintf("/%s/", name)
+
+		// Create the new post
+		id, err := db.CreatePost(slug, name)
+		if err != nil {
+			http.Error(w, "Failed to create post", http.StatusInternalServerError)
+			return
+		}
+
+		// Redirect to edit page
+		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
 	}
 }
 

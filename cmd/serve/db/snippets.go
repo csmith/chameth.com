@@ -15,7 +15,7 @@ func GetSnippetBySlug(slug string) (*Snippet, error) {
 // GetAllSnippets returns all snippets without their content.
 func GetAllSnippets() ([]Snippet, error) {
 	var snippets []Snippet
-	err := db.Select(&snippets, "SELECT slug, title, topic FROM snippets ORDER BY topic, title")
+	err := db.Select(&snippets, "SELECT slug, title, topic FROM snippets WHERE published = true ORDER BY topic, title")
 	if err != nil {
 		return nil, err
 	}

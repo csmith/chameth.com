@@ -4,10 +4,20 @@ import (
 	"fmt"
 )
 
-// GetAllPosts returns all posts without their content.
+// GetAllPosts returns all published posts without their content.
 func GetAllPosts() ([]Post, error) {
 	var posts []Post
-	err := db.Select(&posts, "SELECT id, slug, title, date FROM posts ORDER BY date DESC")
+	err := db.Select(&posts, "SELECT id, slug, title, date FROM posts WHERE published = true ORDER BY date DESC")
+	if err != nil {
+		return nil, err
+	}
+	return posts, nil
+}
+
+// GetDraftPosts returns all unpublished posts without their content.
+func GetDraftPosts() ([]Post, error) {
+	var posts []Post
+	err := db.Select(&posts, "SELECT id, slug, title, date FROM posts WHERE published = false ORDER BY date DESC")
 	if err != nil {
 		return nil, err
 	}
@@ -29,6 +39,20 @@ func GetPostByID(id int) (*Post, error) {
 	}
 
 	return &post, nil
+}
+
+// CreatePost creates a new unpublished post in the database and returns its ID.
+func CreatePost(slug, title string) (int, error) {
+	var id int
+	err := db.QueryRow(`
+		INSERT INTO posts (slug, title, content, date, format, published)
+		VALUES ($1, $2, '', CURRENT_DATE, 'long', false)
+		RETURNING id
+	`, slug, title).Scan(&id)
+	if err != nil {
+		return 0, fmt.Errorf("failed to create post: %w", err)
+	}
+	return id, nil
 }
 
 // UpdatePost updates a post in the database.
@@ -68,6 +92,7 @@ func GetRecentPosts(limit int) ([]Post, error) {
 	err := db.Select(&posts, `
 		SELECT id, slug, title, date, format
 		FROM posts
+		WHERE published = true
 		ORDER BY date DESC
 		LIMIT $1
 	`, limit)
@@ -84,6 +109,7 @@ func GetRecentPostsWithContent(limit int) ([]Post, error) {
 	err := db.Select(&posts, `
 		SELECT id, slug, title, date, format, content
 		FROM posts
+		WHERE published = true
 		ORDER BY date DESC
 		LIMIT $1
 	`, limit)
@@ -100,7 +126,7 @@ func GetRecentPostsWithContentByFormat(limit int, format string) ([]Post, error)
 	err := db.Select(&posts, `
 		SELECT id, slug, title, date, format, content
 		FROM posts
-		WHERE format = $1
+		WHERE format = $1 AND published = true
 		ORDER BY date DESC
 		LIMIT $2
 	`, format, limit)
@@ -123,7 +149,7 @@ func UpdatePostEmbedding(slug string, embedding interface{}) error {
 // GetPostSlugsWithoutEmbeddings returns slugs of all posts that don't have embeddings.
 func GetPostSlugsWithoutEmbeddings() ([]string, error) {
 	var slugs []string
-	err := db.Select(&slugs, "SELECT slug FROM posts WHERE embedding IS NULL ORDER BY date DESC")
+	err := db.Select(&slugs, "SELECT slug FROM posts WHERE embedding IS NULL AND published = true ORDER BY date DESC")
 	if err != nil {
 		return nil, err
 	}
@@ -138,6 +164,7 @@ func GetRelatedPostsByID(postID int, limit int) ([]Post, error) {
 		SELECT id, slug, title
 		FROM posts
 		WHERE id != $1
+		  AND published = true
 		  AND embedding IS NOT NULL
 		  AND (SELECT embedding FROM posts WHERE id = $1) IS NOT NULL
 		ORDER BY embedding <=> (SELECT embedding FROM posts WHERE id = $1)

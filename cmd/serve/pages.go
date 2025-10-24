@@ -100,8 +100,8 @@ func handlePoem(w http.ResponseWriter, r *http.Request) {
 			ArticleTitle:   poem.Title,
 			ArticleSummary: poem.Poem,
 			ArticleDate: templates.ArticleDate{
-				Iso:         poem.Published.Format("2006-01-02"),
-				Friendly:    poem.Published.Format("Jan 2, 2006"),
+				Iso:         poem.Date.Format("2006-01-02"),
+				Friendly:    poem.Date.Format("Jan 2, 2006"),
 				ShowWarning: false,
 			},
 			PageData: templates.PageData{
@@ -461,8 +461,8 @@ func handleHtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 			Title: p.Title,
 			Url:   p.Slug,
 			Date: templates.ContentDate{
-				Iso:      p.Published.Format("2006-01-02"),
-				Friendly: p.Published.Format("Jan 2, 2006"),
+				Iso:      p.Date.Format("2006-01-02"),
+				Friendly: p.Date.Format("Jan 2, 2006"),
 			},
 		})
 	}
@@ -533,8 +533,8 @@ func handleXmlSiteMap(w http.ResponseWriter, r *http.Request) {
 			Title: p.Title,
 			Url:   p.Slug,
 			Date: templates.ContentDate{
-				Iso:      p.Published.Format("2006-01-02"),
-				Friendly: p.Published.Format("Jan 2, 2006"),
+				Iso:      p.Date.Format("2006-01-02"),
+				Friendly: p.Date.Format("Jan 2, 2006"),
 			},
 		})
 	}

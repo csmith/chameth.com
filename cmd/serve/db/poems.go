@@ -5,7 +5,7 @@ package db
 // Returns nil if no poem is found with that slug.
 func GetPoemBySlug(slug string) (*Poem, error) {
 	var poem Poem
-	err := db.Get(&poem, "SELECT slug, title, poem, notes, published, modified FROM poems WHERE slug = $1 OR slug = $2", slug, slug+"/")
+	err := db.Get(&poem, "SELECT slug, title, poem, notes, date, published FROM poems WHERE slug = $1 OR slug = $2", slug, slug+"/")
 	if err != nil {
 		return nil, err
 	}
@@ -14,7 +14,7 @@ func GetPoemBySlug(slug string) (*Poem, error) {
 
 func GetAllPoems() ([]Poem, error) {
 	var res []Poem
-	err := db.Select(&res, "SELECT slug, title, published FROM poems ORDER BY published DESC")
+	err := db.Select(&res, "SELECT slug, title, date FROM poems WHERE published = true ORDER BY date DESC")
 	if err != nil {
 		return nil, err
 	}
