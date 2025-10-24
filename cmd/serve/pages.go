@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/csmith/chameth.com/cmd/serve/content"
 	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/chameth.com/cmd/serve/templates"
 	"github.com/csmith/chameth.com/cmd/serve/templates/includes"
@@ -22,7 +23,7 @@ func handleNotFound(w http.ResponseWriter, r *http.Request) {
 		PageData: templates.PageData{
 			Title:       "Not found · Chameth.com",
 			Stylesheet:  compiledSheetPath,
-			RecentPosts: recentPosts(),
+			RecentPosts: content.RecentPosts(),
 		},
 	})
 	if err != nil {
@@ -38,7 +39,7 @@ func handleServerError(w http.ResponseWriter, r *http.Request) {
 		PageData: templates.PageData{
 			Title:       "Server error · Chameth.com",
 			Stylesheet:  compiledSheetPath,
-			RecentPosts: recentPosts(),
+			RecentPosts: content.RecentPosts(),
 		},
 	})
 	if err != nil {
@@ -84,7 +85,7 @@ func handlePoem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedComments, err := RenderMarkdown(poem.Notes)
+	renderedComments, err := content.RenderMarkdown(poem.Notes)
 	if err != nil {
 		slog.Error("Failed to render markdown for poem comments", "poem", poem.Title, "error", err)
 		handleServerError(w, r)
@@ -108,7 +109,7 @@ func handlePoem(w http.ResponseWriter, r *http.Request) {
 				Title:        fmt.Sprintf("%s · Chameth.com", poem.Title),
 				Stylesheet:   compiledSheetPath,
 				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", poem.Slug),
-				RecentPosts:  recentPosts(),
+				RecentPosts:  content.RecentPosts(),
 			},
 		},
 	})
@@ -130,7 +131,7 @@ func handleSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedContent, err := RenderContent("snippet", 0, snippet.Content)
+	renderedContent, err := content.RenderContent("snippet", 0, snippet.Content)
 	if err != nil {
 		slog.Error("Failed to render markdown for snippet content", "snippet", snippet.Title, "error", err)
 		handleServerError(w, r)
@@ -147,7 +148,7 @@ func handleSnippet(w http.ResponseWriter, r *http.Request) {
 			Title:        fmt.Sprintf("%s · Chameth.com", snippet.Title),
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", snippet.Slug),
-			RecentPosts:  recentPosts(),
+			RecentPosts:  content.RecentPosts(),
 		},
 	})
 	if err != nil {
@@ -168,7 +169,7 @@ func handleStaticPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedContent, err := RenderContent("staticpage", page.ID, page.Content)
+	renderedContent, err := content.RenderContent("staticpage", page.ID, page.Content)
 	if err != nil {
 		slog.Error("Failed to render static page content", "page", page.Title, "error", err)
 		handleServerError(w, r)
@@ -184,7 +185,7 @@ func handleStaticPage(w http.ResponseWriter, r *http.Request) {
 			Title:        fmt.Sprintf("%s · Chameth.com", page.Title),
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", page.Slug),
-			RecentPosts:  recentPosts(),
+			RecentPosts:  content.RecentPosts(),
 		},
 	})
 	if err != nil {
@@ -205,7 +206,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedContent, err := RenderContent("post", post.ID, post.Content)
+	renderedContent, err := content.RenderContent("post", post.ID, post.Content)
 	if err != nil {
 		slog.Error("Failed to render post content", "post", post.Title, "error", err)
 		handleServerError(w, r)
@@ -230,7 +231,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get related posts
-	relatedPosts, err := GetRelatedPosts(post.ID)
+	relatedPosts, err := content.GetRelatedPosts(post.ID)
 	if err != nil {
 		slog.Error("Failed to get related posts", "post_id", post.ID, "error", err)
 		// Continue without related posts rather than erroring
@@ -260,7 +261,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 					Image: ogImage,
 					Type:  "article",
 				},
-				RecentPosts: recentPosts(),
+				RecentPosts: content.RecentPosts(),
 			},
 		},
 	})
@@ -296,7 +297,7 @@ func handleSnippetsList(w http.ResponseWriter, r *http.Request) {
 			Title:        "Snippets · Chameth.com",
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: "https://chameth.com/snippets/",
-			RecentPosts:  recentPosts(),
+			RecentPosts:  content.RecentPosts(),
 		},
 	})
 }
@@ -321,7 +322,7 @@ func handleProjectsList(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for _, project := range projects {
-			renderedDesc, err := RenderMarkdown(project.Description)
+			renderedDesc, err := content.RenderMarkdown(project.Description)
 			if err != nil {
 				slog.Error("Failed to render markdown for project description", "project", project.Name, "error", err)
 				handleServerError(w, r)
@@ -350,7 +351,7 @@ func handleProjectsList(w http.ResponseWriter, r *http.Request) {
 			Title:        "Projects · Chameth.com",
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: "https://chameth.com/projects/",
-			RecentPosts:  recentPosts(),
+			RecentPosts:  content.RecentPosts(),
 		},
 	})
 }
@@ -439,7 +440,7 @@ func handlePrintsList(w http.ResponseWriter, r *http.Request) {
 			Title:        "3D Prints · Chameth.com",
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: "https://chameth.com/prints/",
-			RecentPosts:  recentPosts(),
+			RecentPosts:  content.RecentPosts(),
 		},
 	})
 	if err != nil {
@@ -511,7 +512,7 @@ func handleHtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 			Title:        "Sitemap · Chameth.com",
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: "https://chameth.com/sitemap/",
-			RecentPosts:  recentPosts(),
+			RecentPosts:  content.RecentPosts(),
 		},
 	})
 	if err != nil {
@@ -586,11 +587,11 @@ func handleXmlSiteMap(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleAbout(w http.ResponseWriter, r *http.Request) {
-	posts := recentPosts()[:3]
+	posts := content.RecentPosts()[:3]
 
 	var links []includes.PostLinkData
 	for _, p := range posts {
-		links = append(links, CreatePostLink(p.Url))
+		links = append(links, content.CreatePostLink(p.Url))
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -632,7 +633,7 @@ func handleAbout(w http.ResponseWriter, r *http.Request) {
 			Title:        "Chameth.com: the personal website of Chris Smith",
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: "https://chameth.com/",
-			RecentPosts:  recentPosts(),
+			RecentPosts:  content.RecentPosts(),
 			OpenGraph: templates.OpenGraphHeaders{
 				Type:  "website",
 				Image: "/screenshot.png",
@@ -654,7 +655,7 @@ func handlePostsList(w http.ResponseWriter, r *http.Request) {
 
 	var postLinks []includes.PostLinkData
 	for _, p := range posts {
-		postLinks = append(postLinks, CreatePostLink(p.Slug))
+		postLinks = append(postLinks, content.CreatePostLink(p.Slug))
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -665,7 +666,7 @@ func handlePostsList(w http.ResponseWriter, r *http.Request) {
 			Title:        "Posts · Chameth.com",
 			Stylesheet:   compiledSheetPath,
 			CanonicalUrl: "https://chameth.com/posts/",
-			RecentPosts:  recentPosts(),
+			RecentPosts:  content.RecentPosts(),
 		},
 	})
 	if err != nil {

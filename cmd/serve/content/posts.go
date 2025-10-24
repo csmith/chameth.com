@@ -1,4 +1,4 @@
-package main
+package content
 
 import (
 	"fmt"
@@ -30,7 +30,7 @@ var recentPostsCache = NewCache(time.Minute*10, func() []templates.RecentPost {
 	return recentPostsList
 })
 
-func recentPosts() []templates.RecentPost {
+func RecentPosts() []templates.RecentPost {
 	return *recentPostsCache.Get()
 }
 

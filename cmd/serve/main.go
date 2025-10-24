@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/csmith/chameth.com/cmd/serve/admin"
+	"github.com/csmith/chameth.com/cmd/serve/content"
 	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
@@ -43,7 +44,7 @@ func main() {
 	}()
 
 	go func() {
-		UpdateAllPostEmbeddings(context.Background())
+		content.UpdateAllPostEmbeddings(context.Background())
 	}()
 
 	go func() {

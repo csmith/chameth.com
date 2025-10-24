@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/csmith/chameth.com/cmd/serve/content"
 	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/chameth.com/cmd/serve/templates"
 	"golang.org/x/net/html"
@@ -42,7 +43,7 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 	var feedItems []templates.FeedItem
 	for _, post := range posts {
 		// Render content (shortcodes + markdown)
-		renderedContent, err := RenderContent("post", post.ID, post.Content)
+		renderedContent, err := content.RenderContent("post", post.ID, post.Content)
 		if err != nil {
 			slog.Error("Failed to render post content for feed", "post", post.Title, "error", err)
 			handleServerError(w, r)

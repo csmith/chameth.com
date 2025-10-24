@@ -1,13 +1,16 @@
 package admin
 
 import (
+	"context"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strconv"
 
 	"github.com/csmith/aca"
 	"github.com/csmith/chameth.com/cmd/serve/admin/assets"
 	"github.com/csmith/chameth.com/cmd/serve/admin/templates"
+	"github.com/csmith/chameth.com/cmd/serve/content"
 	"github.com/csmith/chameth.com/cmd/serve/db"
 )
 
@@ -138,12 +141,18 @@ func updatePostHandler() func(http.ResponseWriter, *http.Request) {
 
 		slug := r.FormValue("slug")
 		title := r.FormValue("title")
-		content := r.FormValue("content")
+		postContent := r.FormValue("content")
 		created := r.FormValue("created")
 
-		if err := db.UpdatePost(id, slug, title, content, created); err != nil {
+		if err := db.UpdatePost(id, slug, title, postContent, created); err != nil {
 			http.Error(w, "Failed to update post", http.StatusInternalServerError)
 			return
+		}
+
+		// Regenerate embeddings for the updated post
+		if err := content.GenerateAndStoreEmbedding(context.Background(), slug); err != nil {
+			slog.Error("Failed to regenerate embedding for updated post", "slug", slug, "error", err)
+			// Don't fail the request since the post update succeeded
 		}
 
 		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
