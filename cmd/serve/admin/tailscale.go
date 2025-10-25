@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/csmith/chameth.com/cmd/serve/admin/handlers"
 	"tailscale.com/tsnet"
 )
 
@@ -41,17 +42,26 @@ func Start() error {
 	}
 
 	httpServer := &http.Server{
-		Handler: http.HandlerFunc(redirectHandler(func() string {
+		Handler: http.HandlerFunc(handlers.RedirectHandler(func() string {
 			return fullHostName(s)
 		})),
 	}
 
 	httpsMux := http.NewServeMux()
-	httpsMux.Handle("GET /assets/", http.StripPrefix("/assets/", assetsHandler()))
-	httpsMux.HandleFunc("GET /posts", listPostsHandler())
-	httpsMux.HandleFunc("POST /posts", createPostHandler())
-	httpsMux.HandleFunc("GET /posts/edit/{id}", editPostHandler())
-	httpsMux.HandleFunc("POST /posts/edit/{id}", updatePostHandler())
+	httpsMux.Handle("GET /assets/", http.StripPrefix("/assets/", handlers.AssetsHandler()))
+	httpsMux.HandleFunc("GET /", handlers.IndexHandler())
+	httpsMux.HandleFunc("GET /posts", handlers.ListPostsHandler())
+	httpsMux.HandleFunc("POST /posts", handlers.CreatePostHandler())
+	httpsMux.HandleFunc("GET /posts/edit/{id}", handlers.EditPostHandler())
+	httpsMux.HandleFunc("POST /posts/edit/{id}", handlers.UpdatePostHandler())
+	httpsMux.HandleFunc("GET /snippets", handlers.ListSnippetsHandler())
+	httpsMux.HandleFunc("POST /snippets", handlers.CreateSnippetHandler())
+	httpsMux.HandleFunc("GET /snippets/edit/{id}", handlers.EditSnippetHandler())
+	httpsMux.HandleFunc("POST /snippets/edit/{id}", handlers.UpdateSnippetHandler())
+	httpsMux.HandleFunc("GET /poems", handlers.ListPoemsHandler())
+	httpsMux.HandleFunc("POST /poems", handlers.CreatePoemHandler())
+	httpsMux.HandleFunc("GET /poems/edit/{id}", handlers.EditPoemHandler())
+	httpsMux.HandleFunc("POST /poems/edit/{id}", handlers.UpdatePoemHandler())
 
 	httpsServer := &http.Server{
 		Handler: httpsMux,

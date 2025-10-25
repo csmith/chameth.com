@@ -1,0 +1,3 @@
+{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.IndexData */}}
+{{define "content"}}
+{{end}}

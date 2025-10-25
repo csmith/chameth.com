@@ -3,6 +3,7 @@ package db
 import "time"
 
 type Poem struct {
+	ID        int       `db:"id"`
 	Slug      string    `db:"slug"`
 	Title     string    `db:"title"`
 	Poem      string    `db:"poem"`
@@ -12,6 +13,7 @@ type Poem struct {
 }
 
 type Snippet struct {
+	ID        int    `db:"id"`
 	Slug      string `db:"slug"`
 	Title     string `db:"title"`
 	Topic     string `db:"topic"`

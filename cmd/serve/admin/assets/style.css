@@ -13,11 +13,30 @@ header {
     background: #333;
     color: white;
     padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 header h1 {
     margin: 0;
     font-size: 1.5rem;
+}
+
+header nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+header nav a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+header nav a:hover {
+    color: white;
+    text-decoration: underline;
 }
 
 main {

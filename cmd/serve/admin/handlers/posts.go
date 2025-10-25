@@ -1,4 +1,4 @@
-package admin
+package handlers
 
 import (
 	"context"
@@ -8,27 +8,12 @@ import (
 	"strconv"
 
 	"github.com/csmith/aca"
-	"github.com/csmith/chameth.com/cmd/serve/admin/assets"
 	"github.com/csmith/chameth.com/cmd/serve/admin/templates"
 	"github.com/csmith/chameth.com/cmd/serve/content"
 	"github.com/csmith/chameth.com/cmd/serve/db"
 )
 
-func redirectHandler(hostname func() string) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		httpsURL := fmt.Sprintf("https://%s%s", hostname(), r.URL.Path)
-		if r.URL.RawQuery != "" {
-			httpsURL += "?" + r.URL.RawQuery
-		}
-		http.Redirect(w, r, httpsURL, http.StatusMovedPermanently)
-	}
-}
-
-func assetsHandler() http.Handler {
-	return http.FileServer(http.FS(assets.FS))
-}
-
-func listPostsHandler() func(http.ResponseWriter, *http.Request) {
+func ListPostsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		drafts, err := db.GetDraftPosts()
 		if err != nil {
@@ -73,7 +58,7 @@ func listPostsHandler() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func editPostHandler() func(http.ResponseWriter, *http.Request) {
+func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idStr := r.PathValue("id")
 		id, err := strconv.Atoi(idStr)
@@ -104,7 +89,7 @@ func editPostHandler() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func createPostHandler() func(http.ResponseWriter, *http.Request) {
+func CreatePostHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Generate random adjective-color-animal name
 		gen, err := aca.NewDefaultGenerator()
@@ -127,7 +112,7 @@ func createPostHandler() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func updatePostHandler() func(http.ResponseWriter, *http.Request) {
+func UpdatePostHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idStr := r.PathValue("id")
 		id, err := strconv.Atoi(idStr)
