@@ -80,3 +80,42 @@ func GetOpenGraphImageVariantsForEntity(entityType string, entityID int) ([]Medi
 	}
 	return variants, nil
 }
+
+// CreateMedia creates a new media entry and returns its ID.
+func CreateMedia(contentType, originalFilename string, data []byte, width, height *int, parentMediaID *int) (int, error) {
+	var id int
+	err := db.Get(&id, `
+		INSERT INTO media (content_type, original_filename, data, width, height, parent_media_id)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		RETURNING id
+	`, contentType, originalFilename, data, width, height, parentMediaID)
+	return id, err
+}
+
+// GetAllMedia returns all media items ordered by ID descending (without binary data).
+func GetAllMedia() ([]Media, error) {
+	var media []Media
+	err := db.Select(&media, `
+		SELECT id, original_filename, parent_media_id, width, height, content_type
+		FROM media
+		ORDER BY id DESC
+	`)
+	if err != nil {
+		return nil, err
+	}
+	return media, nil
+}
+
+// GetMediaByID returns media by its ID including the binary data.
+func GetMediaByID(id int) (*Media, error) {
+	var media Media
+	err := db.Get(&media, `
+		SELECT id, content_type, original_filename, data, width, height, parent_media_id
+		FROM media
+		WHERE id = $1
+	`, id)
+	if err != nil {
+		return nil, err
+	}
+	return &media, nil
+}

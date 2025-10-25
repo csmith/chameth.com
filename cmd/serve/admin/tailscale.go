@@ -62,6 +62,9 @@ func Start() error {
 	httpsMux.HandleFunc("POST /poems", handlers.CreatePoemHandler())
 	httpsMux.HandleFunc("GET /poems/edit/{id}", handlers.EditPoemHandler())
 	httpsMux.HandleFunc("POST /poems/edit/{id}", handlers.UpdatePoemHandler())
+	httpsMux.HandleFunc("GET /media", handlers.MediaHandler())
+	httpsMux.HandleFunc("POST /media/upload", handlers.UploadMediaHandler())
+	httpsMux.HandleFunc("GET /media/view/{id}", handlers.ViewMediaHandler())
 
 	httpsServer := &http.Server{
 		Handler: httpsMux,

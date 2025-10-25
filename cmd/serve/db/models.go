@@ -53,6 +53,7 @@ type Media struct {
 	Data             []byte `db:"data"`
 	Width            *int   `db:"width"`
 	Height           *int   `db:"height"`
+	ParentMediaID    *int   `db:"parent_media_id"`
 }
 
 type MediaRelation struct {
