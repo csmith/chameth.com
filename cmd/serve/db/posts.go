@@ -5,9 +5,9 @@ import (
 )
 
 // GetAllPosts returns all published posts without their content.
-func GetAllPosts() ([]Post, error) {
-	var posts []Post
-	err := db.Select(&posts, "SELECT id, slug, title, date FROM posts WHERE published = true ORDER BY date DESC")
+func GetAllPosts() ([]PostMetadata, error) {
+	var posts []PostMetadata
+	err := db.Select(&posts, "SELECT id, slug, title, date, format, published FROM posts WHERE published = true ORDER BY date DESC")
 	if err != nil {
 		return nil, err
 	}
@@ -15,9 +15,9 @@ func GetAllPosts() ([]Post, error) {
 }
 
 // GetDraftPosts returns all unpublished posts without their content.
-func GetDraftPosts() ([]Post, error) {
-	var posts []Post
-	err := db.Select(&posts, "SELECT id, slug, title, date FROM posts WHERE published = false ORDER BY date DESC")
+func GetDraftPosts() ([]PostMetadata, error) {
+	var posts []PostMetadata
+	err := db.Select(&posts, "SELECT id, slug, title, date, format, published FROM posts WHERE published = false ORDER BY date DESC")
 	if err != nil {
 		return nil, err
 	}
@@ -87,10 +87,10 @@ func GetPostBySlug(slug string) (*Post, error) {
 }
 
 // GetRecentPosts returns the N most recent posts.
-func GetRecentPosts(limit int) ([]Post, error) {
-	var posts []Post
+func GetRecentPosts(limit int) ([]PostMetadata, error) {
+	var posts []PostMetadata
 	err := db.Select(&posts, `
-		SELECT id, slug, title, date, format
+		SELECT id, slug, title, date, format, published
 		FROM posts
 		WHERE published = true
 		ORDER BY date DESC
@@ -158,10 +158,10 @@ func GetPostSlugsWithoutEmbeddings() ([]string, error) {
 
 // GetRelatedPostsByID returns posts that are semantically similar to the given post.
 // Returns up to limit posts, ordered by similarity (closest first).
-func GetRelatedPostsByID(postID int, limit int) ([]Post, error) {
-	var posts []Post
+func GetRelatedPostsByID(postID int, limit int) ([]PostMetadata, error) {
+	var posts []PostMetadata
 	err := db.Select(&posts, `
-		SELECT id, slug, title
+		SELECT id, slug, title, date, format, published
 		FROM posts
 		WHERE id != $1
 		  AND published = true

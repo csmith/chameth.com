@@ -25,9 +25,9 @@ func GetPoemByID(id int) (*Poem, error) {
 }
 
 // GetAllPoems returns all published poems without their content.
-func GetAllPoems() ([]Poem, error) {
-	var res []Poem
-	err := db.Select(&res, "SELECT id, slug, title, date FROM poems WHERE published = true ORDER BY date DESC")
+func GetAllPoems() ([]PoemMetadata, error) {
+	var res []PoemMetadata
+	err := db.Select(&res, "SELECT id, slug, title, date, published FROM poems WHERE published = true ORDER BY date DESC")
 	if err != nil {
 		return nil, err
 	}
@@ -35,9 +35,9 @@ func GetAllPoems() ([]Poem, error) {
 }
 
 // GetDraftPoems returns all unpublished poems without their content.
-func GetDraftPoems() ([]Poem, error) {
-	var poems []Poem
-	err := db.Select(&poems, "SELECT id, slug, title, date FROM poems WHERE published = false ORDER BY date DESC")
+func GetDraftPoems() ([]PoemMetadata, error) {
+	var poems []PoemMetadata
+	err := db.Select(&poems, "SELECT id, slug, title, date, published FROM poems WHERE published = false ORDER BY date DESC")
 	if err != nil {
 		return nil, err
 	}

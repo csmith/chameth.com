@@ -2,31 +2,43 @@ package db
 
 import "time"
 
-type Poem struct {
+type PoemMetadata struct {
 	ID        int       `db:"id"`
 	Slug      string    `db:"slug"`
 	Title     string    `db:"title"`
-	Poem      string    `db:"poem"`
-	Notes     string    `db:"notes"`
 	Date      time.Time `db:"date"`
 	Published bool      `db:"published"`
 }
 
-type Snippet struct {
+type Poem struct {
+	PoemMetadata
+	Poem  string `db:"poem"`
+	Notes string `db:"notes"`
+}
+
+type SnippetMetadata struct {
 	ID        int    `db:"id"`
 	Slug      string `db:"slug"`
 	Title     string `db:"title"`
 	Topic     string `db:"topic"`
-	Content   string `db:"content"`
+	Published bool   `db:"published"`
+}
+
+type Snippet struct {
+	SnippetMetadata
+	Content string `db:"content"`
+}
+
+type StaticPageMetadata struct {
+	ID        int    `db:"id"`
+	Slug      string `db:"slug"`
+	Title     string `db:"title"`
 	Published bool   `db:"published"`
 }
 
 type StaticPage struct {
-	ID        int    `db:"id"`
-	Slug      string `db:"slug"`
-	Title     string `db:"title"`
-	Content   string `db:"content"`
-	Published bool   `db:"published"`
+	StaticPageMetadata
+	Content string `db:"content"`
 }
 
 type ProjectSection struct {
@@ -46,14 +58,18 @@ type Project struct {
 	Published   bool   `db:"published"`
 }
 
-type Media struct {
+type MediaMetadata struct {
 	ID               int    `db:"id"`
 	ContentType      string `db:"content_type"`
 	OriginalFilename string `db:"original_filename"`
-	Data             []byte `db:"data"`
 	Width            *int   `db:"width"`
 	Height           *int   `db:"height"`
 	ParentMediaID    *int   `db:"parent_media_id"`
+}
+
+type Media struct {
+	MediaMetadata
+	Data []byte `db:"data"`
 }
 
 type MediaRelation struct {
@@ -85,14 +101,18 @@ type PrintLink struct {
 	Address string `db:"address"`
 }
 
-type Post struct {
+type PostMetadata struct {
 	ID        int       `db:"id"`
 	Slug      string    `db:"slug"`
 	Title     string    `db:"title"`
-	Content   string    `db:"content"`
 	Date      time.Time `db:"date"`
 	Format    string    `db:"format"`
 	Published bool      `db:"published"`
+}
+
+type Post struct {
+	PostMetadata
+	Content string `db:"content"`
 }
 
 // MediaImageVariant represents a media image with its URL and content type

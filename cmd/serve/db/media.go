@@ -93,10 +93,10 @@ func CreateMedia(contentType, originalFilename string, data []byte, width, heigh
 }
 
 // GetAllMedia returns all media items ordered by ID descending (without binary data).
-func GetAllMedia() ([]Media, error) {
-	var media []Media
+func GetAllMedia() ([]MediaMetadata, error) {
+	var media []MediaMetadata
 	err := db.Select(&media, `
-		SELECT id, original_filename, parent_media_id, width, height, content_type
+		SELECT id, content_type, original_filename, width, height, parent_media_id
 		FROM media
 		ORDER BY id DESC
 	`)

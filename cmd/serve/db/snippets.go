@@ -25,9 +25,9 @@ func GetSnippetByID(id int) (*Snippet, error) {
 }
 
 // GetAllSnippets returns all published snippets without their content.
-func GetAllSnippets() ([]Snippet, error) {
-	var snippets []Snippet
-	err := db.Select(&snippets, "SELECT id, slug, title, topic FROM snippets WHERE published = true ORDER BY topic, title")
+func GetAllSnippets() ([]SnippetMetadata, error) {
+	var snippets []SnippetMetadata
+	err := db.Select(&snippets, "SELECT id, slug, title, topic, published FROM snippets WHERE published = true ORDER BY topic, title")
 	if err != nil {
 		return nil, err
 	}
@@ -35,9 +35,9 @@ func GetAllSnippets() ([]Snippet, error) {
 }
 
 // GetDraftSnippets returns all unpublished snippets without their content.
-func GetDraftSnippets() ([]Snippet, error) {
-	var snippets []Snippet
-	err := db.Select(&snippets, "SELECT id, slug, title, topic FROM snippets WHERE published = false ORDER BY topic, title")
+func GetDraftSnippets() ([]SnippetMetadata, error) {
+	var snippets []SnippetMetadata
+	err := db.Select(&snippets, "SELECT id, slug, title, topic, published FROM snippets WHERE published = false ORDER BY topic, title")
 	if err != nil {
 		return nil, err
 	}
