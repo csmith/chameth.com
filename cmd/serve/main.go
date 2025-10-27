@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/csmith/chameth.com/cmd/serve/admin"
+	"github.com/csmith/chameth.com/cmd/serve/assets"
 	"github.com/csmith/chameth.com/cmd/serve/content"
 	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/envflag/v2"
@@ -35,7 +36,7 @@ func main() {
 
 	go func() {
 		for {
-			if err := updateStylesheet(); err != nil {
+			if err := assets.UpdateStylesheet(); err != nil {
 				slog.Error("Failed to update stylesheet", "error", err)
 				os.Exit(1)
 			}

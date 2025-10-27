@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/csmith/chameth.com/cmd/serve/assets"
 	"github.com/csmith/chameth.com/cmd/serve/content"
 	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/chameth.com/cmd/serve/templates"
@@ -22,7 +23,7 @@ func handleNotFound(w http.ResponseWriter, r *http.Request) {
 	err := templates.RenderNotFound(w, templates.NotFoundData{
 		PageData: templates.PageData{
 			Title:       "Not found · Chameth.com",
-			Stylesheet:  compiledSheetPath,
+			Stylesheet:  assets.GetStylesheetPath(),
 			RecentPosts: content.RecentPosts(),
 		},
 	})
@@ -38,7 +39,7 @@ func handleServerError(w http.ResponseWriter, r *http.Request) {
 	err := templates.RenderServerError(w, templates.ServerErrorData{
 		PageData: templates.PageData{
 			Title:       "Server error · Chameth.com",
-			Stylesheet:  compiledSheetPath,
+			Stylesheet:  assets.GetStylesheetPath(),
 			RecentPosts: content.RecentPosts(),
 		},
 	})
@@ -107,7 +108,7 @@ func handlePoem(w http.ResponseWriter, r *http.Request) {
 			},
 			PageData: templates.PageData{
 				Title:        fmt.Sprintf("%s · Chameth.com", poem.Title),
-				Stylesheet:   compiledSheetPath,
+				Stylesheet:   assets.GetStylesheetPath(),
 				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", poem.Slug),
 				RecentPosts:  content.RecentPosts(),
 			},
@@ -146,7 +147,7 @@ func handleSnippet(w http.ResponseWriter, r *http.Request) {
 		SnippetContent: renderedContent,
 		PageData: templates.PageData{
 			Title:        fmt.Sprintf("%s · Chameth.com", snippet.Title),
-			Stylesheet:   compiledSheetPath,
+			Stylesheet:   assets.GetStylesheetPath(),
 			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", snippet.Slug),
 			RecentPosts:  content.RecentPosts(),
 		},
@@ -183,7 +184,7 @@ func handleStaticPage(w http.ResponseWriter, r *http.Request) {
 		StaticContent: renderedContent,
 		PageData: templates.PageData{
 			Title:        fmt.Sprintf("%s · Chameth.com", page.Title),
-			Stylesheet:   compiledSheetPath,
+			Stylesheet:   assets.GetStylesheetPath(),
 			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", page.Slug),
 			RecentPosts:  content.RecentPosts(),
 		},
@@ -255,7 +256,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 			RelatedPosts: relatedPosts,
 			PageData: templates.PageData{
 				Title:        fmt.Sprintf("%s · Chameth.com", post.Title),
-				Stylesheet:   compiledSheetPath,
+				Stylesheet:   assets.GetStylesheetPath(),
 				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", post.Slug),
 				OpenGraph: templates.OpenGraphHeaders{
 					Image: ogImage,
@@ -295,7 +296,7 @@ func handleSnippetsList(w http.ResponseWriter, r *http.Request) {
 		SnippetGroups: groups,
 		PageData: templates.PageData{
 			Title:        "Snippets · Chameth.com",
-			Stylesheet:   compiledSheetPath,
+			Stylesheet:   assets.GetStylesheetPath(),
 			CanonicalUrl: "https://chameth.com/snippets/",
 			RecentPosts:  content.RecentPosts(),
 		},
@@ -349,7 +350,7 @@ func handleProjectsList(w http.ResponseWriter, r *http.Request) {
 		ProjectGroups: groups,
 		PageData: templates.PageData{
 			Title:        "Projects · Chameth.com",
-			Stylesheet:   compiledSheetPath,
+			Stylesheet:   assets.GetStylesheetPath(),
 			CanonicalUrl: "https://chameth.com/projects/",
 			RecentPosts:  content.RecentPosts(),
 		},
@@ -438,7 +439,7 @@ func handlePrintsList(w http.ResponseWriter, r *http.Request) {
 		Prints: printDetails,
 		PageData: templates.PageData{
 			Title:        "3D Prints · Chameth.com",
-			Stylesheet:   compiledSheetPath,
+			Stylesheet:   assets.GetStylesheetPath(),
 			CanonicalUrl: "https://chameth.com/prints/",
 			RecentPosts:  content.RecentPosts(),
 		},
@@ -510,7 +511,7 @@ func handleHtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 		Snippets: snippetDetails,
 		PageData: templates.PageData{
 			Title:        "Sitemap · Chameth.com",
-			Stylesheet:   compiledSheetPath,
+			Stylesheet:   assets.GetStylesheetPath(),
 			CanonicalUrl: "https://chameth.com/sitemap/",
 			RecentPosts:  content.RecentPosts(),
 		},
@@ -631,7 +632,7 @@ func handleAbout(w http.ResponseWriter, r *http.Request) {
 		},
 		PageData: templates.PageData{
 			Title:        "Chameth.com: the personal website of Chris Smith",
-			Stylesheet:   compiledSheetPath,
+			Stylesheet:   assets.GetStylesheetPath(),
 			CanonicalUrl: "https://chameth.com/",
 			RecentPosts:  content.RecentPosts(),
 			OpenGraph: templates.OpenGraphHeaders{
@@ -664,7 +665,7 @@ func handlePostsList(w http.ResponseWriter, r *http.Request) {
 		Posts: postLinks,
 		PageData: templates.PageData{
 			Title:        "Posts · Chameth.com",
-			Stylesheet:   compiledSheetPath,
+			Stylesheet:   assets.GetStylesheetPath(),
 			CanonicalUrl: "https://chameth.com/posts/",
 			RecentPosts:  content.RecentPosts(),
 		},
