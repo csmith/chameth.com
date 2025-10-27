@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"context"
@@ -25,14 +25,14 @@ var (
 	smtpPassword = flag.String("contact-smtp-pass", "", "password to supply to the SMTP server")
 )
 
-type ContactRequest struct {
+type contactRequest struct {
 	Page        string `json:"page"`
 	SenderName  string `json:"name"`
 	SenderEmail string `json:"email"`
 	Message     string `json:"message"`
 }
 
-func handleContactForm(w http.ResponseWriter, r *http.Request) {
+func ContactForm(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("Content-Type") != "application/json" {
 		http.Error(w, http.StatusText(http.StatusUnsupportedMediaType), http.StatusUnsupportedMediaType)
 		return
@@ -46,7 +46,7 @@ func handleContactForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var cr ContactRequest
+	var cr contactRequest
 	if err = json.Unmarshal(body, &cr); err != nil {
 		slog.Error("Error parsing contact form payload", "error", err, "payload", string(body))
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -62,7 +62,7 @@ func handleContactForm(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusAccepted)
 }
 
-func sendContact(req ContactRequest, content string) error {
+func sendContact(req contactRequest, content string) error {
 	auth := smtp.PlainAuth("", *smtpUsername, *smtpPassword, *smtpServer)
 	body := fmt.Sprintf("To: %s\r\nSubject: %s\r\nReply-to: %s\r\nFrom: Online contact form <%s>\r\n\r\n%s\r\n", *toAddress, *subject, req.SenderEmail, *fromAddress, content)
 	slog.Info("Sending e-mail message", "from", *fromAddress, "to", *toAddress, "subject", *subject, "replyTo", req.SenderEmail)
@@ -74,7 +74,7 @@ func sendContact(req ContactRequest, content string) error {
 	return nil
 }
 
-func messageBody(c ContactRequest, req *http.Request) string {
+func messageBody(c contactRequest, req *http.Request) string {
 	body := strings.Builder{}
 	body.WriteString("SENDER: ")
 	body.WriteString(c.SenderName)

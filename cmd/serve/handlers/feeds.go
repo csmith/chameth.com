@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"fmt"
@@ -12,15 +12,15 @@ import (
 	"golang.org/x/net/html"
 )
 
-func handleFullFeed(w http.ResponseWriter, r *http.Request) {
+func FullFeed(w http.ResponseWriter, r *http.Request) {
 	renderFeed(w, r, "Chameth.com", "", 5)
 }
 
-func handleLongPostsFeed(w http.ResponseWriter, r *http.Request) {
+func LongPostsFeed(w http.ResponseWriter, r *http.Request) {
 	renderFeed(w, r, "Chameth.com - long posts", "long", 5)
 }
 
-func handleShortPostsFeed(w http.ResponseWriter, r *http.Request) {
+func ShortPostsFeed(w http.ResponseWriter, r *http.Request) {
 	renderFeed(w, r, "Chameth.com - short posts", "short", 5)
 }
 
@@ -36,7 +36,7 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 
 	if err != nil {
 		slog.Error("Failed to get recent posts for feed", "error", err, "format", format)
-		handleServerError(w, r)
+		ServerError(w, r)
 		return
 	}
 
@@ -46,7 +46,7 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 		renderedContent, err := content.RenderContent("post", post.ID, post.Content)
 		if err != nil {
 			slog.Error("Failed to render post content for feed", "post", post.Title, "error", err)
-			handleServerError(w, r)
+			ServerError(w, r)
 			return
 		}
 
@@ -54,7 +54,7 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 		absoluteContent, err := makeURLsAbsolute(string(renderedContent), "https://chameth.com")
 		if err != nil {
 			slog.Error("Failed to make URLs absolute for feed", "post", post.Title, "error", err)
-			handleServerError(w, r)
+			ServerError(w, r)
 			return
 		}
 

@@ -16,6 +16,7 @@ import (
 	"github.com/csmith/chameth.com/cmd/serve/assets"
 	"github.com/csmith/chameth.com/cmd/serve/content"
 	"github.com/csmith/chameth.com/cmd/serve/db"
+	"github.com/csmith/chameth.com/cmd/serve/handlers"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
 	"github.com/csmith/slogflags"
@@ -56,19 +57,19 @@ func main() {
 	}()
 
 	mux := http.NewServeMux()
-	mux.Handle("POST /api/contact", http.HandlerFunc(handleContactForm))
-	mux.Handle("GET /assets/stylesheets/", serveStylesheet())
-	mux.Handle("GET /index.xml", http.HandlerFunc(handleFullFeed))
-	mux.Handle("GET /short.xml", http.HandlerFunc(handleShortPostsFeed))
-	mux.Handle("GET /long.xml", http.HandlerFunc(handleLongPostsFeed))
-	mux.Handle("GET /sitemap.xml", http.HandlerFunc(handleXmlSiteMap))
-	mux.Handle("GET /posts/{$}", http.HandlerFunc(handlePostsList))
-	mux.Handle("GET /prints/{$}", http.HandlerFunc(handlePrintsList))
-	mux.Handle("GET /projects/{$}", http.HandlerFunc(handleProjectsList))
-	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(handleHtmlSiteMap))
-	mux.Handle("GET /snippets/{$}", http.HandlerFunc(handleSnippetsList))
-	mux.Handle("GET /{$}", http.HandlerFunc(handleAbout))
-	mux.Handle("/", http.HandlerFunc(handleContent))
+	mux.Handle("POST /api/contact", http.HandlerFunc(handlers.ContactForm))
+	mux.Handle("GET /assets/stylesheets/", http.HandlerFunc(handlers.Stylesheet))
+	mux.Handle("GET /index.xml", http.HandlerFunc(handlers.FullFeed))
+	mux.Handle("GET /short.xml", http.HandlerFunc(handlers.ShortPostsFeed))
+	mux.Handle("GET /long.xml", http.HandlerFunc(handlers.LongPostsFeed))
+	mux.Handle("GET /sitemap.xml", http.HandlerFunc(handlers.XmlSiteMap))
+	mux.Handle("GET /posts/{$}", http.HandlerFunc(handlers.PostsList))
+	mux.Handle("GET /prints/{$}", http.HandlerFunc(handlers.PrintsList))
+	mux.Handle("GET /projects/{$}", http.HandlerFunc(handlers.ProjectsList))
+	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(handlers.HtmlSiteMap))
+	mux.Handle("GET /snippets/{$}", http.HandlerFunc(handlers.SnippetsList))
+	mux.Handle("GET /{$}", http.HandlerFunc(handlers.About))
+	mux.Handle("/", http.HandlerFunc(handlers.Content))
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", *port),
@@ -80,7 +81,7 @@ func main() {
 				middleware.RealAddress(),
 				middleware.CrossOriginProtection(),
 				middleware.ErrorHandler(
-					middleware.WithErrorHandler(http.StatusNotFound, http.HandlerFunc(handleNotFound)),
+					middleware.WithErrorHandler(http.StatusNotFound, http.HandlerFunc(handlers.NotFound)),
 				),
 				middleware.CacheControl(
 					middleware.WithCacheTimes(map[string]time.Duration{
