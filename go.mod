@@ -5,6 +5,7 @@ go 1.25.3
 require (
 	github.com/alecthomas/chroma/v2 v2.20.0
 	github.com/anthonynsimon/bild v0.14.0
+	github.com/csmith/aca v1.2.0
 	github.com/csmith/envflag/v2 v2.0.0
 	github.com/csmith/middleware v1.0.0
 	github.com/csmith/slogflags v1.1.0
@@ -16,7 +17,7 @@ require (
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	golang.org/x/image v0.32.0
 	golang.org/x/net v0.46.0
-	tailscale.com v1.90.2
+	tailscale.com v1.90.3
 )
 
 require (
@@ -24,7 +25,6 @@ require (
 	github.com/akutz/memconn v0.1.0 // indirect
 	github.com/alexbrainman/sspi v0.0.0-20231016080023-1a75b4708caa // indirect
 	github.com/coder/websocket v1.8.12 // indirect
-	github.com/csmith/aca v1.2.0 // indirect
 	github.com/dblohm7/wingoes v0.0.0-20240119213807-a09d6be7affa // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
