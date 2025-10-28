@@ -50,10 +50,35 @@ body > header {
       text-transform: uppercase;
       white-space: nowrap;
       text-decoration: none;
+      background-image: linear-gradient(90deg, var(--accent-colour) 0%, var(--accent-colour) 32%, var(--text-highlight-colour) 65%, var(--text-highlight-colour) 100%);
+      background-size: 300% auto;
+      background-clip: text;
+      background-position: 100% 0;
+      color: transparent;
+      transition: background-position ease-in-out 500ms;
+      transition-delay: 300ms;
 
       &::before {
         content: "/";
         color: var(--accent-colour);
+      }
+
+      &::after {
+        content: "/";
+        color: var(--accent-colour);
+        opacity: 0;
+        transition: opacity ease-in-out 300ms;
+        transition-delay: 0ms;
+      }
+
+      &:hover, &:active, &:focus {
+        background-position-x: 0;
+        transition-duration: 500ms;
+        transition-delay: 0ms;
+        &::after {
+          transition-delay: 450ms;
+          opacity: 1;
+        }
       }
     }
 
