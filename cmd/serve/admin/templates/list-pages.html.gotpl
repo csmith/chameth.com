@@ -1,0 +1,52 @@
+{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.ListPagesData */}}
+{{define "content"}}
+    <form method="POST" action="/pages">
+        <button type="submit">Create New Page</button>
+    </form>
+
+    {{if .Drafts}}
+    <h2>Drafts</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Slug</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Drafts}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Title}}</td>
+                <td>{{.Slug}}</td>
+                <td><a href="/pages/edit/{{.ID}}">Edit</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{end}}
+
+    <h2>Pages</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Slug</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Pages}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Title}}</td>
+                <td>{{.Slug}}</td>
+                <td><a href="/pages/edit/{{.ID}}">Edit</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+{{end}}

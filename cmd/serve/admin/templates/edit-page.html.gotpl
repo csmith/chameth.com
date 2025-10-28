@@ -1,0 +1,139 @@
+{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.EditPageData */}}
+{{define "content"}}
+    <h2>Edit page: {{.Title}}</h2>
+    <a href="https://chameth.com{{.Slug}}">View on chameth.com</a>
+
+    <form action="/pages/edit/{{.ID}}" method="post">
+        <label>Slug: <input type="text" name="slug" value="{{.Slug}}" /></label>
+        <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
+        <label>
+            <input type="checkbox" name="published" value="true" {{if .Published}}checked{{end}} />
+            Published
+        </label>
+        <label>
+            Content:
+            <textarea name="content" id="editor">{{.Content}}</textarea>
+        </label>
+        <input type="submit" />
+    </form>
+
+    {{if .Media}}
+    <script>
+    function copyToClipboard(button, text) {
+        // Decode HTML entities
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = text;
+        const decodedText = textarea.value;
+
+        navigator.clipboard.writeText(decodedText).then(() => {
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.classList.remove('copied');
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+            button.textContent = 'Error';
+            setTimeout(() => {
+                button.textContent = 'Copy';
+            }, 2000);
+        });
+    }
+    </script>
+    <h3>Attached Media <a href="/media-relations/edit?entity_type=staticpage&entity_id={{.ID}}" style="font-size: 0.875rem; margin-left: 1rem;">(Manage)</a></h3>
+    <table class="media-table">
+        <thead>
+            <tr>
+                <th>Preview</th>
+                <th>Title / Alt Text</th>
+                <th>Dimensions</th>
+                <th>Role</th>
+                <th>Slug</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Media}}
+            <tr>
+                <td class="preview-cell">
+                    <a href="/media/view/{{.MediaID}}" target="_blank">
+                        {{if or (eq .ContentType "image/jpeg") (eq .ContentType "image/png") (eq .ContentType "image/webp") (eq .ContentType "image/avif") (eq .ContentType "image/gif")}}
+                            <img src="/media/view/{{.MediaID}}" alt="{{.AltText}}" />
+                        {{else if or (eq .ContentType "video/mp4") (eq .ContentType "video/webm")}}
+                            <video controls>
+                                <source src="/media/view/{{.MediaID}}" type="{{.ContentType}}">
+                            </video>
+                        {{else if or (eq .ContentType "audio/mpeg") (eq .ContentType "audio/wav") (eq .ContentType "audio/ogg")}}
+                            <audio controls>
+                                <source src="/media/view/{{.MediaID}}" type="{{.ContentType}}">
+                            </audio>
+                        {{else}}
+                            <span class="no-preview">No preview</span>
+                        {{end}}
+                    </a>
+                </td>
+                <td class="title-cell">
+                    {{if .Title}}<strong>{{.Title}}</strong>{{end}}
+                    {{if .AltText}}
+                        {{if .Title}}<br/>{{end}}
+                        <em>{{.AltText}}</em>
+                        <button class="copy-btn" onclick="copyToClipboard(this, '{{.AltText}}')">Copy</button>
+                    {{end}}
+                </td>
+                <td>
+                    {{if and .Width .Height}}
+                        {{.Width}} × {{.Height}}
+                    {{else}}
+                        —
+                    {{end}}
+                </td>
+                <td>{{if .Role}}{{.Role}}{{else}}—{{end}}</td>
+                <td><code>{{.Slug}}</code></td>
+            </tr>
+            {{if .Variants}}
+            <tr class="variants-row">
+                <td colspan="5">
+                    <details>
+                        <summary>{{len .Variants}} variant(s)</summary>
+                        <table class="variants-table">
+                            <thead>
+                                <tr>
+                                    <th>Preview</th>
+                                    <th>Content Type</th>
+                                    <th>Dimensions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{range .Variants}}
+                                <tr>
+                                    <td class="preview-cell">
+                                        <a href="/media/view/{{.MediaID}}" target="_blank">
+                                            {{if or (eq .ContentType "image/jpeg") (eq .ContentType "image/png") (eq .ContentType "image/webp") (eq .ContentType "image/avif") (eq .ContentType "image/gif")}}
+                                                <img src="/media/view/{{.MediaID}}" alt="" />
+                                            {{else}}
+                                                <span class="no-preview">No preview</span>
+                                            {{end}}
+                                        </a>
+                                    </td>
+                                    <td>{{.ContentType}}</td>
+                                    <td>
+                                        {{if and .Width .Height}}
+                                            {{.Width}} × {{.Height}}
+                                        {{else}}
+                                            —
+                                        {{end}}
+                                    </td>
+                                </tr>
+                                {{end}}
+                            </tbody>
+                        </table>
+                    </details>
+                </td>
+            </tr>
+            {{end}}
+            {{end}}
+        </tbody>
+    </table>
+    {{end}}
+{{end}}

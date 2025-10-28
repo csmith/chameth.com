@@ -12,6 +12,7 @@
     <h1>Chameth.com admin</h1>
     <nav>
         <a href="/posts">Posts</a>
+        <a href="/pages">Pages</a>
         <a href="/snippets">Snippets</a>
         <a href="/poems">Poems</a>
         <a href="/media">Media</a>

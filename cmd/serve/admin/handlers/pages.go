@@ -13,68 +13,66 @@ import (
 	"github.com/csmith/chameth.com/cmd/serve/db"
 )
 
-func ListPostsHandler() func(http.ResponseWriter, *http.Request) {
+func ListPagesHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := db.GetDraftPosts()
+		drafts, err := db.GetDraftStaticPages()
 		if err != nil {
-			http.Error(w, "Failed to retrieve draft posts", http.StatusInternalServerError)
+			http.Error(w, "Failed to retrieve draft pages", http.StatusInternalServerError)
 			return
 		}
 
-		posts, err := db.GetAllPosts()
+		pages, err := db.GetAllStaticPages()
 		if err != nil {
-			http.Error(w, "Failed to retrieve posts", http.StatusInternalServerError)
+			http.Error(w, "Failed to retrieve pages", http.StatusInternalServerError)
 			return
 		}
 
-		draftSummaries := make([]templates.PostSummary, len(drafts))
-		for i, post := range drafts {
-			draftSummaries[i] = templates.PostSummary{
-				ID:    post.ID,
-				Title: post.Title,
-				Slug:  post.Slug,
-				Date:  post.Date.Format("2006-01-02"),
+		draftSummaries := make([]templates.PageSummary, len(drafts))
+		for i, page := range drafts {
+			draftSummaries[i] = templates.PageSummary{
+				ID:    page.ID,
+				Title: page.Title,
+				Slug:  page.Slug,
 			}
 		}
 
-		postSummaries := make([]templates.PostSummary, len(posts))
-		for i, post := range posts {
-			postSummaries[i] = templates.PostSummary{
-				ID:    post.ID,
-				Title: post.Title,
-				Slug:  post.Slug,
-				Date:  post.Date.Format("2006-01-02"),
+		pageSummaries := make([]templates.PageSummary, len(pages))
+		for i, page := range pages {
+			pageSummaries[i] = templates.PageSummary{
+				ID:    page.ID,
+				Title: page.Title,
+				Slug:  page.Slug,
 			}
 		}
 
-		data := templates.ListPostsData{
+		data := templates.ListPagesData{
 			Drafts: draftSummaries,
-			Posts:  postSummaries,
+			Pages:  pageSummaries,
 		}
 
-		if err := templates.RenderListPosts(w, data); err != nil {
+		if err := templates.RenderListPages(w, data); err != nil {
 			http.Error(w, "Failed to render template", http.StatusInternalServerError)
 		}
 	}
 }
 
-func EditPostHandler() func(http.ResponseWriter, *http.Request) {
+func EditPageHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idStr := r.PathValue("id")
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
-			http.Error(w, "Invalid post ID", http.StatusBadRequest)
+			http.Error(w, "Invalid page ID", http.StatusBadRequest)
 			return
 		}
 
-		post, err := db.GetPostByID(id)
+		page, err := db.GetStaticPageByID(id)
 		if err != nil {
-			http.Error(w, "Post not found", http.StatusNotFound)
+			http.Error(w, "Page not found", http.StatusNotFound)
 			return
 		}
 
-		// Fetch media relations for this post
-		mediaRelations, err := db.GetMediaRelationsForEntity("post", id)
+		// Fetch media relations for this page
+		mediaRelations, err := db.GetMediaRelationsForEntity("staticpage", id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve media", http.StatusInternalServerError)
 			return
@@ -82,7 +80,7 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 
 		// Group media by primary vs variants
 		// Use two-pass approach to handle cases where variants appear before their parents
-		mediaMap := make(map[int]*templates.PostMediaItem)
+		mediaMap := make(map[int]*templates.PageMediaItem)
 		var primaryMediaIDs []int
 
 		// First pass: add all primary media items
@@ -104,7 +102,7 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 						role = *rel.Role
 					}
 
-					mediaMap[rel.MediaID] = &templates.PostMediaItem{
+					mediaMap[rel.MediaID] = &templates.PageMediaItem{
 						Slug:        rel.Slug,
 						Title:       caption,
 						AltText:     description,
@@ -113,7 +111,7 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 						Role:        role,
 						ContentType: rel.ContentType,
 						MediaID:     rel.MediaID,
-						Variants:    []templates.PostMediaVariant{},
+						Variants:    []templates.PageMediaVariant{},
 					}
 				}
 			}
@@ -124,7 +122,7 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 			if rel.ParentMediaID != nil {
 				parentID := *rel.ParentMediaID
 				if parent, exists := mediaMap[parentID]; exists {
-					parent.Variants = append(parent.Variants, templates.PostMediaVariant{
+					parent.Variants = append(parent.Variants, templates.PageMediaVariant{
 						MediaID:     rel.MediaID,
 						ContentType: rel.ContentType,
 						Width:       rel.Width,
@@ -135,29 +133,27 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Convert map to slice in order of discovery
-		mediaItems := make([]templates.PostMediaItem, 0, len(primaryMediaIDs))
+		mediaItems := make([]templates.PageMediaItem, 0, len(primaryMediaIDs))
 		for _, mediaID := range primaryMediaIDs {
 			mediaItems = append(mediaItems, *mediaMap[mediaID])
 		}
 
-		data := templates.EditPostData{
-			ID:        post.ID,
-			Title:     post.Title,
-			Slug:      post.Slug,
-			Date:      post.Date.Format("2006-01-02"),
-			Content:   post.Content,
-			Format:    post.Format,
-			Published: post.Published,
+		data := templates.EditPageData{
+			ID:        page.ID,
+			Title:     page.Title,
+			Slug:      page.Slug,
+			Content:   page.Content,
+			Published: page.Published,
 			Media:     mediaItems,
 		}
 
-		if err := templates.RenderEditPost(w, data); err != nil {
+		if err := templates.RenderEditPage(w, data); err != nil {
 			http.Error(w, "Failed to render template", http.StatusInternalServerError)
 		}
 	}
 }
 
-func CreatePostHandler() func(http.ResponseWriter, *http.Request) {
+func CreatePageHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Generate random adjective-color-animal name
 		gen, err := aca.NewDefaultGenerator()
@@ -168,24 +164,24 @@ func CreatePostHandler() func(http.ResponseWriter, *http.Request) {
 		name := gen.Generate()
 		slug := fmt.Sprintf("/%s/", name)
 
-		// Create the new post
-		id, err := db.CreatePost(slug, name)
+		// Create the new page
+		id, err := db.CreateStaticPage(slug, name)
 		if err != nil {
-			http.Error(w, "Failed to create post", http.StatusInternalServerError)
+			http.Error(w, "Failed to create page", http.StatusInternalServerError)
 			return
 		}
 
 		// Redirect to edit page
-		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("/pages/edit/%d", id), http.StatusSeeOther)
 	}
 }
 
-func UpdatePostHandler() func(http.ResponseWriter, *http.Request) {
+func UpdatePageHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idStr := r.PathValue("id")
 		id, err := strconv.Atoi(idStr)
 		if err != nil {
-			http.Error(w, "Invalid post ID", http.StatusBadRequest)
+			http.Error(w, "Invalid page ID", http.StatusBadRequest)
 			return
 		}
 
@@ -196,22 +192,20 @@ func UpdatePostHandler() func(http.ResponseWriter, *http.Request) {
 
 		slug := r.FormValue("slug")
 		title := r.FormValue("title")
-		postContent := r.FormValue("content")
-		date := r.FormValue("date")
-		format := r.FormValue("format")
+		pageContent := r.FormValue("content")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdatePost(id, slug, title, postContent, date, format, published); err != nil {
-			http.Error(w, "Failed to update post", http.StatusInternalServerError)
+		if err := db.UpdateStaticPage(id, slug, title, pageContent, published); err != nil {
+			http.Error(w, "Failed to update page", http.StatusInternalServerError)
 			return
 		}
 
-		// Regenerate embeddings for the updated post
+		// Regenerate embeddings for the updated page
 		if err := content.GenerateAndStoreEmbedding(context.Background(), slug); err != nil {
-			slog.Error("Failed to regenerate embedding for updated post", "slug", slug, "error", err)
-			// Don't fail the request since the post update succeeded
+			slog.Error("Failed to regenerate embedding for updated page", "slug", slug, "error", err)
+			// Don't fail the request since the page update succeeded
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("/pages/edit/%d", id), http.StatusSeeOther)
 	}
 }
