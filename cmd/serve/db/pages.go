@@ -11,3 +11,13 @@ func GetStaticPageBySlug(slug string) (*StaticPage, error) {
 	}
 	return &page, nil
 }
+
+// GetStaticPageByID returns a static page for the given ID.
+func GetStaticPageByID(id int) (*StaticPage, error) {
+	var page StaticPage
+	err := db.Get(&page, "SELECT id, slug, title, content FROM staticpages WHERE id = $1", id)
+	if err != nil {
+		return nil, err
+	}
+	return &page, nil
+}

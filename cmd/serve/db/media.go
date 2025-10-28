@@ -119,3 +119,62 @@ func GetMediaByID(id int) (*Media, error) {
 	}
 	return &media, nil
 }
+
+// UpdateMediaRelation updates the caption, description, and role for a media relation.
+func UpdateMediaRelation(entityType string, entityID int, slug string, caption, description, role *string) error {
+	_, err := db.Exec(`
+		UPDATE media_relations
+		SET caption = $1, description = $2, role = $3
+		WHERE entity_type = $4 AND entity_id = $5 AND slug = $6
+	`, caption, description, role, entityType, entityID, slug)
+	return err
+}
+
+// DeleteMediaRelation removes a media relation.
+func DeleteMediaRelation(entityType string, entityID int, slug string) error {
+	_, err := db.Exec(`
+		DELETE FROM media_relations
+		WHERE entity_type = $1 AND entity_id = $2 AND slug = $3
+	`, entityType, entityID, slug)
+	return err
+}
+
+// UpdateMediaRelationVariants updates the caption and description for all variants of a parent media.
+func UpdateMediaRelationVariants(entityType string, entityID, parentMediaID int, caption, description *string) error {
+	_, err := db.Exec(`
+		UPDATE media_relations
+		SET caption = $1, description = $2
+		WHERE entity_type = $3 AND entity_id = $4
+		  AND media_id IN (
+			SELECT id FROM media WHERE parent_media_id = $5
+		  )
+	`, caption, description, entityType, entityID, parentMediaID)
+	return err
+}
+
+// GetAvailableMediaForEntity returns all media not already attached to the given entity, ordered by newest first.
+func GetAvailableMediaForEntity(entityType string, entityID int) ([]MediaMetadata, error) {
+	var media []MediaMetadata
+	err := db.Select(&media, `
+		SELECT id, content_type, original_filename, width, height, parent_media_id
+		FROM media
+		WHERE id NOT IN (
+			SELECT media_id FROM media_relations
+			WHERE entity_type = $1 AND entity_id = $2
+		)
+		ORDER BY id DESC
+	`, entityType, entityID)
+	if err != nil {
+		return nil, err
+	}
+	return media, nil
+}
+
+// CreateMediaRelation creates a new media relation.
+func CreateMediaRelation(entityType string, entityID, mediaID int, slug string, caption, description, role *string) error {
+	_, err := db.Exec(`
+		INSERT INTO media_relations (slug, media_id, caption, description, role, entity_type, entity_id)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`, slug, mediaID, caption, description, role, entityType, entityID)
+	return err
+}

@@ -65,6 +65,10 @@ func Start() error {
 	httpsMux.HandleFunc("GET /media", handlers.MediaHandler())
 	httpsMux.HandleFunc("POST /media/upload", handlers.UploadMediaHandler())
 	httpsMux.HandleFunc("GET /media/view/{id}", handlers.ViewMediaHandler())
+	httpsMux.HandleFunc("GET /media-relations/edit", handlers.EditMediaRelationsHandler())
+	httpsMux.HandleFunc("POST /media-relations/update", handlers.UpdateMediaRelationHandler())
+	httpsMux.HandleFunc("POST /media-relations/remove", handlers.RemoveMediaRelationHandler())
+	httpsMux.HandleFunc("POST /media-relations/add", handlers.AddMediaRelationsHandler())
 
 	httpsServer := &http.Server{
 		Handler: httpsMux,

@@ -48,7 +48,7 @@
         });
     }
     </script>
-    <h3>Attached Media</h3>
+    <h3>Attached Media <a href="/media-relations/edit?entity_type=post&entity_id={{.ID}}" style="font-size: 0.875rem; margin-left: 1rem;">(Manage)</a></h3>
     <table class="media-table">
         <thead>
             <tr>
