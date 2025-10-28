@@ -30,7 +30,7 @@ func GetPostByID(id int) (*Post, error) {
 	var post Post
 
 	err := db.Get(&post, `
-		SELECT id, slug, title, content, date, format
+		SELECT id, slug, title, content, date, format, published
 		FROM posts
 		WHERE id = $1
 	`, id)
