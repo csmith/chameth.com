@@ -142,4 +142,8 @@
         </tbody>
     </table>
     {{end}}
+
+    <form action="/posts/generate-wordcloud/{{.ID}}" method="post">
+        <button type="submit">Generate Word Cloud</button>
+    </form>
 {{end}}}

@@ -9,6 +9,7 @@ import (
 
 	"github.com/csmith/aca"
 	"github.com/csmith/chameth.com/cmd/serve/admin/templates"
+	"github.com/csmith/chameth.com/cmd/serve/admin/wordclouds"
 	"github.com/csmith/chameth.com/cmd/serve/content"
 	"github.com/csmith/chameth.com/cmd/serve/db"
 )
@@ -212,6 +213,58 @@ func UpdatePostHandler() func(http.ResponseWriter, *http.Request) {
 			// Don't fail the request since the post update succeeded
 		}
 
+		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
+	}
+}
+
+func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := r.PathValue("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid post ID", http.StatusBadRequest)
+			return
+		}
+
+		// Generate the wordcloud image
+		imageData, err := wordclouds.GenerateWordcloud(id)
+		if err != nil {
+			slog.Error("Failed to generate wordcloud", "post_id", id, "error", err)
+			http.Error(w, "Failed to generate wordcloud", http.StatusInternalServerError)
+			return
+		}
+
+		// Get the post to construct the slug
+		post, err := db.GetPostByID(id)
+		if err != nil {
+			http.Error(w, "Post not found", http.StatusNotFound)
+			return
+		}
+
+		// Insert the image into the media table (wordcloud dimensions are 400x300)
+		width := 400
+		height := 300
+		mediaID, err := db.CreateMedia("image/png", "wordcloud.png", imageData, &width, &height, nil)
+		if err != nil {
+			slog.Error("Failed to create media", "error", err)
+			http.Error(w, "Failed to save wordcloud", http.StatusInternalServerError)
+			return
+		}
+
+		// Construct slug: post slug + filename
+		mediaSlug := post.Slug + "wordcloud.png"
+
+		// Create media relation with role=opengraph
+		description := "Word cloud showing frequently used words in the post"
+		role := "opengraph"
+		err = db.CreateMediaRelation("post", id, mediaID, mediaSlug, nil, &description, &role)
+		if err != nil {
+			slog.Error("Failed to create media relation", "error", err)
+			http.Error(w, "Failed to attach wordcloud to post", http.StatusInternalServerError)
+			return
+		}
+
+		// Redirect back to the edit page
 		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
 	}
 }

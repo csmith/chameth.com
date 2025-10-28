@@ -54,6 +54,7 @@ func Start() error {
 	httpsMux.HandleFunc("POST /posts", handlers.CreatePostHandler())
 	httpsMux.HandleFunc("GET /posts/edit/{id}", handlers.EditPostHandler())
 	httpsMux.HandleFunc("POST /posts/edit/{id}", handlers.UpdatePostHandler())
+	httpsMux.HandleFunc("POST /posts/generate-wordcloud/{id}", handlers.GenerateWordcloudHandler())
 	httpsMux.HandleFunc("GET /pages", handlers.ListPagesHandler())
 	httpsMux.HandleFunc("POST /pages", handlers.CreatePageHandler())
 	httpsMux.HandleFunc("GET /pages/edit/{id}", handlers.EditPageHandler())
