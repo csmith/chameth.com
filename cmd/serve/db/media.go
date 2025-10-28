@@ -27,7 +27,7 @@ func GetMediaRelationsForEntity(entityType string, entityID int) ([]MediaRelatio
 	err := db.Select(&relations, `
 		SELECT
 			mr.slug, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id,
-			m.id, m.content_type, m.original_filename, m.width, m.height
+			m.id, m.content_type, m.original_filename, m.width, m.height, m.parent_media_id
 		FROM media_relations mr
 		JOIN media m ON mr.media_id = m.id
 		WHERE mr.entity_type = $1 AND mr.entity_id = $2

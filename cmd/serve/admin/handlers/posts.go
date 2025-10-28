@@ -73,6 +73,68 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
+		// Fetch media relations for this post
+		mediaRelations, err := db.GetMediaRelationsForEntity("post", id)
+		if err != nil {
+			http.Error(w, "Failed to retrieve media", http.StatusInternalServerError)
+			return
+		}
+
+		// Group media by primary vs variants
+		mediaMap := make(map[int]*templates.PostMediaItem)
+		var primaryMediaIDs []int
+
+		for _, rel := range mediaRelations {
+			// If this media has no parent, it's a primary media item
+			if rel.ParentMediaID == nil {
+				if _, exists := mediaMap[rel.MediaID]; !exists {
+					primaryMediaIDs = append(primaryMediaIDs, rel.MediaID)
+
+					caption := ""
+					if rel.Caption != nil {
+						caption = *rel.Caption
+					}
+					description := ""
+					if rel.Description != nil {
+						description = *rel.Description
+					}
+					role := ""
+					if rel.Role != nil {
+						role = *rel.Role
+					}
+
+					mediaMap[rel.MediaID] = &templates.PostMediaItem{
+						Slug:        rel.Slug,
+						Title:       caption,
+						AltText:     description,
+						Width:       rel.Width,
+						Height:      rel.Height,
+						Role:        role,
+						ContentType: rel.ContentType,
+						MediaID:     rel.MediaID,
+						Variants:    []templates.PostMediaVariant{},
+					}
+				}
+			} else {
+				// This is a variant, add it to the parent's variants list
+				parentID := *rel.ParentMediaID
+				if parent, exists := mediaMap[parentID]; exists {
+					parent.Variants = append(parent.Variants, templates.PostMediaVariant{
+						MediaID:     rel.MediaID,
+						ContentType: rel.ContentType,
+						Width:       rel.Width,
+						Height:      rel.Height,
+					})
+				}
+			}
+		}
+
+		// Convert map to slice in order of discovery
+		mediaItems := make([]templates.PostMediaItem, 0, len(primaryMediaIDs))
+		for _, mediaID := range primaryMediaIDs {
+			mediaItems = append(mediaItems, *mediaMap[mediaID])
+		}
+
 		data := templates.EditPostData{
 			ID:        post.ID,
 			Title:     post.Title,
@@ -81,6 +143,7 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 			Content:   post.Content,
 			Format:    post.Format,
 			Published: post.Published,
+			Media:     mediaItems,
 		}
 
 		if err := templates.RenderEditPost(w, data); err != nil {

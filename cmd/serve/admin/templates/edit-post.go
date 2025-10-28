@@ -24,6 +24,26 @@ type EditPostData struct {
 	Content   string
 	Format    string
 	Published bool
+	Media     []PostMediaItem
+}
+
+type PostMediaItem struct {
+	Slug        string
+	Title       string
+	AltText     string
+	Width       *int
+	Height      *int
+	Role        string
+	ContentType string
+	MediaID     int
+	Variants    []PostMediaVariant
+}
+
+type PostMediaVariant struct {
+	MediaID     int
+	ContentType string
+	Width       *int
+	Height      *int
 }
 
 func RenderEditPost(w http.ResponseWriter, data EditPostData) error {
