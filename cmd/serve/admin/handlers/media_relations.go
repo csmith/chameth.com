@@ -25,8 +25,8 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		// Get entity slug based on type
-		var entitySlug string
+		// Get entity path based on type
+		var entityPath string
 		switch entityType {
 		case "post":
 			post, err := db.GetPostByID(entityID)
@@ -34,28 +34,28 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return
 			}
-			entitySlug = post.Slug
+			entityPath = post.Path
 		case "poem":
 			poem, err := db.GetPoemByID(entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return
 			}
-			entitySlug = poem.Slug
+			entityPath = poem.Path
 		case "snippet":
 			snippet, err := db.GetSnippetByID(entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return
 			}
-			entitySlug = snippet.Slug
+			entityPath = snippet.Path
 		case "staticpage":
 			page, err := db.GetStaticPageByID(entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return
 			}
-			entitySlug = page.Slug
+			entityPath = page.Path
 		default:
 			http.Error(w, "Unsupported entity type", http.StatusBadRequest)
 			return
@@ -87,7 +87,7 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 
 			item := templates.MediaRelationItem{
-				Slug:        rel.Slug,
+				Path:        rel.Path,
 				Title:       caption,
 				AltText:     description,
 				Width:       rel.Width,
@@ -140,7 +140,7 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 		data := templates.EditMediaRelationsData{
 			EntityType:     entityType,
 			EntityID:       entityID,
-			EntitySlug:     entitySlug,
+			EntityPath:     entityPath,
 			Media:          mediaItems,
 			AvailableMedia: availableMediaItems,
 		}
@@ -161,7 +161,7 @@ func UpdateMediaRelationHandler() func(http.ResponseWriter, *http.Request) {
 		entityType := r.FormValue("entity_type")
 		entityIDStr := r.FormValue("entity_id")
 		mediaIDStr := r.FormValue("media_id")
-		slug := r.FormValue("slug")
+		path := r.FormValue("path")
 		title := r.FormValue("title")
 		altText := r.FormValue("alt_text")
 		role := r.FormValue("role")
@@ -191,7 +191,7 @@ func UpdateMediaRelationHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Update the primary media relation
-		if err := db.UpdateMediaRelation(entityType, entityID, slug, titlePtr, altTextPtr, rolePtr); err != nil {
+		if err := db.UpdateMediaRelation(entityType, entityID, path, titlePtr, altTextPtr, rolePtr); err != nil {
 			http.Error(w, "Failed to update media relation", http.StatusInternalServerError)
 			return
 		}
@@ -217,7 +217,7 @@ func RemoveMediaRelationHandler() func(http.ResponseWriter, *http.Request) {
 
 		entityType := r.FormValue("entity_type")
 		entityIDStr := r.FormValue("entity_id")
-		slug := r.FormValue("slug")
+		path := r.FormValue("path")
 
 		entityID, err := strconv.Atoi(entityIDStr)
 		if err != nil {
@@ -225,7 +225,7 @@ func RemoveMediaRelationHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if err := db.DeleteMediaRelation(entityType, entityID, slug); err != nil {
+		if err := db.DeleteMediaRelation(entityType, entityID, path); err != nil {
 			http.Error(w, "Failed to remove media relation", http.StatusInternalServerError)
 			return
 		}
@@ -244,7 +244,7 @@ func AddMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 
 		entityType := r.FormValue("entity_type")
 		entityIDStr := r.FormValue("entity_id")
-		entitySlug := r.FormValue("entity_slug")
+		entityPath := r.FormValue("entity_path")
 		selectedMedia := r.Form["media_ids"] // Array of media IDs
 
 		entityID, err := strconv.Atoi(entityIDStr)
@@ -266,8 +266,8 @@ func AddMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 				continue // Skip if media not found
 			}
 
-			// Generate slug: entity_slug + filename
-			slug := entitySlug + media.OriginalFilename
+			// Generate path: entity_path + filename
+			path := entityPath + media.OriginalFilename
 
 			// Determine role: variants get "alternative", others get empty
 			var rolePtr *string
@@ -277,7 +277,7 @@ func AddMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 
 			// Create the media relation
-			if err := db.CreateMediaRelation(entityType, entityID, mediaID, slug, nil, nil, rolePtr); err != nil {
+			if err := db.CreateMediaRelation(entityType, entityID, mediaID, path, nil, nil, rolePtr); err != nil {
 				http.Error(w, "Failed to create media relation", http.StatusInternalServerError)
 				return
 			}

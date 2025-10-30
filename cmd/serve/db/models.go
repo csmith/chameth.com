@@ -4,7 +4,7 @@ import "time"
 
 type PoemMetadata struct {
 	ID        int       `db:"id"`
-	Slug      string    `db:"slug"`
+	Path      string    `db:"path"`
 	Title     string    `db:"title"`
 	Date      time.Time `db:"date"`
 	Published bool      `db:"published"`
@@ -18,7 +18,7 @@ type Poem struct {
 
 type SnippetMetadata struct {
 	ID        int    `db:"id"`
-	Slug      string `db:"slug"`
+	Path      string `db:"path"`
 	Title     string `db:"title"`
 	Topic     string `db:"topic"`
 	Published bool   `db:"published"`
@@ -31,7 +31,7 @@ type Snippet struct {
 
 type StaticPageMetadata struct {
 	ID        int    `db:"id"`
-	Slug      string `db:"slug"`
+	Path      string `db:"path"`
 	Title     string `db:"title"`
 	Published bool   `db:"published"`
 }
@@ -73,7 +73,7 @@ type Media struct {
 }
 
 type MediaRelation struct {
-	Slug        string  `db:"slug"`
+	Path        string  `db:"path"`
 	MediaID     int     `db:"media_id"`
 	Description *string `db:"description"`
 	Caption     *string `db:"caption"`
@@ -103,7 +103,7 @@ type PrintLink struct {
 
 type PostMetadata struct {
 	ID        int       `db:"id"`
-	Slug      string    `db:"slug"`
+	Path      string    `db:"path"`
 	Title     string    `db:"title"`
 	Date      time.Time `db:"date"`
 	Format    string    `db:"format"`
@@ -117,6 +117,6 @@ type Post struct {
 
 // MediaImageVariant represents a media image with its URL and content type
 type MediaImageVariant struct {
-	Slug        string `db:"slug"`
+	Path        string `db:"path"`
 	ContentType string `db:"content_type"`
 }

@@ -5,16 +5,16 @@ import (
 	"errors"
 )
 
-// GetMediaBySlug returns media for the given slug.
-// Returns nil if no media is found with that slug.
-func GetMediaBySlug(slug string) (*Media, error) {
+// GetMediaByPath returns media for the given path.
+// Returns nil if no media is found with that path.
+func GetMediaByPath(path string) (*Media, error) {
 	var media Media
 	err := db.Get(&media, `
 		SELECT m.id, m.content_type, m.original_filename, m.data
 		FROM media m
 		JOIN media_relations mr ON m.id = mr.media_id
-		WHERE mr.slug = $1
-	`, slug)
+		WHERE mr.path = $1
+	`, path)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func GetMediaRelationsForEntity(entityType string, entityID int) ([]MediaRelatio
 	var relations []MediaRelationWithDetails
 	err := db.Select(&relations, `
 		SELECT
-			mr.slug, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id,
+			mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id,
 			m.id, m.content_type, m.original_filename, m.width, m.height, m.parent_media_id
 		FROM media_relations mr
 		JOIN media m ON mr.media_id = m.id
@@ -38,11 +38,11 @@ func GetMediaRelationsForEntity(entityType string, entityID int) ([]MediaRelatio
 	return relations, nil
 }
 
-// GetOpenGraphImageForEntity returns the OpenGraph image slug for a given entity, or empty string if none exists.
+// GetOpenGraphImageForEntity returns the OpenGraph image path for a given entity, or empty string if none exists.
 func GetOpenGraphImageForEntity(entityType string, entityID int) (string, error) {
-	var slug string
-	err := db.Get(&slug, `
-		SELECT mr.slug
+	var path string
+	err := db.Get(&path, `
+		SELECT mr.path
 		FROM media_relations mr
 		WHERE mr.entity_type = $1 AND mr.entity_id = $2 AND mr.role = 'opengraph'
 		LIMIT 1
@@ -53,7 +53,7 @@ func GetOpenGraphImageForEntity(entityType string, entityID int) (string, error)
 		}
 		return "", err
 	}
-	return slug, nil
+	return path, nil
 }
 
 // GetOpenGraphImageVariantsForEntity returns the OpenGraph image and all its variants for a given entity.
@@ -62,12 +62,12 @@ func GetOpenGraphImageForEntity(entityType string, entityID int) (string, error)
 func GetOpenGraphImageVariantsForEntity(entityType string, entityID int) ([]MediaImageVariant, error) {
 	var variants []MediaImageVariant
 	err := db.Select(&variants, `
-		SELECT mr.slug, m.content_type
+		SELECT mr.path, m.content_type
 		FROM media_relations mr
 		JOIN media m ON mr.media_id = m.id
 		WHERE mr.entity_type = $1 AND mr.entity_id = $2 AND mr.role = 'opengraph'
 		UNION ALL
-		SELECT mr2.slug, m2.content_type
+		SELECT mr2.path, m2.content_type
 		FROM media_relations mr
 		JOIN media m ON mr.media_id = m.id
 		JOIN media m2 ON m2.parent_media_id = m.id
@@ -121,21 +121,21 @@ func GetMediaByID(id int) (*Media, error) {
 }
 
 // UpdateMediaRelation updates the caption, description, and role for a media relation.
-func UpdateMediaRelation(entityType string, entityID int, slug string, caption, description, role *string) error {
+func UpdateMediaRelation(entityType string, entityID int, path string, caption, description, role *string) error {
 	_, err := db.Exec(`
 		UPDATE media_relations
 		SET caption = $1, description = $2, role = $3
-		WHERE entity_type = $4 AND entity_id = $5 AND slug = $6
-	`, caption, description, role, entityType, entityID, slug)
+		WHERE entity_type = $4 AND entity_id = $5 AND path = $6
+	`, caption, description, role, entityType, entityID, path)
 	return err
 }
 
 // DeleteMediaRelation removes a media relation.
-func DeleteMediaRelation(entityType string, entityID int, slug string) error {
+func DeleteMediaRelation(entityType string, entityID int, path string) error {
 	_, err := db.Exec(`
 		DELETE FROM media_relations
-		WHERE entity_type = $1 AND entity_id = $2 AND slug = $3
-	`, entityType, entityID, slug)
+		WHERE entity_type = $1 AND entity_id = $2 AND path = $3
+	`, entityType, entityID, path)
 	return err
 }
 
@@ -171,10 +171,10 @@ func GetAvailableMediaForEntity(entityType string, entityID int) ([]MediaMetadat
 }
 
 // CreateMediaRelation creates a new media relation.
-func CreateMediaRelation(entityType string, entityID, mediaID int, slug string, caption, description, role *string) error {
+func CreateMediaRelation(entityType string, entityID, mediaID int, path string, caption, description, role *string) error {
 	_, err := db.Exec(`
-		INSERT INTO media_relations (slug, media_id, caption, description, role, entity_type, entity_id)
+		INSERT INTO media_relations (path, media_id, caption, description, role, entity_type, entity_id)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
-	`, slug, mediaID, caption, description, role, entityType, entityID)
+	`, path, mediaID, caption, description, role, entityType, entityID)
 	return err
 }

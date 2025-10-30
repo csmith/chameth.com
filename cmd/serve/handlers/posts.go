@@ -14,15 +14,15 @@ import (
 )
 
 func Post(w http.ResponseWriter, r *http.Request) {
-	post, err := db.GetPostBySlug(r.URL.Path)
+	post, err := db.GetPostByPath(r.URL.Path)
 	if err != nil {
-		slog.Error("Failed to find post by slug", "error", err, "path", r.URL.Path)
+		slog.Error("Failed to find post by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)
 		return
 	}
 
-	if post.Slug != r.URL.Path {
-		http.Redirect(w, r, post.Slug, http.StatusPermanentRedirect)
+	if post.Path != r.URL.Path {
+		http.Redirect(w, r, post.Path, http.StatusPermanentRedirect)
 		return
 	}
 
@@ -45,9 +45,9 @@ func Post(w http.ResponseWriter, r *http.Request) {
 
 	// Get OpenGraph image
 	var ogImage string
-	ogSlug, err := db.GetOpenGraphImageForEntity("post", post.ID)
-	if err == nil && ogSlug != "" {
-		ogImage = fmt.Sprintf("https://chameth.com%s", ogSlug)
+	ogPath, err := db.GetOpenGraphImageForEntity("post", post.ID)
+	if err == nil && ogPath != "" {
+		ogImage = fmt.Sprintf("https://chameth.com%s", ogPath)
 	}
 
 	// Get related posts
@@ -76,7 +76,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 			PageData: templates.PageData{
 				Title:        fmt.Sprintf("%s · Chameth.com", post.Title),
 				Stylesheet:   assets.GetStylesheetPath(),
-				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", post.Slug),
+				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", post.Path),
 				OpenGraph: templates.OpenGraphHeaders{
 					Image: ogImage,
 					Type:  "article",
@@ -100,7 +100,7 @@ func PostsList(w http.ResponseWriter, r *http.Request) {
 
 	var postLinks []includes.PostLinkData
 	for _, p := range posts {
-		postLinks = append(postLinks, content.CreatePostLink(p.Slug))
+		postLinks = append(postLinks, content.CreatePostLink(p.Path))
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

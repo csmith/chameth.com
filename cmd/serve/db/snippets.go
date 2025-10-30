@@ -2,12 +2,12 @@ package db
 
 import "fmt"
 
-// GetSnippetBySlug returns a snippet for the given slug.
-// It handles cases where the slug may or may not have a trailing slash.
-// Returns nil if no snippet is found with that slug.
-func GetSnippetBySlug(slug string) (*Snippet, error) {
+// GetSnippetByPath returns a snippet for the given path.
+// It handles cases where the path may or may not have a trailing slash.
+// Returns nil if no snippet is found with that path.
+func GetSnippetByPath(path string) (*Snippet, error) {
 	var snippet Snippet
-	err := db.Get(&snippet, "SELECT id, slug, title, topic, content, published FROM snippets WHERE slug = $1 OR slug = $2", slug, slug+"/")
+	err := db.Get(&snippet, "SELECT id, path, title, topic, content, published FROM snippets WHERE path = $1 OR path = $2", path, path+"/")
 	if err != nil {
 		return nil, err
 	}
@@ -17,7 +17,7 @@ func GetSnippetBySlug(slug string) (*Snippet, error) {
 // GetSnippetByID returns a snippet for the given ID.
 func GetSnippetByID(id int) (*Snippet, error) {
 	var snippet Snippet
-	err := db.Get(&snippet, "SELECT id, slug, title, topic, content, published FROM snippets WHERE id = $1", id)
+	err := db.Get(&snippet, "SELECT id, path, title, topic, content, published FROM snippets WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func GetSnippetByID(id int) (*Snippet, error) {
 // GetAllSnippets returns all published snippets without their content.
 func GetAllSnippets() ([]SnippetMetadata, error) {
 	var snippets []SnippetMetadata
-	err := db.Select(&snippets, "SELECT id, slug, title, topic, published FROM snippets WHERE published = true ORDER BY topic, title")
+	err := db.Select(&snippets, "SELECT id, path, title, topic, published FROM snippets WHERE published = true ORDER BY topic, title")
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func GetAllSnippets() ([]SnippetMetadata, error) {
 // GetDraftSnippets returns all unpublished snippets without their content.
 func GetDraftSnippets() ([]SnippetMetadata, error) {
 	var snippets []SnippetMetadata
-	err := db.Select(&snippets, "SELECT id, slug, title, topic, published FROM snippets WHERE published = false ORDER BY topic, title")
+	err := db.Select(&snippets, "SELECT id, path, title, topic, published FROM snippets WHERE published = false ORDER BY topic, title")
 	if err != nil {
 		return nil, err
 	}
@@ -45,13 +45,13 @@ func GetDraftSnippets() ([]SnippetMetadata, error) {
 }
 
 // CreateSnippet creates a new unpublished snippet in the database and returns its ID.
-func CreateSnippet(slug, title string) (int, error) {
+func CreateSnippet(path, title string) (int, error) {
 	var id int
 	err := db.QueryRow(`
-		INSERT INTO snippets (slug, title, topic, content, published)
+		INSERT INTO snippets (path, title, topic, content, published)
 		VALUES ($1, $2, '', '', false)
 		RETURNING id
-	`, slug, title).Scan(&id)
+	`, path, title).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create snippet: %w", err)
 	}
@@ -59,12 +59,12 @@ func CreateSnippet(slug, title string) (int, error) {
 }
 
 // UpdateSnippet updates a snippet in the database.
-func UpdateSnippet(id int, slug, title, topic, content string, published bool) error {
+func UpdateSnippet(id int, path, title, topic, content string, published bool) error {
 	_, err := db.Exec(`
 		UPDATE snippets
-		SET slug = $1, title = $2, topic = $3, content = $4, published = $5
+		SET path = $1, title = $2, topic = $3, content = $4, published = $5
 		WHERE id = $6
-	`, slug, title, topic, content, published, id)
+	`, path, title, topic, content, published, id)
 	if err != nil {
 		return fmt.Errorf("failed to update snippet: %w", err)
 	}

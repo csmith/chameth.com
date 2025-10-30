@@ -1,9 +1,9 @@
 {{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.EditSnippetData */}}
 {{define "content"}}
     <h2>Edit snippet: {{.Title}}</h2>
-    <a href="https://chameth.com{{.Slug}}">View on chameth.com</a>
+    <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
     <form action="/snippets/edit/{{.ID}}" method="post">
-        <label>Slug: <input type="text" name="slug" value="{{.Slug}}" /></label>
+        <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>
         <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
         <label>
             Topic:

@@ -18,7 +18,7 @@ var editSnippetTemplate = template.Must(
 type EditSnippetData struct {
 	PageData
 	ID              int
-	Slug            string
+	Path            string
 	Title           string
 	Topic           string
 	Content         string

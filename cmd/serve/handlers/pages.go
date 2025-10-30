@@ -12,15 +12,15 @@ import (
 )
 
 func StaticPage(w http.ResponseWriter, r *http.Request) {
-	page, err := db.GetStaticPageBySlug(r.URL.Path)
+	page, err := db.GetStaticPageByPath(r.URL.Path)
 	if err != nil {
-		slog.Error("Failed to find static page by slug", "error", err, "path", r.URL.Path)
+		slog.Error("Failed to find static page by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)
 		return
 	}
 
-	if page.Slug != r.URL.Path {
-		http.Redirect(w, r, page.Slug, http.StatusPermanentRedirect)
+	if page.Path != r.URL.Path {
+		http.Redirect(w, r, page.Path, http.StatusPermanentRedirect)
 		return
 	}
 
@@ -39,7 +39,7 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 		PageData: templates.PageData{
 			Title:        fmt.Sprintf("%s · Chameth.com", page.Title),
 			Stylesheet:   assets.GetStylesheetPath(),
-			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", page.Slug),
+			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", page.Path),
 			RecentPosts:  content.RecentPosts(),
 		},
 	})

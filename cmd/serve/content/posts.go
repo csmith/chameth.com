@@ -22,7 +22,7 @@ var recentPostsCache = NewCache(time.Minute*10, func() []templates.RecentPost {
 	for _, post := range posts {
 		recentPostsList = append(recentPostsList, templates.RecentPost{
 			Title: post.Title,
-			Url:   post.Slug,
+			Url:   post.Path,
 			Date:  post.Date.Format("Jan 2, 2006"),
 		})
 	}
@@ -34,10 +34,10 @@ func RecentPosts() []templates.RecentPost {
 	return *recentPostsCache.Get()
 }
 
-var postLinksCache = NewKeyedCache(time.Hour*24, func(slug string) *includes.PostLinkData {
-	post, err := db.GetPostBySlug(slug)
+var postLinksCache = NewKeyedCache(time.Hour*24, func(path string) *includes.PostLinkData {
+	post, err := db.GetPostByPath(path)
 	if err != nil {
-		slog.Error("Failed to get post by slug", "err", err)
+		slog.Error("Failed to get post by path", "err", err)
 		return nil
 	}
 
@@ -48,20 +48,20 @@ var postLinksCache = NewKeyedCache(time.Hour*24, func(slug string) *includes.Pos
 	if err == nil {
 		for _, variant := range imageVariants {
 			images = append(images, includes.PostLinkImage{
-				Url:         fmt.Sprintf("https://chameth.com%s", variant.Slug),
+				Url:         fmt.Sprintf("https://chameth.com%s", variant.Path),
 				ContentType: variant.ContentType,
 			})
 		}
 	}
 
 	return &includes.PostLinkData{
-		Url:     post.Slug,
+		Url:     post.Path,
 		Title:   post.Title,
 		Summary: template.HTML(summary),
 		Images:  images,
 	}
 })
 
-func CreatePostLink(slug string) includes.PostLinkData {
-	return *postLinksCache.Get(slug)
+func CreatePostLink(path string) includes.PostLinkData {
+	return *postLinksCache.Get(path)
 }

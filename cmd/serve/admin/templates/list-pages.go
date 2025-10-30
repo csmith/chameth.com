@@ -24,7 +24,7 @@ type ListPagesData struct {
 type PageSummary struct {
 	ID    int
 	Title string
-	Slug  string
+	Path  string
 }
 
 func RenderListPages(w http.ResponseWriter, data ListPagesData) error {

@@ -12,15 +12,15 @@ import (
 )
 
 func Snippet(w http.ResponseWriter, r *http.Request) {
-	snippet, err := db.GetSnippetBySlug(r.URL.Path)
+	snippet, err := db.GetSnippetByPath(r.URL.Path)
 	if err != nil {
-		slog.Error("Failed to find snippet by slug", "error", err, "path", r.URL.Path)
+		slog.Error("Failed to find snippet by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)
 		return
 	}
 
-	if snippet.Slug != r.URL.Path {
-		http.Redirect(w, r, snippet.Slug, http.StatusPermanentRedirect)
+	if snippet.Path != r.URL.Path {
+		http.Redirect(w, r, snippet.Path, http.StatusPermanentRedirect)
 		return
 	}
 
@@ -40,7 +40,7 @@ func Snippet(w http.ResponseWriter, r *http.Request) {
 		PageData: templates.PageData{
 			Title:        fmt.Sprintf("%s · Chameth.com", snippet.Title),
 			Stylesheet:   assets.GetStylesheetPath(),
-			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", snippet.Slug),
+			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", snippet.Path),
 			RecentPosts:  content.RecentPosts(),
 		},
 	})
@@ -64,7 +64,7 @@ func SnippetsList(w http.ResponseWriter, r *http.Request) {
 		}
 		groups[len(groups)-1].Snippets = append(groups[len(groups)-1].Snippets, templates.SnippetDetails{
 			Name: snippet.Title,
-			Slug: snippet.Slug,
+			Path: snippet.Path,
 		})
 	}
 

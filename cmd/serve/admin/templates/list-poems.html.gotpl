@@ -10,7 +10,7 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Slug</th>
+                <th>Path</th>
                 <th>Title</th>
                 <th>Date</th>
                 <th>Actions</th>
@@ -20,7 +20,7 @@
             {{range .Drafts}}
             <tr>
                 <td>{{.ID}}</td>
-                <td>{{.Slug}}</td>
+                <td>{{.Path}}</td>
                 <td>{{.Title}}</td>
                 <td>{{.Date}}</td>
                 <td><a href="/poems/edit/{{.ID}}">Edit</a></td>
@@ -35,7 +35,7 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Slug</th>
+                <th>Path</th>
                 <th>Title</th>
                 <th>Date</th>
                 <th>Actions</th>
@@ -45,7 +45,7 @@
             {{range .Poems}}
             <tr>
                 <td>{{.ID}}</td>
-                <td>{{.Slug}}</td>
+                <td>{{.Path}}</td>
                 <td>{{.Title}}</td>
                 <td>{{.Date}}</td>
                 <td><a href="/poems/edit/{{.ID}}">Edit</a></td>

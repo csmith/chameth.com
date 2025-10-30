@@ -20,7 +20,7 @@ var (
 )
 
 // GenerateAndStoreEmbedding generates an embedding for a post and stores it in the database
-func GenerateAndStoreEmbedding(ctx context.Context, postSlug string) error {
+func GenerateAndStoreEmbedding(ctx context.Context, postPath string) error {
 	type ollamaEmbeddingRequest struct {
 		Model  string `json:"model"`
 		Prompt string `json:"prompt"`
@@ -30,9 +30,9 @@ func GenerateAndStoreEmbedding(ctx context.Context, postSlug string) error {
 		Embedding []float32 `json:"embedding"`
 	}
 
-	post, err := db.GetPostBySlug(postSlug)
+	post, err := db.GetPostByPath(postPath)
 	if err != nil {
-		return fmt.Errorf("failed to get post by slug %s: %w", postSlug, err)
+		return fmt.Errorf("failed to get post by path %s: %w", postPath, err)
 	}
 
 	renderedHTML, err := RenderContent("post", post.ID, post.Content)
@@ -78,11 +78,11 @@ func GenerateAndStoreEmbedding(ctx context.Context, postSlug string) error {
 
 	embedding := pgvector.NewVector(ollamaResp.Embedding)
 
-	if err := db.UpdatePostEmbedding(postSlug, embedding); err != nil {
+	if err := db.UpdatePostEmbedding(postPath, embedding); err != nil {
 		return err
 	}
 
-	slog.Info("Generated embedding for post", "slug", postSlug, "dimension", len(ollamaResp.Embedding))
+	slog.Info("Generated embedding for post", "path", postPath, "dimension", len(ollamaResp.Embedding))
 	return nil
 }
 
@@ -90,34 +90,34 @@ func GenerateAndStoreEmbedding(ctx context.Context, postSlug string) error {
 func UpdateAllPostEmbeddings(ctx context.Context) {
 	slog.Info("Starting to update post embeddings")
 
-	slugs, err := db.GetPostSlugsWithoutEmbeddings()
+	paths, err := db.GetPostPathsWithoutEmbeddings()
 	if err != nil {
 		slog.Error("Failed to query posts without embeddings", "error", err)
 		return
 	}
 
-	if len(slugs) == 0 {
+	if len(paths) == 0 {
 		slog.Info("No posts need embedding generation")
 		return
 	}
 
-	slog.Info("Found posts without embeddings", "count", len(slugs))
+	slog.Info("Found posts without embeddings", "count", len(paths))
 
 	successCount := 0
 	failureCount := 0
 
-	for i, slug := range slugs {
-		slog.Info("Generating embedding", "progress", fmt.Sprintf("%d/%d", i+1, len(slugs)), "slug", slug)
+	for i, path := range paths {
+		slog.Info("Generating embedding", "progress", fmt.Sprintf("%d/%d", i+1, len(paths)), "path", path)
 
-		if err := GenerateAndStoreEmbedding(ctx, slug); err != nil {
-			slog.Error("Failed to generate embedding for post", "slug", slug, "error", err)
+		if err := GenerateAndStoreEmbedding(ctx, path); err != nil {
+			slog.Error("Failed to generate embedding for post", "path", path, "error", err)
 			failureCount++
 		} else {
 			successCount++
 		}
 	}
 
-	slog.Info("Finished updating post embeddings", "success", successCount, "failures", failureCount, "total", len(slugs))
+	slog.Info("Finished updating post embeddings", "success", successCount, "failures", failureCount, "total", len(paths))
 }
 
 // GetRelatedPosts finds posts that are semantically similar to the given post.
@@ -130,7 +130,7 @@ func GetRelatedPosts(postID int) ([]includes.PostLinkData, error) {
 
 	var relatedPosts []includes.PostLinkData
 	for _, post := range posts {
-		relatedPosts = append(relatedPosts, CreatePostLink(post.Slug))
+		relatedPosts = append(relatedPosts, CreatePostLink(post.Path))
 	}
 
 	return relatedPosts, nil

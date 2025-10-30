@@ -28,7 +28,7 @@ func ListPoemsHandler() func(http.ResponseWriter, *http.Request) {
 		for i, poem := range drafts {
 			draftSummaries[i] = templates.PoemSummary{
 				ID:    poem.ID,
-				Slug:  poem.Slug,
+				Path:  poem.Path,
 				Title: poem.Title,
 				Date:  poem.Date.Format("2006-01-02"),
 			}
@@ -38,7 +38,7 @@ func ListPoemsHandler() func(http.ResponseWriter, *http.Request) {
 		for i, poem := range poems {
 			poemSummaries[i] = templates.PoemSummary{
 				ID:    poem.ID,
-				Slug:  poem.Slug,
+				Path:  poem.Path,
 				Title: poem.Title,
 				Date:  poem.Date.Format("2006-01-02"),
 			}
@@ -72,7 +72,7 @@ func EditPoemHandler() func(http.ResponseWriter, *http.Request) {
 
 		data := templates.EditPoemData{
 			ID:        poem.ID,
-			Slug:      poem.Slug,
+			Path:      poem.Path,
 			Title:     poem.Title,
 			Poem:      poem.Poem,
 			Notes:     poem.Notes,
@@ -95,10 +95,10 @@ func CreatePoemHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 		name := gen.Generate()
-		slug := fmt.Sprintf("/%s/", name)
+		path := fmt.Sprintf("/%s/", name)
 
 		// Create the new poem
-		id, err := db.CreatePoem(slug, name)
+		id, err := db.CreatePoem(path, name)
 		if err != nil {
 			http.Error(w, "Failed to create poem", http.StatusInternalServerError)
 			return
@@ -123,14 +123,14 @@ func UpdatePoemHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		slug := r.FormValue("slug")
+		path := r.FormValue("path")
 		title := r.FormValue("title")
 		poemContent := r.FormValue("poem")
 		notes := r.FormValue("notes")
 		date := r.FormValue("date")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdatePoem(id, slug, title, poemContent, notes, date, published); err != nil {
+		if err := db.UpdatePoem(id, path, title, poemContent, notes, date, published); err != nil {
 			http.Error(w, "Failed to update poem", http.StatusInternalServerError)
 			return
 		}

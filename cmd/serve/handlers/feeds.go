@@ -60,7 +60,7 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 
 		feedItems = append(feedItems, templates.FeedItem{
 			Title:   post.Title,
-			Link:    fmt.Sprintf("https://chameth.com%s", post.Slug),
+			Link:    fmt.Sprintf("https://chameth.com%s", post.Path),
 			Updated: post.Date.Format("2006-01-02T15:04:05Z"),
 			Content: absoluteContent,
 		})

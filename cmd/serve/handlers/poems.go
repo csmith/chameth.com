@@ -13,15 +13,15 @@ import (
 )
 
 func Poem(w http.ResponseWriter, r *http.Request) {
-	poem, err := db.GetPoemBySlug(r.URL.Path)
+	poem, err := db.GetPoemByPath(r.URL.Path)
 	if err != nil {
-		slog.Error("Failed to find poem by slug", "error", err, "path", r.URL.Path)
+		slog.Error("Failed to find poem by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)
 		return
 	}
 
-	if poem.Slug != r.URL.Path {
-		http.Redirect(w, r, poem.Slug, http.StatusPermanentRedirect)
+	if poem.Path != r.URL.Path {
+		http.Redirect(w, r, poem.Path, http.StatusPermanentRedirect)
 		return
 	}
 
@@ -48,7 +48,7 @@ func Poem(w http.ResponseWriter, r *http.Request) {
 			PageData: templates.PageData{
 				Title:        fmt.Sprintf("%s · Chameth.com", poem.Title),
 				Stylesheet:   assets.GetStylesheetPath(),
-				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", poem.Slug),
+				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", poem.Path),
 				RecentPosts:  content.RecentPosts(),
 			},
 		},

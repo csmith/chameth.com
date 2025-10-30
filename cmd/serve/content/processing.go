@@ -242,7 +242,7 @@ func renderAudio(input string, media []db.MediaRelationWithDetails) (string, err
 		}
 
 		replacement, err := shortcodes.RenderAudio(shortcodes.AudioData{
-			Src:         mediaRelation.Slug,
+			Src:         mediaRelation.Path,
 			Description: description,
 			Caption:     caption,
 		})
@@ -275,7 +275,7 @@ func renderVideo(input string, media []db.MediaRelationWithDetails) (string, err
 		}
 
 		replacement, err := shortcodes.RenderVideo(shortcodes.VideoData{
-			Src:         mediaRelation.Slug,
+			Src:         mediaRelation.Path,
 			Description: description,
 		})
 		if err != nil {
@@ -319,7 +319,7 @@ func renderFigure(input string, media []db.MediaRelationWithDetails) (string, er
 				}
 			case "image/avif", "image/webp":
 				sources = append(sources, shortcodes.FigureSource{
-					Src:  m.Slug,
+					Src:  m.Path,
 					Type: m.ContentType,
 				})
 			}
@@ -346,7 +346,7 @@ func renderFigure(input string, media []db.MediaRelationWithDetails) (string, er
 		replacement, err := shortcodes.RenderFigure(shortcodes.FigureData{
 			Class:       class,
 			Sources:     sources,
-			Src:         primaryMedia.Slug,
+			Src:         primaryMedia.Path,
 			Description: description,
 			Caption:     renderedCaption,
 			Width:       *primaryMedia.Width,

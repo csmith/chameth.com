@@ -8,9 +8,9 @@ import (
 )
 
 func Content(w http.ResponseWriter, r *http.Request) {
-	contentType, err := db.FindContentBySlug(r.URL.Path)
+	contentType, err := db.FindContentByPath(r.URL.Path)
 	if err != nil {
-		slog.Error("Failed to find content by slug", "error", err, "path", r.URL.Path)
+		slog.Error("Failed to find content by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)
 		return
 	}

@@ -1,9 +1,9 @@
 {{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.EditPoemData */}}
 {{define "content"}}
     <h2>Edit poem: {{.Title}}</h2>
-    <a href="https://chameth.com{{.Slug}}">View on chameth.com</a>
+    <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
     <form action="/poems/edit/{{.ID}}" method="post">
-        <label>Slug: <input type="text" name="slug" value="{{.Slug}}" /></label>
+        <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>
         <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
         <label>Date: <input type="text" name="date" value="{{.Date}}" /></label>
         <label>

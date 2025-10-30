@@ -28,7 +28,7 @@ func ListSnippetsHandler() func(http.ResponseWriter, *http.Request) {
 		for i, snippet := range drafts {
 			draftSummaries[i] = templates.SnippetSummary{
 				ID:    snippet.ID,
-				Slug:  snippet.Slug,
+				Path:  snippet.Path,
 				Title: snippet.Title,
 				Topic: snippet.Topic,
 			}
@@ -38,7 +38,7 @@ func ListSnippetsHandler() func(http.ResponseWriter, *http.Request) {
 		for i, snippet := range snippets {
 			snippetSummaries[i] = templates.SnippetSummary{
 				ID:    snippet.ID,
-				Slug:  snippet.Slug,
+				Path:  snippet.Path,
 				Title: snippet.Title,
 				Topic: snippet.Topic,
 			}
@@ -78,7 +78,7 @@ func EditSnippetHandler() func(http.ResponseWriter, *http.Request) {
 
 		data := templates.EditSnippetData{
 			ID:              snippet.ID,
-			Slug:            snippet.Slug,
+			Path:            snippet.Path,
 			Title:           snippet.Title,
 			Topic:           snippet.Topic,
 			Content:         snippet.Content,
@@ -101,10 +101,10 @@ func CreateSnippetHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 		name := gen.Generate()
-		slug := fmt.Sprintf("/snippets/%s/", name)
+		path := fmt.Sprintf("/snippets/%s/", name)
 
 		// Create the new snippet
-		id, err := db.CreateSnippet(slug, name)
+		id, err := db.CreateSnippet(path, name)
 		if err != nil {
 			http.Error(w, "Failed to create snippet", http.StatusInternalServerError)
 			return
@@ -129,7 +129,7 @@ func UpdateSnippetHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		slug := r.FormValue("slug")
+		path := r.FormValue("path")
 		title := r.FormValue("title")
 		snippetContent := r.FormValue("content")
 		published := r.FormValue("published") == "true"
@@ -140,7 +140,7 @@ func UpdateSnippetHandler() func(http.ResponseWriter, *http.Request) {
 			topic = r.FormValue("topic")
 		}
 
-		if err := db.UpdateSnippet(id, slug, title, topic, snippetContent, published); err != nil {
+		if err := db.UpdateSnippet(id, path, title, topic, snippetContent, published); err != nil {
 			http.Error(w, "Failed to update snippet", http.StatusInternalServerError)
 			return
 		}

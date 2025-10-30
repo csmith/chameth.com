@@ -19,14 +19,14 @@ type EditPageData struct {
 	PageData
 	ID        int
 	Title     string
-	Slug      string
+	Path      string
 	Content   string
 	Published bool
 	Media     []PageMediaItem
 }
 
 type PageMediaItem struct {
-	Slug        string
+	Path        string
 	Title       string
 	AltText     string
 	Width       *int

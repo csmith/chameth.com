@@ -24,7 +24,7 @@ type ListPostsData struct {
 type PostSummary struct {
 	ID    int
 	Title string
-	Slug  string
+	Path  string
 	Date  string
 }
 

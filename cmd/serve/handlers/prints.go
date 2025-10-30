@@ -54,13 +54,13 @@ func PrintsList(w http.ResponseWriter, r *http.Request) {
 
 			switch *mr.Role {
 			case "render":
-				renderPath = mr.Slug
+				renderPath = mr.Path
 			case "preview":
-				previewPath = mr.Slug
+				previewPath = mr.Path
 			case "download":
 				printLinks = append(printLinks, templates.PrintLink{
-					Name:    fmt.Sprintf("%s file", path.Ext(mr.Slug)),
-					Address: mr.Slug,
+					Name:    fmt.Sprintf("%s file", path.Ext(mr.Path)),
+					Address: mr.Path,
 				})
 			}
 		}

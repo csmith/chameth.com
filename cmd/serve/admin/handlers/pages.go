@@ -32,7 +32,7 @@ func ListPagesHandler() func(http.ResponseWriter, *http.Request) {
 			draftSummaries[i] = templates.PageSummary{
 				ID:    page.ID,
 				Title: page.Title,
-				Slug:  page.Slug,
+				Path:  page.Path,
 			}
 		}
 
@@ -41,7 +41,7 @@ func ListPagesHandler() func(http.ResponseWriter, *http.Request) {
 			pageSummaries[i] = templates.PageSummary{
 				ID:    page.ID,
 				Title: page.Title,
-				Slug:  page.Slug,
+				Path:  page.Path,
 			}
 		}
 
@@ -103,7 +103,7 @@ func EditPageHandler() func(http.ResponseWriter, *http.Request) {
 					}
 
 					mediaMap[rel.MediaID] = &templates.PageMediaItem{
-						Slug:        rel.Slug,
+						Path:        rel.Path,
 						Title:       caption,
 						AltText:     description,
 						Width:       rel.Width,
@@ -141,7 +141,7 @@ func EditPageHandler() func(http.ResponseWriter, *http.Request) {
 		data := templates.EditPageData{
 			ID:        page.ID,
 			Title:     page.Title,
-			Slug:      page.Slug,
+			Path:      page.Path,
 			Content:   page.Content,
 			Published: page.Published,
 			Media:     mediaItems,
@@ -162,10 +162,10 @@ func CreatePageHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 		name := gen.Generate()
-		slug := fmt.Sprintf("/%s/", name)
+		path := fmt.Sprintf("/%s/", name)
 
 		// Create the new page
-		id, err := db.CreateStaticPage(slug, name)
+		id, err := db.CreateStaticPage(path, name)
 		if err != nil {
 			http.Error(w, "Failed to create page", http.StatusInternalServerError)
 			return
@@ -190,19 +190,19 @@ func UpdatePageHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		slug := r.FormValue("slug")
+		path := r.FormValue("path")
 		title := r.FormValue("title")
 		pageContent := r.FormValue("content")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdateStaticPage(id, slug, title, pageContent, published); err != nil {
+		if err := db.UpdateStaticPage(id, path, title, pageContent, published); err != nil {
 			http.Error(w, "Failed to update page", http.StatusInternalServerError)
 			return
 		}
 
 		// Regenerate embeddings for the updated page
-		if err := content.GenerateAndStoreEmbedding(context.Background(), slug); err != nil {
-			slog.Error("Failed to regenerate embedding for updated page", "slug", slug, "error", err)
+		if err := content.GenerateAndStoreEmbedding(context.Background(), path); err != nil {
+			slog.Error("Failed to regenerate embedding for updated page", "path", path, "error", err)
 			// Don't fail the request since the page update succeeded
 		}
 

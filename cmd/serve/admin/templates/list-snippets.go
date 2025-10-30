@@ -23,7 +23,7 @@ type ListSnippetsData struct {
 
 type SnippetSummary struct {
 	ID    int
-	Slug  string
+	Path  string
 	Title string
 	Topic string
 }

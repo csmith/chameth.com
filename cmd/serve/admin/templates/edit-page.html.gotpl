@@ -1,10 +1,10 @@
 {{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.EditPageData */}}
 {{define "content"}}
     <h2>Edit page: {{.Title}}</h2>
-    <a href="https://chameth.com{{.Slug}}">View on chameth.com</a>
+    <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
 
     <form action="/pages/edit/{{.ID}}" method="post">
-        <label>Slug: <input type="text" name="slug" value="{{.Slug}}" /></label>
+        <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>
         <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
         <label>
             <input type="checkbox" name="published" value="true" {{if .Published}}checked{{end}} />
@@ -50,7 +50,7 @@
                 <th>Title / Alt Text</th>
                 <th>Dimensions</th>
                 <th>Role</th>
-                <th>Slug</th>
+                <th>Path</th>
             </tr>
         </thead>
         <tbody>
@@ -89,7 +89,7 @@
                     {{end}}
                 </td>
                 <td>{{if .Role}}{{.Role}}{{else}}—{{end}}</td>
-                <td><code>{{.Slug}}</code></td>
+                <td><code>{{.Path}}</code></td>
             </tr>
             {{if .Variants}}
             <tr class="variants-row">

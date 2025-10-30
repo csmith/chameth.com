@@ -18,7 +18,7 @@ var editPoemTemplate = template.Must(
 type EditPoemData struct {
 	PageData
 	ID        int
-	Slug      string
+	Path      string
 	Title     string
 	Poem      string
 	Notes     string

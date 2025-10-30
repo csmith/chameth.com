@@ -10,7 +10,7 @@
             <h3>{{ .Name }}</h3>
             <ul>
                 {{ range .Snippets -}}
-                    <li><a href="{{.Slug}}">{{.Name}}</a></li>
+                    <li><a href="{{.Path}}">{{.Name}}</a></li>
                 {{- end }}
             </ul>
         </section>

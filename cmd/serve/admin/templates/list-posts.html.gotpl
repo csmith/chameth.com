@@ -11,7 +11,7 @@
             <tr>
                 <th>ID</th>
                 <th>Title</th>
-                <th>Slug</th>
+                <th>Path</th>
                 <th>Date</th>
                 <th>Actions</th>
             </tr>
@@ -21,7 +21,7 @@
             <tr>
                 <td>{{.ID}}</td>
                 <td>{{.Title}}</td>
-                <td>{{.Slug}}</td>
+                <td>{{.Path}}</td>
                 <td>{{.Date}}</td>
                 <td><a href="/posts/edit/{{.ID}}">Edit</a></td>
             </tr>
@@ -36,7 +36,7 @@
             <tr>
                 <th>ID</th>
                 <th>Title</th>
-                <th>Slug</th>
+                <th>Path</th>
                 <th>Date</th>
                 <th>Actions</th>
             </tr>
@@ -46,7 +46,7 @@
             <tr>
                 <td>{{.ID}}</td>
                 <td>{{.Title}}</td>
-                <td>{{.Slug}}</td>
+                <td>{{.Path}}</td>
                 <td>{{.Date}}</td>
                 <td><a href="/posts/edit/{{.ID}}">Edit</a></td>
             </tr>

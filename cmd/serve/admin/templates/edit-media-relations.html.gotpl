@@ -12,7 +12,7 @@
                 <th>Alt Text</th>
                 <th>Dimensions</th>
                 <th>Role</th>
-                <th>Slug</th>
+                <th>Path</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -23,7 +23,7 @@
                     <input type="hidden" name="entity_type" value="{{$.EntityType}}" />
                     <input type="hidden" name="entity_id" value="{{$.EntityID}}" />
                     <input type="hidden" name="media_id" value="{{.MediaID}}" />
-                    <input type="hidden" name="slug" value="{{.Slug}}" />
+                    <input type="hidden" name="path" value="{{.Path}}" />
 
                     <td class="preview-cell">
                         <a href="/media/view/{{.MediaID}}" target="_blank">
@@ -59,7 +59,7 @@
                     <td>
                         <input type="text" name="role" value="{{.Role}}" class="inline-input short" />
                     </td>
-                    <td><code>{{.Slug}}</code></td>
+                    <td><code>{{.Path}}</code></td>
                     <td class="actions-cell">
                         <button type="submit" class="btn-update">Update</button>
                 </form>
@@ -67,7 +67,7 @@
                     <input type="hidden" name="entity_type" value="{{$.EntityType}}" />
                     <input type="hidden" name="entity_id" value="{{$.EntityID}}" />
                     <input type="hidden" name="media_id" value="{{.MediaID}}" />
-                    <input type="hidden" name="slug" value="{{.Slug}}" />
+                    <input type="hidden" name="path" value="{{.Path}}" />
                     <button type="submit" class="btn-remove" onclick="return confirm('Remove this media relation?')">Remove</button>
                 </form>
                     </td>
@@ -84,7 +84,7 @@
     <form action="/media-relations/add" method="post">
         <input type="hidden" name="entity_type" value="{{.EntityType}}" />
         <input type="hidden" name="entity_id" value="{{.EntityID}}" />
-        <input type="hidden" name="entity_slug" value="{{.EntitySlug}}" />
+        <input type="hidden" name="entity_path" value="{{.EntityPath}}" />
 
         <div class="media-picker">
             <div class="media-picker-header">

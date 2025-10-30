@@ -19,7 +19,7 @@ type EditPostData struct {
 	PageData
 	ID        int
 	Title     string
-	Slug      string
+	Path      string
 	Date      string
 	Content   string
 	Format    string
@@ -28,7 +28,7 @@ type EditPostData struct {
 }
 
 type PostMediaItem struct {
-	Slug        string
+	Path        string
 	Title       string
 	AltText     string
 	Width       *int

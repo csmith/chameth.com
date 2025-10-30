@@ -54,13 +54,13 @@ func Init() error {
 	return nil
 }
 
-// FindContentBySlug returns the content type for the given slug.
-// It handles cases where the slug may or may not have a trailing slash.
-// If slug is "/foo", it will also check for "/foo/" in the database.
-// Returns "", nil if no matching slug is found.
-func FindContentBySlug(slug string) (string, error) {
+// FindContentByPath returns the content type for the given path.
+// It handles cases where the path may or may not have a trailing slash.
+// If path is "/foo", it will also check for "/foo/" in the database.
+// Returns "", nil if no matching path is found.
+func FindContentByPath(path string) (string, error) {
 	var contentType string
-	err := db.Get(&contentType, "SELECT content_type FROM slugs WHERE slug = $1 OR slug = $2", slug, slug+"/")
+	err := db.Get(&contentType, "SELECT content_type FROM paths WHERE path = $1 OR path = $2", path, path+"/")
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return "", nil

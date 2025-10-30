@@ -77,7 +77,7 @@
 
     {{ range .Snippets -}}
         <url>
-            <loc>https://chameth.com/{{ .Slug }}</loc>
+            <loc>https://chameth.com/{{ .Path }}</loc>
             <changeFreq>yearly</changeFreq>
             <priority>0.4</priority>
         </url>

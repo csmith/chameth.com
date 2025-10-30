@@ -19,13 +19,13 @@ type EditMediaRelationsData struct {
 	PageData
 	EntityType     string
 	EntityID       int
-	EntitySlug     string
+	EntityPath     string
 	Media          []MediaRelationItem
 	AvailableMedia []AvailableMediaItem
 }
 
 type MediaRelationItem struct {
-	Slug        string
+	Path        string
 	Title       string
 	AltText     string
 	Width       *int

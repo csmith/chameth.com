@@ -23,7 +23,7 @@ type ListPoemsData struct {
 
 type PoemSummary struct {
 	ID    int
-	Slug  string
+	Path  string
 	Title string
 	Date  string
 }

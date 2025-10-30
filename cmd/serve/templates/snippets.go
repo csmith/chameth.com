@@ -27,7 +27,7 @@ type SnippetGroup struct {
 
 type SnippetDetails struct {
 	Name string
-	Slug string
+	Path string
 }
 
 func RenderSnippets(w http.ResponseWriter, data SnippetsData) error {

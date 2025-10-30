@@ -33,7 +33,7 @@ func ListPostsHandler() func(http.ResponseWriter, *http.Request) {
 			draftSummaries[i] = templates.PostSummary{
 				ID:    post.ID,
 				Title: post.Title,
-				Slug:  post.Slug,
+				Path:  post.Path,
 				Date:  post.Date.Format("2006-01-02"),
 			}
 		}
@@ -43,7 +43,7 @@ func ListPostsHandler() func(http.ResponseWriter, *http.Request) {
 			postSummaries[i] = templates.PostSummary{
 				ID:    post.ID,
 				Title: post.Title,
-				Slug:  post.Slug,
+				Path:  post.Path,
 				Date:  post.Date.Format("2006-01-02"),
 			}
 		}
@@ -106,7 +106,7 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 					}
 
 					mediaMap[rel.MediaID] = &templates.PostMediaItem{
-						Slug:        rel.Slug,
+						Path:        rel.Path,
 						Title:       caption,
 						AltText:     description,
 						Width:       rel.Width,
@@ -144,7 +144,7 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 		data := templates.EditPostData{
 			ID:        post.ID,
 			Title:     post.Title,
-			Slug:      post.Slug,
+			Path:      post.Path,
 			Date:      post.Date.Format("2006-01-02"),
 			Content:   post.Content,
 			Format:    post.Format,
@@ -167,10 +167,10 @@ func CreatePostHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 		name := gen.Generate()
-		slug := fmt.Sprintf("/%s/", name)
+		path := fmt.Sprintf("/%s/", name)
 
 		// Create the new post
-		id, err := db.CreatePost(slug, name)
+		id, err := db.CreatePost(path, name)
 		if err != nil {
 			http.Error(w, "Failed to create post", http.StatusInternalServerError)
 			return
@@ -195,21 +195,21 @@ func UpdatePostHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		slug := r.FormValue("slug")
+		path := r.FormValue("path")
 		title := r.FormValue("title")
 		postContent := r.FormValue("content")
 		date := r.FormValue("date")
 		format := r.FormValue("format")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdatePost(id, slug, title, postContent, date, format, published); err != nil {
+		if err := db.UpdatePost(id, path, title, postContent, date, format, published); err != nil {
 			http.Error(w, "Failed to update post", http.StatusInternalServerError)
 			return
 		}
 
 		// Regenerate embeddings for the updated post
-		if err := content.GenerateAndStoreEmbedding(context.Background(), slug); err != nil {
-			slog.Error("Failed to regenerate embedding for updated post", "slug", slug, "error", err)
+		if err := content.GenerateAndStoreEmbedding(context.Background(), path); err != nil {
+			slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
 			// Don't fail the request since the post update succeeded
 		}
 
@@ -234,7 +234,7 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		// Get the post to construct the slug
+		// Get the post to construct the path
 		post, err := db.GetPostByID(id)
 		if err != nil {
 			http.Error(w, "Post not found", http.StatusNotFound)
@@ -251,13 +251,13 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		// Construct slug: post slug + filename
-		mediaSlug := post.Slug + "wordcloud.png"
+		// Construct path: post path + filename
+		mediaPath := post.Path + "wordcloud.png"
 
 		// Create media relation with role=opengraph
 		description := "Word cloud showing frequently used words in the post"
 		role := "opengraph"
-		err = db.CreateMediaRelation("post", id, mediaID, mediaSlug, nil, &description, &role)
+		err = db.CreateMediaRelation("post", id, mediaID, mediaPath, nil, &description, &role)
 		if err != nil {
 			slog.Error("Failed to create media relation", "error", err)
 			http.Error(w, "Failed to attach wordcloud to post", http.StatusInternalServerError)
