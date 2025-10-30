@@ -10,6 +10,7 @@ import (
 )
 
 func NotFound(w http.ResponseWriter, r *http.Request) {
+	slog.Warn("Serving not found response", "url", r.URL.String())
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusNotFound)
@@ -26,6 +27,7 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServerError(w http.ResponseWriter, r *http.Request) {
+	slog.Warn("Serving server error response", "url", r.URL.String())
 	w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusInternalServerError)
