@@ -23,7 +23,7 @@ func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 	for _, p := range poems {
 		poemDetails = append(poemDetails, templates.ContentDetails{
 			Title: p.Title,
-			Url:   p.Path,
+			Path:  p.Path,
 			Date: templates.ContentDate{
 				Iso:      p.Date.Format("2006-01-02"),
 				Friendly: p.Date.Format("Jan 2, 2006"),
@@ -57,7 +57,7 @@ func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 	for _, p := range posts {
 		postDetails = append(postDetails, templates.ContentDetails{
 			Title: p.Title,
-			Url:   p.Path,
+			Path:  p.Path,
 			Date: templates.ContentDate{
 				Iso:      p.Date.Format("2006-01-02"),
 				Friendly: p.Date.Format("Jan 2, 2006"),
@@ -95,7 +95,7 @@ func XmlSiteMap(w http.ResponseWriter, r *http.Request) {
 	for _, p := range poems {
 		poemDetails = append(poemDetails, templates.ContentDetails{
 			Title: p.Title,
-			Url:   p.Path,
+			Path:  p.Path,
 			Date: templates.ContentDate{
 				Iso:      p.Date.Format("2006-01-02"),
 				Friendly: p.Date.Format("Jan 2, 2006"),
@@ -129,7 +129,7 @@ func XmlSiteMap(w http.ResponseWriter, r *http.Request) {
 	for _, p := range posts {
 		postDetails = append(postDetails, templates.ContentDetails{
 			Title: p.Title,
-			Url:   p.Path,
+			Path:  p.Path,
 			Date: templates.ContentDate{
 				Iso:      p.Date.Format("2006-01-02"),
 				Friendly: p.Date.Format("Jan 2, 2006"),

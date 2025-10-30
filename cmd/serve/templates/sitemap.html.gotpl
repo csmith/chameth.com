@@ -34,7 +34,7 @@
 
     <ul class="sitemap">
         {{- range .Posts }}
-            <li><a href="{{ .Url }}">{{ .Title }}</a>
+            <li><a href="{{ .Path }}">{{ .Title }}</a>
                 <time datetime="{{ .Date.Iso }}">{{ .Date.Friendly }}</time>
             </li>
         {{ end -}}
@@ -56,7 +56,7 @@
 
     <ul class="sitemap">
         {{- range .Poems }}
-            <li><a href="{{ .Url }}">{{ .Title }}</a>
+            <li><a href="{{ .Path }}">{{ .Title }}</a>
                 <time datetime="{{ .Date.Iso }}">{{ .Date.Friendly }}</time>
             </li>
         {{ end -}}

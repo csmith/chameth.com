@@ -34,7 +34,7 @@ type SiteMapData struct {
 
 type ContentDetails struct {
 	Title string
-	Url   string
+	Path  string
 	Date  ContentDate
 }
 
