@@ -103,8 +103,8 @@ func main() {
 					middleware.WithHeader("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload"),
 					middleware.WithHeader("Referrer-Policy", "no-referrer-when-downgrade"),
 				),
-				// middleware.Recover(),
 				applyRedirects(),
+				middleware.Recover(),
 			),
 		)(mux),
 	}
