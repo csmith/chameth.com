@@ -72,7 +72,7 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 		lastUpdated = posts[0].Date.Format("2006-01-02T15:04:05Z")
 	}
 
-	w.Header().Set("Content-Type", "application/atom+xml; charset=utf-8")
+	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderAtom(w, templates.AtomData{
 		FeedTitle:       title,

@@ -1,0 +1,18 @@
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 2em auto;
+  max-width: 800px;
+  font-size: large;
+}
+
+p {
+  padding: 1em;
+  background-color: #c0dee8;
+  font-size: x-large;
+  border-radius: 10px;
+}
+
+section {
+  margin-top: 1em;
+}
