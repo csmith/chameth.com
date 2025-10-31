@@ -15,6 +15,16 @@ article h2 {
   }
 }
 
+.paste-metadata {
+  color: var(--text-alt-colour);
+  padding: 0;
+  margin: 0 0 var(--small-space) 0;
+  font-size: var(--font-size-tiny);
+  font-family: "Berkeley Mono", monospace;
+  text-transform: uppercase;
+  float: right;
+}
+
 hr.end-of-post {
   clear: both;
   border: 0;
@@ -27,64 +37,5 @@ hr.end-of-post {
 @media (min-width: 1200px) {
   .e-content figure.right:first-child {
     margin-top: calc(-1 * (var(--font-size-xlarge) + var(--font-size-tiny) + var(--medium-space)));
-  }
-}
-
-.feedback-links {
-  display: flex;
-  gap: var(--medium-space);
-  flex-direction: row;
-
-  @media (max-width: 1200px) {
-    flex-direction: column;
-  }
-
-  .feedback {
-    position: relative;
-    flex-basis: 200px;
-    flex-grow: 1;
-    text-decoration: none;
-    background: var(--accent-colour);
-    color: var(--text-colour);
-    border-radius: var(--border-radius);
-    padding: var(--small-space);
-    font-size: var(--font-size-xlarge);
-    font-family: "Chris Hand", cursive;
-    display: flex;
-    align-items: center;
-    transition: color 300ms ease-in-out, transform 300ms ease-in-out;
-
-    &::after {
-      display: none;
-    }
-
-    svg {
-      width: 90px;
-      height: 90px;
-      filter: invert(100%);
-      opacity: 0.1;
-      position: absolute;
-      top: calc(var(--medium-space) / 2);
-      left: calc(var(--medium-space) / 2);
-      transition: opacity 300ms ease-in-out;
-    }
-
-    &:hover, &:active {
-      color: var(--text-highlight-colour);
-
-      @media (min-width: 1200px) {
-        transform: scale(1.1);
-      }
-
-      svg {
-        opacity: 0.3;
-      }
-    }
-
-    span {
-      display: block;
-      padding: var(--medium-space);
-      margin-left: 45px;
-    }
   }
 }

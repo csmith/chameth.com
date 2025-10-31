@@ -115,6 +115,20 @@ type Post struct {
 	Content string `db:"content"`
 }
 
+type PasteMetadata struct {
+	ID        int       `db:"id"`
+	Path      string    `db:"path"`
+	Title     string    `db:"title"`
+	Language  string    `db:"language"`
+	Date      time.Time `db:"date"`
+	Published bool      `db:"published"`
+}
+
+type Paste struct {
+	PasteMetadata
+	Content string `db:"content"`
+}
+
 // MediaImageVariant represents a media image with its URL and content type
 type MediaImageVariant struct {
 	Path        string `db:"path"`

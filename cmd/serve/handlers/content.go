@@ -24,6 +24,8 @@ func Content(w http.ResponseWriter, r *http.Request) {
 		StaticPage(w, r)
 	case "post":
 		Post(w, r)
+	case "paste":
+		Paste(w, r)
 	case "media":
 		Media(w, r)
 	default:

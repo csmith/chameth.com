@@ -2,3 +2,4 @@ Sitemap: https://chameth.com/sitemap.xml
 
 User-agent: *
 Disallow: /*.stl
+Disallow: /paste/
