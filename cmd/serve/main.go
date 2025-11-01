@@ -46,7 +46,7 @@ func main() {
 	}()
 
 	go func() {
-		content.UpdateAllPostEmbeddings(context.Background())
+		content.UpdateAllPostEmbeddings()
 	}()
 
 	go func() {

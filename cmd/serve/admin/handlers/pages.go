@@ -1,15 +1,12 @@
 package handlers
 
 import (
-	"context"
 	"fmt"
-	"log/slog"
 	"net/http"
 	"strconv"
 
 	"github.com/csmith/aca"
 	"github.com/csmith/chameth.com/cmd/serve/admin/templates"
-	"github.com/csmith/chameth.com/cmd/serve/content"
 	"github.com/csmith/chameth.com/cmd/serve/db"
 )
 
@@ -198,12 +195,6 @@ func UpdatePageHandler() func(http.ResponseWriter, *http.Request) {
 		if err := db.UpdateStaticPage(id, path, title, pageContent, published); err != nil {
 			http.Error(w, "Failed to update page", http.StatusInternalServerError)
 			return
-		}
-
-		// Regenerate embeddings for the updated page
-		if err := content.GenerateAndStoreEmbedding(context.Background(), path); err != nil {
-			slog.Error("Failed to regenerate embedding for updated page", "path", path, "error", err)
-			// Don't fail the request since the page update succeeded
 		}
 
 		http.Redirect(w, r, fmt.Sprintf("/pages/edit/%d", id), http.StatusSeeOther)

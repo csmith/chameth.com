@@ -2,12 +2,12 @@ package content
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"log/slog"
 	"net/http"
+	"sync"
 
 	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/csmith/chameth.com/cmd/serve/templates/includes"
@@ -17,10 +17,15 @@ import (
 var (
 	ollamaEndpoint = flag.String("ollama-endpoint", "http://ollama:11434", "Ollama API endpoint")
 	ollamaModel    = flag.String("ollama-model", "mxbai-embed-large", "Ollama embedding model")
+
+	embeddingMutex sync.Mutex
 )
 
 // GenerateAndStoreEmbedding generates an embedding for a post and stores it in the database
-func GenerateAndStoreEmbedding(ctx context.Context, postPath string) error {
+func GenerateAndStoreEmbedding(postPath string) error {
+	embeddingMutex.Lock()
+	defer embeddingMutex.Unlock()
+
 	type ollamaEmbeddingRequest struct {
 		Model  string `json:"model"`
 		Prompt string `json:"prompt"`
@@ -54,7 +59,7 @@ func GenerateAndStoreEmbedding(ctx context.Context, postPath string) error {
 		return fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, "POST", *ollamaEndpoint+"/api/embeddings", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", *ollamaEndpoint+"/api/embeddings", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -87,7 +92,7 @@ func GenerateAndStoreEmbedding(ctx context.Context, postPath string) error {
 }
 
 // UpdateAllPostEmbeddings generates embeddings for all posts that don't have one
-func UpdateAllPostEmbeddings(ctx context.Context) {
+func UpdateAllPostEmbeddings() {
 	slog.Info("Starting to update post embeddings")
 
 	paths, err := db.GetPostPathsWithoutEmbeddings()
@@ -109,7 +114,7 @@ func UpdateAllPostEmbeddings(ctx context.Context) {
 	for i, path := range paths {
 		slog.Info("Generating embedding", "progress", fmt.Sprintf("%d/%d", i+1, len(paths)), "path", path)
 
-		if err := GenerateAndStoreEmbedding(ctx, path); err != nil {
+		if err := GenerateAndStoreEmbedding(path); err != nil {
 			slog.Error("Failed to generate embedding for post", "path", path, "error", err)
 			failureCount++
 		} else {

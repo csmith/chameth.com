@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -207,11 +206,11 @@ func UpdatePostHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		// Regenerate embeddings for the updated post
-		if err := content.GenerateAndStoreEmbedding(context.Background(), path); err != nil {
-			slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
-			// Don't fail the request since the post update succeeded
-		}
+		go func() {
+			if err := content.GenerateAndStoreEmbedding(path); err != nil {
+				slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
+			}
+		}()
 
 		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
 	}
