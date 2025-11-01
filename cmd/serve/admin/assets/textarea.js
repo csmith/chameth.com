@@ -1,4 +1,4 @@
-import {WorkerLinter, binaryInlined, Dialect} from '/assets/harper/harper.js';
+import {binaryInlined, Dialect, WorkerLinter} from '/assets/harper/harper.js';
 
 // Initialize Harper linter once for all textareas
 const linter = new WorkerLinter({
@@ -17,9 +17,20 @@ function escapeHtml(text) {
 function findMarkdownSyntax(text) {
     const syntaxSpans = [];
 
-    // Headers (^#{1,6} .*)
-    const headerRegex = /^#{1,6} .*/gm;
+    // Fenced code blocks
+    const codeBlockRegex = /^```[\s\S]*?^```/gm;
     let match;
+    while ((match = codeBlockRegex.exec(text)) !== null) {
+        syntaxSpans.push({
+            start: match.index,
+            end: match.index + match[0].length,
+            type: 'codeblock',
+            color: '#586e75'
+        });
+    }
+
+    // Headers
+    const headerRegex = /^#{3,6} .*/gm;
     while ((match = headerRegex.exec(text)) !== null) {
         syntaxSpans.push({
             start: match.index,
@@ -29,8 +40,8 @@ function findMarkdownSyntax(text) {
         });
     }
 
-    // Inline links [text](url)
-    const inlineLinkRegex = /\[([^\]]+)\]\(([^\)]+)\)/g;
+    // Inline links
+    const inlineLinkRegex = /\[([^\]]+)]\(([^)]+)\)/g;
     while ((match = inlineLinkRegex.exec(text)) !== null) {
         syntaxSpans.push({
             start: match.index,
@@ -40,19 +51,8 @@ function findMarkdownSyntax(text) {
         });
     }
 
-    // Reference links [text][ref]
-    const refLinkRegex = /\[([^\]]+)\]\[([^\]]*)\]/g;
-    while ((match = refLinkRegex.exec(text)) !== null) {
-        syntaxSpans.push({
-            start: match.index,
-            end: match.index + match[0].length,
-            type: 'link',
-            color: '#0066cc'
-        });
-    }
-
     // Footnotes [^...]
-    const footnoteRegex = /\[\^[^\]]+\]/g;
+    const footnoteRegex = /\[\^[^\]]+]/g;
     while ((match = footnoteRegex.exec(text)) !== null) {
         syntaxSpans.push({
             start: match.index,
@@ -63,7 +63,7 @@ function findMarkdownSyntax(text) {
     }
 
     // Shortcodes {% ... %}
-    const shortcodeRegex = /\{%[^%]*%\}/g;
+    const shortcodeRegex = /\{%[^%]*%}/g;
     while ((match = shortcodeRegex.exec(text)) !== null) {
         syntaxSpans.push({
             start: match.index,
@@ -247,8 +247,7 @@ function enhanceTextarea(textarea) {
 
         if (lintAtCursor) {
             // Show tooltip near cursor
-            const message = lintAtCursor.message();
-            tooltip.textContent = message;
+            tooltip.textContent = lintAtCursor.message();
             tooltip.style.display = 'block';
 
             // Position tooltip near the error
@@ -320,8 +319,6 @@ function enhanceTextarea(textarea) {
     updateMirrorImmediate();
 }
 
-// Find and enhance all textareas on page load
 document.addEventListener('DOMContentLoaded', () => {
-    const textareas = document.querySelectorAll('textarea');
-    textareas.forEach(enhanceTextarea);
+    document.querySelectorAll('textarea').forEach(enhanceTextarea);
 });
