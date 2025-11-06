@@ -1,5 +1,5 @@
 # Step 1 - build server
-FROM golang:1.25.3 AS go
+FROM golang:1.25.4 AS go
 WORKDIR /usr/src/app
 ADD go.mod go.sum /usr/src/app/
 ADD cmd /usr/src/app/cmd
