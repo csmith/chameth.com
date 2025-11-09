@@ -17,6 +17,7 @@
         <input type="submit" />
     </form>
 
+    <h3>Attached Media <a href="/media-relations/edit?entity_type=staticpage&entity_id={{.ID}}" style="font-size: 0.875rem; margin-left: 1rem;">(Manage)</a></h3>
     {{if .Media}}
     <script>
     function copyToClipboard(button, text) {
@@ -42,7 +43,6 @@
         });
     }
     </script>
-    <h3>Attached Media <a href="/media-relations/edit?entity_type=staticpage&entity_id={{.ID}}" style="font-size: 0.875rem; margin-left: 1rem;">(Manage)</a></h3>
     <table class="media-table">
         <thead>
             <tr>
