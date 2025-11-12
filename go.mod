@@ -15,7 +15,7 @@ require (
 	github.com/pgvector/pgvector-go v0.3.0
 	github.com/yuin/goldmark v1.7.13
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
-	golang.org/x/image v0.32.0
+	golang.org/x/image v0.33.0
 	golang.org/x/net v0.46.0
 	tailscale.com v1.90.6
 )
@@ -58,7 +58,7 @@ require (
 	golang.org/x/crypto v0.43.0 // indirect
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sync v0.17.0 // indirect
+	golang.org/x/sync v0.18.0 // indirect
 	golang.org/x/sys v0.37.0 // indirect
 	golang.org/x/term v0.36.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
@@ -69,5 +69,5 @@ require (
 
 require (
 	github.com/kljensen/snowball v0.10.0
-	golang.org/x/text v0.30.0 // indirect
+	golang.org/x/text v0.31.0 // indirect
 )
