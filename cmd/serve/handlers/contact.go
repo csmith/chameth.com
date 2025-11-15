@@ -53,7 +53,18 @@ func ContactForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := sendContact(cr, messageBody(cr, r)); err != nil {
+	spam, err := checkSpamhaus(r.RemoteAddr)
+	if err != nil {
+		slog.Error("Error checking Spamhaus", "error", err, "remoteAddr", r.RemoteAddr)
+	}
+
+	if spam.ExploitsBlockList {
+		slog.Info("Blocking contact form from XBL listed address", "remoteAddr", r.RemoteAddr, "request", cr)
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+
+	if err := sendContact(cr, messageBody(cr, r, spam)); err != nil {
 		slog.Error("Error sending contact form", "error", err, "request", cr)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
@@ -74,7 +85,7 @@ func sendContact(req contactRequest, content string) error {
 	return nil
 }
 
-func messageBody(c contactRequest, req *http.Request) string {
+func messageBody(c contactRequest, req *http.Request, result spamhausResult) string {
 	body := strings.Builder{}
 	body.WriteString("SENDER: ")
 	body.WriteString(c.SenderName)
@@ -88,11 +99,123 @@ func messageBody(c contactRequest, req *http.Request) string {
 	body.WriteString(req.RemoteAddr)
 	body.WriteString("\n")
 	body.WriteString("SPAMHAUS: ")
-	body.WriteString(checkSpamhaus(req.RemoteAddr))
-	body.WriteString("\n\n")
-	body.WriteString("MESSAGE:\n\n")
+	body.WriteString(result.Summary())
+	body.WriteString("; see ")
+	body.WriteString(result.CheckURL)
+	body.WriteString("\n")
+
+	body.WriteString("\nMESSAGE:\n\n")
 	body.WriteString(c.Message)
 	return body.String()
+}
+
+type spamhausResult struct {
+	Success                 bool
+	SpamhausBlockList       bool
+	CombinedSpamSources     bool
+	ExploitsBlockList       bool
+	DontRouteOrPeer         bool
+	PolicyBlockListISP      bool
+	PolicyBlockListSpamhaus bool
+	CheckURL                string
+}
+
+func (r spamhausResult) Summary() string {
+	if !r.Success {
+		return "check failed"
+	}
+
+	var lists []string
+	if r.SpamhausBlockList {
+		lists = append(lists, "SBL")
+	}
+	if r.CombinedSpamSources {
+		lists = append(lists, "CSS")
+	}
+	if r.ExploitsBlockList {
+		lists = append(lists, "XBL")
+	}
+	if r.DontRouteOrPeer {
+		lists = append(lists, "DROP")
+	}
+	if r.PolicyBlockListISP {
+		lists = append(lists, "PBL")
+	}
+	if r.PolicyBlockListSpamhaus {
+		lists = append(lists, "PBL")
+	}
+
+	if len(lists) == 0 {
+		return "not listed"
+	}
+
+	return "listed: " + strings.Join(lists, ", ")
+}
+
+func checkSpamhaus(ipAddr string) (spamhausResult, error) {
+	host, _, err := net.SplitHostPort(ipAddr)
+	if err != nil {
+		// If SplitHostPort fails, assume it's just an IP without port
+		host = ipAddr
+	}
+
+	result := spamhausResult{
+		CheckURL: fmt.Sprintf("https://check.spamhaus.org/results/?query=%s", host),
+	}
+
+	ip := net.ParseIP(host)
+	if ip == nil {
+		return result, fmt.Errorf("invalid IP address: %s", ipAddr)
+	}
+
+	var reversed string
+	if ip.To4() != nil {
+		reversed = reverseIPv4(ip)
+	} else {
+		reversed = reverseIPv6(ip)
+	}
+
+	if reversed == "" {
+		return result, fmt.Errorf("failed to reverse IP: %s", ipAddr)
+	}
+
+	dnsQuery := reversed + ".zen.spamhaus.org"
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	resolver := &net.Resolver{}
+	addrs, err := resolver.LookupHost(ctx, dnsQuery)
+
+	if err != nil {
+		var dnsErr *net.DNSError
+		if errors.As(err, &dnsErr) && dnsErr.IsNotFound {
+			result.Success = true
+			return result, nil
+		}
+
+		return result, fmt.Errorf("spamhaus DNS lookup failed: %w", err)
+	}
+
+	for _, addr := range addrs {
+		switch addr {
+		case "127.0.0.2":
+			result.SpamhausBlockList = true
+		case "127.0.0.3":
+			result.CombinedSpamSources = true
+		case "127.0.0.4":
+			result.ExploitsBlockList = true
+		case "127.0.0.9":
+			result.DontRouteOrPeer = true
+		case "127.0.0.10":
+			result.PolicyBlockListISP = true
+		case "127.0.0.11":
+			result.PolicyBlockListSpamhaus = true
+		}
+	}
+
+	result.Success = true
+	return result, nil
 }
 
 // reverseIPv4 reverses the octets of an IPv4 address for DNSBL lookup
@@ -121,59 +244,4 @@ func reverseIPv6(ip net.IP) string {
 	}
 
 	return strings.Join(parts, ".")
-}
-
-// checkSpamhaus queries the Spamhaus zen.spamhaus.org blocklist for the given IP
-// Returns:
-// - "Not listed" if the IP is not in the blocklist
-// - "Listed - [reason]" if the IP is in the blocklist with the TXT record explanation
-// - "Check failed" if the DNS lookup encounters an error
-func checkSpamhaus(ipAddr string) string {
-	host, _, err := net.SplitHostPort(ipAddr)
-	if err != nil {
-		// If SplitHostPort fails, assume it's just an IP without port
-		host = ipAddr
-	}
-
-	ip := net.ParseIP(host)
-	if ip == nil {
-		slog.Warn("Invalid IP address for Spamhaus check", "ip", ipAddr)
-		return "Check failed"
-	}
-
-	var reversed string
-	if ip.To4() != nil {
-		reversed = reverseIPv4(ip)
-	} else {
-		reversed = reverseIPv6(ip)
-	}
-
-	if reversed == "" {
-		slog.Warn("Failed to reverse IP for Spamhaus check", "ip", ipAddr)
-		return "Check failed"
-	}
-
-	dnsQuery := reversed + ".zen.spamhaus.org"
-
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-
-	resolver := &net.Resolver{}
-	txtRecords, err := resolver.LookupTXT(ctx, dnsQuery)
-
-	if err != nil {
-		var dnsErr *net.DNSError
-		if errors.As(err, &dnsErr) && dnsErr.IsNotFound {
-			return "Not listed"
-		}
-
-		slog.Warn("Spamhaus DNS lookup failed", "query", dnsQuery, "error", err)
-		return "Check failed"
-	}
-
-	if len(txtRecords) > 0 {
-		return "Listed - " + strings.Join(txtRecords, "; ")
-	}
-
-	return "Not listed"
 }
