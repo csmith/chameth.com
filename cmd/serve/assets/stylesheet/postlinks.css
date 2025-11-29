@@ -1,9 +1,13 @@
+.post-links-parent {
+  container-type: inline-size;
+}
+
 .post-links {
   display: flex;
   gap: var(--medium-space);
   flex-direction: row;
 
-  @media (max-width: 1200px) {
+  @container (width < 1000px) {
     flex-direction: column;
   }
 }
@@ -20,8 +24,9 @@
 }
 
 .post-link {
-  flex-basis: 200px;
-  max-width: 500px;
+  flex-basis: 300px;
+  min-width: 300px;
+  max-width: 600px;
   flex-grow: 1;
   text-decoration: none;
   background-color: var(--background-alt-colour);

@@ -38,7 +38,7 @@
         </section>
 
         {{ if .RelatedPosts -}}
-            <section>
+            <section class="post-links-parent">
                 <h3>Related posts</h3>
                 <div class="post-links">
                 {{ range .RelatedPosts -}}
