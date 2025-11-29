@@ -114,5 +114,9 @@ body > footer {
         fill: var(--link-colour);
       }
     }
+
+    @media (max-width: 1000px) {
+      justify-content: left;
+    }
   }
 }
