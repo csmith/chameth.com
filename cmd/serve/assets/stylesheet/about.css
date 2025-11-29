@@ -61,10 +61,6 @@
     transform: rotate(0deg);
   }
 
-  @media (max-width: 500px) {
-    margin-bottom: 0;
-  }
-
   .tcg-front {
     transform: rotateY(0deg);
   }

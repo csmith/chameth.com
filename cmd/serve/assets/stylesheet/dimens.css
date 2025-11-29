@@ -16,12 +16,12 @@
 
   @media (max-width: 800px) {
     --small-space: 0.4rem;
-    --medium-space: 1rem;
-    --large-space: 2rem;
+    --medium-space: 1.5rem;
+    --large-space: 2.5rem;
   }
 
   @media (max-width: 500px) {
-    --content-width: calc(100vw - 20px);
+    --content-width: calc(100vw - 20pt);
   }
 }
 

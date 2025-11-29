@@ -12,6 +12,9 @@
     --font-size-regular: 12pt;
     --font-size-large: 15pt;
     --font-size-xlarge: 20pt;
+  }
+
+  @media (max-width: 500px) {
     --font-size-giant: 30pt;
   }
 }
