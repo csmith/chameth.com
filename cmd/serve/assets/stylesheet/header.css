@@ -24,6 +24,7 @@ body > header {
     color: var(--text-highlight-colour);
     font-family: "Berkeley Mono", monospace;
     text-transform: uppercase;
+    text-wrap: nowrap;
 
     .prelude {
       font-size: var(--font-size-small);
