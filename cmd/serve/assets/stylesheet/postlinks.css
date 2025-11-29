@@ -21,6 +21,7 @@
 
 .post-link {
   flex-basis: 200px;
+  max-width: 500px;
   flex-grow: 1;
   text-decoration: none;
   background-color: var(--background-alt-colour);
