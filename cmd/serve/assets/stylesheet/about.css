@@ -23,19 +23,13 @@
     }
 
     .drop {
+      font-family: "Chris Hand", sans-serif;
       color: var(--text-highlight-colour);
       font-weight: 800;
-      font-size: var(--font-size-xlarge);
-    }
-
-    li {
-      font-size: var(--font-size-regular);
-    }
-
-    .interests {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-row-gap: var(--small-space);
+      font-size: var(--font-size-giant);
+      margin-right: var(--small-space);
+      vertical-align: baseline;
+      line-height: 0;
     }
   }
 }
@@ -215,85 +209,6 @@
       font-style: italic;
       display: flex;
       justify-content: right;
-    }
-  }
-}
-
-.expandy {
-  position: relative;
-  display: inline-block;
-  margin-right: -4px;
-
-  span {
-    text-decoration: underline;
-    text-decoration-skip-ink: none;
-    text-decoration-color: var(--accent-colour);
-    text-decoration-thickness: 1px;
-    text-decoration-style: wavy;
-    cursor: help;
-  }
-
-  .popup {
-    position: absolute;
-    display: none;
-    top: calc(2em);
-    left: calc(100% + 25px);
-    z-index: 100;
-    transition: display 300s;
-    transition-property: allow-discrete;
-
-    div {
-      transition: opacity 100ms;
-      background-color: var(--accent-colour);
-      padding: var(--medium-space);
-      min-width: 400px;
-      border-radius: 20px;
-
-      ul {
-        margin-top: var(--medium-space);
-      }
-    }
-
-    &::before, &::after {
-      content: '';
-      display: block;
-      position: absolute;
-      border-radius: 100%;
-      background-color: var(--accent-colour);
-    }
-
-    &::before {
-      width: 15px;
-      height: 15px;
-      top: -20px;
-      left: -30px;
-      transition: opacity 100ms 200ms;
-    }
-
-    &::after {
-      width: 20px;
-      height: 20px;
-      top: -10px;
-      left: -15px;
-      transition: opacity 100ms 100ms;
-    }
-  }
-
-  &:has(span:hover), &:has(span:focus) {
-    .popup {
-      display: block;
-
-      div { transition: opacity 100ms 300ms; }
-      &::before { transition: opacity 100ms; }
-      &::after { transition: opacity 100ms 150ms; }
-    }
-  }
-}
-
-@starting-style {
-  .expandy .popup {
-    &::before, &::after, div {
-      opacity: 0;
     }
   }
 }

@@ -45,23 +45,27 @@
         </div>
 
         <div>
-            <div class="intro">
+            <p>
                 <span class="drop">Hello!</span> I'm Chris, a software developer from the UK. That's me over in the picture.
-                My <code>$dayjob</code> generally involves Android app development, but I also
-                have an excessive collection of <a href="/projects">side projects</a>. Outside of
-                <div class="expandy"><span tabindex="0">programming</span><div class="popup"><div>My current languages of choice: <ul>{{range .Interests.Languages}}<li>{{.}}</li>{{end}}</ul></div></div></div>, I enjoy
-                <div class="expandy"><span tabindex="0">video games</span><div class="popup"><div>Recent picks: <ul>{{range .Interests.VideoGames}}<li>{{.}}</li>{{end}}</ul></div></div></div>,
-                <div class="expandy"><span tabindex="0">reading</span><div class="popup"><div>Some favourites: <ul>{{range .Interests.Books}}<li>{{.}}</li>{{end}}</ul></div></div></div>,
-                puzzle hunts, DIY,
-                <div class="expandy"><span tabindex="0">board games</span><div class="popup"><div>Some picks: <ul>{{range .Interests.BoardGames}}<li>{{.}}</li>{{end}}</ul></div></div></div>,
-                <div class="expandy"><span tabindex="0">films</span><div class="popup"><div>Favourites: <ul>{{range .Interests.Films}}<li>{{.}}</li>{{end}}</ul></div></div></div>,
-                escape rooms, and tinkering with electronics.
-            </div>
+            </p>
 
             <p>
-                This website houses <a href="/posts">my blog</a> and <a href="/misc">some other random bits and bobs</a>.
-                There's a full <a href="/index/">site map</a> if you want a quick overview of what's here. Here are
-                my latest blog posts:
+                My <code>$dayjob</code> generally involves Android app development, but I also
+                have an excessive collection of side projects you can see at <a href="/projects">/projects</a>.
+                If you want to know what I do <em>besides</em> programming, there's an info-dump over at my
+                <a href="/interests">/interests</a> page, and a write-up of things I use over at <a href="/uses">/uses</a>.
+                (Disclaimer: both may also talk about programming a lot.) If you want to get hold of me,
+                you probably want <a href="/contact">/contact</a>.
+            </p>
+
+            <p>
+                This website mainly houses <a href="/posts">my blog</a>, but it's also accumulated a lot of other
+                bits and pieces. There's a full <a href="/sitemap/">site map</a> if you want a quick overview of what's
+                here. If you want to know more about the site itself, there's a <a href="/colophon/">colophon</a>.
+            </p>
+
+            <p>
+                If you're just here for the blog posts, the latest ones are below:
             </p>
 
             <section class="recent-posts post-links-parent">
