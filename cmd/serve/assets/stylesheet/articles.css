@@ -2,6 +2,10 @@ article h2 {
   margin-bottom: 0;
 }
 
+article section + section {
+  margin-top: var(--medium-space);
+}
+
 .date {
   margin: var(--small-space) 0 var(--medium-space) 0;
   color: var(--text-alt-colour);
