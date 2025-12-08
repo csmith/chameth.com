@@ -13,6 +13,14 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// Set mirror innerHTML, preserving trailing newlines that browsers would collapse
+function setMirrorHtml(mirror, text, html) {
+    if (text.endsWith('\n')) {
+        html += ' ';
+    }
+    mirror.innerHTML = html;
+}
+
 // Find all markdown syntax elements
 function findMarkdownSyntax(text) {
     const syntaxSpans = [];
@@ -271,9 +279,7 @@ function enhanceTextarea(textarea) {
     // Update mirror immediately with plain text, then with syntax highlighting
     function updateMirrorImmediate() {
         const text = textarea.value;
-        // Show plain text immediately
-        mirror.innerHTML = escapeHtml(text);
-        // Then update with syntax highlighting and linting
+        setMirrorHtml(mirror, text, escapeHtml(text));
         updateMirrorAsync();
     }
 
@@ -290,13 +296,13 @@ function enhanceTextarea(textarea) {
             // Check if text hasn't changed while linting
             if (text === textarea.value) {
                 currentLints = lints;
-                mirror.innerHTML = buildHighlightedText(text, lints);
+                setMirrorHtml(mirror, text, buildHighlightedText(text, lints));
                 checkCursorPosition();
             }
         } catch (error) {
             console.error('Harper linting error:', error);
             currentLints = [];
-            mirror.innerHTML = escapeHtml(text);
+            setMirrorHtml(mirror, text, escapeHtml(text));
         } finally {
             lintInProgress = false;
         }
