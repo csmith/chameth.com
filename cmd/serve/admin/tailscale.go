@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/csmith/chameth.com/cmd/serve/admin/handlers"
+	"github.com/csmith/middleware"
 	"tailscale.com/tsnet"
 )
 
@@ -80,7 +82,19 @@ func Start() error {
 	httpsMux.HandleFunc("POST /media-relations/add", handlers.AddMediaRelationsHandler())
 
 	httpsServer := &http.Server{
-		Handler: httpsMux,
+		Handler: middleware.Chain(
+			middleware.WithMiddleware(
+				middleware.CacheControl(
+					middleware.WithCacheTimes(map[string]time.Duration{
+						"application/*": time.Hour * 24 * 365,
+						"font/*":        time.Hour * 24 * 365,
+						"image/*":       time.Hour * 24 * 365,
+						"text/css":      time.Hour * 24 * 365,
+						"text/javascript": time.Hour * 24 * 365,
+					}),
+				),
+			),
+		)(httpsMux),
 	}
 
 	go httpServer.Serve(httpListener)
