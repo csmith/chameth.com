@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/smtp"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -30,6 +31,21 @@ type contactRequest struct {
 	SenderName  string `json:"name"`
 	SenderEmail string `json:"email"`
 	Message     string `json:"message"`
+}
+
+var (
+	rateLimitMu  sync.Mutex
+	rateLimitMap = make(map[string]time.Time)
+	rateLimitTTL = 1 * time.Minute
+)
+
+func init() {
+	ticker := time.NewTicker(5 * time.Minute)
+	go func() {
+		for range ticker.C {
+			cleanupRateLimitMap()
+		}
+	}()
 }
 
 func ContactForm(w http.ResponseWriter, r *http.Request) {
@@ -53,13 +69,33 @@ func ContactForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	spam, err := checkSpamhaus(r.RemoteAddr)
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
-		slog.Error("Error checking Spamhaus", "error", err, "remoteAddr", r.RemoteAddr)
+		host = r.RemoteAddr
+	}
+
+	if !checkRateLimit(host) {
+		slog.Info("Rate limit exceeded for contact form", "remoteAddr", host, "request", cr)
+		time.Sleep(5 * time.Second)
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+
+	if isRandomCharacterSpam(cr.SenderName, cr.Message) {
+		slog.Info("Blocking random character spam", "remoteAddr", host, "request", cr)
+		time.Sleep(5 * time.Second)
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+
+	spam, err := checkSpamhaus(host)
+	if err != nil {
+		slog.Error("Error checking Spamhaus", "error", err, "remoteAddr", host)
 	}
 
 	if spam.ExploitsBlockList {
-		slog.Info("Blocking contact form from XBL listed address", "remoteAddr", r.RemoteAddr, "request", cr)
+		slog.Info("Blocking contact form from XBL listed address", "remoteAddr", host, "request", cr)
+		time.Sleep(5 * time.Second)
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -152,20 +188,14 @@ func (r spamhausResult) Summary() string {
 	return "listed: " + strings.Join(lists, ", ")
 }
 
-func checkSpamhaus(ipAddr string) (spamhausResult, error) {
-	host, _, err := net.SplitHostPort(ipAddr)
-	if err != nil {
-		// If SplitHostPort fails, assume it's just an IP without port
-		host = ipAddr
-	}
-
+func checkSpamhaus(host string) (spamhausResult, error) {
 	result := spamhausResult{
 		CheckURL: fmt.Sprintf("https://check.spamhaus.org/results/?query=%s", host),
 	}
 
 	ip := net.ParseIP(host)
 	if ip == nil {
-		return result, fmt.Errorf("invalid IP address: %s", ipAddr)
+		return result, fmt.Errorf("invalid IP address: %s", host)
 	}
 
 	var reversed string
@@ -176,7 +206,7 @@ func checkSpamhaus(ipAddr string) (spamhausResult, error) {
 	}
 
 	if reversed == "" {
-		return result, fmt.Errorf("failed to reverse IP: %s", ipAddr)
+		return result, fmt.Errorf("failed to reverse IP: %s", host)
 	}
 
 	dnsQuery := reversed + ".zen.spamhaus.org"
@@ -244,4 +274,33 @@ func reverseIPv6(ip net.IP) string {
 	}
 
 	return strings.Join(parts, ".")
+}
+
+func cleanupRateLimitMap() {
+	rateLimitMu.Lock()
+	defer rateLimitMu.Unlock()
+
+	now := time.Now()
+	for ip, lastSeen := range rateLimitMap {
+		if now.Sub(lastSeen) > 5*time.Minute {
+			delete(rateLimitMap, ip)
+		}
+	}
+}
+
+func checkRateLimit(ip string) bool {
+	rateLimitMu.Lock()
+	defer rateLimitMu.Unlock()
+
+	lastSubmission, exists := rateLimitMap[ip]
+	if exists && time.Since(lastSubmission) < rateLimitTTL {
+		return false
+	}
+
+	rateLimitMap[ip] = time.Now()
+	return true
+}
+
+func isRandomCharacterSpam(name, message string) bool {
+	return !strings.Contains(name, " ") && !strings.Contains(message, " ")
 }
