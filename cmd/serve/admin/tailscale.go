@@ -73,6 +73,10 @@ func Start() error {
 	httpsMux.HandleFunc("POST /pastes", handlers.CreatePasteHandler())
 	httpsMux.HandleFunc("GET /pastes/edit/{id}", handlers.EditPasteHandler())
 	httpsMux.HandleFunc("POST /pastes/edit/{id}", handlers.UpdatePasteHandler())
+	httpsMux.HandleFunc("GET /projects", handlers.ListProjectsHandler())
+	httpsMux.HandleFunc("POST /projects", handlers.CreateProjectHandler())
+	httpsMux.HandleFunc("GET /projects/edit/{id}", handlers.EditProjectHandler())
+	httpsMux.HandleFunc("POST /projects/edit/{id}", handlers.UpdateProjectHandler())
 	httpsMux.HandleFunc("GET /media", handlers.MediaHandler())
 	httpsMux.HandleFunc("POST /media/upload", handlers.UploadMediaHandler())
 	httpsMux.HandleFunc("GET /media/view/{id}", handlers.ViewMediaHandler())
@@ -86,10 +90,10 @@ func Start() error {
 			middleware.WithMiddleware(
 				middleware.CacheControl(
 					middleware.WithCacheTimes(map[string]time.Duration{
-						"application/*": time.Hour * 24 * 365,
-						"font/*":        time.Hour * 24 * 365,
-						"image/*":       time.Hour * 24 * 365,
-						"text/css":      time.Hour * 24 * 365,
+						"application/*":   time.Hour * 24 * 365,
+						"font/*":          time.Hour * 24 * 365,
+						"image/*":         time.Hour * 24 * 365,
+						"text/css":        time.Hour * 24 * 365,
 						"text/javascript": time.Hour * 24 * 365,
 					}),
 				),
