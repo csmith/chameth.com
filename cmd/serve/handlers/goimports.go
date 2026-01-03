@@ -3,6 +3,7 @@ package handlers
 import (
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
@@ -19,7 +20,7 @@ func GoImport(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Has("go-get") {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		data := templates.GoImportData{
-			ModulePath: "chameth.com" + goimport.Path,
+			ModulePath: "chameth.com" + strings.TrimSuffix(goimport.Path, "/"),
 			VCS:        goimport.VCS,
 			RepoURL:    goimport.RepoURL,
 		}
