@@ -1,4 +1,4 @@
-{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.EditProjectData */}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.EditProjectData */}}
 {{define "content"}}
     <h2>Edit project: {{.Name}}</h2>
     <form action="/projects/edit/{{.ID}}" method="post">

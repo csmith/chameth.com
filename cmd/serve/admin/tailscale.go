@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/csmith/chameth.com/cmd/serve/admin/handlers"
+	"chameth.com/chameth.com/cmd/serve/admin/handlers"
 	"github.com/csmith/middleware"
 	"tailscale.com/tsnet"
 )

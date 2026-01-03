@@ -1,4 +1,4 @@
-{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.MediaData */}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.MediaData */}}
 {{define "content"}}
     <h2>Upload Media</h2>
     <form id="upload-form" action="/media/upload" method="post" enctype="multipart/form-data">

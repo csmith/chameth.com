@@ -8,8 +8,8 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/csmith/chameth.com/cmd/serve/assets"
-	"github.com/csmith/chameth.com/cmd/serve/db"
+	"chameth.com/chameth.com/cmd/serve/assets"
+	"chameth.com/chameth.com/cmd/serve/db"
 )
 
 func StaticAsset(w http.ResponseWriter, r *http.Request) {

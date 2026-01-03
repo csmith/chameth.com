@@ -1,4 +1,4 @@
-{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.PageData */}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.PageData */}}
 <!doctype html>
 <html lang="en">
 <head>

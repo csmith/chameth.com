@@ -1,4 +1,4 @@
-{{/* gotype: github.com/csmith/chameth.com/cmd/serve/templates.PostsData*/}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/templates.PostsData*/}}
 {{define "content"}}
     <h2>Posts</h2>
     <p>

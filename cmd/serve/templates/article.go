@@ -1,6 +1,6 @@
 package templates
 
-import "github.com/csmith/chameth.com/cmd/serve/templates/includes"
+import "chameth.com/chameth.com/cmd/serve/templates/includes"
 
 type ArticleData struct {
 	PageData

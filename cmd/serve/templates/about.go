@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/csmith/chameth.com/cmd/serve/templates/includes"
+	"chameth.com/chameth.com/cmd/serve/templates/includes"
 )
 
 var aboutTemplate = template.Must(

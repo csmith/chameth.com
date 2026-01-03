@@ -1,4 +1,4 @@
-{{/* gotype: github.com/csmith/chameth.com/cmd/serve/templates/shortcodes.WarningData*/}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/templates/shortcodes.WarningData*/}}
 <aside class="warning">
   <div>
     <h5>Warning</h5>

@@ -1,4 +1,4 @@
-{{/* gotype: github.com/csmith/chameth.com/cmd/serve/templates/shortcodes.FigureData*/}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/templates/shortcodes.FigureData*/}}
 <figure class="{{ .Class }}">
   <picture>
       {{range .Sources}}<source srcset="{{ .Src }}" type="{{ .Type }}">

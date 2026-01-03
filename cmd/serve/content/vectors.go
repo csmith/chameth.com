@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/csmith/chameth.com/cmd/serve/db"
-	"github.com/csmith/chameth.com/cmd/serve/templates/includes"
+	"chameth.com/chameth.com/cmd/serve/db"
+	"chameth.com/chameth.com/cmd/serve/templates/includes"
 	"github.com/pgvector/pgvector-go"
 )
 

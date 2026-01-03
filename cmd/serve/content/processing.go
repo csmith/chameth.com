@@ -8,9 +8,9 @@ import (
 	"regexp"
 	"strings"
 
+	"chameth.com/chameth.com/cmd/serve/db"
+	"chameth.com/chameth.com/cmd/serve/templates/shortcodes"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
-	"github.com/csmith/chameth.com/cmd/serve/db"
-	"github.com/csmith/chameth.com/cmd/serve/templates/shortcodes"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting/v2"
 	"github.com/yuin/goldmark/extension"

@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/csmith/chameth.com/cmd/serve/db"
-	"github.com/csmith/chameth.com/cmd/serve/templates"
-	"github.com/csmith/chameth.com/cmd/serve/templates/includes"
+	"chameth.com/chameth.com/cmd/serve/db"
+	"chameth.com/chameth.com/cmd/serve/templates"
+	"chameth.com/chameth.com/cmd/serve/templates/includes"
 )
 
 var recentPostsCache = NewCache(time.Minute*10, func() []templates.RecentPost {

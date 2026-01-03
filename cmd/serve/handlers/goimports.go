@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/csmith/chameth.com/cmd/serve/db"
-	"github.com/csmith/chameth.com/cmd/serve/templates"
+	"chameth.com/chameth.com/cmd/serve/db"
+	"chameth.com/chameth.com/cmd/serve/templates"
 )
 
 func GoImport(w http.ResponseWriter, r *http.Request) {

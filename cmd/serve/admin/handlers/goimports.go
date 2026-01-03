@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/csmith/chameth.com/cmd/serve/admin/templates"
-	"github.com/csmith/chameth.com/cmd/serve/db"
+	"chameth.com/chameth.com/cmd/serve/admin/templates"
+	"chameth.com/chameth.com/cmd/serve/db"
 )
 
 func ListGoImportsHandler() func(http.ResponseWriter, *http.Request) {

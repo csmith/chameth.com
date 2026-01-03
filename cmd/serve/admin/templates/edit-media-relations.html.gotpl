@@ -1,4 +1,4 @@
-{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.EditMediaRelationsData */}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.EditMediaRelationsData */}}
 {{define "content"}}
     <h2>Edit Media Relations</h2>
     <p>Entity Type: <strong>{{.EntityType}}</strong> | Entity ID: <strong>{{.EntityID}}</strong></p>

@@ -1,4 +1,4 @@
-{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.EditPostData */}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.EditPostData */}}
 {{define "content"}}
     <h2>Edit post: {{.Title}}</h2>
     <a href="https://chameth.com{{.Path}}">View on chameth.com</a>

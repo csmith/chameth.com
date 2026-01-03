@@ -10,8 +10,8 @@ import (
 	"slices"
 	"strings"
 
+	"chameth.com/chameth.com/cmd/serve/db"
 	"github.com/anthonynsimon/bild/transform"
-	"github.com/csmith/chameth.com/cmd/serve/db"
 	"github.com/kljensen/snowball/english"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"

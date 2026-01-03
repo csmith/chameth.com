@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/csmith/chameth.com/cmd/serve/db"
+	"chameth.com/chameth.com/cmd/serve/db"
 )
 
 func Content(w http.ResponseWriter, r *http.Request) {

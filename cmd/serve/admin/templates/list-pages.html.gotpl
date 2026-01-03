@@ -1,4 +1,4 @@
-{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.ListPagesData */}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.ListPagesData */}}
 {{define "content"}}
     <form method="POST" action="/pages">
         <button type="submit">Create New Page</button>

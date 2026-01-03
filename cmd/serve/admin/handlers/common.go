@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/csmith/chameth.com/cmd/serve/admin/assets"
-	"github.com/csmith/chameth.com/cmd/serve/admin/templates"
+	"chameth.com/chameth.com/cmd/serve/admin/assets"
+	"chameth.com/chameth.com/cmd/serve/admin/templates"
 )
 
 func RedirectHandler(hostname func() string) func(http.ResponseWriter, *http.Request) {

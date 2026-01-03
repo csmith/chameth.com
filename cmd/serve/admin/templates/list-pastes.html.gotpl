@@ -1,4 +1,4 @@
-{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.ListPastesData */}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.ListPastesData */}}
 {{define "content"}}
     <form method="POST" action="/pastes">
         <button type="submit">Create New Paste</button>

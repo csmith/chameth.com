@@ -1,4 +1,4 @@
-module github.com/csmith/chameth.com
+module chameth.com/chameth.com
 
 go 1.25.3
 

@@ -4,10 +4,10 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/csmith/chameth.com/cmd/serve/assets"
-	"github.com/csmith/chameth.com/cmd/serve/content"
-	"github.com/csmith/chameth.com/cmd/serve/templates"
-	"github.com/csmith/chameth.com/cmd/serve/templates/includes"
+	"chameth.com/chameth.com/cmd/serve/assets"
+	"chameth.com/chameth.com/cmd/serve/content"
+	"chameth.com/chameth.com/cmd/serve/templates"
+	"chameth.com/chameth.com/cmd/serve/templates/includes"
 )
 
 func About(w http.ResponseWriter, r *http.Request) {

@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"chameth.com/chameth.com/cmd/serve/admin/templates"
+	"chameth.com/chameth.com/cmd/serve/admin/wordclouds"
+	"chameth.com/chameth.com/cmd/serve/content"
+	"chameth.com/chameth.com/cmd/serve/db"
 	"github.com/csmith/aca"
-	"github.com/csmith/chameth.com/cmd/serve/admin/templates"
-	"github.com/csmith/chameth.com/cmd/serve/admin/wordclouds"
-	"github.com/csmith/chameth.com/cmd/serve/content"
-	"github.com/csmith/chameth.com/cmd/serve/db"
 )
 
 func ListPostsHandler() func(http.ResponseWriter, *http.Request) {

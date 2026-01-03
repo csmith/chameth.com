@@ -1,4 +1,4 @@
-{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.ListProjectsData */}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.ListProjectsData */}}
 {{define "content"}}
     <form method="POST" action="/projects">
         <button type="submit">Create New Project</button>

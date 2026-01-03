@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/csmith/chameth.com/cmd/serve/assets"
-	"github.com/csmith/chameth.com/cmd/serve/content"
-	"github.com/csmith/chameth.com/cmd/serve/db"
-	"github.com/csmith/chameth.com/cmd/serve/templates"
+	"chameth.com/chameth.com/cmd/serve/assets"
+	"chameth.com/chameth.com/cmd/serve/content"
+	"chameth.com/chameth.com/cmd/serve/db"
+	"chameth.com/chameth.com/cmd/serve/templates"
 )
 
 func Paste(w http.ResponseWriter, r *http.Request) {
