@@ -1,0 +1,57 @@
+{{/* gotype: github.com/csmith/chameth.com/cmd/serve/admin/templates.ListGoImportsData */}}
+{{define "content"}}
+    <form method="POST" action="/goimports">
+        <label>Project: <input type="text" name="project" placeholder="e.g., myproject" required /></label>
+        <button type="submit">Create New Go Import</button>
+    </form>
+
+    {{if .Drafts}}
+    <h2>Drafts</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Path</th>
+                <th>VCS</th>
+                <th>Repo URL</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Drafts}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Path}}</td>
+                <td>{{.VCS}}</td>
+                <td>{{.RepoURL}}</td>
+                <td><a href="/goimports/edit/{{.ID}}">Edit</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{end}}
+
+    <h2>Go Imports</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Path</th>
+                <th>VCS</th>
+                <th>Repo URL</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .GoImports}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Path}}</td>
+                <td>{{.VCS}}</td>
+                <td>{{.RepoURL}}</td>
+                <td><a href="/goimports/edit/{{.ID}}">Edit</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+{{end}}

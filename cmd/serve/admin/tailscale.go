@@ -84,6 +84,10 @@ func Start() error {
 	httpsMux.HandleFunc("POST /media-relations/update", handlers.UpdateMediaRelationHandler())
 	httpsMux.HandleFunc("POST /media-relations/remove", handlers.RemoveMediaRelationHandler())
 	httpsMux.HandleFunc("POST /media-relations/add", handlers.AddMediaRelationsHandler())
+	httpsMux.HandleFunc("GET /goimports", handlers.ListGoImportsHandler())
+	httpsMux.HandleFunc("POST /goimports", handlers.CreateGoImportHandler())
+	httpsMux.HandleFunc("GET /goimports/edit/{id}", handlers.EditGoImportHandler())
+	httpsMux.HandleFunc("POST /goimports/edit/{id}", handlers.UpdateGoImportHandler())
 
 	httpsServer := &http.Server{
 		Handler: middleware.Chain(

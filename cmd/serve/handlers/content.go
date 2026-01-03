@@ -28,6 +28,8 @@ func Content(w http.ResponseWriter, r *http.Request) {
 		Paste(w, r)
 	case "media":
 		Media(w, r)
+	case "goimport":
+		GoImport(w, r)
 	default:
 		// In the future this will be a 404, but for now fall back to 11ty rendered content
 		StaticAsset(w, r)

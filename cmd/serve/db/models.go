@@ -129,6 +129,14 @@ type Paste struct {
 	Content string `db:"content"`
 }
 
+type GoImport struct {
+	ID        int    `db:"id"`
+	Path      string `db:"path"`
+	VCS       string `db:"vcs"`
+	RepoURL   string `db:"repo_url"`
+	Published bool   `db:"published"`
+}
+
 // MediaImageVariant represents a media image with its URL and content type
 type MediaImageVariant struct {
 	Path        string `db:"path"`
