@@ -7,7 +7,7 @@ func GetGoImportByPrefix(path string) (*GoImport, error) {
 	err := db.Get(&goimport, `
 		SELECT id, path, vcs, repo_url, published 
 		FROM goimports 
-		WHERE $1 = path OR $1 LIKE path || '%' 
+		WHERE $1 = path OR $1 || '/' = path OR $1 LIKE path || '%'
 		ORDER BY LENGTH(path) DESC 
 		LIMIT 1
 	`, path)
