@@ -1,6 +1,6 @@
 module chameth.com/chameth.com
 
-go 1.25.3
+go 1.25.5
 
 require (
 	github.com/alecthomas/chroma/v2 v2.20.0
@@ -17,7 +17,7 @@ require (
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	golang.org/x/image v0.34.0
 	golang.org/x/net v0.47.0
-	tailscale.com v1.92.0
+	tailscale.com v1.92.1
 )
 
 require (
