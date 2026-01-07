@@ -21,15 +21,6 @@ var aboutTemplate = template.Must(
 type AboutData struct {
 	PageData
 	HighlightedPosts []includes.PostLinkData
-	Interests        AboutInterests
-}
-
-type AboutInterests struct {
-	Languages  []string
-	VideoGames []string
-	BoardGames []string
-	Books      []string
-	Films      []string
 }
 
 func RenderAbout(w http.ResponseWriter, aboutData AboutData) error {

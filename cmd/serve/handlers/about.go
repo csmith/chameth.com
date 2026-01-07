@@ -22,37 +22,6 @@ func About(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err := templates.RenderAbout(w, templates.AboutData{
 		HighlightedPosts: links,
-		Interests: templates.AboutInterests{
-			Books: []string{
-				"Snow Crash",
-				"Dune",
-				"A Memory Called Empire",
-				"Dungeon Crawler Carl",
-			},
-			Languages: []string{
-				"Go",
-				"Kotlin",
-				"Android",
-			},
-			BoardGames: []string{
-				"Cartographers",
-				"Terraforming Mars",
-				"Fluxx",
-				"Lovecraft Letter",
-			},
-			Films: []string{
-				"Easy A",
-				"Hackers",
-				"The Matrix",
-				"Everything Everywhere All at Once",
-			},
-			VideoGames: []string{
-				"Warframe",
-				"Final Fantasy XIV",
-				"Factorio",
-				"Rocket League",
-			},
-		},
 		PageData: templates.PageData{
 			Title:        "Chameth.com: the personal website of Chris Smith",
 			Stylesheet:   assets.GetStylesheetPath(),
