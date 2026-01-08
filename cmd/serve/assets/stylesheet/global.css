@@ -1,5 +1,5 @@
 body {
-  background-color: var(--background-colour);
+  background: url(/background.png) var(--background-colour);
   color: var(--text-colour);
   display: flex;
   flex-direction: column;
