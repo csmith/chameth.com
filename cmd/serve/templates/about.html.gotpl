@@ -46,26 +46,27 @@
 
         <div>
             <p>
-                <span class="drop">Hello!</span> I'm Chris, a software developer from the UK. That's me over in the picture.
+                <span class="drop">Hello!</span> I'm Chris, a software developer from the UK.
+                Welcome to my personal website.
             </p>
 
             <p>
-                My <code>$dayjob</code> generally involves Android app development, but I also
-                have an excessive collection of side projects you can see at <a href="/projects">/projects</a>.
-                If you want to know what I do <em>besides</em> programming, there's an info-dump over at my
-                <a href="/interests">/interests</a> page, and a write-up of things I use over at <a href="/uses">/uses</a>.
-                (Disclaimer: both may also talk about programming a lot.) If you want to get hold of me,
-                you probably want <a href="/contact">/contact</a>.
+                The site is mostly organised around a bunch of slash pages:
             </p>
 
-            <p>
-                This website mainly houses <a href="/posts">my blog</a>, but it's also accumulated a lot of other
-                bits and pieces. There's a full <a href="/sitemap/">site map</a> if you want a quick overview of what's
-                here. If you want to know more about the site itself, there's a <a href="/colophon/">colophon</a>.
-            </p>
+            <ul>
+                <li><a href="/posts">/posts</a> is where all my blog posts live</li>
+                <li><a href="/projects">/projects</a> lists my various side projects</li>
+                <li><a href="/interests">/interests</a> is a big ol' list of things I'm into</li>
+                <li><a href="/uses">/uses</a> has an overview of the software, hardware, services, and so on, that I use</li>
+                <li><a href="/contact">/contact</a> provides a way to drop me an e-mail</li>
+                <li><a href="/colophon">/colophon</a> details a bit about how the site is made</li>
+                <li><a href="/snippets">/snippets</a> has little bits of code or other info I find useful</li>
+                <li><a href="/sitemap">/sitemap</a> is a more exhaustive list of contents</li>
+            </ul>
 
             <p>
-                If you're just here for the blog posts, the latest ones are below:
+                If you're just here for the blog posts, the latest ones are:
             </p>
 
             <section class="recent-posts post-links-parent">
