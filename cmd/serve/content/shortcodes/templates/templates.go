@@ -1,4 +1,4 @@
-package shortcodes
+package templates
 
 import (
 	"embed"

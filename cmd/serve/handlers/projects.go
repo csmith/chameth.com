@@ -7,6 +7,7 @@ import (
 
 	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
+	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
 )
@@ -31,7 +32,7 @@ func ProjectsList(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for _, project := range projects {
-			renderedDesc, err := content.RenderMarkdown(project.Description)
+			renderedDesc, err := markdown.Render(project.Description)
 			if err != nil {
 				slog.Error("Failed to render markdown for project description", "project", project.Name, "error", err)
 				ServerError(w, r)

@@ -8,6 +8,7 @@ import (
 
 	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
+	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
 )
@@ -25,7 +26,7 @@ func Poem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedComments, err := content.RenderMarkdown(poem.Notes)
+	renderedComments, err := markdown.Render(poem.Notes)
 	if err != nil {
 		slog.Error("Failed to render markdown for poem comments", "poem", poem.Title, "error", err)
 		ServerError(w, r)

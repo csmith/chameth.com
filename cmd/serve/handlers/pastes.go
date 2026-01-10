@@ -8,6 +8,7 @@ import (
 
 	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
+	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
 )
@@ -34,19 +35,19 @@ func Paste(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Construct markdown fenced code block
-	var markdown strings.Builder
-	markdown.WriteString("```")
+	var md strings.Builder
+	md.WriteString("```")
 	if paste.Language != "" {
-		markdown.WriteString(paste.Language)
+		md.WriteString(paste.Language)
 	}
-	markdown.WriteString("\n")
-	markdown.WriteString(paste.Content)
+	md.WriteString("\n")
+	md.WriteString(paste.Content)
 	if !strings.HasSuffix(paste.Content, "\n") {
-		markdown.WriteString("\n")
+		md.WriteString("\n")
 	}
-	markdown.WriteString("```")
+	md.WriteString("```")
 
-	renderedContent, err := content.RenderMarkdown(markdown.String())
+	renderedContent, err := markdown.Render(md.String())
 	if err != nil {
 		slog.Error("Failed to render markdown for paste", "paste", paste.Title, "error", err)
 		ServerError(w, r)

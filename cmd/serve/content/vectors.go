@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"sync"
 
+	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates/includes"
 	"github.com/pgvector/pgvector-go"
@@ -45,7 +46,7 @@ func GenerateAndStoreEmbedding(postPath string) error {
 		return fmt.Errorf("failed to render post content: %w", err)
 	}
 
-	textContent := stripHTMLTags(string(renderedHTML))
+	textContent := markdown.StripHTMLTags(string(renderedHTML))
 
 	embeddingText := fmt.Sprintf("%s\n\n%s", post.Title, textContent)
 

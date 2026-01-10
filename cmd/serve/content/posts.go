@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"time"
 
+	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
 	"chameth.com/chameth.com/cmd/serve/templates/includes"
@@ -41,7 +42,7 @@ var postLinksCache = NewKeyedCache(time.Hour*24, func(path string) *includes.Pos
 		return nil
 	}
 
-	summary := extractFirstParagraph(post.Content)
+	summary := markdown.FirstParagraph(post.Content)
 
 	imageVariants, err := db.GetOpenGraphImageVariantsForEntity("post", post.ID)
 	var images []includes.PostLinkImage
