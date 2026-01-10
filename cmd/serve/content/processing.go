@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log/slog"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"chameth.com/chameth.com/cmd/serve/db"
@@ -107,12 +108,13 @@ func extractFirstParagraph(content string) string {
 }
 
 var (
-	sideNoteRegexp = regexp.MustCompile(`(?s)\{%\s*sidenote "(.*?)"\s*%}(.*?)\{%\s*endsidenote\s*%}`)
-	updateRegexp   = regexp.MustCompile(`(?s)\{%\s*update "(.*?)"\s*%}(.*?)\{%\s*endupdate\s*%}`)
-	warningRegexp  = regexp.MustCompile(`(?s)\{%\s*warning\s*%}(.*?)\{%\s*endwarning\s*%}`)
-	audioRegexp    = regexp.MustCompile(`\{%\s*audio "(.*?)"\s*%}`)
-	videoRegexp    = regexp.MustCompile(`\{%\s*video "(.*?)"\s*%}`)
-	figureRegexp   = regexp.MustCompile(`\{%\s*figure "(.*?)" "(.*?)"\s*%}`)
+	sideNoteRegexp   = regexp.MustCompile(`(?s)\{%\s*sidenote "(.*?)"\s*%}(.*?)\{%\s*endsidenote\s*%}`)
+	updateRegexp     = regexp.MustCompile(`(?s)\{%\s*update "(.*?)"\s*%}(.*?)\{%\s*endupdate\s*%}`)
+	warningRegexp    = regexp.MustCompile(`(?s)\{%\s*warning\s*%}(.*?)\{%\s*endwarning\s*%}`)
+	audioRegexp      = regexp.MustCompile(`\{%\s*audio "(.*?)"\s*%}`)
+	videoRegexp      = regexp.MustCompile(`\{%\s*video "(.*?)"\s*%}`)
+	figureRegexp     = regexp.MustCompile(`\{%\s*figure "(.*?)" "(.*?)"\s*%}`)
+	filmReviewRegexp = regexp.MustCompile(`\{%\s*filmreview ([0-9]+)\s*%}`)
 )
 
 func RenderShortCodes(input string, media []db.MediaRelationWithDetails) (string, error) {
@@ -145,6 +147,11 @@ func RenderShortCodes(input string, media []db.MediaRelationWithDetails) (string
 	}
 
 	res, err = renderFigure(res, media)
+	if err != nil {
+		return "", err
+	}
+
+	res, err = renderFilmReview(res)
 	if err != nil {
 		return "", err
 	}
@@ -357,6 +364,50 @@ func renderFigure(input string, media []db.MediaRelationWithDetails) (string, er
 		}
 
 		res = strings.Replace(res, figure[0], replacement, 1)
+	}
+	return res, nil
+}
+
+func renderFilmReview(input string) (string, error) {
+	res := input
+	reviews := filmReviewRegexp.FindAllStringSubmatch(input, -1)
+	for _, review := range reviews {
+		reviewID := review[1]
+
+		id, err := strconv.Atoi(reviewID)
+		if err != nil {
+			return "", fmt.Errorf("invalid film review ID: %s", reviewID)
+		}
+
+		reviewData, err := db.GetFilmReviewWithFilmAndPoster(id)
+		if err != nil {
+			return "", fmt.Errorf("failed to get film review: %w", err)
+		}
+
+		markdown, err := RenderMarkdown(reviewData.ReviewText)
+		if err != nil {
+			return "", fmt.Errorf("failed to render film review markdown: %w", err)
+		}
+
+		posterPath := ""
+		if reviewData.Poster != nil {
+			posterPath = reviewData.Poster.Path
+		}
+
+		replacement, err := shortcodes.RenderFilmReview(shortcodes.FilmReviewData{
+			Name:       reviewData.Title,
+			PosterPath: posterPath,
+			Rating:     reviewData.Rating,
+			Date:       reviewData.WatchedDate,
+			Rewatch:    reviewData.IsRewatch,
+			Spoiler:    reviewData.HasSpoilers,
+			Review:     markdown,
+		})
+		if err != nil {
+			return "", fmt.Errorf("failed to render film review template: %w", err)
+		}
+
+		res = strings.Replace(res, review[0], replacement, 1)
 	}
 	return res, nil
 }

@@ -56,3 +56,46 @@ func UpdateFilmReview(id int, rating int, watchedDate string, isRewatch, hasSpoi
 	}
 	return nil
 }
+
+func GetFilmReviewWithFilmAndPoster(reviewID int) (*FilmReviewWithFilmAndPoster, error) {
+	query := `
+		SELECT
+			fr.id, fr.film_id, fr.watched_date, fr.rating, fr.is_rewatch, fr.has_spoilers, fr.review_text, fr.published,
+			f.id as film_id2, f.tmdb_id, f.title, f.year, f.overview, f.runtime, f.published as film_published
+		FROM film_reviews fr
+		JOIN films f ON fr.film_id = f.id
+		WHERE fr.id = $1
+	`
+
+	var review FilmReview
+	var film Film
+
+	err := db.QueryRow(query, reviewID).Scan(
+		&review.ID, &review.FilmID, &review.WatchedDate, &review.Rating, &review.IsRewatch, &review.HasSpoilers, &review.ReviewText, &review.Published,
+		&film.ID, &film.TMDBID, &film.Title, &film.Year, &film.Overview, &film.Runtime, &film.Published,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	result := FilmReviewWithFilmAndPoster{
+		FilmReviewWithFilm: FilmReviewWithFilm{
+			FilmReview: review,
+			Film:       film,
+		},
+	}
+
+	relations, err := GetMediaRelationsForEntity("film", film.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, r := range relations {
+		if r.Role != nil && *r.Role == "poster" {
+			result.Poster = &r
+			break
+		}
+	}
+
+	return &result, nil
+}

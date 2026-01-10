@@ -2,6 +2,7 @@
   --border-radius: 10px;
 
   --small-space: 0.5rem;
+  --smedium-space: 1rem;
   --medium-space: 2.5rem;
   --large-space: 5rem;
 
@@ -10,12 +11,14 @@
 
   @media (max-width: 1200px) {
     --small-space: 0.5rem;
+    --smedium-space: 1rem;
     --medium-space: 2rem;
     --large-space: 4rem;
   }
 
   @media (max-width: 800px) {
     --small-space: 0.4rem;
+    --smedium-space: 0.8rem;
     --medium-space: 1.5rem;
     --large-space: 2.5rem;
   }

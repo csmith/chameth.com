@@ -172,3 +172,13 @@ type FilmWithReview struct {
 	Film
 	Review *FilmReview
 }
+
+type FilmReviewWithFilm struct {
+	FilmReview
+	Film
+}
+
+type FilmReviewWithFilmAndPoster struct {
+	FilmReviewWithFilm
+	Poster *MediaRelationWithDetails
+}
