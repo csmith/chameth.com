@@ -142,3 +142,33 @@ type MediaImageVariant struct {
 	Path        string `db:"path"`
 	ContentType string `db:"content_type"`
 }
+
+type FilmMetadata struct {
+	ID        int    `db:"id"`
+	TMDBID    *int   `db:"tmdb_id"`
+	Title     string `db:"title"`
+	Year      *int   `db:"year"`
+	Published bool   `db:"published"`
+}
+
+type Film struct {
+	FilmMetadata
+	Overview string `db:"overview"`
+	Runtime  *int   `db:"runtime"`
+}
+
+type FilmReview struct {
+	ID          int       `db:"id"`
+	FilmID      int       `db:"film_id"`
+	WatchedDate time.Time `db:"watched_date"`
+	Rating      int       `db:"rating"`
+	IsRewatch   bool      `db:"is_rewatch"`
+	HasSpoilers bool      `db:"has_spoilers"`
+	ReviewText  string    `db:"review_text"`
+	Published   bool      `db:"published"`
+}
+
+type FilmWithReview struct {
+	Film
+	Review *FilmReview
+}

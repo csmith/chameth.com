@@ -88,6 +88,15 @@ func Start() error {
 	httpsMux.HandleFunc("POST /goimports", handlers.CreateGoImportHandler())
 	httpsMux.HandleFunc("GET /goimports/edit/{id}", handlers.EditGoImportHandler())
 	httpsMux.HandleFunc("POST /goimports/edit/{id}", handlers.UpdateGoImportHandler())
+	httpsMux.HandleFunc("GET /films", handlers.ListFilmsHandler())
+	httpsMux.HandleFunc("GET /films/search", handlers.SearchFilmsHandler())
+	httpsMux.HandleFunc("POST /films", handlers.CreateFilmHandler())
+	httpsMux.HandleFunc("POST /films/import", handlers.ImportLetterboxdHandler())
+	httpsMux.HandleFunc("GET /films/edit/{id}", handlers.EditFilmHandler())
+	httpsMux.HandleFunc("POST /films/edit/{id}", handlers.UpdateFilmHandler())
+	httpsMux.HandleFunc("GET /film-reviews/edit/{id}", handlers.EditFilmReviewHandler())
+	httpsMux.HandleFunc("POST /film-reviews/create/{id}", handlers.CreateFilmReviewHandler())
+	httpsMux.HandleFunc("POST /film-reviews/edit/{id}", handlers.UpdateFilmReviewHandler())
 
 	httpsServer := &http.Server{
 		Handler: middleware.Chain(
@@ -101,6 +110,7 @@ func Start() error {
 						"text/javascript": time.Hour * 24 * 365,
 					}),
 				),
+				middleware.CrossOriginProtection(),
 			),
 		)(httpsMux),
 	}

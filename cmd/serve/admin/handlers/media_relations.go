@@ -56,6 +56,13 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 				return
 			}
 			entityPath = page.Path
+		case "film":
+			film, err := db.GetFilmByID(entityID)
+			if err != nil {
+				http.Error(w, "Entity not found", http.StatusNotFound)
+				return
+			}
+			entityPath = fmt.Sprintf("/film-%d/", film.ID)
 		default:
 			http.Error(w, "Unsupported entity type", http.StatusBadRequest)
 			return
