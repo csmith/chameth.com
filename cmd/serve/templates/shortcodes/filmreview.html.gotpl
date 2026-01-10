@@ -4,8 +4,8 @@
     <img src="{{ .PosterPath }}" alt="Poster for {{ .Name }}">
     <header>
       <h3>{{ .Name }}</h3>
-      <div title="{{ .Rating }}/10">{{ stars .Rating }}</div>
       <div>{{ if .Rewatch }}<div class="rewatch">rewatch</div>{{ end }}{{ if .Spoiler }}<div class="spoilers">spoilers</div>{{ end }}</div>
+      <div title="{{ .Rating }}/10">{{ stars .Rating }}</div>
       <time>{{ formatDate .Date }}</time>
     </header>
     <div>{{ .Review }}</div>

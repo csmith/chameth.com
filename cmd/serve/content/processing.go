@@ -108,13 +108,14 @@ func extractFirstParagraph(content string) string {
 }
 
 var (
-	sideNoteRegexp   = regexp.MustCompile(`(?s)\{%\s*sidenote "(.*?)"\s*%}(.*?)\{%\s*endsidenote\s*%}`)
-	updateRegexp     = regexp.MustCompile(`(?s)\{%\s*update "(.*?)"\s*%}(.*?)\{%\s*endupdate\s*%}`)
-	warningRegexp    = regexp.MustCompile(`(?s)\{%\s*warning\s*%}(.*?)\{%\s*endwarning\s*%}`)
-	audioRegexp      = regexp.MustCompile(`\{%\s*audio "(.*?)"\s*%}`)
-	videoRegexp      = regexp.MustCompile(`\{%\s*video "(.*?)"\s*%}`)
-	figureRegexp     = regexp.MustCompile(`\{%\s*figure "(.*?)" "(.*?)"\s*%}`)
-	filmReviewRegexp = regexp.MustCompile(`\{%\s*filmreview ([0-9]+)\s*%}`)
+	sideNoteRegexp    = regexp.MustCompile(`(?s)\{%\s*sidenote "(.*?)"\s*%}(.*?)\{%\s*endsidenote\s*%}`)
+	updateRegexp      = regexp.MustCompile(`(?s)\{%\s*update "(.*?)"\s*%}(.*?)\{%\s*endupdate\s*%}`)
+	warningRegexp     = regexp.MustCompile(`(?s)\{%\s*warning\s*%}(.*?)\{%\s*endwarning\s*%}`)
+	audioRegexp       = regexp.MustCompile(`\{%\s*audio "(.*?)"\s*%}`)
+	videoRegexp       = regexp.MustCompile(`\{%\s*video "(.*?)"\s*%}`)
+	figureRegexp      = regexp.MustCompile(`\{%\s*figure "(.*?)" "(.*?)"\s*%}`)
+	filmReviewRegexp  = regexp.MustCompile(`\{%\s*filmreview ([0-9]+)\s*%}`)
+	filmReviewsRegexp = regexp.MustCompile(`\{%\s*filmreviews\s*%}`)
 )
 
 func RenderShortCodes(input string, media []db.MediaRelationWithDetails) (string, error) {
@@ -152,6 +153,11 @@ func RenderShortCodes(input string, media []db.MediaRelationWithDetails) (string
 	}
 
 	res, err = renderFilmReview(res)
+	if err != nil {
+		return "", err
+	}
+
+	res, err = renderFilmReviews(res)
 	if err != nil {
 		return "", err
 	}
@@ -389,14 +395,9 @@ func renderFilmReview(input string) (string, error) {
 			return "", fmt.Errorf("failed to render film review markdown: %w", err)
 		}
 
-		posterPath := ""
-		if reviewData.Poster != nil {
-			posterPath = reviewData.Poster.Path
-		}
-
 		replacement, err := shortcodes.RenderFilmReview(shortcodes.FilmReviewData{
 			Name:       reviewData.Title,
-			PosterPath: posterPath,
+			PosterPath: reviewData.Poster.Path,
 			Rating:     reviewData.Rating,
 			Date:       reviewData.WatchedDate,
 			Rewatch:    reviewData.IsRewatch,
@@ -409,6 +410,56 @@ func renderFilmReview(input string) (string, error) {
 
 		res = strings.Replace(res, review[0], replacement, 1)
 	}
+	return res, nil
+}
+
+func renderFilmReviews(input string) (string, error) {
+	res := input
+	matches := filmReviewsRegexp.FindAllStringSubmatch(input, -1)
+
+	if len(matches) == 0 {
+		return res, nil
+	}
+
+	reviews, err := db.GetAllPublishedFilmReviewsWithFilmAndPosters()
+	if err != nil {
+		return "", fmt.Errorf("failed to get film reviews: %w", err)
+	}
+
+	var renderedReviews []template.HTML
+	for _, review := range reviews {
+		markdown, err := RenderMarkdown(review.ReviewText)
+		if err != nil {
+			return "", fmt.Errorf("failed to render film review markdown: %w", err)
+		}
+
+		replacement, err := shortcodes.RenderFilmReview(shortcodes.FilmReviewData{
+			Name:       review.Title,
+			PosterPath: review.Poster.Path,
+			Rating:     review.Rating,
+			Date:       review.WatchedDate,
+			Rewatch:    review.IsRewatch,
+			Spoiler:    review.HasSpoilers,
+			Review:     markdown,
+		})
+		if err != nil {
+			return "", fmt.Errorf("failed to render film review template: %w", err)
+		}
+
+		renderedReviews = append(renderedReviews, template.HTML(replacement))
+	}
+
+	filmReviewsHTML, err := shortcodes.RenderFilmReviews(shortcodes.FilmReviewsData{
+		Reviews: renderedReviews,
+	})
+	if err != nil {
+		return "", fmt.Errorf("failed to render film reviews template: %w", err)
+	}
+
+	for _, match := range matches {
+		res = strings.Replace(res, match[0], filmReviewsHTML, 1)
+	}
+
 	return res, nil
 }
 

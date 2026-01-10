@@ -37,7 +37,7 @@ func ListFilmsHandler() func(http.ResponseWriter, *http.Request) {
 
 			rating := ""
 			if film.Review != nil {
-				rating = fmt.Sprintf("%.1f", film.Review.Rating)
+				rating = fmt.Sprintf("%d/10", film.Review.Rating)
 			}
 
 			filmSummaries[i] = templates.FilmSummary{

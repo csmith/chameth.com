@@ -15,24 +15,6 @@ func GetFilmByID(id int) (*Film, error) {
 	return &film, nil
 }
 
-func GetAllFilms() ([]FilmMetadata, error) {
-	var res []FilmMetadata
-	err := db.Select(&res, "SELECT id, tmdb_id, title, year, published FROM films ORDER BY title")
-	if err != nil {
-		return nil, err
-	}
-	return res, nil
-}
-
-func GetDraftFilms() ([]FilmMetadata, error) {
-	var films []FilmMetadata
-	err := db.Select(&films, "SELECT id, tmdb_id, title, year, published FROM films WHERE published = false ORDER BY title")
-	if err != nil {
-		return nil, err
-	}
-	return films, nil
-}
-
 func GetAllFilmsWithReviews() ([]FilmWithReview, error) {
 	query := `
 		SELECT

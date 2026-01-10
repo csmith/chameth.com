@@ -173,12 +173,8 @@ type FilmWithReview struct {
 	Review *FilmReview
 }
 
-type FilmReviewWithFilm struct {
-	FilmReview
-	Film
-}
-
 type FilmReviewWithFilmAndPoster struct {
-	FilmReviewWithFilm
-	Poster *MediaRelationWithDetails
+	FilmReview `db:"filmreview"`
+	Film       `db:"film"`
+	Poster     MediaRelationWithDetails `db:"poster"`
 }

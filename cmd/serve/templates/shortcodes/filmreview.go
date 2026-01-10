@@ -11,7 +11,7 @@ var filmReviewTemplate = template.Must(
 		New("filmreview.html.gotpl").
 		Funcs(template.FuncMap{
 			"formatDate": func(t time.Time) string {
-				return t.Format("January 2, 2006")
+				return t.Format("2006-01-02")
 			},
 			"stars": func(rating int) template.HTML {
 				full := rating / 2

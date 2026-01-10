@@ -13,12 +13,12 @@
   border-radius: var(--border-radius);
   padding: 0;
   column-gap: var(--smedium-space);
-  row-gap: var(--smedium-space);
+  row-gap: var(--small-space);
   margin: var(--smedium-space) 0;
   box-shadow: 0 0 3px var(--accent-colour);
   overflow: hidden;
 
-  @container (width >= 800px) {
+  @container (width >= 700px) {
     height: 225px;
 
     img {
@@ -27,7 +27,7 @@
     }
   }
 
-  @container (width < 800px) {
+  @container (width < 700px) {
     grid-template-areas: "header" "image" "body";
     grid-template-rows: auto auto auto;
     grid-template-columns: 1fr;
@@ -52,7 +52,9 @@
   header {
     grid-area: header;
     display: grid;
-    grid-template-columns: 4fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr auto auto auto;
+    align-items: center;
+    column-gap: var(--small-space);
     margin-top: var(--smedium-space);
     margin-right: var(--smedium-space);
 
@@ -61,15 +63,22 @@
       font-size: var(--font-size-xlarge);
       line-height: var(--font-size-xlarge);
       margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     time {
       text-align: right;
+      font-size: var(--font-size-tiny);
+      font-family: "Berkeley Mono", monospace;
+      text-transform: uppercase;
     }
   }
 
   .rewatch {
     display: inline-block;
+    font-size: var(--font-size-tiny);
     padding: 0 var(--small-space);
     background-color: var(--accent-colour);
     border-radius: var(--border-radius);
@@ -77,6 +86,7 @@
 
   .spoilers {
     display: inline-block;
+    font-size: var(--font-size-tiny);
     padding: 0 var(--small-space);
     background-color: darkred;
     border-radius: var(--border-radius);
@@ -89,5 +99,22 @@
 
     p:first-child { margin-top: 0; }
     p:last-child { margin-bottom: 0; }
+  }
+}
+
+.film-reviews-parent {
+  container-type: inline-size;
+}
+
+.film-reviews {
+  display: grid;
+  column-gap: var(--smedium-space);
+
+  @container (width >= 1500px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @container (width < 1500px) {
+    grid-template-columns: 1fr;
   }
 }

@@ -23,15 +23,6 @@ func GetFilmReviewsByFilmID(filmID int) ([]FilmReview, error) {
 	return reviews, nil
 }
 
-func GetLatestFilmReviewByFilmID(filmID int) (*FilmReview, error) {
-	var review FilmReview
-	err := db.Get(&review, "SELECT id, film_id, watched_date, rating, is_rewatch, has_spoilers, review_text, published FROM film_reviews WHERE film_id = $1 ORDER BY watched_date DESC LIMIT 1", filmID)
-	if err != nil {
-		return nil, err
-	}
-	return &review, nil
-}
-
 func CreateFilmReview(filmID int, rating int, watchedDate time.Time, isRewatch, hasSpoilers, published bool, reviewText string) (int, error) {
 	var id int
 	err := db.QueryRow(`
@@ -60,42 +51,58 @@ func UpdateFilmReview(id int, rating int, watchedDate string, isRewatch, hasSpoi
 func GetFilmReviewWithFilmAndPoster(reviewID int) (*FilmReviewWithFilmAndPoster, error) {
 	query := `
 		SELECT
-			fr.id, fr.film_id, fr.watched_date, fr.rating, fr.is_rewatch, fr.has_spoilers, fr.review_text, fr.published,
-			f.id as film_id2, f.tmdb_id, f.title, f.year, f.overview, f.runtime, f.published as film_published
+			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",
+			fr.rating as "filmreview.rating", fr.is_rewatch as "filmreview.is_rewatch", fr.has_spoilers as "filmreview.has_spoilers",
+			fr.review_text as "filmreview.review_text", fr.published as "filmreview.published",
+			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title", f.year as "film.year",
+			f.overview as "film.overview", f.runtime as "film.runtime", f.published as "film.published",
+			mr.path as "poster.path", mr.media_id as "poster.media_id", mr.description as "poster.description",
+			mr.caption as "poster.caption", mr.role as "poster.role", mr.entity_type as "poster.entity_type",
+			mr.entity_id as "poster.entity_id",
+			m.id as "poster.id", m.content_type as "poster.content_type", m.original_filename as "poster.original_filename",
+			m.width as "poster.width", m.height as "poster.height", m.parent_media_id as "poster.parent_media_id"
 		FROM film_reviews fr
 		JOIN films f ON fr.film_id = f.id
+		JOIN media_relations mr ON mr.entity_type = 'film' AND mr.entity_id = f.id AND mr.role = 'poster'
+		JOIN media m ON mr.media_id = m.id
 		WHERE fr.id = $1
 	`
 
-	var review FilmReview
-	var film Film
-
-	err := db.QueryRow(query, reviewID).Scan(
-		&review.ID, &review.FilmID, &review.WatchedDate, &review.Rating, &review.IsRewatch, &review.HasSpoilers, &review.ReviewText, &review.Published,
-		&film.ID, &film.TMDBID, &film.Title, &film.Year, &film.Overview, &film.Runtime, &film.Published,
-	)
+	var result FilmReviewWithFilmAndPoster
+	err := db.Get(&result, query, reviewID)
 	if err != nil {
 		return nil, err
-	}
-
-	result := FilmReviewWithFilmAndPoster{
-		FilmReviewWithFilm: FilmReviewWithFilm{
-			FilmReview: review,
-			Film:       film,
-		},
-	}
-
-	relations, err := GetMediaRelationsForEntity("film", film.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, r := range relations {
-		if r.Role != nil && *r.Role == "poster" {
-			result.Poster = &r
-			break
-		}
 	}
 
 	return &result, nil
+}
+
+func GetAllPublishedFilmReviewsWithFilmAndPosters() ([]FilmReviewWithFilmAndPoster, error) {
+	query := `
+		SELECT
+			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",
+			fr.rating as "filmreview.rating", fr.is_rewatch as "filmreview.is_rewatch", fr.has_spoilers as "filmreview.has_spoilers",
+			fr.review_text as "filmreview.review_text", fr.published as "filmreview.published",
+			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title", f.year as "film.year",
+			f.overview as "film.overview", f.runtime as "film.runtime", f.published as "film.published",
+			mr.path as "poster.path", mr.media_id as "poster.media_id", mr.description as "poster.description",
+			mr.caption as "poster.caption", mr.role as "poster.role", mr.entity_type as "poster.entity_type",
+			mr.entity_id as "poster.entity_id",
+			m.id as "poster.id", m.content_type as "poster.content_type", m.original_filename as "poster.original_filename",
+			m.width as "poster.width", m.height as "poster.height", m.parent_media_id as "poster.parent_media_id"
+		FROM film_reviews fr
+		JOIN films f ON fr.film_id = f.id
+		JOIN media_relations mr ON mr.entity_type = 'film' AND mr.entity_id = f.id AND mr.role = 'poster'
+		JOIN media m ON mr.media_id = m.id
+		WHERE fr.published = true
+		ORDER BY fr.watched_date DESC
+	`
+
+	var results []FilmReviewWithFilmAndPoster
+	err := db.Select(&results, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }
