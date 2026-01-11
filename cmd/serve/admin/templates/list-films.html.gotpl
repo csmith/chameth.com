@@ -27,7 +27,12 @@
                 <td>{{.Year}}</td>
                 <td>{{.Rating}}</td>
                 <td>{{.Published}}</td>
-                <td><a href="/films/edit/{{.ID}}">Edit</a></td>
+                <td>
+                    <a href="/films/edit/{{.ID}}">Edit</a>
+                    <form method="POST" action="/films/delete/{{.ID}}" style="display:inline">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
             </tr>
             {{end}}
         </tbody>

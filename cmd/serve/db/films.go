@@ -152,3 +152,11 @@ func GetFilmByPath(path string) (*Film, error) {
 	}
 	return &film, nil
 }
+
+func DeleteFilm(id int) error {
+	_, err := db.Exec("DELETE FROM films WHERE id = $1", id)
+	if err != nil {
+		return fmt.Errorf("failed to delete film: %w", err)
+	}
+	return nil
+}

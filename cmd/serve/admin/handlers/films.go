@@ -336,3 +336,22 @@ func UpdateFilmHandler() func(http.ResponseWriter, *http.Request) {
 		http.Redirect(w, r, fmt.Sprintf("/films/edit/%d", id), http.StatusSeeOther)
 	}
 }
+
+func DeleteFilmHandler() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := r.PathValue("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid film ID", http.StatusBadRequest)
+			return
+		}
+
+		if err := db.DeleteFilm(id); err != nil {
+			slog.Error("Failed to delete film", "error", err, "id", id)
+			http.Error(w, "Failed to delete film", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/films", http.StatusSeeOther)
+	}
+}
