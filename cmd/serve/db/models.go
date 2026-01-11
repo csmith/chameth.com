@@ -207,3 +207,10 @@ type FilmListEntryWithDetails struct {
 	AverageRating *float64      `db:"average_rating"`
 	LastWatched   *time.Time    `db:"last_watched"`
 }
+
+type FilmListEntryWithPoster struct {
+	ID       int           `db:"id"`
+	Position int           `db:"position"`
+	Film     Film          `db:"film"`
+	Poster   MediaRelation `db:"poster"`
+}

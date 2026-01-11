@@ -40,7 +40,7 @@ type disableCodeBlocks struct {
 func (d *disableCodeBlocks) SetParserOption(config *parser.Config) {
 	// This relies on NewCodeBlockParser returning the same instance each
 	// call, which it does currently, but... :shrug:
-	config.BlockParsers.Remove(parser.NewCodeBlockParser())
+	config.BlockParsers = config.BlockParsers.Remove(parser.NewCodeBlockParser())
 }
 
 func Render(input string) (template.HTML, error) {

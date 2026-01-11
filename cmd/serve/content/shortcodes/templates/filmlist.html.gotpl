@@ -1,0 +1,8 @@
+<a href="{{.Path}}" class="film-list">
+  <h3>{{.Title}}</h3>
+  <div class="poster-stack">
+    {{range .Films}}<img src="{{.PosterPath}}" alt="Poster of {{.Title}}" />{{end}}
+  </div>
+  <div class="description">{{.Description}}</div>
+  <p class="count">{{.Count}} film{{if ne .Count 1}}s{{end}}</p>
+</a>
