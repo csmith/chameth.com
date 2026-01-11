@@ -23,6 +23,7 @@ type EditFilmData struct {
 	Overview  string
 	Runtime   string
 	Published bool
+	Path      string
 	Poster    *MediaItem
 	Reviews   []FilmReviewSummary
 }

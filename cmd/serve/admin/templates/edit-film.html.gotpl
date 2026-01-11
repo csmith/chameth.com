@@ -1,9 +1,11 @@
 {{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.EditFilmData */}}
 {{define "content"}}
     <h2>Edit film: {{.Title}}</h2>
+    <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
     <form action="/films/edit/{{.ID}}" method="post">
         <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
         <label>Year: <input type="text" name="year" value="{{.Year}}" /></label>
+        <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>
         <label>Runtime (minutes): <input type="text" name="runtime" value="{{.Runtime}}" /></label>
         <label>
             <input type="checkbox" name="published" value="true" {{if .Published}}checked{{end}} />

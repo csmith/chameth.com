@@ -149,6 +149,7 @@ type FilmMetadata struct {
 	Title     string `db:"title"`
 	Year      *int   `db:"year"`
 	Published bool   `db:"published"`
+	Path      string `db:"path"`
 }
 
 type Film struct {

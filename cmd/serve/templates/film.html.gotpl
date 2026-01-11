@@ -1,0 +1,26 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/templates.FilmData*/}}
+{{define "content"}}
+    <article>
+        <header>
+            <h2><a href="/films/">Films</a> &raquo; {{.Title}}</h2>
+            <p class="date">Released in <time datetime="{{ .Year }}">{{ .Year }}</time></p>
+        </header>
+
+        <blockquote>
+            {{.Overview}}
+        </blockquote>
+
+        {{if .TMDBID}}
+        <p><a href="https://www.themoviedb.org/movie/{{.TMDBID}}">View on TMDB</a> · <a href="https://letterboxd.com/tmdb/{{.TMDBID}}">View on Letterboxd</a></p>
+        {{end}}
+
+        {{if .Reviews}}
+        <section>
+            <h3>My watch history</h3>
+            {{range .Reviews}}
+            {{.}}
+            {{end}}
+        </section>
+        {{end}}
+    </article>
+{{end}}

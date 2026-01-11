@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -15,6 +16,25 @@ import (
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/external/tmdb"
 )
+
+func generateFilmPath(title string, year int) string {
+	lowered := strings.ToLower(title)
+	replaced := strings.Map(func(r rune) rune {
+		if r == ' ' {
+			return '-'
+		}
+		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
+			return r
+		}
+		return '-'
+	}, lowered)
+	cleaned := regexp.MustCompile(`-+`).ReplaceAllString(replaced, "-")
+	cleaned = regexp.MustCompile(`^-+|-+$`).ReplaceAllString(cleaned, "")
+	if year > 0 {
+		cleaned = cleaned + "-" + strconv.Itoa(year)
+	}
+	return "/films/" + cleaned + "/"
+}
 
 var (
 	tmdbAPIKey = flag.String("tmdb-api-key", "", "TMDB API key")
@@ -137,14 +157,17 @@ func CreateFilmHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		year := ""
+		yearInt := 0
 		if movie.ReleaseDate != "" {
 			releaseDate, err := time.Parse("2006-01-02", movie.ReleaseDate)
 			if err == nil {
 				year = strconv.Itoa(releaseDate.Year())
+				yearInt = releaseDate.Year()
 			}
 		}
 
-		filmID, err := db.CreateFilm(movie.ID, movie.Title, year, movie.Overview, movie.Runtime)
+		path := generateFilmPath(movie.Title, yearInt)
+		filmID, err := db.CreateFilm(movie.ID, movie.Title, year, path, movie.Overview, movie.Runtime)
 		if err != nil {
 			slog.Error("Failed to create film", "error", err)
 			http.Error(w, "Failed to create film", http.StatusInternalServerError)
@@ -260,6 +283,7 @@ func EditFilmHandler() func(http.ResponseWriter, *http.Request) {
 			Overview:  film.Overview,
 			Runtime:   runtime,
 			Published: film.Published,
+			Path:      film.Path,
 			Poster:    poster,
 			Reviews:   reviewSummaries,
 		}
@@ -299,7 +323,13 @@ func UpdateFilmHandler() func(http.ResponseWriter, *http.Request) {
 			}
 		}
 
-		if err := db.UpdateFilm(id, 0, title, year, overview, runtime, published); err != nil {
+		yearInt := 0
+		if year != "" {
+			yearInt, _ = strconv.Atoi(year)
+		}
+		path := generateFilmPath(title, yearInt)
+
+		if err := db.UpdateFilm(id, 0, title, year, path, overview, runtime, published); err != nil {
 			http.Error(w, "Failed to update film", http.StatusInternalServerError)
 			return
 		}
@@ -447,14 +477,17 @@ func ImportLetterboxdHandler() func(http.ResponseWriter, *http.Request) {
 			}
 
 			yearStrForDB := ""
+			yearInt := 0
 			if matchedMovie.ReleaseDate != "" {
 				releaseDate, err := time.Parse("2006-01-02", matchedMovie.ReleaseDate)
 				if err == nil {
 					yearStrForDB = strconv.Itoa(releaseDate.Year())
+					yearInt = releaseDate.Year()
 				}
 			}
 
-			filmID, err := db.CreateFilm(matchedMovie.ID, matchedMovie.Title, yearStrForDB, matchedMovie.Overview, 0)
+			path := generateFilmPath(matchedMovie.Title, yearInt)
+			filmID, err := db.CreateFilm(matchedMovie.ID, matchedMovie.Title, yearStrForDB, path, matchedMovie.Overview, 0)
 			if err != nil {
 				slog.Error("Failed to create film", "error", err, "film", name)
 				errors++
