@@ -15,6 +15,15 @@ func GetFilmByID(id int) (*Film, error) {
 	return &film, nil
 }
 
+func GetAllFilms() ([]Film, error) {
+	var films []Film
+	err := db.Select(&films, "SELECT id, tmdb_id, title, year, overview, runtime, published, path FROM films ORDER BY title")
+	if err != nil {
+		return nil, err
+	}
+	return films, nil
+}
+
 func GetAllFilmsWithReviews() ([]FilmWithReview, error) {
 	query := `
 		SELECT

@@ -179,3 +179,23 @@ type FilmReviewWithFilmAndPoster struct {
 	Film       `db:"film"`
 	Poster     MediaRelationWithDetails `db:"poster"`
 }
+
+type FilmList struct {
+	ID          int    `db:"id"`
+	Title       string `db:"title"`
+	Description string `db:"description"`
+	Published   bool   `db:"published"`
+	Path        string `db:"path"`
+}
+
+type FilmListEntry struct {
+	ID         int `db:"id"`
+	FilmListID int `db:"film_list_id"`
+	FilmID     int `db:"film_id"`
+	Position   int `db:"position"`
+}
+
+type FilmListEntryWithFilm struct {
+	FilmListEntry
+	Film Film `db:"film"`
+}

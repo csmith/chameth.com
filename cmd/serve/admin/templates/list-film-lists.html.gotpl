@@ -1,0 +1,61 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.ListFilmListsData */}}
+{{define "content"}}
+    <h2>Film Lists</h2>
+    <form method="POST" action="/film-lists">
+        <button type="submit">Create New List</button>
+    </form>
+
+    {{if .Drafts}}
+    <h3>Drafts</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Path</th>
+                <th>Published</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Drafts}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Title}}</td>
+                <td>{{.Path}}</td>
+                <td>{{.Published}}</td>
+                <td>
+                    <a href="/film-lists/{{.ID}}/edit">Edit</a>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{end}}
+
+    <h3>Published Lists</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Path</th>
+                <th>Published</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Lists}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Title}}</td>
+                <td>{{.Path}}</td>
+                <td>{{.Published}}</td>
+                <td>
+                    <a href="/film-lists/{{.ID}}/edit">Edit</a>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+{{end}}

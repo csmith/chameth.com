@@ -1,0 +1,63 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.EditFilmListData */}}
+{{define "content"}}
+    <h2>Edit film list: {{.Title}}</h2>
+    <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
+    <form action="/film-lists/{{.ID}}/edit" method="post">
+        <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
+        <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>
+        <label>
+            <input type="checkbox" name="published" value="true" {{if .Published}}checked{{end}} />
+            Published
+        </label>
+        <label>
+            Description:
+            <textarea name="description">{{.Description}}</textarea>
+        </label>
+        <input type="submit" />
+    </form>
+
+    <h2>Entries</h2>
+    <form method="POST" action="/film-lists/{{.ID}}/entries">
+        <label>Add Film:
+            <select name="film_id">
+                <option value="">Select a film...</option>
+                {{range .Films}}
+                <option value="{{.ID}}">{{.Title}} ({{.Year}})</option>
+                {{end}}
+            </select>
+        </label>
+        <button type="submit">Add to List</button>
+    </form>
+
+    {{if .Entries}}
+    <table>
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>Film</th>
+                <th>Year</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Entries}}
+            <tr>
+                <td>
+                    <form method="POST" action="/film-lists/{{$.ID}}/entries/position/{{.EntryID}}" style="display:inline">
+                        <input type="text" name="position" value="{{.Position}}" style="width: 50px;" />
+                        <button type="submit">Move</button>
+                    </form>
+                </td>
+                <td><a href="/films/edit/{{.FilmID}}">{{.Title}}</a></td>
+                <td>{{.Year}}</td>
+                <td>
+                    <form method="POST" action="/film-lists/{{$.ID}}/entries/remove/{{.EntryID}}" style="display:inline">
+                        <button type="submit">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{end}}
+{{end}}

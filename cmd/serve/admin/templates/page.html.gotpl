@@ -20,6 +20,7 @@
         <a href="/projects">Projects</a>
         <a href="/goimports">Go Imports</a>
         <a href="/films">Films</a>
+        <a href="/film-lists">Film Lists</a>
         <a href="/media">Media</a>
     </nav>
 </header>
