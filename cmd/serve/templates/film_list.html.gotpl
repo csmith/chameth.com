@@ -2,7 +2,7 @@
 {{define "content"}}
     <article>
         <header>
-            <h2><a href="/films/">Films</a> &raquo; {{.Title}}</h2>
+            <h2><a href="/films/">Films</a> &raquo; {{.ListTitle}}</h2>
         </header>
 
         {{.Description}}
@@ -14,7 +14,7 @@
                 <img src="{{.PosterPath}}" alt="{{.Title}} poster" loading="lazy">
                 <h3>{{.Position}}. <a href="{{.FilmPath}}">{{.Title}}</a> <span class="year">{{.Year}}</span></h3>
                 <p>Watched {{.TimesWatched}} time{{if ne .TimesWatched 1}}s{{end}}{{if .LastWatched}}, most recently on {{.LastWatched}}{{end}}.</p>
-                <div class="rating" title="{{.RatingText}}">Average rating: {{if .RatingHTML}}{{.RatingHTML}}{{else}}-{{end}}</div>
+                <div class="rating" title="{{.RatingText}}">{{if .RatingHTML}}{{.RatingHTML}}{{else}}-{{end}}</div>
             </li>
             {{end}}
         </ol>

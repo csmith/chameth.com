@@ -147,10 +147,16 @@
 
   li {
     display: grid;
-    grid-template-areas: "image header" "image watches" "image rating";
+    grid-template-areas: "image header" "image watches" "image rating" "image blank";
     grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto auto 1fr;
     grid-column-gap: var(--smedium-space);
     grid-row-gap: var(--small-space);
+
+    &:not(:first-child) {
+      padding-top: var(--smedium-space);
+      border-top: 2px solid var(--background-alt-colour);
+    }
 
     &, * {
       margin: 0;
@@ -160,6 +166,9 @@
     img {
       grid-area: image;
       max-height: 200px;
+      border-radius: var(--border-radius);
+      border: 2px solid var(--background-alt-colour);
+      box-shadow: 0 0 5px var(--background-alt-colour);
     }
 
     h3 {

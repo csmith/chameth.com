@@ -152,7 +152,7 @@ func FilmList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderFilmList(w, templates.FilmListData{
-		Title:       filmList.Title,
+		ListTitle:   filmList.Title,
 		Description: renderedDescription,
 		Entries:     filmListItems,
 		PageData: templates.PageData{

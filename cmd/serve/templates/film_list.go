@@ -18,7 +18,7 @@ var filmListTemplate = template.Must(
 
 type FilmListData struct {
 	PageData
-	Title       string
+	ListTitle   string
 	Description template.HTML
 	Entries     []FilmListItem
 }
