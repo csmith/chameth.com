@@ -1,11 +1,11 @@
-{{/* gotype: chameth.com/chameth.com/cmd/serve/templates/shortcodes.FilmReviewData*/}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/templates.FilmReviewData*/}}
 <div class="film-review-parent">
   <section class="film-review">
     <img src="{{ .PosterPath }}" alt="Poster for {{ .Name }}" loading="lazy">
     <header>
       <h3>{{ .Name }}</h3>
       <div>{{ if .Rewatch }}<div class="rewatch">rewatch</div>{{ end }}{{ if .Spoiler }}<div class="spoilers">spoilers</div>{{ end }}</div>
-      <div title="{{ .Rating }}/10">{{ stars .Rating }}</div>
+      <div title="{{ .Rating }}/10">{{ .Stars }}</div>
       <time>{{ formatDate .Date }}</time>
     </header>
     <div>{{ .Review }}</div>

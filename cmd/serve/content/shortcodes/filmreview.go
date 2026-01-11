@@ -2,6 +2,7 @@ package shortcodes
 
 import (
 	"fmt"
+	"html/template"
 	"regexp"
 	"strconv"
 	"strings"
@@ -47,10 +48,16 @@ func RenderFilmReview(id int) (string, error) {
 		return "", fmt.Errorf("failed to render film review markdown: %w", err)
 	}
 
+	stars, err := RenderRating(reviewData.Rating)
+	if err != nil {
+		return "", fmt.Errorf("failed to render film review stars: %w", err)
+	}
+
 	replacement, err := templates.RenderFilmReview(templates.FilmReviewData{
 		Name:       reviewData.Title,
 		PosterPath: reviewData.Poster.Path,
 		Rating:     reviewData.Rating,
+		Stars:      template.HTML(stars),
 		Date:       reviewData.WatchedDate,
 		Rewatch:    reviewData.IsRewatch,
 		Spoiler:    reviewData.HasSpoilers,

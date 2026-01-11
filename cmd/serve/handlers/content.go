@@ -32,6 +32,8 @@ func Content(w http.ResponseWriter, r *http.Request) {
 		GoImport(w, r)
 	case "film":
 		Film(w, r)
+	case "film_list":
+		FilmList(w, r)
 	default:
 		StaticAsset(w, r)
 	}

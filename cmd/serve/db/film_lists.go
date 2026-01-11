@@ -65,6 +65,34 @@ func GetFilmListWithEntries(id int) (*FilmList, []FilmListEntryWithFilm, error) 
 	return list, entries, nil
 }
 
+func GetFilmListEntriesWithDetails(listID int) ([]FilmListEntryWithDetails, error) {
+	var entries []FilmListEntryWithDetails
+	err := db.Select(&entries, `
+		SELECT
+			fle.id, fle.film_list_id, fle.film_id, fle.position,
+			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title",
+			f.year as "film.year", f.overview as "film.overview", f.runtime as "film.runtime",
+			f.published as "film.published", f.path as "film.path",
+			COUNT(fr.id) as times_watched,
+			AVG(fr.rating) as average_rating,
+			MAX(fr.watched_date) as last_watched,
+			mr.path as "poster.path", mr.media_id as "poster.media_id", mr.description as "poster.description",
+			mr.caption as "poster.caption", mr.role as "poster.role", mr.entity_type as "poster.entity_type",
+			mr.entity_id as "poster.entity_id"
+		FROM film_list_entries fle
+		JOIN films f ON fle.film_id = f.id
+		LEFT JOIN film_reviews fr ON fr.film_id = f.id AND fr.published = true
+		JOIN media_relations mr ON mr.entity_type = 'film' AND mr.entity_id = f.id AND mr.role = 'poster'
+		WHERE fle.film_list_id = $1
+		GROUP BY fle.id, f.id, mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id
+		ORDER BY fle.position
+	`, listID)
+	if err != nil {
+		return nil, err
+	}
+	return entries, nil
+}
+
 func CreateFilmList(path, title, description string) (int, error) {
 	var id int
 	err := db.QueryRow(`

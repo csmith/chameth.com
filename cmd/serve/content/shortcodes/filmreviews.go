@@ -35,9 +35,15 @@ func renderFilmReviews(input string) (string, error) {
 			return "", fmt.Errorf("failed to render film review markdown: %w", err)
 		}
 
+		stars, err := RenderRating(review.Rating)
+		if err != nil {
+			return "", fmt.Errorf("failed to render film review rating: %w", err)
+		}
+
 		replacement, err := templates.RenderFilmReview(templates.FilmReviewData{
 			Name:       review.Title,
 			PosterPath: review.Poster.Path,
+			Stars:      template.HTML(stars),
 			Rating:     review.Rating,
 			Date:       review.WatchedDate,
 			Rewatch:    review.IsRewatch,

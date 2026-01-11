@@ -59,7 +59,10 @@
     margin-right: var(--smedium-space);
 
     h3 {
-      &::before { content: none; }
+      &::before {
+        content: none;
+      }
+
       font-size: var(--font-size-xlarge);
       line-height: var(--font-size-xlarge);
       margin: 0;
@@ -102,8 +105,13 @@
       margin-top: var(--smedium-space);
       margin-bottom: var(--smedium-space);
 
-      &:first-child { margin-top: 0; }
-      &:last-child { margin-bottom: 0; }
+      &:first-child {
+        margin-top: 0;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
 
     i {
@@ -126,5 +134,49 @@
 
   @container (width < 1500px) {
     grid-template-columns: 1fr;
+  }
+}
+
+.films-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--smedium-space);
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: grid;
+    grid-template-areas: "image header" "image watches" "image rating";
+    grid-template-columns: auto 1fr;
+    grid-column-gap: var(--smedium-space);
+    grid-row-gap: var(--small-space);
+
+    &, * {
+      margin: 0;
+      padding: 0;
+    }
+
+    img {
+      grid-area: image;
+      max-height: 200px;
+    }
+
+    h3 {
+      &::before {
+        content: none;
+      }
+
+      .year {
+        color: var(--text-alt-colour);
+        font-size: var(--font-size-large);
+      }
+    }
+
+    p {
+      color: var(--text-alt-colour);
+      font-family: "Berkeley Mono", monospace;
+      font-size: var(--font-size-small);
+    }
   }
 }

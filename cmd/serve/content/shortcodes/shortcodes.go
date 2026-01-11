@@ -46,5 +46,10 @@ func Render(input string, media []db.MediaRelationWithDetails) (string, error) {
 		return "", err
 	}
 
+	res, err = renderRating(res)
+	if err != nil {
+		return "", err
+	}
+
 	return res, nil
 }

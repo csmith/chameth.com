@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/cmd/serve/templates/shortcodes.FilmReviewsData*/}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/templates.FilmReviewsData*/}}
 <div class="film-reviews-parent">
   <section class="film-reviews">
     {{- range .Reviews }}

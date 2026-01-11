@@ -199,3 +199,11 @@ type FilmListEntryWithFilm struct {
 	FilmListEntry
 	Film Film `db:"film"`
 }
+
+type FilmListEntryWithDetails struct {
+	FilmListEntryWithFilm
+	Poster        MediaRelation `db:"poster"`
+	TimesWatched  int           `db:"times_watched"`
+	AverageRating *float64      `db:"average_rating"`
+	LastWatched   *time.Time    `db:"last_watched"`
+}

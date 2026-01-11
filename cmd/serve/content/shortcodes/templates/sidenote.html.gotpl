@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/cmd/serve/templates/shortcodes.SideNoteData*/}}
+{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/templates.SideNoteData*/}}
 <aside class="sidenote">
   <h5>Side note: {{ .Title }}</h5>
   {{ .Content }}
