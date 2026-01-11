@@ -165,7 +165,22 @@ func RemoveFilmFromList(entryID int) error {
 		return fmt.Errorf("failed to get entry: %w", err)
 	}
 
-	_, err = db.Exec(`
+	tx, err := db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
+
+	_, err = tx.Exec("SET CONSTRAINTS ALL DEFERRED")
+	if err != nil {
+		return fmt.Errorf("failed to defer constraints: %w", err)
+	}
+
+	_, err = tx.Exec(`
 		UPDATE film_list_entries
 		SET position = position - 1
 		WHERE film_list_id = $1 AND position > $2
@@ -174,9 +189,13 @@ func RemoveFilmFromList(entryID int) error {
 		return fmt.Errorf("failed to reflow positions: %w", err)
 	}
 
-	_, err = db.Exec("DELETE FROM film_list_entries WHERE id = $1", entryID)
+	_, err = tx.Exec("DELETE FROM film_list_entries WHERE id = $1", entryID)
 	if err != nil {
 		return fmt.Errorf("failed to delete entry: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
 	return nil
