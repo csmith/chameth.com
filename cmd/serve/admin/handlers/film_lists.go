@@ -105,6 +105,7 @@ func EditFilmListHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		entryItems := make([]templates.FilmListEntryItem, len(entries))
+		existingFilmIDs := make(map[int]struct{}, len(entries))
 		for i, entry := range entries {
 			year := ""
 			if entry.Film.Year != nil {
@@ -118,10 +119,18 @@ func EditFilmListHandler() func(http.ResponseWriter, *http.Request) {
 				Title:    entry.Film.Title,
 				Year:     year,
 			}
+			existingFilmIDs[entry.Film.ID] = struct{}{}
 		}
 
-		filmOptions := make([]templates.FilmOption, len(allFilms))
-		for i, film := range allFilms {
+		availableFilms := make([]db.Film, 0, len(allFilms))
+		for _, film := range allFilms {
+			if _, exists := existingFilmIDs[film.ID]; !exists {
+				availableFilms = append(availableFilms, film)
+			}
+		}
+
+		filmOptions := make([]templates.FilmOption, len(availableFilms))
+		for i, film := range availableFilms {
 			year := ""
 			if film.Year != nil {
 				year = strconv.Itoa(*film.Year)
