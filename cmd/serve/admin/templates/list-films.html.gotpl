@@ -1,11 +1,5 @@
 {{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.ListFilmsData */}}
 {{define "content"}}
-    <h2>Import from Letterboxd</h2>
-    <form action="/films/import" method="POST" enctype="multipart/form-data">
-        <input type="file" name="csv" accept=".csv" required />
-        <button type="submit">Import</button>
-    </form>
-
     <h2>Search TMDB</h2>
     <form id="tmdb-search-form">
         <input type="text" id="tmdb-search-input" name="q" placeholder="Search for a movie..." />
