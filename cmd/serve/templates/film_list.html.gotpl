@@ -3,6 +3,7 @@
     <article>
         <header>
             <h2><a href="/films/">Films</a> &raquo; {{.ListTitle}}</h2>
+            <p class="meta">A list of {{len .Entries}} film{{if ne (len .Entries) 1}}s{{end}}</p>
         </header>
 
         {{.Description}}
