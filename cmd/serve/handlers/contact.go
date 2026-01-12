@@ -111,6 +111,10 @@ func ContactForm(w http.ResponseWriter, r *http.Request) {
 
 func sendContact(req contactRequest, content string) error {
 	auth := smtp.PlainAuth("", *smtpUsername, *smtpPassword, *smtpServer)
+	replyTo := req.SenderEmail
+	if replyTo == "" {
+		replyTo = "noreply@chameth.com"
+	}
 	body := fmt.Sprintf("To: %s\r\nSubject: %s\r\nReply-to: %s\r\nFrom: Online contact form <%s>\r\n\r\n%s\r\n", *toAddress, *subject, req.SenderEmail, *fromAddress, content)
 	slog.Info("Sending e-mail message", "from", *fromAddress, "to", *toAddress, "subject", *subject, "replyTo", req.SenderEmail)
 	err := smtp.SendMail(fmt.Sprintf("%s:%d", *smtpServer, *smtpPort), auth, *fromAddress, []string{*toAddress}, []byte(body))

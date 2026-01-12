@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('*[data-contact]').forEach((el) => {
         el.innerHTML = `
             <form class="contact">
-                <input type="text" name="name" id="name" placeholder="Your name/alias" required />
-                <input type="email" name="email" id="email" placeholder="Your e-mail address" required />
+                <input type="text" name="name" id="name" placeholder="Your name/alias (optional)" />
+                <input type="email" name="email" id="email" placeholder="Your e-mail address (optional)" />
                 <textarea name="message" id="message" placeholder="Your message" required></textarea>
                 <button type="submit" class="submit">Submit</button>
             </form>
