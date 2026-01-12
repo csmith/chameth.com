@@ -65,12 +65,32 @@ func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	filmReviews, err := db.GetAllPublishedFilmReviewsWithFilmAndPosters()
+	if err != nil {
+		slog.Error("Failed to get all film reviews", "error", err)
+		ServerError(w, r)
+		return
+	}
+
+	var filmDetails []templates.ContentDetails
+	for _, review := range filmReviews {
+		filmDetails = append(filmDetails, templates.ContentDetails{
+			Title: review.Film.Title,
+			Path:  review.Film.Path,
+			Date: templates.ContentDate{
+				Iso:      review.FilmReview.WatchedDate.Format("2006-01-02"),
+				Friendly: review.FilmReview.WatchedDate.Format("Jan 2, 2006"),
+			},
+		})
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderHtmlSiteMap(w, templates.SiteMapData{
 		Posts:    postDetails,
 		Poems:    poemDetails,
 		Snippets: snippetDetails,
+		Films:    filmDetails,
 		PageData: templates.PageData{
 			Title:        "Sitemap · Chameth.com",
 			Stylesheet:   assets.GetStylesheetPath(),
@@ -137,12 +157,32 @@ func XmlSiteMap(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	filmReviews, err := db.GetAllPublishedFilmReviewsWithFilmAndPosters()
+	if err != nil {
+		slog.Error("Failed to get all film reviews", "error", err)
+		ServerError(w, r)
+		return
+	}
+
+	var filmDetails []templates.ContentDetails
+	for _, review := range filmReviews {
+		filmDetails = append(filmDetails, templates.ContentDetails{
+			Title: review.Film.Title,
+			Path:  review.Film.Path,
+			Date: templates.ContentDate{
+				Iso:      review.FilmReview.WatchedDate.Format("2006-01-02"),
+				Friendly: review.FilmReview.WatchedDate.Format("Jan 2, 2006"),
+			},
+		})
+	}
+
 	w.Header().Set("Content-Type", "text/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderXmlSiteMap(w, templates.SiteMapData{
 		Posts:    postDetails,
 		Poems:    poemDetails,
 		Snippets: snippetDetails,
+		Films:    filmDetails,
 	})
 	if err != nil {
 		slog.Error("Failed to render site map template", "error", err)

@@ -80,3 +80,19 @@ func GetAllTopics() ([]string, error) {
 	}
 	return topics, nil
 }
+
+// GetRecentSnippetsWithContent returns the N most recent snippets with full content.
+func GetRecentSnippetsWithContent(limit int) ([]Snippet, error) {
+	var snippets []Snippet
+	err := db.Select(&snippets, `
+		SELECT id, path, title, topic, content, published
+		FROM snippets
+		WHERE published = true
+		ORDER BY id DESC
+		LIMIT $1
+	`, limit)
+	if err != nil {
+		return nil, err
+	}
+	return snippets, nil
+}

@@ -36,6 +36,7 @@ var redirects = []redirect{
 	{regexp.MustCompile(`^/prints/(.*)/?$`), `/prints/`},
 	{regexp.MustCompile(`^/misc/snippets/?$`), `/snippets/`},
 	{regexp.MustCompile(`^/feed.xml$`), `/index.xml`},
+	{regexp.MustCompile(`^/posts/feed.xml$`), `/index.xml`},
 	{regexp.MustCompile(`^/16402FE2.txt$`), `/pgp/`},
 	{regexp.MustCompile(`^/favicon.ico`), `/favicon.png`},
 	{regexp.MustCompile(`^/misc/?$`), `/sitemap/`},

@@ -30,6 +30,7 @@ type SiteMapData struct {
 	Poems    []ContentDetails
 	Posts    []ContentDetails
 	Snippets []SnippetDetails
+	Films    []ContentDetails
 }
 
 type ContentDetails struct {

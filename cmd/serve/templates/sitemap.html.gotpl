@@ -10,6 +10,8 @@
         <li><a href="/">About</a></li>
         <li><a href="/colophon">Colophon</a></li>
         <li><a href="/contact/">Contact me</a></li>
+        <li><a href="/feeds/">Feeds</a></li>
+        <li><a href="/films/">Films</a></li>
         <li><a href="/interests/">My interests</a></li>
         <li><a href="/posts/">Posts</a></li>
         <li><a href="/prints/">3D Prints</a></li>
@@ -21,12 +23,18 @@
 
     <h3>Feeds</h3>
 
-    <p>Keep up-to-date with things I write by subscribing to one of these feeds in an RSS reader.</p>
+    <p>
+        Keep up-to-date with things I write by subscribing to one of these feeds in an RSS reader.
+        See the <a href="/feeds">feeds page</a> for more information.
+    </p>
 
     <ul class="sitemap">
         <li><a href="/index.xml">All posts</a></li>
         <li><a href="/short.xml">Short format posts</a></li>
         <li><a href="/long.xml">Long format posts</a></li>
+        <li><a href="/poems/feed.xml">Poems</a></li>
+        <li><a href="/snippets/feed.xml">Snippets</a></li>
+        <li><a href="/films/reviews/feed.xml">Film reviews</a></li>
     </ul>
 
     <h3>Blog posts</h3>
@@ -57,6 +65,18 @@
 
     <ul class="sitemap">
         {{- range .Poems }}
+            <li><a href="{{ .Path }}">{{ .Title }}</a>
+                <time datetime="{{ .Date.Iso }}">{{ .Date.Friendly }}</time>
+            </li>
+        {{ end -}}
+    </ul>
+
+    <h3>Film reviews</h3>
+
+    <p>I write short reviews of films I watch. See the <a href="/films/">/films page</a> for more information.</p>
+
+    <ul class="sitemap">
+        {{- range .Films }}
             <li><a href="{{ .Path }}">{{ .Title }}</a>
                 <time datetime="{{ .Date.Iso }}">{{ .Date.Friendly }}</time>
             </li>

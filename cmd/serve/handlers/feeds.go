@@ -24,6 +24,18 @@ func ShortPostsFeed(w http.ResponseWriter, r *http.Request) {
 	renderFeed(w, r, "Chameth.com - short posts", "short", 5)
 }
 
+func PoemsFeed(w http.ResponseWriter, r *http.Request) {
+	renderPoemsFeed(w, r, "Chameth.com - poems", 5)
+}
+
+func SnippetsFeed(w http.ResponseWriter, r *http.Request) {
+	renderSnippetsFeed(w, r, "Chameth.com - snippets", 5)
+}
+
+func FilmReviewsFeed(w http.ResponseWriter, r *http.Request) {
+	renderFilmReviewsFeed(w, r, "Chameth.com - film reviews", 5)
+}
+
 func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, limit int) {
 	var posts []db.Post
 	var err error
@@ -70,6 +82,153 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 	var lastUpdated string
 	if len(posts) > 0 {
 		lastUpdated = posts[0].Date.Format("2006-01-02T15:04:05Z")
+	}
+
+	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderAtom(w, templates.AtomData{
+		FeedTitle:       title,
+		FeedLastUpdated: lastUpdated,
+		FeedItems:       feedItems,
+	})
+	if err != nil {
+		slog.Error("Failed to render atom feed", "error", err)
+	}
+}
+
+func renderPoemsFeed(w http.ResponseWriter, r *http.Request, title string, limit int) {
+	poems, err := db.GetRecentPoemsWithContent(limit)
+	if err != nil {
+		slog.Error("Failed to get recent poems for feed", "error", err)
+		ServerError(w, r)
+		return
+	}
+
+	var feedItems []templates.FeedItem
+	for _, poem := range poems {
+		// Render content (shortcodes + markdown)
+		renderedContent, err := content.RenderContent("poem", poem.ID, poem.Poem)
+		if err != nil {
+			slog.Error("Failed to render poem content for feed", "poem", poem.Title, "error", err)
+			ServerError(w, r)
+			return
+		}
+
+		// Convert relative URLs to absolute
+		absoluteContent, err := makeURLsAbsolute(string(renderedContent), "https://chameth.com")
+		if err != nil {
+			slog.Error("Failed to make URLs absolute for feed", "poem", poem.Title, "error", err)
+			ServerError(w, r)
+			return
+		}
+
+		feedItems = append(feedItems, templates.FeedItem{
+			Title:   poem.Title,
+			Link:    fmt.Sprintf("https://chameth.com%s", poem.Path),
+			Updated: poem.Date.Format("2006-01-02T15:04:05Z"),
+			Content: absoluteContent,
+		})
+	}
+
+	// Get the last updated date from the most recent poem
+	var lastUpdated string
+	if len(poems) > 0 {
+		lastUpdated = poems[0].Date.Format("2006-01-02T15:04:05Z")
+	}
+
+	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderAtom(w, templates.AtomData{
+		FeedTitle:       title,
+		FeedLastUpdated: lastUpdated,
+		FeedItems:       feedItems,
+	})
+	if err != nil {
+		slog.Error("Failed to render atom feed", "error", err)
+	}
+}
+
+func renderSnippetsFeed(w http.ResponseWriter, r *http.Request, title string, limit int) {
+	snippets, err := db.GetRecentSnippetsWithContent(limit)
+	if err != nil {
+		slog.Error("Failed to get recent snippets for feed", "error", err)
+		ServerError(w, r)
+		return
+	}
+
+	var feedItems []templates.FeedItem
+	for _, snippet := range snippets {
+		// Render content (shortcodes + markdown)
+		renderedContent, err := content.RenderContent("snippet", snippet.ID, snippet.Content)
+		if err != nil {
+			slog.Error("Failed to render snippet content for feed", "snippet", snippet.Title, "error", err)
+			ServerError(w, r)
+			return
+		}
+
+		// Convert relative URLs to absolute
+		absoluteContent, err := makeURLsAbsolute(string(renderedContent), "https://chameth.com")
+		if err != nil {
+			slog.Error("Failed to make URLs absolute for feed", "snippet", snippet.Title, "error", err)
+			ServerError(w, r)
+			return
+		}
+
+		feedItems = append(feedItems, templates.FeedItem{
+			Title:   snippet.Title,
+			Link:    fmt.Sprintf("https://chameth.com%s", snippet.Path),
+			Updated: "1970-01-01T00:00:00Z",
+			Content: absoluteContent,
+		})
+	}
+
+	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderAtom(w, templates.AtomData{
+		FeedTitle:       title,
+		FeedLastUpdated: "1970-01-01T00:00:00Z",
+		FeedItems:       feedItems,
+	})
+	if err != nil {
+		slog.Error("Failed to render atom feed", "error", err)
+	}
+}
+
+func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string, limit int) {
+	reviews, err := db.GetRecentPublishedFilmReviewsWithFilmAndPosters(limit)
+	if err != nil {
+		slog.Error("Failed to get recent film reviews for feed", "error", err)
+		ServerError(w, r)
+		return
+	}
+
+	var feedItems []templates.FeedItem
+	for _, review := range reviews {
+		var content strings.Builder
+		content.WriteString("<p>")
+		content.WriteString(fmt.Sprintf("<strong>Rating:</strong> %d/10", review.FilmReview.Rating))
+		if review.FilmReview.IsRewatch {
+			content.WriteString(" (Rewatch)")
+		}
+		content.WriteString("</p>")
+
+		if review.FilmReview.ReviewText != "" {
+			content.WriteString(fmt.Sprintf("<p>%s</p>", review.FilmReview.ReviewText))
+		}
+
+		reviewURL := fmt.Sprintf("https://chameth.com%s", review.Film.Path)
+
+		feedItems = append(feedItems, templates.FeedItem{
+			Title:   review.Film.Title,
+			Link:    reviewURL,
+			Updated: review.FilmReview.WatchedDate.Format("2006-01-02T15:04:05Z"),
+			Content: content.String(),
+		})
+	}
+
+	var lastUpdated string
+	if len(reviews) > 0 {
+		lastUpdated = reviews[0].FilmReview.WatchedDate.Format("2006-01-02T15:04:05Z")
 	}
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")

@@ -70,3 +70,19 @@ func UpdatePoem(id int, path, title, poem, notes, date string, published bool) e
 	}
 	return nil
 }
+
+// GetRecentPoemsWithContent returns the N most recent poems with full content.
+func GetRecentPoemsWithContent(limit int) ([]Poem, error) {
+	var poems []Poem
+	err := db.Select(&poems, `
+		SELECT id, path, title, poem, notes, date, published
+		FROM poems
+		WHERE published = true
+		ORDER BY date DESC
+		LIMIT $1
+	`, limit)
+	if err != nil {
+		return nil, err
+	}
+	return poems, nil
+}

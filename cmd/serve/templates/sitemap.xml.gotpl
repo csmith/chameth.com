@@ -13,6 +13,24 @@
     </url>
 
     <url>
+        <loc>https://chameth.com/feeds/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/films/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/films/reviews/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <url>
         <loc>https://chameth.com/contact/</loc>
         <changefreq>monthly</changefreq>
         <priority>0.2</priority>
@@ -73,6 +91,24 @@
         <priority>0.25</priority>
     </url>
 
+    <url>
+        <loc>https://chameth.com/snippets/feed.xml</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.25</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/poems/feed.xml</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.25</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/films/reviews/feed.xml</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.25</priority>
+    </url>
+
     {{ range .Posts -}}
         <url>
             <loc>https://chameth.com{{ .Path }}</loc>
@@ -95,6 +131,15 @@
             <loc>https://chameth.com{{ .Path }}</loc>
             <changefreq>never</changefreq>
             <priority>0.4</priority>
+            <lastmod>{{ .Date.Iso }}</lastmod>
+        </url>
+    {{- end }}
+
+    {{ range .Films -}}
+        <url>
+            <loc>https://chameth.com{{ .Path }}</loc>
+            <changefreq>yearly</changefreq>
+            <priority>0.2</priority>
             <lastmod>{{ .Date.Iso }}</lastmod>
         </url>
     {{- end }}
