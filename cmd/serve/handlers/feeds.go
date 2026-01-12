@@ -40,6 +40,8 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 	var posts []db.Post
 	var err error
 
+	slog.Info("Serving feed", "type", "posts", "format", format, "useragent", r.UserAgent())
+
 	if format == "" {
 		posts, err = db.GetRecentPostsWithContent(limit)
 	} else {
@@ -97,6 +99,8 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 }
 
 func renderPoemsFeed(w http.ResponseWriter, r *http.Request, title string, limit int) {
+	slog.Info("Serving feed", "type", "poems", "useragent", r.UserAgent())
+
 	poems, err := db.GetRecentPoemsWithContent(limit)
 	if err != nil {
 		slog.Error("Failed to get recent poems for feed", "error", err)
@@ -149,6 +153,8 @@ func renderPoemsFeed(w http.ResponseWriter, r *http.Request, title string, limit
 }
 
 func renderSnippetsFeed(w http.ResponseWriter, r *http.Request, title string, limit int) {
+	slog.Info("Serving feed", "type", "snippets", "useragent", r.UserAgent())
+
 	snippets, err := db.GetRecentSnippetsWithContent(limit)
 	if err != nil {
 		slog.Error("Failed to get recent snippets for feed", "error", err)
@@ -195,6 +201,8 @@ func renderSnippetsFeed(w http.ResponseWriter, r *http.Request, title string, li
 }
 
 func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string, limit int) {
+	slog.Info("Serving feed", "type", "filmreviews", "useragent", r.UserAgent())
+
 	reviews, err := db.GetRecentPublishedFilmReviewsWithFilmAndPosters(limit)
 	if err != nil {
 		slog.Error("Failed to get recent film reviews for feed", "error", err)
