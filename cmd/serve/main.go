@@ -58,6 +58,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.Handle("POST /api/contact", http.HandlerFunc(handlers.ContactForm))
+	mux.Handle("POST /api/nod", http.HandlerFunc(handlers.Nod))
 	mux.Handle("GET /assets/stylesheets/", http.HandlerFunc(handlers.Stylesheet))
 	mux.Handle("GET /index.xml", http.HandlerFunc(handlers.FullFeed))
 	mux.Handle("GET /short.xml", http.HandlerFunc(handlers.ShortPostsFeed))

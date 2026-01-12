@@ -33,7 +33,7 @@ hr.end-of-post {
   clear: both;
   border: 0;
   width: 100%;
-  margin: var(--large-space) 0;
+  margin: var(--medium-space) 0;
   height: var(--medium-space);
   background: repeating-linear-gradient(-45deg, var(--accent-colour) 0, var(--accent-colour) 10px, transparent 10px, transparent 20px);
 }

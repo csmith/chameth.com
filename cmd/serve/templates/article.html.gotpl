@@ -25,9 +25,10 @@
 
         <hr class="end-of-post">
 
+        <aside><div data-nod></div></aside>
+
         <section>
-            <h3>Thanks for reading!</h3>
-            <p>Have thoughts? Send me an e-mail!</p>
+            <p>Have thoughts that transcend nodding? Send me a message!</p>
             <div data-contact>
                 <noscript>
                     Sorry, to reduce the amount of spam I receive, this contact form

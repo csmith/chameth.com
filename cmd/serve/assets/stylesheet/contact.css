@@ -7,7 +7,7 @@
     }
 }
 
-[data-contact] {
+[data-contact], [data-nod] {
   position: relative;
 
   .loading, .result {
@@ -45,10 +45,13 @@
   }
 
   form {
+    transition: opacity 200ms ease-in-out;
+  }
+
+  form.contact {
     display: flex;
     flex-direction: column;
     gap: var(--small-space);
-    transition: opacity 200ms ease-in-out;
 
     input, textarea {
       font-size: var(--font-size-small);
@@ -73,6 +76,47 @@
       padding: var(--small-space);
       border-radius: 2px;
       cursor: pointer;
+    }
+  }
+
+  form.nod {
+    --button-size: 125px;
+
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--smedium-space);
+    background-color: var(--accent-alt-colour);
+    border-radius: calc((var(--button-size) + var(--smedium-space)) / 2);
+    padding: var(--smedium-space);
+
+    button {
+      display: inline-block;
+      border-radius: calc(var(--button-size) / 2);
+      height: var(--button-size);
+      width: var(--button-size);
+      background-color: var(--accent-colour);
+      color: var(--text-colour);
+      font-size: var(--font-size-xlarge);
+      cursor: pointer;
+      border: none;
+      transition: box-shadow 200ms ease-in-out;
+
+      &:hover, &:active, &:focus {
+        box-shadow: 0 0 20px var(--accent-colour);
+      }
+    }
+
+    div {
+      align-self: center;
+      text-align: center;
+    }
+
+    p {
+      font-family: "Chris Hand", sans-serif;
+      font-size: var(--font-size-xlarge);
+      line-height: var(--font-size-xlarge);
+      margin: 0;
+      padding: 0;
     }
   }
 }

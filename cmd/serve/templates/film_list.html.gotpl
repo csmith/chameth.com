@@ -20,5 +20,9 @@
             {{end}}
         </ol>
         {{end}}
+
+        <hr class="end-of-post">
+
+        <aside><div data-nod></div></aside>
     </article>
 {{end}}

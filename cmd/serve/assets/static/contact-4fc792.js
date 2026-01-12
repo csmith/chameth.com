@@ -50,4 +50,56 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         })
     })
+
+    document.querySelectorAll('*[data-nod]').forEach((el) => {
+        el.innerHTML = `
+            <form class="nod">
+                <button type="submit" class="submit">nod</button>
+                <div>
+                    <p>Liked this page? Just want to declare you that reached the end? Like pressing buttons?</p>
+                    <p>Give me a nod to let me know you were here. No tracking, no counters, etc, just a nod in passing.</p>
+                </div>
+            </form>
+        `
+
+        el.querySelector('form').addEventListener('submit', (e) => {
+            e.preventDefault()
+
+            const payload = {
+                page: document.location.href
+            }
+
+            const loadingContainer = document.createElement('div')
+            loadingContainer.classList.add('loading')
+            loadingContainer.appendChild(document.createElement('span'))
+            el.appendChild(loadingContainer)
+
+            const resultContainer = document.createElement('div')
+            resultContainer.classList.add('result')
+            const resultText = document.createElement('p')
+            resultContainer.appendChild(resultText)
+
+            fetch("/api/nod", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            }).then(response => {
+                if (response.ok) {
+                    resultText.innerText = 'Thanks!'
+                    el.appendChild(resultContainer)
+                    el.removeChild(loadingContainer)
+                } else {
+                    resultText.innerText = 'Sorry, something went wrong.'
+                    el.appendChild(resultContainer)
+                    el.removeChild(loadingContainer)
+                }
+            }).catch(() => {
+                resultText.innerText = 'Sorry, something went wrong.'
+                el.appendChild(resultContainer)
+                el.removeChild(loadingContainer)
+            });
+        })
+    })
 })
