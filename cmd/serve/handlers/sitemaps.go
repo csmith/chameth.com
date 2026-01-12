@@ -11,12 +11,10 @@ import (
 	"chameth.com/chameth.com/cmd/serve/templates"
 )
 
-func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
+func buildSiteMapData(pageData templates.PageData) (templates.SiteMapData, error) {
 	poems, err := db.GetAllPoems()
 	if err != nil {
-		slog.Error("Failed to get all poems", "error", err)
-		ServerError(w, r)
-		return
+		return templates.SiteMapData{}, fmt.Errorf("failed to get all poems: %w", err)
 	}
 
 	var poemDetails []templates.ContentDetails
@@ -33,9 +31,7 @@ func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 
 	snippets, err := db.GetAllSnippets()
 	if err != nil {
-		slog.Error("Failed to get all snippets", "error", err)
-		ServerError(w, r)
-		return
+		return templates.SiteMapData{}, fmt.Errorf("failed to get all snippets: %w", err)
 	}
 
 	var snippetDetails []templates.SnippetDetails
@@ -48,9 +44,7 @@ func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 
 	posts, err := db.GetAllPosts()
 	if err != nil {
-		slog.Error("Failed to get all posts", "error", err)
-		ServerError(w, r)
-		return
+		return templates.SiteMapData{}, fmt.Errorf("failed to get all posts: %w", err)
 	}
 
 	var postDetails []templates.ContentDetails
@@ -67,9 +61,7 @@ func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 
 	filmReviews, err := db.GetAllPublishedFilmReviewsWithFilmAndPosters()
 	if err != nil {
-		slog.Error("Failed to get all film reviews", "error", err)
-		ServerError(w, r)
-		return
+		return templates.SiteMapData{}, fmt.Errorf("failed to get all film reviews: %w", err)
 	}
 
 	var filmDetails []templates.ContentDetails
@@ -84,106 +76,49 @@ func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	err = templates.RenderHtmlSiteMap(w, templates.SiteMapData{
+	return templates.SiteMapData{
 		Posts:    postDetails,
 		Poems:    poemDetails,
 		Snippets: snippetDetails,
 		Films:    filmDetails,
-		PageData: templates.PageData{
-			Title:        "Sitemap · Chameth.com",
-			Stylesheet:   assets.GetStylesheetPath(),
-			CanonicalUrl: "https://chameth.com/sitemap/",
-			RecentPosts:  content.RecentPosts(),
-		},
-	})
+		PageData: pageData,
+	}, nil
+}
+
+func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
+	pageData := templates.PageData{
+		Title:        "Sitemap · Chameth.com",
+		Stylesheet:   assets.GetStylesheetPath(),
+		CanonicalUrl: "https://chameth.com/sitemap/",
+		RecentPosts:  content.RecentPosts(),
+	}
+
+	siteMapData, err := buildSiteMapData(pageData)
+	if err != nil {
+		slog.Error("Failed to build site map data", "error", err)
+		ServerError(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderHtmlSiteMap(w, siteMapData)
 	if err != nil {
 		slog.Error("Failed to render site map template", "error", err)
 	}
 }
 
 func XmlSiteMap(w http.ResponseWriter, r *http.Request) {
-	poems, err := db.GetAllPoems()
+	siteMapData, err := buildSiteMapData(templates.PageData{})
 	if err != nil {
-		slog.Error("Failed to get all poems", "error", err)
+		slog.Error("Failed to build site map data", "error", err)
 		ServerError(w, r)
 		return
-	}
-
-	var poemDetails []templates.ContentDetails
-	for _, p := range poems {
-		poemDetails = append(poemDetails, templates.ContentDetails{
-			Title: p.Title,
-			Path:  p.Path,
-			Date: templates.ContentDate{
-				Iso:      p.Date.Format("2006-01-02"),
-				Friendly: p.Date.Format("Jan 2, 2006"),
-			},
-		})
-	}
-
-	snippets, err := db.GetAllSnippets()
-	if err != nil {
-		slog.Error("Failed to get all snippets", "error", err)
-		ServerError(w, r)
-		return
-	}
-
-	var snippetDetails []templates.SnippetDetails
-	for _, s := range snippets {
-		snippetDetails = append(snippetDetails, templates.SnippetDetails{
-			Path: s.Path,
-			Name: fmt.Sprintf("%s ➔ %s", s.Topic, s.Title),
-		})
-	}
-
-	posts, err := db.GetAllPosts()
-	if err != nil {
-		slog.Error("Failed to get all posts", "error", err)
-		ServerError(w, r)
-		return
-	}
-
-	var postDetails []templates.ContentDetails
-	for _, p := range posts {
-		postDetails = append(postDetails, templates.ContentDetails{
-			Title: p.Title,
-			Path:  p.Path,
-			Date: templates.ContentDate{
-				Iso:      p.Date.Format("2006-01-02"),
-				Friendly: p.Date.Format("Jan 2, 2006"),
-			},
-		})
-	}
-
-	filmReviews, err := db.GetAllPublishedFilmReviewsWithFilmAndPosters()
-	if err != nil {
-		slog.Error("Failed to get all film reviews", "error", err)
-		ServerError(w, r)
-		return
-	}
-
-	var filmDetails []templates.ContentDetails
-	for _, review := range filmReviews {
-		filmDetails = append(filmDetails, templates.ContentDetails{
-			Title: review.Film.Title,
-			Path:  review.Film.Path,
-			Date: templates.ContentDate{
-				Iso:      review.FilmReview.WatchedDate.Format("2006-01-02"),
-				Friendly: review.FilmReview.WatchedDate.Format("Jan 2, 2006"),
-			},
-		})
 	}
 
 	w.Header().Set("Content-Type", "text/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderXmlSiteMap(w, templates.SiteMapData{
-		Posts:    postDetails,
-		Poems:    poemDetails,
-		Snippets: snippetDetails,
-		Films:    filmDetails,
-	})
+	err = templates.RenderXmlSiteMap(w, siteMapData)
 	if err != nil {
 		slog.Error("Failed to render site map template", "error", err)
 	}
