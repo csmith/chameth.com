@@ -76,12 +76,26 @@ func buildSiteMapData(pageData templates.PageData) (templates.SiteMapData, error
 		})
 	}
 
+	filmLists, err := db.GetAllFilmLists()
+	if err != nil {
+		return templates.SiteMapData{}, fmt.Errorf("failed to get all film lists: %w", err)
+	}
+
+	var filmListDetails []templates.ContentDetails
+	for _, list := range filmLists {
+		filmListDetails = append(filmListDetails, templates.ContentDetails{
+			Title: list.Title,
+			Path:  list.Path,
+		})
+	}
+
 	return templates.SiteMapData{
-		Posts:    postDetails,
-		Poems:    poemDetails,
-		Snippets: snippetDetails,
-		Films:    filmDetails,
-		PageData: pageData,
+		Posts:     postDetails,
+		Poems:     poemDetails,
+		Snippets:  snippetDetails,
+		Films:     filmDetails,
+		FilmLists: filmListDetails,
+		PageData:  pageData,
 	}, nil
 }
 

@@ -112,7 +112,7 @@
     {{ range .Posts -}}
         <url>
             <loc>https://chameth.com{{ .Path }}</loc>
-            <changefreq>monthly</changefreq>
+            <changefreq>never</changefreq>
             <priority>0.9</priority>
             <lastmod>{{ .Date.Iso }}</lastmod>
         </url>
@@ -141,6 +141,14 @@
             <changefreq>yearly</changefreq>
             <priority>0.2</priority>
             <lastmod>{{ .Date.Iso }}</lastmod>
+        </url>
+    {{- end }}
+
+    {{ range .FilmLists -}}
+        <url>
+            <loc>https://chameth.com{{ .Path }}</loc>
+            <changefreq>monthly</changefreq>
+            <priority>0.1</priority>
         </url>
     {{- end }}
 </urlset>

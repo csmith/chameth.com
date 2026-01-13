@@ -27,10 +27,11 @@ var siteMapXmlTemplate = textTemplate.Must(
 
 type SiteMapData struct {
 	PageData
-	Poems    []ContentDetails
-	Posts    []ContentDetails
-	Snippets []SnippetDetails
-	Films    []ContentDetails
+	Poems     []ContentDetails
+	Posts     []ContentDetails
+	Snippets  []SnippetDetails
+	Films     []ContentDetails
+	FilmLists []ContentDetails
 }
 
 type ContentDetails struct {

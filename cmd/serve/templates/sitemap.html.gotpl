@@ -83,6 +83,16 @@
         {{ end -}}
     </ul>
 
+    <h3>Film lists</h3>
+
+    <p>Lists of films for various purposes.</p>
+
+    <ul class="sitemap">
+        {{- range .FilmLists }}
+            <li><a href="{{ .Path }}">{{ .Title }}</a></li>
+        {{ end -}}
+    </ul>
+
     <hr class="end-of-post">
 
     <aside><div data-nod></div></aside>
