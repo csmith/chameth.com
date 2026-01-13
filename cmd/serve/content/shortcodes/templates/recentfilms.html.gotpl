@@ -1,0 +1,12 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/templates.RecentFilmsData*/}}
+<ol class="recent-films">
+{{- range .Films }}
+  <li>
+    <a href="{{ .Path }}">
+      <img src="{{ .PosterPath }}" alt="Poster of {{ .Title }}" loading="lazy">
+      <time>{{ formatDate .Date }}</time>
+      <div>{{ .Stars }}</div>
+    </a>
+  </li>
+{{- end }}
+</ol>

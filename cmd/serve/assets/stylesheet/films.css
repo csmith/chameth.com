@@ -267,3 +267,65 @@ a.film-list {
     }
   }
 }
+
+ol.recent-films {
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  overflow-x: hidden;
+  gap: var(--small-space);
+
+  margin: var(--small-space) 0;
+  padding: 0;
+
+  mask: linear-gradient(
+      to right,
+      black,
+      black 95%,
+      transparent 100%
+  );
+
+  li {
+    margin: 0;
+    padding: 0;
+
+    a {
+      border-radius: var(--border-radius);
+      padding: var(--small-space);
+      background: none;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--small-space);
+      transition: background 200ms ease-in-out;
+
+      &:hover, &:focus, &:active {
+        background: var(--accent-colour);
+
+        time {
+          color: var(--text-colour);
+        }
+
+        img {
+          border-color: var(--text-colour);
+        }
+      }
+
+      time {
+        font-family: "Berkeley Mono", monospace;
+        font-size: var(--font-size-small);
+        color: var(--text-alt-colour);
+        transition: color 200ms ease-in-out;
+      }
+
+      img {
+        max-height: 200px;
+        max-width: 133px;
+        border: 4px solid var(--background-alt-colour);
+        border-radius: 4px;
+        transition: border-color 200ms ease-in-out;
+      }
+    }
+  }
+}
