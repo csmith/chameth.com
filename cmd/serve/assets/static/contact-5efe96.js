@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('*[data-nod]').forEach((el) => {
         el.innerHTML = `
-            <form class="nod">
+            <form class="nod" role="button" tabindex="0">
                 <button type="submit" class="submit">nod</button>
                 <div>
                     <p>Liked this page? Just want to declare you that reached the end? Like pressing buttons?</p>
@@ -61,6 +61,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </form>
         `
+
+        const form = el.querySelector('form')
+        form.addEventListener('click', () => {
+            form.querySelector('.submit').click()
+        })
+
+        form.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                form.querySelector('.submit').click()
+            }
+        })
 
         el.querySelector('form').addEventListener('submit', (e) => {
             e.preventDefault()
@@ -87,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(payload),
             }).then(response => {
                 if (response.ok) {
-                    resultText.innerText = 'Thanks!'
+                    resultText.innerText = 'Your nod has been received and is appreciated'
                     el.appendChild(resultContainer)
                     el.removeChild(loadingContainer)
                 } else {

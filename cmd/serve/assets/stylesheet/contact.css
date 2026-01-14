@@ -82,12 +82,19 @@
   form.nod {
     --button-size: 125px;
 
+    cursor: pointer;
     display: grid;
     grid-template-columns: auto 1fr;
     gap: var(--smedium-space);
     background-color: var(--accent-alt-colour);
     border-radius: calc((var(--button-size) + var(--smedium-space)) / 2);
     padding: var(--smedium-space);
+
+    &:hover, &:active, &:focus {
+      button {
+        box-shadow: 0 0 20px var(--accent-colour);
+      }
+    }
 
     button {
       display: inline-block;
@@ -100,10 +107,6 @@
       cursor: pointer;
       border: none;
       transition: box-shadow 200ms ease-in-out;
-
-      &:hover, &:active, &:focus {
-        box-shadow: 0 0 20px var(--accent-colour);
-      }
     }
 
     div {
