@@ -104,6 +104,14 @@ func Start() error {
 	httpsMux.HandleFunc("POST /film-lists/{id}/entries", handlers.AddFilmToListHandler())
 	httpsMux.HandleFunc("POST /film-lists/{id}/entries/remove/{entryId}", handlers.RemoveFilmFromListHandler())
 	httpsMux.HandleFunc("POST /film-lists/{id}/entries/position/{entryId}", handlers.UpdateEntryPositionHandler())
+	httpsMux.HandleFunc("GET /videogames", handlers.ListVideoGamesHandler())
+	httpsMux.HandleFunc("POST /videogames", handlers.CreateVideoGameHandler())
+	httpsMux.HandleFunc("GET /videogames/edit/{id}", handlers.EditVideoGameHandler())
+	httpsMux.HandleFunc("POST /videogames/edit/{id}", handlers.UpdateVideoGameHandler())
+	httpsMux.HandleFunc("POST /videogames/delete/{id}", handlers.DeleteVideoGameHandler())
+	httpsMux.HandleFunc("GET /video-game-reviews/edit/{id}", handlers.EditVideoGameReviewHandler())
+	httpsMux.HandleFunc("POST /video-game-reviews/create/{id}", handlers.CreateVideoGameReviewHandler())
+	httpsMux.HandleFunc("POST /video-game-reviews/edit/{id}", handlers.UpdateVideoGameReviewHandler())
 
 	httpsServer := &http.Server{
 		Handler: middleware.Chain(

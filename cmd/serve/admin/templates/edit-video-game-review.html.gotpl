@@ -1,0 +1,21 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.EditVideoGameReviewData */}}
+{{define "content"}}
+    <h2>Edit review: {{.VideoGameTitle}}</h2>
+    <form action="/video-game-reviews/edit/{{.ID}}" method="post">
+        <label>Video Game: {{.VideoGameTitle}}</label>
+        <label>Played Date: <input type="text" name="played_date" value="{{.PlayedDate}}" /></label>
+        <label>Rating (0-10): <input type="text" name="rating" value="{{.Rating}}" /></label>
+        <label>Playtime (hours): <input type="text" name="playtime" value="{{.Playtime}}" /></label>
+        <label>Completion Status: <input type="text" name="completion_status" value="{{.CompletionStatus}}" /></label>
+        <label>
+            <input type="checkbox" name="published" value="true" {{if .Published}}checked{{end}} />
+            Published
+        </label>
+        <label>
+            Notes:
+            <textarea name="notes">{{.Notes}}</textarea>
+        </label>
+        <input type="submit" />
+    </form>
+    <a href="/videogames/edit/{{.VideoGameID}}">Back to game</a>
+{{end}}

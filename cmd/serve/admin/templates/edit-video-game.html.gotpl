@@ -1,0 +1,41 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.EditVideoGameData */}}
+{{define "content"}}
+    <h2>Edit video game: {{.Title}}</h2>
+    <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
+    <form action="/videogames/edit/{{.ID}}" method="post">
+        <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
+        <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>
+        <label>Platform: <input type="text" name="platform" value="{{.Platform}}" /></label>
+        <label>
+            Overview:
+            <textarea name="overview">{{.Overview}}</textarea>
+        </label>
+        <label>
+            <input type="checkbox" name="published" value="true" {{if .Published}}checked{{end}} />
+            Published
+        </label>
+        <input type="submit" />
+    </form>
+
+    {{if .Poster}}
+    <h2>Cover Art</h2>
+    <img src="/media/view/{{.Poster.ID}}" alt="{{.Title}} cover art" style="max-width: 300px;" />
+    {{end}}
+    <a href="/media-relations/edit?entity_type=videogame&entity_id={{.ID}}&entity_path={{.Path}}">Manage Media</a>
+
+    <h2>Reviews</h2>
+    <form method="POST" action="/video-game-reviews/create/{{.ID}}">
+        <button type="submit">Add New Review</button>
+    </form>
+
+    {{range .Reviews}}
+    <div>
+        <strong>{{.PlayedDate}}</strong> - Rating: {{.Rating}}/10
+        {{if .Playtime}}({{.Playtime}}h){{end}}
+        {{if .CompletionStatus}}({{.CompletionStatus}}){{end}}
+        {{if .Published}}(Published){{end}}
+        - <a href="/video-game-reviews/edit/{{.ID}}">Edit</a>
+        <p>{{.Notes}}</p>
+    </div>
+    {{end}}
+{{end}}

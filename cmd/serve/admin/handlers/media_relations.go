@@ -63,6 +63,13 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 				return
 			}
 			entityPath = fmt.Sprintf("/film-%d/", film.ID)
+		case "videogame":
+			game, err := db.GetVideoGameByID(entityID)
+			if err != nil {
+				http.Error(w, "Entity not found", http.StatusNotFound)
+				return
+			}
+			entityPath = game.Path
 		default:
 			http.Error(w, "Unsupported entity type", http.StatusBadRequest)
 			return
