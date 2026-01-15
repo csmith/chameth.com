@@ -158,6 +158,18 @@ type Film struct {
 	Runtime  *int   `db:"runtime"`
 }
 
+type FilmWithPoster struct {
+	ID         int     `db:"id"`
+	TMDBID     *int    `db:"tmdb_id"`
+	Title      string  `db:"title"`
+	Year       *int    `db:"year"`
+	Overview   string  `db:"overview"`
+	Runtime    *int    `db:"runtime"`
+	Published  bool    `db:"published"`
+	Path       string  `db:"path"`
+	PosterPath *string `db:"poster_path"`
+}
+
 type FilmReview struct {
 	ID          int       `db:"id"`
 	FilmID      int       `db:"film_id"`

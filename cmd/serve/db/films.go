@@ -144,9 +144,16 @@ func GetFilmByTMDBID(tmdbID int) (*Film, error) {
 	return &film, nil
 }
 
-func GetFilmByPath(path string) (*Film, error) {
-	var film Film
-	err := db.Get(&film, "SELECT id, tmdb_id, title, year, overview, runtime, published, path FROM films WHERE path = $1 OR path = $2", path, path+"/")
+func GetFilmWithPosterByPath(path string) (*FilmWithPoster, error) {
+	var film FilmWithPoster
+	err := db.Get(&film, `
+		SELECT
+			f.id, f.tmdb_id, f.title, f.year, f.overview, f.runtime, f.published, f.path,
+			mr.path as poster_path
+		FROM films f
+		LEFT JOIN media_relations mr ON mr.entity_type = 'film' AND mr.entity_id = f.id AND mr.role = 'poster'
+		WHERE f.path = $1 OR f.path = $2
+	`, path, path+"/")
 	if err != nil {
 		return nil, err
 	}

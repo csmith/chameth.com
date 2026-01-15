@@ -16,7 +16,7 @@ import (
 )
 
 func Film(w http.ResponseWriter, r *http.Request) {
-	film, err := db.GetFilmByPath(r.URL.Path)
+	film, err := db.GetFilmWithPosterByPath(r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find film by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)
@@ -42,15 +42,30 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var reviewHTMLs []template.HTML
+	var reviewData []templates.FilmReviewData
 	for _, review := range publishedReviews {
-		reviewHTML, err := shortcodes.RenderFilmReview(review.ID)
+		ratingHTML, err := shortcodes.RenderRating(review.Rating)
 		if err != nil {
-			slog.Error("Failed to render film review", "review_id", review.ID, "error", err)
+			slog.Error("Failed to render rating", "review_id", review.ID, "error", err)
 			ServerError(w, r)
 			return
 		}
-		reviewHTMLs = append(reviewHTMLs, template.HTML(reviewHTML))
+
+		reviewTextHTML, err := markdown.Render(review.ReviewText)
+		if err != nil {
+			slog.Error("Failed to render review text", "review_id", review.ID, "error", err)
+			ServerError(w, r)
+			return
+		}
+
+		reviewData = append(reviewData, templates.FilmReviewData{
+			WatchedDate: review.WatchedDate.Format("2006-01-02"),
+			Rating:      review.Rating,
+			RatingHTML:  template.HTML(ratingHTML),
+			IsRewatch:   review.IsRewatch,
+			HasSpoilers: review.HasSpoilers,
+			Content:     reviewTextHTML,
+		})
 	}
 
 	renderedOverview, err := markdown.Render(film.Overview)
@@ -65,14 +80,39 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		year = fmt.Sprintf("%d", *film.Year)
 	}
 
+	timesWatched := len(publishedReviews)
+	var ratingHTML string
+	if len(publishedReviews) > 0 {
+		var sum int
+		for _, review := range publishedReviews {
+			sum += review.Rating
+		}
+		averageRating := float64(sum) / float64(len(publishedReviews))
+		roundedRating := int(math.Round(averageRating))
+		stars, err := shortcodes.RenderRating(roundedRating)
+		if err != nil {
+			slog.Error("Failed to render rating", "error", err, "rating", roundedRating)
+		} else {
+			ratingHTML = stars
+		}
+	}
+
+	posterPath := ""
+	if film.PosterPath != nil {
+		posterPath = *film.PosterPath
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderFilm(w, templates.FilmData{
-		Title:    film.Title,
-		Year:     year,
-		TMDBID:   film.TMDBID,
-		Overview: renderedOverview,
-		Reviews:  reviewHTMLs,
+		Title:         film.Title,
+		Year:          year,
+		TMDBID:        film.TMDBID,
+		Overview:      renderedOverview,
+		Reviews:       reviewData,
+		TimesWatched:  timesWatched,
+		AverageRating: template.HTML(ratingHTML),
+		PosterPath:    posterPath,
 		PageData: templates.PageData{
 			Title:        fmt.Sprintf("%s (%s) · Chameth.com", film.Title, year),
 			Stylesheet:   assets.GetStylesheetPath(),

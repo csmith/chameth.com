@@ -4,7 +4,7 @@
     <img src="{{ .PosterPath }}" alt="Poster for {{ .Name }}" loading="lazy">
     <header>
       <h3>{{ .Name }}</h3>
-      <div>{{ if .Rewatch }}<div class="rewatch">rewatch</div>{{ end }}{{ if .Spoiler }}<div class="spoilers">spoilers</div>{{ end }}</div>
+      <div>{{ if .Rewatch }}<span class="film-rewatch">rewatch</span>{{ end }}{{ if .Spoiler }}<span class="film-spoilers">spoilers</span>{{ end }}</div>
       <div title="{{ .Rating }}/10">{{ .Stars }}</div>
       <time>{{ formatDate .Date }}</time>
     </header>

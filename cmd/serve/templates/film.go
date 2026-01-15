@@ -18,11 +18,23 @@ var filmTemplate = template.Must(
 
 type FilmData struct {
 	PageData
-	Title    string
-	Year     string
-	TMDBID   *int
-	Overview template.HTML
-	Reviews  []template.HTML
+	Title         string
+	Year          string
+	TMDBID        *int
+	Overview      template.HTML
+	Reviews       []FilmReviewData
+	TimesWatched  int
+	AverageRating template.HTML
+	PosterPath    string
+}
+
+type FilmReviewData struct {
+	WatchedDate string
+	Rating      int
+	RatingHTML  template.HTML
+	IsRewatch   bool
+	HasSpoilers bool
+	Content     template.HTML
 }
 
 func RenderFilm(w io.Writer, film FilmData) error {

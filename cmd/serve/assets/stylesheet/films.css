@@ -58,6 +58,11 @@
     margin-top: var(--small-space);
     margin-right: var(--smedium-space);
 
+    div {
+      display: flex;
+      align-items: center;
+    }
+
     h3 {
       &::before {
         content: none;
@@ -77,22 +82,6 @@
       font-family: "Berkeley Mono", monospace;
       text-transform: uppercase;
     }
-  }
-
-  .rewatch {
-    display: inline-block;
-    font-size: var(--font-size-tiny);
-    padding: 0 var(--small-space);
-    background-color: var(--accent-colour);
-    border-radius: var(--border-radius);
-  }
-
-  .spoilers {
-    display: inline-block;
-    font-size: var(--font-size-tiny);
-    padding: 0 var(--small-space);
-    background-color: darkred;
-    border-radius: var(--border-radius);
   }
 
   & > div {
@@ -325,6 +314,115 @@ ol.recent-films {
         border: 4px solid var(--background-alt-colour);
         border-radius: 4px;
         transition: border-color 200ms ease-in-out;
+      }
+    }
+  }
+}
+
+.film-rewatch {
+  display: inline-block;
+  font-size: var(--font-size-tiny);
+  padding: 0 var(--small-space);
+  background-color: var(--accent-colour);
+  border-radius: var(--border-radius);
+}
+
+.film-spoilers {
+  display: inline-block;
+  font-size: var(--font-size-tiny);
+  padding: 0 var(--small-space);
+  background-color: darkred;
+  border-radius: var(--border-radius);
+}
+
+.film-page {
+  display: grid;
+
+  @media(min-width: 1200px) {
+    grid-template-areas: "header sidebar" "review sidebar";
+    grid-template-columns: calc(var(--content-width) - 300px) 300px;
+    grid-template-rows: auto 1fr;
+    column-gap: var(--medium-space);
+
+    aside {
+      rotate: 1.5deg;
+    }
+
+    .film-review-content {
+      padding-right: calc(300px + var(--medium-space) + var(--content-margin));
+
+      &::after {
+        right: calc(300px + var(--medium-space) + var(--content-margin));
+      }
+    }
+  }
+
+  @media (max-width: 1200px) {
+    grid-template-areas: "header" "review" "sidebar";
+    grid-template-columns: 1fr;
+
+    aside {
+      margin-top: var(--medium-space);
+    }
+  }
+
+  & > header {
+    grid-area: header;
+  }
+
+  & > div {
+    grid-area: review;
+  }
+
+  & > aside {
+    grid-area: sidebar;
+  }
+
+  .film-page-review {
+    position: relative;
+
+    .film-review-content p {
+      font-family: "Chris Hand", sans-serif;
+      font-size: var(--font-size-xlarge);
+    }
+
+    & > h3 {
+      margin-bottom: 0;
+    }
+
+    & > p {
+      margin-top: 0;
+
+      span:not(:first-child) {
+        margin-left: var(--smedium-space);
+      }
+    }
+  }
+
+  aside {
+    z-index: 1;
+    background: var(--background-colour);
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--accent-colour);
+    max-width: 300px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    gap: var(--smedium-space);
+    padding-bottom: var(--medium-space);
+
+    img {
+      border-bottom: 2px solid var(--accent-colour);
+    }
+
+    p, a {
+      margin: 0 var(--small-space);
+      font-size: var(--font-size-small);
+      text-align: center;
+      background: none;
+
+      &.release-date {
+        color: var(--text-alt-colour);
       }
     }
   }
