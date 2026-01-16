@@ -14,20 +14,14 @@ var (
 	figureRegexp = regexp.MustCompile(`\{%\s*figure "(.*?)" "(.*?)"\s*%}`)
 )
 
-func renderFigure(input string, media []db.MediaRelationWithDetails) (string, error) {
+func renderFigure(input string, ctx *Context) (string, error) {
 	res := input
 	figures := figureRegexp.FindAllStringSubmatch(input, -1)
 	for _, figure := range figures {
 		class := strings.ReplaceAll(figure[1], `\\"`, `"`)
 		description := strings.ReplaceAll(figure[2], `\\"`, `"`)
 
-		// Find all media relations with matching description
-		var matchingMedia []db.MediaRelationWithDetails
-		for i := range media {
-			if media[i].Description != nil && *media[i].Description == description {
-				matchingMedia = append(matchingMedia, media[i])
-			}
-		}
+		matchingMedia := ctx.MediaWithDescription(description)
 
 		if len(matchingMedia) == 0 {
 			return "", fmt.Errorf("figure media not found for description: %s", description)

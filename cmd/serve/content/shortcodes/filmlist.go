@@ -15,7 +15,7 @@ var (
 	filmListRegexp = regexp.MustCompile(`\{%\s*filmlist ([0-9]+)\s*%}`)
 )
 
-func renderFilmList(input string) (string, error) {
+func renderFilmList(input string, _ *Context) (string, error) {
 	res := input
 	matches := filmListRegexp.FindAllStringSubmatch(input, -1)
 	for _, match := range matches {

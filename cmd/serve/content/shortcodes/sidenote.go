@@ -13,7 +13,7 @@ var (
 	sideNoteRegexp = regexp.MustCompile(`(?s)\{%\s*sidenote "(.*?)"\s*%}(.*?)\{%\s*endsidenote\s*%}`)
 )
 
-func renderSideNote(input string) (string, error) {
+func renderSideNote(input string, _ *Context) (string, error) {
 	res := input
 	sideNotes := sideNoteRegexp.FindAllStringSubmatch(input, -1)
 	for _, sideNote := range sideNotes {

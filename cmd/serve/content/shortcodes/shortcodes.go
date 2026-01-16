@@ -2,63 +2,44 @@ package shortcodes
 
 import "chameth.com/chameth.com/cmd/serve/db"
 
-func Render(input string, media []db.MediaRelationWithDetails) (string, error) {
+type Context struct {
+	Media []db.MediaRelationWithDetails
+}
+
+func (c *Context) MediaWithDescription(description string) []db.MediaRelationWithDetails {
+	var matching []db.MediaRelationWithDetails
+	for i := range c.Media {
+		if c.Media[i].Description != nil && *c.Media[i].Description == description {
+			matching = append(matching, c.Media[i])
+		}
+	}
+	return matching
+}
+
+type renderer func(string, *Context) (string, error)
+
+var renderers = []renderer{
+	renderSideNote,
+	renderUpdate,
+	renderWarning,
+	renderAudio,
+	renderVideo,
+	renderFigure,
+	renderFilmReview,
+	renderFilmReviews,
+	renderFilmList,
+	renderRecentFilms,
+	renderRating,
+}
+
+func Render(input string, ctx *Context) (string, error) {
 	var res = input
 	var err error
 
-	res, err = renderSideNote(res)
-	if err != nil {
-		return "", err
-	}
-
-	res, err = renderUpdate(res)
-	if err != nil {
-		return "", err
-	}
-
-	res, err = renderWarning(res)
-	if err != nil {
-		return "", err
-	}
-
-	res, err = renderAudio(res, media)
-	if err != nil {
-		return "", err
-	}
-
-	res, err = renderVideo(res, media)
-	if err != nil {
-		return "", err
-	}
-
-	res, err = renderFigure(res, media)
-	if err != nil {
-		return "", err
-	}
-
-	res, err = renderFilmReview(res)
-	if err != nil {
-		return "", err
-	}
-
-	res, err = renderFilmReviews(res)
-	if err != nil {
-		return "", err
-	}
-
-	res, err = renderFilmList(res)
-	if err != nil {
-		return "", err
-	}
-
-	res, err = renderRecentFilms(res)
-	if err != nil {
-		return "", err
-	}
-
-	res, err = renderRating(res)
-	if err != nil {
-		return "", err
+	for _, r := range renderers {
+		if res, err = r(res, ctx); err != nil {
+			return "", err
+		}
 	}
 
 	return res, nil

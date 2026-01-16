@@ -13,7 +13,7 @@ var (
 	ratingRegexp = regexp.MustCompile(`(?s)\{%\s*rating ([0-9]+)\s*%}`)
 )
 
-func renderRating(input string) (string, error) {
+func renderRating(input string, _ *Context) (string, error) {
 	res := input
 	ratings := ratingRegexp.FindAllStringSubmatch(input, -1)
 	for _, rating := range ratings {

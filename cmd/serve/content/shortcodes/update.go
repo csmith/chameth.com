@@ -13,7 +13,7 @@ var (
 	updateRegexp = regexp.MustCompile(`(?s)\{%\s*update "(.*?)"\s*%}(.*?)\{%\s*endupdate\s*%}`)
 )
 
-func renderUpdate(input string) (string, error) {
+func renderUpdate(input string, _ *Context) (string, error) {
 	res := input
 	updates := updateRegexp.FindAllStringSubmatch(input, -1)
 	for _, update := range updates {

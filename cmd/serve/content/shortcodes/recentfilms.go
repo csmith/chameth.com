@@ -15,7 +15,7 @@ var (
 	recentFilmsRegexp = regexp.MustCompile(`\{%\s*recentfilms ([0-9]+)\s*%}`)
 )
 
-func renderRecentFilms(input string) (string, error) {
+func renderRecentFilms(input string, _ *Context) (string, error) {
 	res := input
 	matches := recentFilmsRegexp.FindAllStringSubmatch(input, -1)
 	for _, match := range matches {

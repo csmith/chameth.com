@@ -13,7 +13,7 @@ var (
 	warningRegexp = regexp.MustCompile(`(?s)\{%\s*warning\s*%}(.*?)\{%\s*endwarning\s*%}`)
 )
 
-func renderWarning(input string) (string, error) {
+func renderWarning(input string, _ *Context) (string, error) {
 	res := input
 	warnings := warningRegexp.FindAllStringSubmatch(input, -1)
 	for _, warning := range warnings {

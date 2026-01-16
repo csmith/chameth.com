@@ -15,7 +15,7 @@ var (
 	filmReviewsRegexp = regexp.MustCompile(`\{%\s*filmreviews\s*%}`)
 )
 
-func renderFilmReviews(input string) (string, error) {
+func renderFilmReviews(input string, _ *Context) (string, error) {
 	res := input
 	matches := filmReviewsRegexp.FindAllStringSubmatch(input, -1)
 
