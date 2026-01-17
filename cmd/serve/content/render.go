@@ -16,10 +16,7 @@ func RenderContent(entityType string, entityID int, content string) (template.HT
 		return "", fmt.Errorf("failed to get media relations: %w", err)
 	}
 
-	contentWithShortcodes, err := shortcodes.Render(content, &shortcodes.Context{Media: mediaRelations})
-	if err != nil {
-		return "", fmt.Errorf("failed to render shortcodes: %w", err)
-	}
+	contentWithShortcodes := shortcodes.Render(content, &shortcodes.Context{Media: mediaRelations})
 
 	renderedContent, err := markdown.Render(contentWithShortcodes)
 	if err != nil {

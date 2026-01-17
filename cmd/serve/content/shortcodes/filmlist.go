@@ -2,38 +2,24 @@ package shortcodes
 
 import (
 	"fmt"
-	"regexp"
 	"strconv"
-	"strings"
 
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/templates"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
 
-var (
-	filmListRegexp = regexp.MustCompile(`\{%\s*filmlist ([0-9]+)\s*%}`)
-)
-
-func renderFilmList(input string, _ *Context) (string, error) {
-	res := input
-	matches := filmListRegexp.FindAllStringSubmatch(input, -1)
-	for _, match := range matches {
-		listID := match[1]
-
-		id, err := strconv.Atoi(listID)
-		if err != nil {
-			return "", fmt.Errorf("invalid film list ID: %s", listID)
-		}
-
-		replacement, err := RenderFilmList(id)
-		if err != nil {
-			return "", err
-		}
-
-		res = strings.Replace(res, match[0], replacement, 1)
+func renderFilmList(args []string, _ *Context) (string, error) {
+	if len(args) < 1 {
+		return "", fmt.Errorf("filmlist requires at least 1 argument (id)")
 	}
-	return res, nil
+
+	id, err := strconv.Atoi(args[0])
+	if err != nil {
+		return "", fmt.Errorf("invalid film list ID: %s", args[0])
+	}
+
+	return RenderFilmList(id)
 }
 
 func RenderFilmList(id int) (string, error) {

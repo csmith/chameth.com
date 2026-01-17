@@ -2,34 +2,22 @@ package shortcodes
 
 import (
 	"fmt"
-	"regexp"
 	"strconv"
-	"strings"
 
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/templates"
 )
 
-var (
-	ratingRegexp = regexp.MustCompile(`(?s)\{%\s*rating ([0-9]+)\s*%}`)
-)
-
-func renderRating(input string, _ *Context) (string, error) {
-	res := input
-	ratings := ratingRegexp.FindAllStringSubmatch(input, -1)
-	for _, rating := range ratings {
-		numericRating, err := strconv.Atoi(rating[1])
-		if err != nil {
-			return "", fmt.Errorf("invalid rating %s: %w", rating[1], err)
-		}
-
-		replacement, err := RenderRating(numericRating)
-		if err != nil {
-			return "", fmt.Errorf("failed to render sidenote template: %w", err)
-		}
-
-		res = strings.Replace(res, rating[0], replacement, 1)
+func renderRating(args []string, _ *Context) (string, error) {
+	if len(args) < 1 {
+		return "", fmt.Errorf("rating requires at least 1 argument (value)")
 	}
-	return res, nil
+
+	numericRating, err := strconv.Atoi(args[0])
+	if err != nil {
+		return "", fmt.Errorf("invalid rating %s: %w", args[0], err)
+	}
+
+	return RenderRating(numericRating)
 }
 
 func RenderRating(rating int) (string, error) {

@@ -3,26 +3,13 @@ package shortcodes
 import (
 	"fmt"
 	"html/template"
-	"regexp"
-	"strings"
 
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/templates"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
 
-var (
-	filmReviewsRegexp = regexp.MustCompile(`\{%\s*filmreviews\s*%}`)
-)
-
-func renderFilmReviews(input string, _ *Context) (string, error) {
-	res := input
-	matches := filmReviewsRegexp.FindAllStringSubmatch(input, -1)
-
-	if len(matches) == 0 {
-		return res, nil
-	}
-
+func renderFilmReviews(args []string, _ *Context) (string, error) {
 	reviews, err := db.GetAllPublishedFilmReviewsWithFilmAndPosters()
 	if err != nil {
 		return "", fmt.Errorf("failed to get film reviews: %w", err)
@@ -64,9 +51,5 @@ func renderFilmReviews(input string, _ *Context) (string, error) {
 		return "", fmt.Errorf("failed to render film reviews template: %w", err)
 	}
 
-	for _, match := range matches {
-		res = strings.Replace(res, match[0], filmReviewsHTML, 1)
-	}
-
-	return res, nil
+	return filmReviewsHTML, nil
 }

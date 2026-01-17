@@ -3,38 +3,24 @@ package shortcodes
 import (
 	"fmt"
 	"html/template"
-	"regexp"
 	"strconv"
-	"strings"
 
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/templates"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
 
-var (
-	filmReviewRegexp = regexp.MustCompile(`\{%\s*filmreview ([0-9]+)\s*%}`)
-)
-
-func renderFilmReview(input string, _ *Context) (string, error) {
-	res := input
-	reviews := filmReviewRegexp.FindAllStringSubmatch(input, -1)
-	for _, review := range reviews {
-		reviewID := review[1]
-
-		id, err := strconv.Atoi(reviewID)
-		if err != nil {
-			return "", fmt.Errorf("invalid film review ID: %s", reviewID)
-		}
-
-		replacement, err := RenderFilmReview(id)
-		if err != nil {
-			return "", err
-		}
-
-		res = strings.Replace(res, review[0], replacement, 1)
+func renderFilmReview(args []string, _ *Context) (string, error) {
+	if len(args) < 1 {
+		return "", fmt.Errorf("filmreview requires at least 1 argument (id)")
 	}
-	return res, nil
+
+	id, err := strconv.Atoi(args[0])
+	if err != nil {
+		return "", fmt.Errorf("invalid film review ID: %s", args[0])
+	}
+
+	return RenderFilmReview(id)
 }
 
 func RenderFilmReview(id int) (string, error) {

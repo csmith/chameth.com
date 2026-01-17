@@ -3,37 +3,23 @@ package shortcodes
 import (
 	"fmt"
 	"html/template"
-	"regexp"
 	"strconv"
-	"strings"
 
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/templates"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
 
-var (
-	recentFilmsRegexp = regexp.MustCompile(`\{%\s*recentfilms ([0-9]+)\s*%}`)
-)
-
-func renderRecentFilms(input string, _ *Context) (string, error) {
-	res := input
-	matches := recentFilmsRegexp.FindAllStringSubmatch(input, -1)
-	for _, match := range matches {
-		countStr := match[1]
-
-		count, err := strconv.Atoi(countStr)
-		if err != nil {
-			return "", fmt.Errorf("invalid recent films count: %s", countStr)
-		}
-
-		replacement, err := RenderRecentFilms(count)
-		if err != nil {
-			return "", err
-		}
-
-		res = strings.Replace(res, match[0], replacement, 1)
+func renderRecentFilms(args []string, _ *Context) (string, error) {
+	if len(args) < 1 {
+		return "", fmt.Errorf("recentfilms requires at least 1 argument (count)")
 	}
-	return res, nil
+
+	count, err := strconv.Atoi(args[0])
+	if err != nil {
+		return "", fmt.Errorf("invalid recent films count: %s", args[0])
+	}
+
+	return RenderRecentFilms(count)
 }
 
 func RenderRecentFilms(n int) (string, error) {
