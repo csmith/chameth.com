@@ -28,20 +28,18 @@ func (c *Context) MediaWithDescription(description string) []db.MediaRelationWit
 
 type renderer func([]string, *Context) (string, error)
 
-var renderers = map[string]renderer{}
-
-func init() {
-	renderers["sidenote"] = renderSideNote
-	renderers["update"] = renderUpdate
-	renderers["warning"] = renderWarning
-	renderers["audio"] = renderAudio
-	renderers["video"] = renderVideo
-	renderers["figure"] = renderFigure
-	renderers["filmreview"] = renderFilmReview
-	renderers["filmreviews"] = renderFilmReviews
-	renderers["filmlist"] = renderFilmList
-	renderers["recentfilms"] = renderRecentFilms
-	renderers["rating"] = renderRating
+var renderers = map[string]renderer{
+	"sidenote":    renderSideNote,
+	"update":      renderUpdate,
+	"warning":     renderWarning,
+	"audio":       renderAudio,
+	"video":       renderVideo,
+	"figure":      renderFigure,
+	"filmreview":  renderFilmReview,
+	"filmreviews": renderFilmReviews,
+	"filmlist":    renderFilmList,
+	"recentfilms": renderRecentFilms,
+	"rating":      renderRating,
 }
 
 var tagRegexp = regexp.MustCompile(`\{%\s*(\w+)(.*?)\s*%\}`)
