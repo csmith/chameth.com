@@ -72,7 +72,6 @@ func main() {
 	mux.Handle("GET /projects/{$}", http.HandlerFunc(handlers.ProjectsList))
 	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(handlers.HtmlSiteMap))
 	mux.Handle("GET /snippets/{$}", http.HandlerFunc(handlers.SnippetsList))
-	mux.Handle("GET /{$}", http.HandlerFunc(handlers.About))
 	mux.Handle("/", http.HandlerFunc(handlers.Content))
 
 	server := &http.Server{
