@@ -13,8 +13,10 @@ import (
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmlist"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmreview"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmreviews"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/postlink"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/rating"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/recentfilms"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/recentposts"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/sidenote"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/update"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/video"
@@ -37,6 +39,8 @@ var renderers = map[string]renderer{
 	"filmlist":    filmlist.RenderFromText,
 	"recentfilms": recentfilms.RenderFromText,
 	"rating":      rating.RenderFromText,
+	"postlink":    postlink.RenderFromText,
+	"recentposts": recentposts.RenderFromText,
 }
 
 var tagRegexp = regexp.MustCompile(`\{%\s*(\w+)(.*?)\s*%\}`)
