@@ -65,7 +65,7 @@ func Render(input string, ctx *context.Context) string {
 
 		renderer, ok := renderers[name]
 		if !ok {
-			slog.Error("unknown shortcode", "name", name)
+			slog.Error("unknown shortcode", "name", name, "url", ctx.URL)
 			res.WriteString(input[lastTag:start])
 			res.WriteString(shortcodesError)
 			lastTag = realEnd
@@ -77,7 +77,7 @@ func Render(input string, ctx *context.Context) string {
 			argStr := input[match[4]:match[5]]
 			parsedArgs, err := splitArguments(argStr)
 			if err != nil {
-				slog.Error("failed to parse shortcode arguments", "name", name, "error", err)
+				slog.Error("failed to parse shortcode arguments", "name", name, "url", ctx.URL, "error", err)
 				res.WriteString(input[lastTag:start])
 				res.WriteString(shortcodesError)
 				lastTag = realEnd
@@ -92,7 +92,7 @@ func Render(input string, ctx *context.Context) string {
 
 		replacement, err := renderer(args, ctx)
 		if err != nil {
-			slog.Error("failed to render shortcode", "name", name, "error", err)
+			slog.Error("failed to render shortcode", "name", name, "url", ctx.URL, "error", err)
 			res.WriteString(input[lastTag:start])
 			res.WriteString(shortcodesError)
 			lastTag = realEnd

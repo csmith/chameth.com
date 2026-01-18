@@ -24,7 +24,7 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedContent, err := content.RenderContent("staticpage", page.ID, page.Content)
+	renderedContent, err := content.RenderContent("staticpage", page.ID, page.Content, page.Path)
 	if err != nil {
 		slog.Error("Failed to render static page content", "page", page.Title, "error", err)
 		ServerError(w, r)

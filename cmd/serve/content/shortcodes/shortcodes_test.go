@@ -81,7 +81,7 @@ func TestSplitArguments(t *testing.T) {
 
 func TestRenderUnknownShortcode(t *testing.T) {
 	input := "prefix {%unknown%} suffix"
-	result := Render(input, &context.Context{})
+	result := Render(input, &context.Context{URL: "/test/url"})
 	expected := "prefix " + shortcodesError + " suffix"
 	if result != expected {
 		t.Errorf("Render() = %q, want %q (unknown shortcode should be replaced with error)", result, expected)
@@ -90,7 +90,7 @@ func TestRenderUnknownShortcode(t *testing.T) {
 
 func TestRenderEndTagWhitespace(t *testing.T) {
 	input := "prefix {%warning%} content {%end warning%} suffix"
-	result := Render(input, &context.Context{})
+	result := Render(input, &context.Context{URL: "/test/url"})
 	if result == input {
 		t.Errorf("Render() returned unchanged input, end tag with whitespace not recognized")
 	}

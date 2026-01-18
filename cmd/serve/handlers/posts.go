@@ -26,7 +26,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedContent, err := content.RenderContent("post", post.ID, post.Content)
+	renderedContent, err := content.RenderContent("post", post.ID, post.Content, post.Path)
 	if err != nil {
 		slog.Error("Failed to render post content", "post", post.Title, "error", err)
 		ServerError(w, r)

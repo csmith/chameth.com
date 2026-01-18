@@ -41,7 +41,7 @@ func GenerateAndStoreEmbedding(postPath string) error {
 		return fmt.Errorf("failed to get post by path %s: %w", postPath, err)
 	}
 
-	renderedHTML, err := RenderContent("post", post.ID, post.Content)
+	renderedHTML, err := RenderContent("post", post.ID, post.Content, post.Path)
 	if err != nil {
 		return fmt.Errorf("failed to render post content: %w", err)
 	}

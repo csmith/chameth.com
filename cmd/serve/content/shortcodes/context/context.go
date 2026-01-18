@@ -6,6 +6,7 @@ import (
 
 type Context struct {
 	Media []db.MediaRelationWithDetails
+	URL   string
 }
 
 func (c *Context) MediaWithDescription(description string) []db.MediaRelationWithDetails {

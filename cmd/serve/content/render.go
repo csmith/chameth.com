@@ -11,13 +11,13 @@ import (
 )
 
 // RenderContent renders content (shortcodes + markdown to HTML) for any entity type.
-func RenderContent(entityType string, entityID int, content string) (template.HTML, error) {
+func RenderContent(entityType string, entityID int, content string, url string) (template.HTML, error) {
 	mediaRelations, err := db.GetMediaRelationsForEntity(entityType, entityID)
 	if err != nil {
 		return "", fmt.Errorf("failed to get media relations: %w", err)
 	}
 
-	contentWithShortcodes := shortcodes.Render(content, &context.Context{Media: mediaRelations})
+	contentWithShortcodes := shortcodes.Render(content, &context.Context{Media: mediaRelations, URL: url})
 
 	renderedContent, err := markdown.Render(contentWithShortcodes)
 	if err != nil {
