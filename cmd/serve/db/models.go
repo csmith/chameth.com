@@ -34,6 +34,7 @@ type StaticPageMetadata struct {
 	Path      string `db:"path"`
 	Title     string `db:"title"`
 	Published bool   `db:"published"`
+	Raw       bool   `db:"raw"`
 }
 
 type StaticPage struct {

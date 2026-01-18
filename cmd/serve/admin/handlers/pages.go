@@ -141,6 +141,7 @@ func EditPageHandler() func(http.ResponseWriter, *http.Request) {
 			Path:      page.Path,
 			Content:   page.Content,
 			Published: page.Published,
+			Raw:       page.Raw,
 			Media:     mediaItems,
 		}
 
@@ -191,8 +192,9 @@ func UpdatePageHandler() func(http.ResponseWriter, *http.Request) {
 		title := r.FormValue("title")
 		pageContent := r.FormValue("content")
 		published := r.FormValue("published") == "true"
+		raw := r.FormValue("raw") == "true"
 
-		if err := db.UpdateStaticPage(id, path, title, pageContent, published); err != nil {
+		if err := db.UpdateStaticPage(id, path, title, pageContent, published, raw); err != nil {
 			http.Error(w, "Failed to update page", http.StatusInternalServerError)
 			return
 		}

@@ -11,6 +11,10 @@
             Published
         </label>
         <label>
+            <input type="checkbox" name="raw" value="true" {{if .Raw}}checked{{end}} />
+            Raw
+        </label>
+        <label>
             Content:
             <textarea name="content" id="editor">{{.Content}}</textarea>
         </label>

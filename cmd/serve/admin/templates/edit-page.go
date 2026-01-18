@@ -22,6 +22,7 @@ type EditPageData struct {
 	Path      string
 	Content   string
 	Published bool
+	Raw       bool
 	Media     []PageMediaItem
 }
 

@@ -24,6 +24,32 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if page.Raw {
+		renderedContent, err := content.RenderContent("rawpage", page.ID, page.Content, page.Path)
+		if err != nil {
+			slog.Error("Failed to render raw page content", "page", page.Title, "error", err)
+			ServerError(w, r)
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+
+		err = templates.RenderRawPage(w, templates.RawPageData{
+			RawContent: renderedContent,
+			PageData: templates.PageData{
+				Title:        fmt.Sprintf("%s · Chameth.com", page.Title),
+				Stylesheet:   assets.GetStylesheetPath(),
+				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", page.Path),
+				RecentPosts:  content.RecentPosts(),
+			},
+		})
+		if err != nil {
+			slog.Error("Failed to render raw page template", "error", err, "path", r.URL.Path)
+		}
+		return
+	}
+
 	renderedContent, err := content.RenderContent("staticpage", page.ID, page.Content, page.Path)
 	if err != nil {
 		slog.Error("Failed to render static page content", "page", page.Title, "error", err)
@@ -33,6 +59,7 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
+
 	err = templates.RenderStaticPage(w, templates.StaticPageData{
 		StaticTitle:   page.Title,
 		StaticContent: renderedContent,

@@ -1,0 +1,4 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/templates.RawPageData*/}}
+{{define "content"}}
+{{ .RawContent }}
+{{end}}
