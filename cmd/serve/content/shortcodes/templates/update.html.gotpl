@@ -1,5 +1,0 @@
-{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/templates.UpdateData*/}}
-<aside class="update">
-  <h5>Update {{ .Date }}:</h5>
-  {{ .Content }}
-</aside>

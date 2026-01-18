@@ -7,44 +7,41 @@ import (
 	"regexp"
 	"strings"
 
-	"chameth.com/chameth.com/cmd/serve/db"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/audio"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/figure"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmlist"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmreview"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmreviews"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/rating"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/recentfilms"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/sidenote"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/update"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/video"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/warning"
 )
 
 const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering failed]</div>\n\n"
 
-type Context struct {
-	Media []db.MediaRelationWithDetails
-}
-
-func (c *Context) MediaWithDescription(description string) []db.MediaRelationWithDetails {
-	var matching []db.MediaRelationWithDetails
-	for i := range c.Media {
-		if c.Media[i].Description != nil && *c.Media[i].Description == description {
-			matching = append(matching, c.Media[i])
-		}
-	}
-	return matching
-}
-
-type renderer func([]string, *Context) (string, error)
+type renderer func([]string, *context.Context) (string, error)
 
 var renderers = map[string]renderer{
-	"sidenote":    renderSideNote,
-	"update":      renderUpdate,
-	"warning":     renderWarning,
-	"audio":       renderAudio,
-	"video":       renderVideo,
-	"figure":      renderFigure,
-	"filmreview":  renderFilmReview,
-	"filmreviews": renderFilmReviews,
-	"filmlist":    renderFilmList,
-	"recentfilms": renderRecentFilms,
-	"rating":      renderRating,
+	"sidenote":    sidenote.RenderFromText,
+	"update":      update.RenderFromText,
+	"warning":     warning.RenderFromText,
+	"audio":       audio.RenderFromText,
+	"video":       video.RenderFromText,
+	"figure":      figure.RenderFromText,
+	"filmreview":  filmreview.RenderFromText,
+	"filmreviews": filmreviews.RenderFromText,
+	"filmlist":    filmlist.RenderFromText,
+	"recentfilms": recentfilms.RenderFromText,
+	"rating":      rating.RenderFromText,
 }
 
 var tagRegexp = regexp.MustCompile(`\{%\s*(\w+)(.*?)\s*%\}`)
 
-func Render(input string, ctx *Context) string {
+func Render(input string, ctx *context.Context) string {
 	var res bytes.Buffer
 	lastTag := 0
 

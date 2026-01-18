@@ -1,0 +1,5 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/audio.Data*/}}
+<figure class="full">
+  <audio src="{{ .Src }}" alt="{{ .Description }}" controls></audio>
+  <figcaption>{{ .Caption }}</figcaption>
+</figure>

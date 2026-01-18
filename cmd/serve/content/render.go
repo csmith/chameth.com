@@ -6,6 +6,7 @@ import (
 
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
 
@@ -16,7 +17,7 @@ func RenderContent(entityType string, entityID int, content string) (template.HT
 		return "", fmt.Errorf("failed to get media relations: %w", err)
 	}
 
-	contentWithShortcodes := shortcodes.Render(content, &shortcodes.Context{Media: mediaRelations})
+	contentWithShortcodes := shortcodes.Render(content, &context.Context{Media: mediaRelations})
 
 	renderedContent, err := markdown.Render(contentWithShortcodes)
 	if err != nil {

@@ -1,0 +1,8 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/filmreviews.Data*/}}
+<div class="film-reviews-parent">
+  <section class="film-reviews">
+    {{- range .Reviews }}
+    {{ . -}}
+    {{- end }}
+  </section>
+</div>

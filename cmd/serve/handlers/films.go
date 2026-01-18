@@ -10,7 +10,7 @@ import (
 	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/rating"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
 )
@@ -44,7 +44,7 @@ func Film(w http.ResponseWriter, r *http.Request) {
 
 	var reviewData []templates.FilmReviewData
 	for _, review := range publishedReviews {
-		ratingHTML, err := shortcodes.RenderRating(review.Rating)
+		ratingHTML, err := rating.Render(review.Rating)
 		if err != nil {
 			slog.Error("Failed to render rating", "review_id", review.ID, "error", err)
 			ServerError(w, r)
@@ -89,7 +89,7 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		}
 		averageRating := float64(sum) / float64(len(publishedReviews))
 		roundedRating := int(math.Round(averageRating))
-		stars, err := shortcodes.RenderRating(roundedRating)
+		stars, err := rating.Render(roundedRating)
 		if err != nil {
 			slog.Error("Failed to render rating", "error", err, "rating", roundedRating)
 		} else {
@@ -165,7 +165,7 @@ func FilmList(w http.ResponseWriter, r *http.Request) {
 		if entry.AverageRating != nil {
 			roundedRating := int(math.Round(*entry.AverageRating))
 			ratingText = fmt.Sprintf("%d/10", roundedRating)
-			stars, err := shortcodes.RenderRating(roundedRating)
+			stars, err := rating.Render(roundedRating)
 			if err != nil {
 				slog.Error("Failed to render rating", "error", err, "rating", roundedRating)
 			} else {
