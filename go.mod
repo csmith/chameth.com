@@ -3,7 +3,7 @@ module chameth.com/chameth.com
 go 1.25.5
 
 require (
-	github.com/alecthomas/chroma/v2 v2.20.0
+	github.com/alecthomas/chroma/v2 v2.21.1
 	github.com/anthonynsimon/bild v0.14.0
 	github.com/csmith/aca v1.2.0
 	github.com/csmith/envflag/v2 v2.0.0
