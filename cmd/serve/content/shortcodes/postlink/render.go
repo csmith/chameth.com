@@ -41,7 +41,7 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		}
 	}
 
-	return renderTemplate(Data{
+	return Render(Data{
 		Url:     post.Path,
 		Title:   post.Title,
 		Summary: template.HTML(summary),
@@ -50,10 +50,6 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 }
 
 func Render(data Data) (string, error) {
-	return renderTemplate(data)
-}
-
-func renderTemplate(data Data) (string, error) {
 	buf := &bytes.Buffer{}
 	err := tmpl.Execute(buf, data)
 	if err != nil {

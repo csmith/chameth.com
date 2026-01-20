@@ -58,7 +58,7 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		return "", fmt.Errorf("failed to render film list description: %w", err)
 	}
 
-	return renderTemplate(Data{
+	return Render(Data{
 		ID:          list.ID,
 		Title:       list.Title,
 		Description: description,
@@ -68,7 +68,7 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 	})
 }
 
-func renderTemplate(data Data) (string, error) {
+func Render(data Data) (string, error) {
 	buf := &bytes.Buffer{}
 	err := tmpl.Execute(buf, data)
 	if err != nil {

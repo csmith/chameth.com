@@ -43,7 +43,7 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		return "", fmt.Errorf("failed to render film review stars: %w", err)
 	}
 
-	return renderTemplate(Data{
+	return Render(Data{
 		Name:       data.Film.Title,
 		Path:       data.Film.Path,
 		PosterPath: data.Poster.Path,
@@ -56,15 +56,11 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 	})
 }
 
-func renderTemplate(data Data) (string, error) {
+func Render(data Data) (string, error) {
 	buf := &bytes.Buffer{}
 	err := tmpl.Execute(buf, data)
 	if err != nil {
 		return "", err
 	}
 	return buf.String(), nil
-}
-
-func Render(data Data) (string, error) {
-	return renderTemplate(data)
 }

@@ -25,11 +25,7 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		return "", fmt.Errorf("invalid rating %s: %w", args[0], err)
 	}
 
-	return renderTemplate(Data{
-		FilledStars: numericRating / 2,
-		HalfStar:    numericRating%2 == 1,
-		EmptyStars:  5 - ((numericRating + 1) / 2),
-	})
+	return Render(numericRating)
 }
 
 func Render(rating int) (string, error) {
