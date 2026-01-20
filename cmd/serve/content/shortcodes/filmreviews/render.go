@@ -24,37 +24,38 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		return "", fmt.Errorf("failed to get film reviews: %w", err)
 	}
 
-	var renderedReviews []template.HTML
-	for _, review := range reviews {
-		md, err := markdown.Render(review.ReviewText)
+	var html []template.HTML
+	for _, data := range reviews {
+		md, err := markdown.Render(data.ReviewText)
 		if err != nil {
 			return "", fmt.Errorf("failed to render film review markdown: %w", err)
 		}
 
-		stars, err := rating.Render(review.Rating)
+		stars, err := rating.Render(data.Rating)
 		if err != nil {
 			return "", fmt.Errorf("failed to render film review rating: %w", err)
 		}
 
 		replacement, err := filmreview.Render(filmreview.Data{
-			Name:       review.Title,
-			PosterPath: review.Poster.Path,
+			Name:       data.Film.Title,
+			Path:       data.Film.Path,
+			PosterPath: data.Poster.Path,
 			Stars:      template.HTML(stars),
-			Rating:     review.Rating,
-			Date:       review.WatchedDate.Format("2006-01-02"),
-			Rewatch:    review.IsRewatch,
-			Spoiler:    review.HasSpoilers,
+			Rating:     data.FilmReview.Rating,
+			Date:       data.FilmReview.WatchedDate.Format("2006-01-02"),
+			Rewatch:    data.FilmReview.IsRewatch,
+			Spoiler:    data.FilmReview.HasSpoilers,
 			Review:     md,
 		})
 		if err != nil {
 			return "", fmt.Errorf("failed to render film review: %w", err)
 		}
 
-		renderedReviews = append(renderedReviews, template.HTML(replacement))
+		html = append(html, template.HTML(replacement))
 	}
 
 	return renderTemplate(Data{
-		Reviews: renderedReviews,
+		Reviews: html,
 	})
 }
 

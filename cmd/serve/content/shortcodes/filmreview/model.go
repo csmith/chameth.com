@@ -4,6 +4,7 @@ import "html/template"
 
 type Data struct {
 	Name       string
+	Path       string
 	PosterPath string
 	Rating     int
 	Stars      template.HTML

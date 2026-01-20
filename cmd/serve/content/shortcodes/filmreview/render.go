@@ -28,29 +28,30 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		return "", fmt.Errorf("invalid film review ID: %s", args[0])
 	}
 
-	reviewData, err := db.GetFilmReviewWithFilmAndPoster(id)
+	data, err := db.GetFilmReviewWithFilmAndPoster(id)
 	if err != nil {
 		return "", fmt.Errorf("failed to get film review: %w", err)
 	}
 
-	md, err := markdown.Render(reviewData.ReviewText)
+	md, err := markdown.Render(data.FilmReview.ReviewText)
 	if err != nil {
 		return "", fmt.Errorf("failed to render film review markdown: %w", err)
 	}
 
-	stars, err := rating.Render(reviewData.Rating)
+	stars, err := rating.Render(data.FilmReview.Rating)
 	if err != nil {
 		return "", fmt.Errorf("failed to render film review stars: %w", err)
 	}
 
 	return renderTemplate(Data{
-		Name:       reviewData.Title,
-		PosterPath: reviewData.Poster.Path,
-		Rating:     reviewData.Rating,
+		Name:       data.Film.Title,
+		Path:       data.Film.Path,
+		PosterPath: data.Poster.Path,
+		Rating:     data.FilmReview.Rating,
 		Stars:      template.HTML(stars),
-		Date:       reviewData.WatchedDate.Format("2006-01-02"),
-		Rewatch:    reviewData.IsRewatch,
-		Spoiler:    reviewData.HasSpoilers,
+		Date:       data.FilmReview.WatchedDate.Format("2006-01-02"),
+		Rewatch:    data.FilmReview.IsRewatch,
+		Spoiler:    data.FilmReview.HasSpoilers,
 		Review:     md,
 	})
 }
