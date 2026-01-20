@@ -20,6 +20,14 @@
                 </blockquote>
             </section>
             {{end}}
+            {{if .FilmLists}}
+            <section class="film-lists">
+                <h3>Appears in these lists</h3>
+                {{range .FilmLists}}
+                    {{.}}
+                {{end}}
+            </section>
+            {{end}}
         </div>
 
         <aside class="film-sidebar">

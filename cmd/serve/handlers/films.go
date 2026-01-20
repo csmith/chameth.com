@@ -10,6 +10,7 @@ import (
 	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmlist"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/rating"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
@@ -102,6 +103,21 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		posterPath = *film.PosterPath
 	}
 
+	lists, err := db.GetFilmListsContainingFilm(film.ID)
+	if err != nil {
+		slog.Error("Failed to get film lists containing film", "film_id", film.ID, "error", err)
+	}
+
+	var filmLists []template.HTML
+	for _, list := range lists {
+		listHTML, err := filmlist.Render(list.ID)
+		if err != nil {
+			slog.Error("Failed to render film list", "list_id", list.ID, "error", err)
+		} else {
+			filmLists = append(filmLists, template.HTML(listHTML))
+		}
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderFilm(w, templates.FilmData{
@@ -113,6 +129,7 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		TimesWatched:  timesWatched,
 		AverageRating: template.HTML(ratingHTML),
 		PosterPath:    posterPath,
+		FilmLists:     filmLists,
 		PageData: templates.PageData{
 			Title:        fmt.Sprintf("%s (%s) · Chameth.com", film.Title, year),
 			Stylesheet:   assets.GetStylesheetPath(),

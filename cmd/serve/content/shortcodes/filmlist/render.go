@@ -27,6 +27,10 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		return "", fmt.Errorf("invalid film list ID: %s", args[0])
 	}
 
+	return Render(id)
+}
+
+func Render(id int) (string, error) {
 	list, count, entries, err := db.GetFilmListWithFilms(id)
 	if err != nil {
 		return "", fmt.Errorf("failed to get film list: %w", err)
@@ -58,7 +62,7 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		return "", fmt.Errorf("failed to render film list description: %w", err)
 	}
 
-	return Render(Data{
+	return renderTemplate(Data{
 		ID:          list.ID,
 		Title:       list.Title,
 		Description: description,
@@ -68,7 +72,7 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 	})
 }
 
-func Render(data Data) (string, error) {
+func renderTemplate(data Data) (string, error) {
 	buf := &bytes.Buffer{}
 	err := tmpl.Execute(buf, data)
 	if err != nil {

@@ -200,6 +200,10 @@ a.film-list {
     background: var(--accent-colour);
   }
 
+  & + & {
+    margin-top: var(--medium-space);
+  }
+
   *, *:hover, *:active, *:focus {
     margin: 0;
     padding: 0;
@@ -339,9 +343,9 @@ ol.recent-films {
   display: grid;
 
   @media(min-width: 1200px) {
-    grid-template-areas: "header sidebar" "review sidebar";
+    grid-template-areas: "header sidebar" "review sidebar" "review -";
     grid-template-columns: calc(var(--content-width) - 300px) 300px;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto auto 1fr;
     column-gap: var(--medium-space);
 
     aside {

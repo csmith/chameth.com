@@ -26,6 +26,7 @@ type FilmData struct {
 	TimesWatched  int
 	AverageRating template.HTML
 	PosterPath    string
+	FilmLists     []template.HTML
 }
 
 type FilmReviewData struct {

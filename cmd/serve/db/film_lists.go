@@ -328,3 +328,18 @@ func GetNextPosition(listID int) (int, error) {
 	}
 	return position, nil
 }
+
+func GetFilmListsContainingFilm(filmID int) ([]FilmList, error) {
+	var lists []FilmList
+	err := db.Select(&lists, `
+		SELECT DISTINCT fl.id, fl.title, fl.description, fl.published, fl.path
+		FROM film_lists fl
+		JOIN film_list_entries fle ON fl.id = fle.film_list_id
+		WHERE fl.published = true AND fle.film_id = $1
+		ORDER BY fl.title
+	`, filmID)
+	if err != nil {
+		return nil, err
+	}
+	return lists, nil
+}
