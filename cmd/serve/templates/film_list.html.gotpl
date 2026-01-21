@@ -21,6 +21,10 @@
         </ol>
         {{end}}
 
+        {{if .Syndications}}
+        {{.Syndications}}
+        {{end}}
+
         <hr class="end-of-post">
 
         <aside><div data-nod></div></aside>

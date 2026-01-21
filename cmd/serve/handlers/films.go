@@ -213,12 +213,18 @@ func FilmList(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	syndicationHTML, err := syndication.Render(filmList.Path)
+	if err != nil {
+		slog.Error("Failed to render syndications", "path", filmList.Path, "error", err)
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderFilmList(w, templates.FilmListData{
-		ListTitle:   filmList.Title,
-		Description: renderedDescription,
-		Entries:     filmListItems,
+		ListTitle:    filmList.Title,
+		Description:  renderedDescription,
+		Entries:      filmListItems,
+		Syndications: template.HTML(syndicationHTML),
 		PageData: templates.PageData{
 			Title:        fmt.Sprintf("%s · Chameth.com", filmList.Title),
 			Stylesheet:   assets.GetStylesheetPath(),
