@@ -12,6 +12,7 @@ import (
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmlist"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/rating"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/syndication"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
 )
@@ -118,6 +119,11 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	syndicationHTML, err := syndication.Render(film.Path)
+	if err != nil {
+		slog.Error("Failed to render syndications", "path", film.Path, "error", err)
+	}
+
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderFilm(w, templates.FilmData{
@@ -130,6 +136,7 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		AverageRating: template.HTML(ratingHTML),
 		PosterPath:    posterPath,
 		FilmLists:     filmLists,
+		Syndications:  template.HTML(syndicationHTML),
 		PageData: templates.PageData{
 			Title:        fmt.Sprintf("%s (%s) · Chameth.com", film.Title, year),
 			Stylesheet:   assets.GetStylesheetPath(),

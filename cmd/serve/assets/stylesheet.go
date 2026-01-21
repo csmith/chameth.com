@@ -31,6 +31,7 @@ var includeOrder = []string{
 	"prints.css",
 	"projects.css",
 	"snippets.css",
+	"syndication.css",
 	"syntax.css",
 	"tables.css",
 	"typography.css",

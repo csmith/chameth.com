@@ -1,0 +1,9 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/syndication.Data*/}}
+<section class="syndications">
+  <p>This content is also published/discussed on these external sites:</p>
+  <ul>
+  {{range .Syndications}}
+    <li><a href="{{.ExternalURL}}">{{.Name}}</a></li>
+  {{end}}
+  </ul>
+</section>

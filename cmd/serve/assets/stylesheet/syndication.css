@@ -1,0 +1,19 @@
+.syndications {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--small-space);
+    color: var(--text-alt-colour);
+
+    ul {
+        display: contents;
+        list-style-type: none;
+    }
+
+    p,
+    ul,
+    li {
+        margin: 0;
+        padding: 0;
+    }
+}

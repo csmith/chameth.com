@@ -28,6 +28,9 @@
                 {{end}}
             </section>
             {{end}}
+            {{if .Syndications}}
+            {{.Syndications}}
+            {{end}}
         </div>
 
         <aside class="film-sidebar">

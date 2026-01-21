@@ -1,0 +1,7 @@
+CREATE TABLE syndications (
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    path VARCHAR NOT NULL,
+    external_url VARCHAR NOT NULL,
+    name VARCHAR NOT NULL,
+    published BOOLEAN DEFAULT false
+);

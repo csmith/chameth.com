@@ -27,6 +27,7 @@ type FilmData struct {
 	AverageRating template.HTML
 	PosterPath    string
 	FilmLists     []template.HTML
+	Syndications  template.HTML
 }
 
 type FilmReviewData struct {

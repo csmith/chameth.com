@@ -112,6 +112,11 @@ func Start() error {
 	httpsMux.HandleFunc("GET /video-game-reviews/edit/{id}", handlers.EditVideoGameReviewHandler())
 	httpsMux.HandleFunc("POST /video-game-reviews/create/{id}", handlers.CreateVideoGameReviewHandler())
 	httpsMux.HandleFunc("POST /video-game-reviews/edit/{id}", handlers.UpdateVideoGameReviewHandler())
+	httpsMux.HandleFunc("GET /syndications", handlers.ListSyndicationsHandler())
+	httpsMux.HandleFunc("POST /syndications/create", handlers.CreateSyndicationHandler())
+	httpsMux.HandleFunc("GET /syndications/edit/{id}", handlers.EditSyndicationHandler())
+	httpsMux.HandleFunc("POST /syndications/edit/{id}", handlers.UpdateSyndicationHandler())
+	httpsMux.HandleFunc("POST /syndications/delete/{id}", handlers.DeleteSyndicationHandler())
 
 	httpsServer := &http.Server{
 		Handler: middleware.Chain(
