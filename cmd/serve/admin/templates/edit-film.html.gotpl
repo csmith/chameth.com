@@ -5,6 +5,7 @@
     <form action="/films/edit/{{.ID}}" method="post">
         <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
         <label>Year: <input type="text" name="year" value="{{.Year}}" /></label>
+        <label>TMDB ID: <input type="text" name="tmdb_id" value="{{if .TMDBID}}{{.TMDBID}}{{end}}" /></label>
         <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>
         <label>Runtime (minutes): <input type="text" name="runtime" value="{{.Runtime}}" /></label>
         <label>

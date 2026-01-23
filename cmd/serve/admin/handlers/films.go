@@ -279,6 +279,7 @@ func EditFilmHandler() func(http.ResponseWriter, *http.Request) {
 			ID:        film.ID,
 			Title:     film.Title,
 			Year:      year,
+			TMDBID:    film.TMDBID,
 			Overview:  film.Overview,
 			Runtime:   runtime,
 			Published: film.Published,
@@ -309,6 +310,7 @@ func UpdateFilmHandler() func(http.ResponseWriter, *http.Request) {
 
 		title := r.FormValue("title")
 		year := r.FormValue("year")
+		tmdbIDStr := r.FormValue("tmdb_id")
 		overview := r.FormValue("overview")
 		runtimeStr := r.FormValue("runtime")
 		published := r.FormValue("published") == "true"
@@ -322,13 +324,23 @@ func UpdateFilmHandler() func(http.ResponseWriter, *http.Request) {
 			}
 		}
 
+		var tmdbID *int
+		if tmdbIDStr != "" {
+			value, err := strconv.Atoi(tmdbIDStr)
+			if err != nil {
+				http.Error(w, "Invalid TMDB ID", http.StatusBadRequest)
+				return
+			}
+			tmdbID = &value
+		}
+
 		yearInt := 0
 		if year != "" {
 			yearInt, _ = strconv.Atoi(year)
 		}
 		path := generateFilmPath(title, yearInt)
 
-		if err := db.UpdateFilm(id, 0, title, year, path, overview, runtime, published); err != nil {
+		if err := db.UpdateFilm(id, tmdbID, title, year, path, overview, runtime, published); err != nil {
 			http.Error(w, "Failed to update film", http.StatusInternalServerError)
 			return
 		}

@@ -20,6 +20,7 @@ type EditFilmData struct {
 	ID        int
 	Title     string
 	Year      string
+	TMDBID    *int
 	Overview  string
 	Runtime   string
 	Published bool

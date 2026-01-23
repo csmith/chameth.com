@@ -105,12 +105,7 @@ func CreateFilm(tmdbID int, title, year, path string, overview string, runtime i
 	return id, nil
 }
 
-func UpdateFilm(id int, tmdbID int, title, year, path string, overview string, runtime int, published bool) error {
-	var tmdbIDPtr *int
-	if tmdbID > 0 {
-		tmdbIDPtr = &tmdbID
-	}
-
+func UpdateFilm(id int, tmdbID *int, title, year, path string, overview string, runtime int, published bool) error {
 	var yearPtr *int
 	if year != "" {
 		y, err := strconv.Atoi(year)
@@ -128,7 +123,7 @@ func UpdateFilm(id int, tmdbID int, title, year, path string, overview string, r
 		UPDATE films
 		SET tmdb_id = $1, title = $2, year = $3, overview = $4, runtime = $5, published = $6, path = $7
 		WHERE id = $8
-	`, tmdbIDPtr, title, yearPtr, overview, runtimePtr, published, path, id)
+	`, tmdbID, title, yearPtr, overview, runtimePtr, published, path, id)
 	if err != nil {
 		return fmt.Errorf("failed to update film: %w", err)
 	}
