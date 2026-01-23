@@ -104,6 +104,7 @@ func Start() error {
 	httpsMux.HandleFunc("POST /film-lists/{id}/entries", handlers.AddFilmToListHandler())
 	httpsMux.HandleFunc("POST /film-lists/{id}/entries/remove/{entryId}", handlers.RemoveFilmFromListHandler())
 	httpsMux.HandleFunc("POST /film-lists/{id}/entries/position/{entryId}", handlers.UpdateEntryPositionHandler())
+	httpsMux.HandleFunc("GET /api/films/reviews/", handlers.GetFilmsWithReviewsHandler())
 	httpsMux.HandleFunc("GET /videogames", handlers.ListVideoGamesHandler())
 	httpsMux.HandleFunc("POST /videogames", handlers.CreateVideoGameHandler())
 	httpsMux.HandleFunc("GET /videogames/edit/{id}", handlers.EditVideoGameHandler())

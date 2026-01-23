@@ -355,3 +355,16 @@ func DeleteFilmHandler() func(http.ResponseWriter, *http.Request) {
 		http.Redirect(w, r, "/films", http.StatusSeeOther)
 	}
 }
+
+func GetFilmsWithReviewsHandler() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		films, err := db.GetAllFilmsWithReviews()
+		if err != nil {
+			http.Error(w, "Failed to retrieve films", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(films)
+	}
+}
