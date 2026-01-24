@@ -1,30 +1,29 @@
 :root {
-  --border-radius: 10px;
+    --border-radius: 10px;
 
-  --small-space: 0.5rem;
-  --smedium-space: 1rem;
-  --medium-space: 2.5rem;
-  --large-space: 5rem;
-
-  --content-width: min(1600px, calc(100vw - 2 * var(--large-space)));
-  --content-margin: calc((100vw - var(--content-width)) / 2);
-
-  @media (max-width: 1200px) {
     --small-space: 0.5rem;
     --smedium-space: 1rem;
-    --medium-space: 2rem;
-    --large-space: 4rem;
-  }
+    --medium-space: 2.5rem;
+    --large-space: 5rem;
 
-  @media (max-width: 800px) {
-    --small-space: 0.4rem;
-    --smedium-space: 0.8rem;
-    --medium-space: 1.5rem;
-    --large-space: 2.5rem;
-  }
+    --content-width: min(1600px, calc(100vw - 2 * var(--large-space)));
+    --content-margin: calc((100vw - var(--content-width)) / 2);
 
-  @media (max-width: 500px) {
-    --content-width: calc(100vw - 20pt);
-  }
+    @media (max-width: 1200px) {
+        --small-space: 0.5rem;
+        --smedium-space: 1rem;
+        --medium-space: 2rem;
+        --large-space: 4rem;
+    }
+
+    @media (max-width: 800px) {
+        --small-space: 0.4rem;
+        --smedium-space: 0.8rem;
+        --medium-space: 1.5rem;
+        --large-space: 2.5rem;
+    }
+
+    @media (max-width: 500px) {
+        --content-width: calc(100vw - 20pt);
+    }
 }
-

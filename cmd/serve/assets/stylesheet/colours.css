@@ -1,10 +1,10 @@
 :root {
-  --accent-colour: #3c658d;
-  --accent-alt-colour: #223950;
-  --background-colour: #15151A;
-  --background-alt-colour: #202026;
-  --text-colour: #e0e0eA;
-  --text-highlight-colour: #efefff;
-  --text-alt-colour: #90909A;
-  --link-colour: #7099c4;
+    --accent-colour: #3c658d;
+    --accent-alt-colour: #223950;
+    --background-colour: #15151a;
+    --background-alt-colour: #202026;
+    --text-colour: #e0e0ea;
+    --text-highlight-colour: #efefff;
+    --text-alt-colour: #90909a;
+    --link-colour: #7099c4;
 }

@@ -1,45 +1,58 @@
 article h2 {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 article section + section {
-  margin-top: var(--medium-space);
+    margin-top: var(--medium-space);
 }
 
-.date, .meta {
-  margin: var(--small-space) 0 var(--medium-space) 0;
-  color: var(--text-alt-colour);
-  padding-top: 0;
-  font-size: var(--font-size-tiny);
-  font-family: "Berkeley Mono", monospace;
-  text-transform: uppercase;
+.date,
+.meta {
+    margin: var(--small-space) 0 var(--medium-space) 0;
+    color: var(--text-alt-colour);
+    padding-top: 0;
+    font-size: var(--font-size-tiny);
+    font-family: "Berkeley Mono", monospace;
+    text-transform: uppercase;
 
-  &::before {
-    content: '// '
-  }
+    &::before {
+        content: "// ";
+    }
 }
 
 .paste-metadata {
-  color: var(--text-alt-colour);
-  padding: 0;
-  margin: 0 0 var(--small-space) 0;
-  font-size: var(--font-size-tiny);
-  font-family: "Berkeley Mono", monospace;
-  text-transform: uppercase;
-  float: right;
+    color: var(--text-alt-colour);
+    padding: 0;
+    margin: 0 0 var(--small-space) 0;
+    font-size: var(--font-size-tiny);
+    font-family: "Berkeley Mono", monospace;
+    text-transform: uppercase;
+    float: right;
 }
 
 hr.end-of-post {
-  clear: both;
-  border: 0;
-  width: 100%;
-  margin: var(--medium-space) 0;
-  height: var(--medium-space);
-  background: repeating-linear-gradient(-45deg, var(--accent-colour) 0, var(--accent-colour) 10px, transparent 10px, transparent 20px);
+    clear: both;
+    border: 0;
+    width: 100%;
+    margin: var(--medium-space) 0;
+    height: var(--medium-space);
+    background: repeating-linear-gradient(
+        -45deg,
+        var(--accent-colour) 0,
+        var(--accent-colour) 10px,
+        transparent 10px,
+        transparent 20px
+    );
 }
 
 @media (min-width: 1200px) {
-  .e-content figure.right:first-child {
-    margin-top: calc(-1 * (var(--font-size-xlarge) + var(--font-size-tiny) + var(--medium-space)));
-  }
+    .e-content figure.right:first-child {
+        margin-top: calc(
+            -1 *
+                (
+                    var(--font-size-xlarge) + var(--font-size-tiny) +
+                        var(--medium-space)
+                )
+        );
+    }
 }

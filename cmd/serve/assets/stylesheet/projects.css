@@ -1,58 +1,58 @@
 .projects {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-gap: var(--medium-space);
-  margin-top: var(--medium-space);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: var(--medium-space);
+    margin-top: var(--medium-space);
 
-  @media (max-width: 800px) {
-    grid-template-columns: repeat(1, 1fr);
-  }
-
-  .project {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background-color: var(--background-alt-colour);
-    border-radius: var(--border-radius);
-    padding: var(--medium-space);
-
-    h4 {
-      margin: 0;
-      padding: 0;
-
-      &::before {
-        display: none;
-      }
-
-      svg {
-        width: 48px;
-        height: 48px;
-      }
-
-      svg.icon-tabler-pinned {
-        float: right;
-        width: 24px;
-        height: 24px;
-      }
+    @media (max-width: 800px) {
+        grid-template-columns: repeat(1, 1fr);
     }
 
-    p {
-      flex-grow: 1;
-    }
+    .project {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background-color: var(--background-alt-colour);
+        border-radius: var(--border-radius);
+        padding: var(--medium-space);
 
-    ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      gap: var(--small-space);
-      flex-direction: column;
+        h4 {
+            margin: 0;
+            padding: 0;
 
-      a {
-        font-family: "Berkeley Mono", monospace;
-        text-transform: uppercase;
-        font-size: var(--font-size-small);
-      }
+            &::before {
+                display: none;
+            }
+
+            svg {
+                width: 48px;
+                height: 48px;
+            }
+
+            svg.icon-tabler-pinned {
+                float: right;
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        p {
+            flex-grow: 1;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: var(--small-space);
+            flex-direction: column;
+
+            a {
+                font-family: "Berkeley Mono", monospace;
+                text-transform: uppercase;
+                font-size: var(--font-size-small);
+            }
+        }
     }
-  }
 }

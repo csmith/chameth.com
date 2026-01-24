@@ -31,183 +31,254 @@
     }
 }
 
-[data-contact], [data-nod] {
-  position: relative;
+[data-contact],
+[data-nod] {
+    position: relative;
 
-  .loading, .result {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    span {
-      width: 48px;
-      height: 48px;
-      border: 5px solid var(--accent-colour);
-      border-bottom-color: transparent;
-      border-radius: 50%;
-      display: inline-block;
-      box-sizing: border-box;
-      animation: rotation 1s linear infinite;
-    }
-
-    p {
-      background-color: var(--accent-colour);
-      padding: var(--medium-space);
-      color: var(--text-colour);
-      text-align: center;
-      border-radius: var(--border-radius);
-    }
-  }
-
-  &:has(.loading) form, &:has(.result) form {
-    opacity: 0.5;
-  }
-
-  form {
-    transition: opacity 200ms ease-in-out;
-  }
-
-  form.contact {
-    display: flex;
-    flex-direction: column;
-    gap: var(--small-space);
-
-    input, textarea {
-      font-size: var(--font-size-small);
-      background-color: var(--background-alt-colour);
-      color: var(--text-colour);
-      border: 1px solid var(--accent-colour);
-      border-radius: 2px;
-      padding: var(--small-space);
-    }
-
-    textarea {
-      min-height: 200px;
-      resize: vertical;
-    }
-
-    button {
-      font-size: var(--font-size-small);
-      background-color: var(--accent-colour);
-      color: var(--text-colour);
-      border: 0;
-      text-transform: uppercase;
-      padding: var(--small-space);
-      border-radius: 2px;
-      cursor: pointer;
-    }
-  }
-
-  form.nod {
-    --button-size: 125px;
-
-    cursor: pointer;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--smedium-space);
-    background-color: var(--accent-alt-colour);
-    border-radius: calc((var(--button-size) + var(--smedium-space)) / 2);
-    padding: var(--smedium-space);
-
-    &:hover, &:active, &:focus {
-      button {
-        box-shadow:
-        inset 0 calc(var(--button-size) / 24) 0 hsl(from var(--accent-colour) h s calc(l + 5)),
-        inset 0 calc(-1 * var(--button-size) / 24) calc(var(--button-size) / 60) hsl(from var(--accent-colour) h s calc(l - 5)),
-        0 0 calc(var(--button-size) / 60) var(--accent-colour),
-        inset 0 0 calc(var(--button-size) / 30) hsl(from var(--accent-colour) h s calc(l - 15)),
-        inset 0 0 calc(var(--button-size) / 30) hsla(from var(--accent-alt-colour) h s l / .5),
-        inset 0 0 calc(var(--button-size) / 60) calc(var(--button-size) / 12) var(--accent-colour),
-        inset 0 calc(-1 * var(--button-size) / 30) calc(var(--button-size) / 40) calc(var(--button-size) / 10) hsla(from var(--accent-alt-colour) h s l / .7),
-        inset 0 0 calc(var(--button-size) / 60) calc(var(--button-size) / 10) hsl(from var(--accent-colour) h s calc(l - 20)),
-        inset 0 0 calc(var(--button-size) / 60) calc(var(--button-size) / 10) hsla(from var(--accent-alt-colour) h s l / .7),
-        inset 0 0 calc(var(--button-size) / 40) calc(var(--button-size) / 8.5) hsl(from var(--accent-colour) h s calc(l - 40)),
-        inset 0 0 calc(var(--button-size) / 120) calc(var(--button-size) / 7.5) hsla(from var(--accent-colour) h s calc(l + 30) / .2),
-        inset 0 calc(var(--button-size) / 20) 0 calc(var(--button-size) / 8.5) hsla(from var(--accent-colour) h s calc(l + 15) / .5),
-        inset 0 calc(-1 * var(--button-size) / 20) calc(var(--button-size) / 60) calc(var(--button-size) / 8.5) hsla(from var(--accent-colour) h s calc(l - 10) / .8),
-        inset 0 0 0 calc(var(--button-size) / 5.5) hsl(from var(--accent-colour) h s calc(l - 3)),
-        inset 0 calc(var(--button-size) / 2.5) calc(var(--button-size) / 7.5) hsl(from var(--accent-colour) h s calc(l - 8)),
-        inset 0 0 calc(var(--button-size) / 10) calc(var(--button-size) / 6) hsl(from var(--accent-colour) h s calc(l - 15)),
-        0 calc(var(--button-size) / 40) calc(var(--button-size) / 20) rgba(0, 0, 0, .5);
-
-        background-color: hsl(from var(--accent-colour) h s calc(l - 2));
-        color: hsl(from var(--text-colour) h s calc(l - 10) / .8);
-
-        &:before {
-          opacity: .5;
-        }
-      }
-    }
-
-    button {
-      position: relative;
-      display: inline-block;
-      width: var(--button-size);
-      height: var(--button-size);
-      border: 0;
-      outline: none;
-      background-color: var(--accent-colour);
-      border-radius: 50%;
-      cursor: pointer;
-      transition: box-shadow 200ms, color 200ms;
-      color: hsl(from var(--text-colour) h s l / .8);
-      text-shadow: -1px 1px 0 rgba(255,255,255,0.1), 1px -1px 0 rgba(0,0,0,0.4);
-      font-size: var(--font-size-large);
-      font-family: 'IBM Plex Sans', serif;
-      font-weight: bolder;
-
-      box-shadow:
-        inset 0 calc(var(--button-size) / 24) 0 hsl(from var(--accent-colour) h s calc(l + 5)),
-        inset 0 calc(-1 * var(--button-size) / 24) calc(var(--button-size) / 60) hsl(from var(--accent-colour) h s calc(l - 5)),
-        0 0 calc(var(--button-size) / 60) var(--accent-colour),
-        inset 0 0 calc(var(--button-size) / 30) hsl(from var(--accent-colour) h s calc(l - 15)),
-        inset 0 0 calc(var(--button-size) / 30) hsla(from var(--accent-alt-colour) h s l / .5),
-        inset 0 0 calc(var(--button-size) / 60) calc(var(--button-size) / 12) var(--accent-colour),
-        inset 0 calc(-1 * var(--button-size) / 30) calc(var(--button-size) / 40) calc(var(--button-size) / 10) hsla(from var(--accent-alt-colour) h s l / .7),
-        inset 0 0 calc(var(--button-size) / 60) calc(var(--button-size) / 10) hsl(from var(--accent-colour) h s calc(l - 20)),
-        inset 0 0 calc(var(--button-size) / 60) calc(var(--button-size) / 10) hsla(from var(--accent-alt-colour) h s l / .7),
-        inset 0 0 calc(var(--button-size) / 120) calc(var(--button-size) / 9.2) hsl(from var(--accent-colour) h s calc(l - 50)),
-        inset 0 0 calc(var(--button-size) / 120) calc(var(--button-size) / 8) hsla(from var(--accent-colour) h s calc(l + 30) / .7),
-        inset 0 calc(var(--button-size) / 20) 0 calc(var(--button-size) / 8.5) hsla(from var(--accent-colour) h s calc(l + 15) / .7),
-        inset 0 calc(-1 * var(--button-size) / 20) calc(var(--button-size) / 60) calc(var(--button-size) / 8.5) hsla(from var(--accent-colour) h s calc(l - 10) / .2),
-        inset 0 0 0 calc(var(--button-size) / 5.5) var(--accent-colour),
-        inset 0 calc(var(--button-size) / 2.5) calc(var(--button-size) / 7.5) hsl(from var(--accent-colour) h s calc(l - 5)),
-        inset 0 0 calc(var(--button-size) / 10) calc(var(--button-size) / 6) hsl(from var(--accent-colour) h s calc(l - 10)),
-        0 calc(var(--button-size) / 40) calc(var(--button-size) / 20) rgba(0, 0, 0, .5);
-
-      &:before {
-        content: '';
+    .loading,
+    .result {
         position: absolute;
-        bottom: calc(var(--button-size) / 4.5);
-        left: calc(var(--button-size) / 3.6);
-        display: block;
-        width: calc(var(--button-size) / 2.2);
-        height: calc(var(--button-size) / 3.3);
-        background: hsla(from var(--accent-colour) h s calc(l + 30) / .2);
-        background: linear-gradient(to top, hsla(from var(--accent-colour) h s calc(l + 40) / .3) 0%, hsla(from var(--accent-colour) h s l / .1) 100%);
-        border-radius: 40% 40% 60% 60%;
-        transition: opacity 200ms;
-      }
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        span {
+            width: 48px;
+            height: 48px;
+            border: 5px solid var(--accent-colour);
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        p {
+            background-color: var(--accent-colour);
+            padding: var(--medium-space);
+            color: var(--text-colour);
+            text-align: center;
+            border-radius: var(--border-radius);
+        }
     }
 
-    div {
-      align-self: center;
-      text-align: center;
+    &:has(.loading) form,
+    &:has(.result) form {
+        opacity: 0.5;
     }
 
-    p {
-      font-family: "Chris Hand", sans-serif;
-      font-size: var(--font-size-xlarge);
-      line-height: var(--font-size-xlarge);
-      margin: 0;
-      padding: 0;
+    form {
+        transition: opacity 200ms ease-in-out;
     }
-  }
+
+    form.contact {
+        display: flex;
+        flex-direction: column;
+        gap: var(--small-space);
+
+        input,
+        textarea {
+            font-size: var(--font-size-small);
+            background-color: var(--background-alt-colour);
+            color: var(--text-colour);
+            border: 1px solid var(--accent-colour);
+            border-radius: 2px;
+            padding: var(--small-space);
+        }
+
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        button {
+            font-size: var(--font-size-small);
+            background-color: var(--accent-colour);
+            color: var(--text-colour);
+            border: 0;
+            text-transform: uppercase;
+            padding: var(--small-space);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+    }
+
+    form.nod {
+        --button-size: 125px;
+
+        cursor: pointer;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: var(--smedium-space);
+        background-color: var(--accent-alt-colour);
+        border-radius: calc((var(--button-size) + var(--smedium-space)) / 2);
+        padding: var(--smedium-space);
+
+        &:hover,
+        &:active,
+        &:focus {
+            button {
+                box-shadow:
+                    inset 0 calc(var(--button-size) / 24) 0
+                        hsl(from var(--accent-colour) h s calc(l + 5)),
+                    inset 0 calc(-1 * var(--button-size) / 24)
+                        calc(var(--button-size) / 60)
+                        hsl(from var(--accent-colour) h s calc(l - 5)),
+                    0 0 calc(var(--button-size) / 60) var(--accent-colour),
+                    inset 0 0 calc(var(--button-size) / 30)
+                        hsl(from var(--accent-colour) h s calc(l - 15)),
+                    inset 0 0 calc(var(--button-size) / 30)
+                        hsla(from var(--accent-alt-colour) h s l / 0.5),
+                    inset 0 0 calc(var(--button-size) / 60)
+                        calc(var(--button-size) / 12) var(--accent-colour),
+                    inset 0 calc(-1 * var(--button-size) / 30)
+                        calc(var(--button-size) / 40)
+                        calc(var(--button-size) / 10)
+                        hsla(from var(--accent-alt-colour) h s l / 0.7),
+                    inset 0 0 calc(var(--button-size) / 60)
+                        calc(var(--button-size) / 10)
+                        hsl(from var(--accent-colour) h s calc(l - 20)),
+                    inset 0 0 calc(var(--button-size) / 60)
+                        calc(var(--button-size) / 10)
+                        hsla(from var(--accent-alt-colour) h s l / 0.7),
+                    inset 0 0 calc(var(--button-size) / 40)
+                        calc(var(--button-size) / 8.5)
+                        hsl(from var(--accent-colour) h s calc(l - 40)),
+                    inset 0 0 calc(var(--button-size) / 120)
+                        calc(var(--button-size) / 7.5)
+                        hsla(from var(--accent-colour) h s calc(l + 30) / 0.2),
+                    inset 0 calc(var(--button-size) / 20) 0
+                        calc(var(--button-size) / 8.5)
+                        hsla(from var(--accent-colour) h s calc(l + 15) / 0.5),
+                    inset 0 calc(-1 * var(--button-size) / 20)
+                        calc(var(--button-size) / 60)
+                        calc(var(--button-size) / 8.5)
+                        hsla(from var(--accent-colour) h s calc(l - 10) / 0.8),
+                    inset 0 0 0 calc(var(--button-size) / 5.5)
+                        hsl(from var(--accent-colour) h s calc(l - 3)),
+                    inset 0 calc(var(--button-size) / 2.5)
+                        calc(var(--button-size) / 7.5)
+                        hsl(from var(--accent-colour) h s calc(l - 8)),
+                    inset 0 0 calc(var(--button-size) / 10)
+                        calc(var(--button-size) / 6)
+                        hsl(from var(--accent-colour) h s calc(l - 15)),
+                    0 calc(var(--button-size) / 40)
+                        calc(var(--button-size) / 20) rgba(0, 0, 0, 0.5);
+
+                background-color: hsl(
+                    from var(--accent-colour) h s calc(l - 2)
+                );
+                color: hsl(from var(--text-colour) h s calc(l - 10) / 0.8);
+
+                &:before {
+                    opacity: 0.5;
+                }
+            }
+        }
+
+        button {
+            position: relative;
+            display: inline-block;
+            width: var(--button-size);
+            height: var(--button-size);
+            border: 0;
+            outline: none;
+            background-color: var(--accent-colour);
+            border-radius: 50%;
+            cursor: pointer;
+            transition:
+                box-shadow 200ms,
+                color 200ms;
+            color: hsl(from var(--text-colour) h s l / 0.8);
+            text-shadow:
+                -1px 1px 0 rgba(255, 255, 255, 0.1),
+                1px -1px 0 rgba(0, 0, 0, 0.4);
+            font-size: var(--font-size-large);
+            font-family: "IBM Plex Sans", serif;
+            font-weight: bolder;
+
+            box-shadow:
+                inset 0 calc(var(--button-size) / 24) 0
+                    hsl(from var(--accent-colour) h s calc(l + 5)),
+                inset 0 calc(-1 * var(--button-size) / 24)
+                    calc(var(--button-size) / 60)
+                    hsl(from var(--accent-colour) h s calc(l - 5)),
+                0 0 calc(var(--button-size) / 60) var(--accent-colour),
+                inset 0 0 calc(var(--button-size) / 30)
+                    hsl(from var(--accent-colour) h s calc(l - 15)),
+                inset 0 0 calc(var(--button-size) / 30)
+                    hsla(from var(--accent-alt-colour) h s l / 0.5),
+                inset 0 0 calc(var(--button-size) / 60)
+                    calc(var(--button-size) / 12) var(--accent-colour),
+                inset 0 calc(-1 * var(--button-size) / 30)
+                    calc(var(--button-size) / 40) calc(var(--button-size) / 10)
+                    hsla(from var(--accent-alt-colour) h s l / 0.7),
+                inset 0 0 calc(var(--button-size) / 60)
+                    calc(var(--button-size) / 10)
+                    hsl(from var(--accent-colour) h s calc(l - 20)),
+                inset 0 0 calc(var(--button-size) / 60)
+                    calc(var(--button-size) / 10)
+                    hsla(from var(--accent-alt-colour) h s l / 0.7),
+                inset 0 0 calc(var(--button-size) / 120)
+                    calc(var(--button-size) / 9.2)
+                    hsl(from var(--accent-colour) h s calc(l - 50)),
+                inset 0 0 calc(var(--button-size) / 120)
+                    calc(var(--button-size) / 8)
+                    hsla(from var(--accent-colour) h s calc(l + 30) / 0.7),
+                inset 0 calc(var(--button-size) / 20) 0
+                    calc(var(--button-size) / 8.5)
+                    hsla(from var(--accent-colour) h s calc(l + 15) / 0.7),
+                inset 0 calc(-1 * var(--button-size) / 20)
+                    calc(var(--button-size) / 60) calc(var(--button-size) / 8.5)
+                    hsla(from var(--accent-colour) h s calc(l - 10) / 0.2),
+                inset 0 0 0 calc(var(--button-size) / 5.5) var(--accent-colour),
+                inset 0 calc(var(--button-size) / 2.5)
+                    calc(var(--button-size) / 7.5)
+                    hsl(from var(--accent-colour) h s calc(l - 5)),
+                inset 0 0 calc(var(--button-size) / 10)
+                    calc(var(--button-size) / 6)
+                    hsl(from var(--accent-colour) h s calc(l - 10)),
+                0 calc(var(--button-size) / 40) calc(var(--button-size) / 20)
+                    rgba(0, 0, 0, 0.5);
+
+            &:before {
+                content: "";
+                position: absolute;
+                bottom: calc(var(--button-size) / 4.5);
+                left: calc(var(--button-size) / 3.6);
+                display: block;
+                width: calc(var(--button-size) / 2.2);
+                height: calc(var(--button-size) / 3.3);
+                background: hsla(
+                    from var(--accent-colour) h s calc(l + 30) / 0.2
+                );
+                background: linear-gradient(
+                    to top,
+                    hsla(from var(--accent-colour) h s calc(l + 40) / 0.3) 0%,
+                    hsla(from var(--accent-colour) h s l / 0.1) 100%
+                );
+                border-radius: 40% 40% 60% 60%;
+                transition: opacity 200ms;
+            }
+        }
+
+        div {
+            align-self: center;
+            text-align: center;
+        }
+
+        p {
+            font-family: "Chris Hand", sans-serif;
+            font-size: var(--font-size-xlarge);
+            line-height: var(--font-size-xlarge);
+            margin: 0;
+            padding: 0;
+        }
+    }
 }
 
 /** End of file **/

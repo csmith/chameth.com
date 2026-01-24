@@ -1,149 +1,195 @@
 :root {
-  --font-size-tiny: 11pt;
-  --font-size-small: 13pt;
-  --font-size-regular: 16pt;
-  --font-size-large: 19pt;
-  --font-size-xlarge: 24pt;
-  --font-size-xxlarge: 32pt;
-  --font-size-giant: 40pt;
+    --font-size-tiny: 11pt;
+    --font-size-small: 13pt;
+    --font-size-regular: 16pt;
+    --font-size-large: 19pt;
+    --font-size-xlarge: 24pt;
+    --font-size-xxlarge: 32pt;
+    --font-size-giant: 40pt;
 
-  @media (max-width: 500px) and (min-resolution: 2dppx) {
-    --font-size-tiny: 8pt;
-    --font-size-small: 9pt;
-    --font-size-regular: 12pt;
-    --font-size-large: 15pt;
-    --font-size-xlarge: 20pt;
-    --font-size-xxlarge: 25pt;
-  }
+    @media (max-width: 500px) and (min-resolution: 2dppx) {
+        --font-size-tiny: 8pt;
+        --font-size-small: 9pt;
+        --font-size-regular: 12pt;
+        --font-size-large: 15pt;
+        --font-size-xlarge: 20pt;
+        --font-size-xxlarge: 25pt;
+    }
 
-  @media (max-width: 500px) {
-    --font-size-giant: 30pt;
-  }
+    @media (max-width: 500px) {
+        --font-size-giant: 30pt;
+    }
 }
 
 @font-face {
-  font-family: 'IBM Plex Sans';
-  src: local('IBM Plex Sans'), url('/fonts/IBMPlexSans-Regular.woff2') format('woff2'), url('/fonts/IBMPlexSans-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
+    font-family: "IBM Plex Sans";
+    src:
+        local("IBM Plex Sans"),
+        url("/fonts/IBMPlexSans-Regular.woff2") format("woff2"),
+        url("/fonts/IBMPlexSans-Regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
-  font-family: 'Berkeley Mono';
-  src: local('Berkeley Mono'), url('/fonts/BerkeleyMono-Regular.woff2') format('woff2'), url('/fonts/BerkeleyMono-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
+    font-family: "Berkeley Mono";
+    src:
+        local("Berkeley Mono"),
+        url("/fonts/BerkeleyMono-Regular.woff2") format("woff2"),
+        url("/fonts/BerkeleyMono-Regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
 
 @font-face {
-  font-family: 'Chris Hand';
-  src: url('/fonts/ChrisHand-Regular.woff2') format('woff2'), url('/fonts/ChrisHand-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
+    font-family: "Chris Hand";
+    src:
+        url("/fonts/ChrisHand-Regular.woff2") format("woff2"),
+        url("/fonts/ChrisHand-Regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
 }
 
 body {
-  font-size: var(--font-size-regular);
-  font-family: 'IBM Plex Sans', serif;
-  line-height: 1.6;
+    font-size: var(--font-size-regular);
+    font-family: "IBM Plex Sans", serif;
+    line-height: 1.6;
 }
 
-h2, h3, h4, h5, h6 {
-  font-family: "Chris Hand", sans-serif;
-  font-size: var(--font-size-giant);
-  color: var(--text-highlight-colour);
-  margin: var(--medium-space) 0;
-  line-height: 1;
-
-  &:before {
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: "Chris Hand", sans-serif;
     font-size: var(--font-size-giant);
-    color: var(--accent-colour);
-    margin-right: 0.25em;
-  }
+    color: var(--text-highlight-colour);
+    margin: var(--medium-space) 0;
+    line-height: 1;
 
-  a {
-    background: none;
-    text-decoration-skip-ink: auto;
-    transition: text-decoration-color 200ms ease-in-out;
-    text-decoration-color: var(--text-alt-colour);
-
-    &:hover, &:focus, &:active {
-      text-decoration-color: var(--accent-colour);
+    &:before {
+        font-family: "Chris Hand", sans-serif;
+        font-size: var(--font-size-giant);
+        color: var(--accent-colour);
+        margin-right: 0.25em;
     }
-  }
+
+    a {
+        background: none;
+        text-decoration-skip-ink: auto;
+        transition: text-decoration-color 200ms ease-in-out;
+        text-decoration-color: var(--text-alt-colour);
+
+        &:hover,
+        &:focus,
+        &:active {
+            text-decoration-color: var(--accent-colour);
+        }
+    }
 }
 
-h2:before { content: '#'; }
-h3:before { content: '##'; }
-h4:before { content: '###'; }
-h5:before { content: '####'; }
-h6:before { content: '#####'; }
+h2:before {
+    content: "#";
+}
+h3:before {
+    content: "##";
+}
+h4:before {
+    content: "###";
+}
+h5:before {
+    content: "####";
+}
+h6:before {
+    content: "#####";
+}
 
 p {
-  margin: var(--medium-space) 0;
+    margin: var(--medium-space) 0;
 }
 
-p code, li code {
-  background-color: var(--background-alt-colour);
-  border-radius: var(--border-radius);
-  padding: 0.1em 0.5em;
-  font-family: "Berkeley Mono", monospace;
+p code,
+li code {
+    background-color: var(--background-alt-colour);
+    border-radius: var(--border-radius);
+    padding: 0.1em 0.5em;
+    font-family: "Berkeley Mono", monospace;
 }
 
 a {
-  color: var(--text-highlight-colour);
-  text-decoration: underline;
-  text-decoration-color: var(--accent-colour);
-  text-decoration-thickness: 4px;
-  text-decoration-skip-ink: none;
+    color: var(--text-highlight-colour);
+    text-decoration: underline;
+    text-decoration-color: var(--accent-colour);
+    text-decoration-thickness: 4px;
+    text-decoration-skip-ink: none;
 
-  background: linear-gradient(to bottom, transparent 50%, var(--accent-colour) 50%) top;
-  background-size: 100% 200%;
-  line-height: 1;
+    background: linear-gradient(
+            to bottom,
+            transparent 50%,
+            var(--accent-colour) 50%
+        )
+        top;
+    background-size: 100% 200%;
+    line-height: 1;
 
-  transition: background 1s ease-out;
+    transition: background 1s ease-out;
 
-  &:hover, &:active, &:focus {
-    background-position: bottom;
-    transition-duration: 150ms;
-  }
+    &:hover,
+    &:active,
+    &:focus {
+        background-position: bottom;
+        transition-duration: 150ms;
+    }
 
-  &[href*="://"]:not([href*="://chameth.com"])::after {
-    content: '↗';
-    font-family: "Berkeley Mono", monospace;
-    color: var(--accent-colour);
-  }
+    &[href*="://"]:not([href*="://chameth.com"])::after {
+        content: "↗";
+        font-family: "Berkeley Mono", monospace;
+        color: var(--accent-colour);
+    }
 }
 
 .poem {
-  font-family: "Berkeley Mono", monospace;
-  background-color: var(--background-alt-colour);
-  padding: 1em;
-  margin: var(--medium-space) 0;
-  border-radius: var(--border-radius);
-  white-space: preserve-spaces;
+    font-family: "Berkeley Mono", monospace;
+    background-color: var(--background-alt-colour);
+    padding: 1em;
+    margin: var(--medium-space) 0;
+    border-radius: var(--border-radius);
+    white-space: preserve-spaces;
 }
 
 .ascii-art {
-  font-family: "Berkeley Mono", monospace;
-  font-size: var(--font-size-tiny);
-  color: var(--text-alt-colour);
+    font-family: "Berkeley Mono", monospace;
+    font-size: var(--font-size-tiny);
+    color: var(--text-alt-colour);
 }
 
 em {
-  font-style: italic;
+    font-style: italic;
 
-  &::before, &::after {
-    color: var(--accent-colour);
-    font-size: var(--font-size-tiny);
-    content: '_';
-  }
+    &::before,
+    &::after {
+        color: var(--accent-colour);
+        font-size: var(--font-size-tiny);
+        content: "_";
+    }
 }
 
 strong {
-  font-weight: bold;
+    font-weight: bold;
+}
+
+/* via https://css-tricks.com/fluid-superscripts-and-subscripts/ */
+sup,
+sub {
+    font-size: calc(0.5em + 4px);
+    vertical-align: baseline;
+    position: relative;
+    top: calc(-0.5 * 0.83 * 2 * (1em - 4px));
+}
+
+sub {
+    top: calc(0.25 * 0.83 * 2 * (1em - 4px));
 }

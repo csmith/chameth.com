@@ -1,433 +1,461 @@
 .film-review-parent {
-  container-type: inline-size;
+    container-type: inline-size;
 }
 
 .film-review {
-  display: grid;
-  grid-template-areas:
-      "image header"
-      "image body";
-  grid-template-columns: auto 1fr;
-  grid-template-rows: auto 1fr;
-  background-color: var(--background-alt-colour);
-  border-radius: var(--border-radius);
-  padding: 0;
-  column-gap: var(--smedium-space);
-  margin: var(--smedium-space) 0;
-  box-shadow: 0 0 3px var(--accent-colour);
-  overflow: hidden;
+    display: grid;
+    grid-template-areas:
+        "image header"
+        "image body";
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+    background-color: var(--background-alt-colour);
+    border-radius: var(--border-radius);
+    padding: 0;
+    column-gap: var(--smedium-space);
+    margin: var(--smedium-space) 0;
+    box-shadow: 0 0 3px var(--accent-colour);
+    overflow: hidden;
 
-  @container (width >= 700px) {
-    height: 350px;
+    @container (width >= 700px) {
+        height: 350px;
+
+        img {
+            border-top-left-radius: var(--border-radius);
+            border-bottom-left-radius: var(--border-radius);
+        }
+    }
+
+    @container (width < 700px) {
+        grid-template-areas: "header" "image" "body";
+        grid-template-rows: auto auto auto;
+        grid-template-columns: 1fr;
+        row-gap: var(--small-space);
+        padding: var(--smedium-space);
+
+        header {
+            grid-template-columns: 100% !important;
+            grid-template-rows: auto auto auto auto;
+
+            time {
+                text-align: left !important;
+            }
+        }
+    }
 
     img {
-      border-top-left-radius: var(--border-radius);
-      border-bottom-left-radius: var(--border-radius);
+        grid-area: image;
+        max-width: 100%;
+        max-height: 350px;
     }
-  }
-
-  @container (width < 700px) {
-    grid-template-areas: "header" "image" "body";
-    grid-template-rows: auto auto auto;
-    grid-template-columns: 1fr;
-    row-gap: var(--small-space);
-    padding: var(--smedium-space);
 
     header {
-      grid-template-columns: 100% !important;
-      grid-template-rows: auto auto auto auto;
+        grid-area: header;
+        display: grid;
+        grid-template-columns: 1fr auto auto auto;
+        align-items: center;
+        column-gap: var(--small-space);
+        margin-top: var(--small-space);
+        margin-right: var(--smedium-space);
 
-      time {
-        text-align: left !important;
-      }
-    }
-  }
+        div {
+            display: flex;
+            align-items: center;
+        }
 
-  img {
-    grid-area: image;
-    max-width: 100%;
-    max-height: 350px;
-  }
+        h3 {
+            &::before {
+                content: none;
+            }
 
-  header {
-    grid-area: header;
-    display: grid;
-    grid-template-columns: 1fr auto auto auto;
-    align-items: center;
-    column-gap: var(--small-space);
-    margin-top: var(--small-space);
-    margin-right: var(--smedium-space);
+            font-size: var(--font-size-xlarge);
+            line-height: var(--font-size-xlarge);
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    div {
-      display: flex;
-      align-items: center;
-    }
-
-    h3 {
-      &::before {
-        content: none;
-      }
-
-      font-size: var(--font-size-xlarge);
-      line-height: var(--font-size-xlarge);
-      margin: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+        time {
+            text-align: right;
+            font-size: var(--font-size-tiny);
+            font-family: "Berkeley Mono", monospace;
+            text-transform: uppercase;
+        }
     }
 
-    time {
-      text-align: right;
-      font-size: var(--font-size-tiny);
-      font-family: "Berkeley Mono", monospace;
-      text-transform: uppercase;
+    & > div {
+        padding-bottom: var(--small-space);
+        padding-right: var(--small-space);
+        overflow-y: auto;
+        font-size: var(--font-size-small);
+
+        p {
+            margin-top: var(--smedium-space);
+            margin-bottom: var(--smedium-space);
+
+            &:first-child {
+                margin-top: 0;
+            }
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        i {
+            font-style: italic;
+        }
     }
-  }
-
-  & > div {
-    padding-bottom: var(--small-space);
-    padding-right: var(--small-space);
-    overflow-y: auto;
-    font-size: var(--font-size-small);
-
-    p {
-      margin-top: var(--smedium-space);
-      margin-bottom: var(--smedium-space);
-
-      &:first-child {
-        margin-top: 0;
-      }
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-    }
-
-    i {
-      font-style: italic;
-    }
-  }
 }
 
 .film-reviews-parent {
-  container-type: inline-size;
+    container-type: inline-size;
 }
 
 .film-reviews {
-  display: grid;
-  column-gap: var(--smedium-space);
+    display: grid;
+    column-gap: var(--smedium-space);
 
-  @container (width >= 1500px) {
-    grid-template-columns: 1fr 1fr;
-  }
+    @container (width >= 1500px) {
+        grid-template-columns: 1fr 1fr;
+    }
 
-  @container (width < 1500px) {
-    grid-template-columns: 1fr;
-  }
+    @container (width < 1500px) {
+        grid-template-columns: 1fr;
+    }
 }
 
 .films-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--smedium-space);
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-
-  li {
-    display: grid;
-    grid-template-areas: "image header" "image watches" "image rating" "image blank";
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto auto 1fr;
-    grid-column-gap: var(--smedium-space);
-    grid-row-gap: var(--small-space);
-
-    &:not(:first-child) {
-      padding-top: var(--smedium-space);
-      border-top: 2px solid var(--background-alt-colour);
-    }
-
-    &, * {
-      margin: 0;
-      padding: 0;
-    }
-
-    img {
-      grid-area: image;
-      max-height: 200px;
-      border-radius: var(--border-radius);
-      border: 2px solid var(--background-alt-colour);
-      box-shadow: 0 0 5px var(--background-alt-colour);
-    }
-
-    h3 {
-      &::before {
-        content: none;
-      }
-
-      .year {
-        color: var(--text-alt-colour);
-        font-size: var(--font-size-large);
-      }
-    }
-
-    p {
-      color: var(--text-alt-colour);
-      font-family: "Berkeley Mono", monospace;
-      font-size: var(--font-size-small);
-    }
-  }
-}
-
-a.film-list {
-  display: grid;
-  max-height: calc(200px + var(--smedium-space) * 2);
-  grid-template-areas: "header images" "description images" "meta images";
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto 1fr auto;
-  row-gap: var(--small-space);
-  background: var(--background-alt-colour);
-  box-shadow: 0 0 3px var(--accent-colour);
-
-  &, &:hover, &:focus, &:active {
-    padding: var(--smedium-space);
-    border: none;
-    text-decoration: none;
-    border-radius: var(--border-radius);
-  }
-
-  &:hover, &:focus, &:active {
-    background: var(--accent-colour);
-  }
-
-  & + & {
-    margin-top: var(--medium-space);
-  }
-
-  *, *:hover, *:active, *:focus {
-    margin: 0;
-    padding: 0;
-    border: none;
-  }
-
-  h3 {
-    font-size: var(--font-size-xxlarge);
-    &::before { content: none; }
-  }
-
-  .description {
-    p + p {
-      margin-top: var(--smedium-space);
-    }
-
-    overflow: hidden;
-    --mask-height: 1.5em;
-    mask: linear-gradient(
-        to bottom,
-        black,
-        black var(--mask-height),
-        transparent calc(100% - var(--mask-height)),
-        transparent
-    );
-  }
-
-  .count {
-    color: var(--text-alt-colour);
-    font-size: var(--font-size-small);
-    font-family: "Berkeley Mono", monospace;
-  }
-
-  .poster-stack {
-    --overlap: 0.4;
-    grid-area: images;
-    position: relative;
-    width: calc(133px + (133px * 4 * var(--overlap)));
-    height: 200px;
-
-    img {
-      max-height: 200px;
-      max-width: 133px;
-      border-radius: var(--border-radius);
-      position: absolute;
-      top: 0;
-
-      /* There must be a nicer way to do this... Please tell me how. */
-      &:nth-child(1) { z-index: 5; left: 0; }
-      &:nth-child(2) { z-index: 4; left: calc(133px * var(--overlap) * 1); }
-      &:nth-child(3) { z-index: 3; left: calc(133px * var(--overlap) * 2); }
-      &:nth-child(4) { z-index: 2; left: calc(133px * var(--overlap) * 3); }
-      &:nth-child(5) { z-index: 1; left: calc(133px * var(--overlap) * 4); }
-    }
-  }
-}
-
-ol.recent-films {
-  list-style-type: none;
-  display: flex;
-  flex-direction: row;
-  overflow-x: hidden;
-  gap: var(--small-space);
-
-  margin: var(--small-space) 0;
-  padding: 0;
-
-  mask: linear-gradient(
-      to right,
-      black,
-      black 95%,
-      transparent 100%
-  );
-
-  li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--smedium-space);
+    list-style-type: none;
     margin: 0;
     padding: 0;
 
-    a {
-      border-radius: var(--border-radius);
-      padding: var(--small-space);
-      background: none;
-      text-decoration: none;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--small-space);
-      transition: background 200ms ease-in-out;
+    li {
+        display: grid;
+        grid-template-areas: "image header" "image watches" "image rating" "image blank";
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto auto 1fr;
+        grid-column-gap: var(--smedium-space);
+        grid-row-gap: var(--small-space);
 
-      &:hover, &:focus, &:active {
-        background: var(--accent-colour);
+        &:not(:first-child) {
+            padding-top: var(--smedium-space);
+            border-top: 2px solid var(--background-alt-colour);
+        }
 
-        time {
-          color: var(--text-colour);
+        &,
+        * {
+            margin: 0;
+            padding: 0;
         }
 
         img {
-          border-color: var(--text-colour);
+            grid-area: image;
+            max-height: 200px;
+            border-radius: var(--border-radius);
+            border: 2px solid var(--background-alt-colour);
+            box-shadow: 0 0 5px var(--background-alt-colour);
         }
-      }
 
-      time {
-        font-family: "Berkeley Mono", monospace;
-        font-size: var(--font-size-small);
-        color: var(--text-alt-colour);
-        transition: color 200ms ease-in-out;
-      }
+        h3 {
+            &::before {
+                content: none;
+            }
 
-      img {
-        max-height: 200px;
-        max-width: 133px;
-        border: 4px solid var(--background-alt-colour);
-        border-radius: 4px;
-        transition: border-color 200ms ease-in-out;
-      }
+            .year {
+                color: var(--text-alt-colour);
+                font-size: var(--font-size-large);
+            }
+        }
+
+        p {
+            color: var(--text-alt-colour);
+            font-family: "Berkeley Mono", monospace;
+            font-size: var(--font-size-small);
+        }
     }
-  }
+}
+
+a.film-list {
+    display: grid;
+    max-height: calc(200px + var(--smedium-space) * 2);
+    grid-template-areas: "header images" "description images" "meta images";
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr auto;
+    row-gap: var(--small-space);
+    background: var(--background-alt-colour);
+    box-shadow: 0 0 3px var(--accent-colour);
+
+    &,
+    &:hover,
+    &:focus,
+    &:active {
+        padding: var(--smedium-space);
+        border: none;
+        text-decoration: none;
+        border-radius: var(--border-radius);
+    }
+
+    &:hover,
+    &:focus,
+    &:active {
+        background: var(--accent-colour);
+    }
+
+    & + & {
+        margin-top: var(--medium-space);
+    }
+
+    *,
+    *:hover,
+    *:active,
+    *:focus {
+        margin: 0;
+        padding: 0;
+        border: none;
+    }
+
+    h3 {
+        font-size: var(--font-size-xxlarge);
+        &::before {
+            content: none;
+        }
+    }
+
+    .description {
+        p + p {
+            margin-top: var(--smedium-space);
+        }
+
+        overflow: hidden;
+        --mask-height: 1.5em;
+        mask: linear-gradient(
+            to bottom,
+            black,
+            black var(--mask-height),
+            transparent calc(100% - var(--mask-height)),
+            transparent
+        );
+    }
+
+    .count {
+        color: var(--text-alt-colour);
+        font-size: var(--font-size-small);
+        font-family: "Berkeley Mono", monospace;
+    }
+
+    .poster-stack {
+        --overlap: 0.4;
+        grid-area: images;
+        position: relative;
+        width: calc(133px + (133px * 4 * var(--overlap)));
+        height: 200px;
+
+        img {
+            max-height: 200px;
+            max-width: 133px;
+            border-radius: var(--border-radius);
+            position: absolute;
+            top: 0;
+
+            /* There must be a nicer way to do this... Please tell me how. */
+            &:nth-child(1) {
+                z-index: 5;
+                left: 0;
+            }
+            &:nth-child(2) {
+                z-index: 4;
+                left: calc(133px * var(--overlap) * 1);
+            }
+            &:nth-child(3) {
+                z-index: 3;
+                left: calc(133px * var(--overlap) * 2);
+            }
+            &:nth-child(4) {
+                z-index: 2;
+                left: calc(133px * var(--overlap) * 3);
+            }
+            &:nth-child(5) {
+                z-index: 1;
+                left: calc(133px * var(--overlap) * 4);
+            }
+        }
+    }
+}
+
+ol.recent-films {
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    overflow-x: hidden;
+    gap: var(--small-space);
+
+    margin: var(--small-space) 0;
+    padding: 0;
+
+    mask: linear-gradient(to right, black, black 95%, transparent 100%);
+
+    li {
+        margin: 0;
+        padding: 0;
+
+        a {
+            border-radius: var(--border-radius);
+            padding: var(--small-space);
+            background: none;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--small-space);
+            transition: background 200ms ease-in-out;
+
+            &:hover,
+            &:focus,
+            &:active {
+                background: var(--accent-colour);
+
+                time {
+                    color: var(--text-colour);
+                }
+
+                img {
+                    border-color: var(--text-colour);
+                }
+            }
+
+            time {
+                font-family: "Berkeley Mono", monospace;
+                font-size: var(--font-size-small);
+                color: var(--text-alt-colour);
+                transition: color 200ms ease-in-out;
+            }
+
+            img {
+                max-height: 200px;
+                max-width: 133px;
+                border: 4px solid var(--background-alt-colour);
+                border-radius: 4px;
+                transition: border-color 200ms ease-in-out;
+            }
+        }
+    }
 }
 
 .film-rewatch {
-  display: inline-block;
-  font-size: var(--font-size-tiny);
-  padding: 0 var(--small-space);
-  background-color: var(--accent-colour);
-  border-radius: var(--border-radius);
+    display: inline-block;
+    font-size: var(--font-size-tiny);
+    padding: 0 var(--small-space);
+    background-color: var(--accent-colour);
+    border-radius: var(--border-radius);
 }
 
 .film-spoilers {
-  display: inline-block;
-  font-size: var(--font-size-tiny);
-  padding: 0 var(--small-space);
-  background-color: darkred;
-  border-radius: var(--border-radius);
+    display: inline-block;
+    font-size: var(--font-size-tiny);
+    padding: 0 var(--small-space);
+    background-color: darkred;
+    border-radius: var(--border-radius);
 }
 
 .film-page {
-  display: grid;
+    display: grid;
 
-  @media(min-width: 1200px) {
-    grid-template-areas: "header sidebar" "review sidebar" "review -";
-    grid-template-columns: calc(var(--content-width) - 300px) 300px;
-    grid-template-rows: auto auto 1fr;
-    column-gap: var(--medium-space);
+    @media (min-width: 1200px) {
+        grid-template-areas: "header sidebar" "review sidebar" "review -";
+        grid-template-columns: calc(var(--content-width) - 300px) 300px;
+        grid-template-rows: auto auto 1fr;
+        column-gap: var(--medium-space);
+
+        aside {
+            rotate: 1.5deg;
+        }
+
+        .film-review-content {
+            padding-right: calc(
+                300px + var(--medium-space) + var(--content-margin)
+            );
+
+            &::after {
+                right: calc(
+                    300px + var(--medium-space) + var(--content-margin)
+                );
+            }
+        }
+    }
+
+    @media (max-width: 1200px) {
+        grid-template-areas: "header" "review" "sidebar";
+        grid-template-columns: 1fr;
+
+        aside {
+            margin-top: var(--medium-space);
+        }
+    }
+
+    & > header {
+        grid-area: header;
+    }
+
+    & > div {
+        grid-area: review;
+    }
+
+    & > aside {
+        grid-area: sidebar;
+    }
+
+    .film-page-review {
+        position: relative;
+
+        .film-review-content p {
+            font-family: "Chris Hand", sans-serif;
+            font-size: var(--font-size-xlarge);
+        }
+
+        & > h3 {
+            margin-bottom: 0;
+        }
+
+        & > p {
+            margin-top: 0;
+
+            span:not(:first-child) {
+                margin-left: var(--smedium-space);
+            }
+        }
+    }
 
     aside {
-      rotate: 1.5deg;
+        z-index: 1;
+        background: var(--background-colour);
+        display: flex;
+        flex-direction: column;
+        border: 2px solid var(--accent-colour);
+        max-width: 300px;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        gap: var(--smedium-space);
+        padding-bottom: var(--medium-space);
+
+        img {
+            border-bottom: 2px solid var(--accent-colour);
+        }
+
+        p,
+        a {
+            margin: 0 var(--small-space);
+            font-size: var(--font-size-small);
+            text-align: center;
+            background: none;
+
+            &.release-date {
+                color: var(--text-alt-colour);
+            }
+        }
     }
-
-    .film-review-content {
-      padding-right: calc(300px + var(--medium-space) + var(--content-margin));
-
-      &::after {
-        right: calc(300px + var(--medium-space) + var(--content-margin));
-      }
-    }
-  }
-
-  @media (max-width: 1200px) {
-    grid-template-areas: "header" "review" "sidebar";
-    grid-template-columns: 1fr;
-
-    aside {
-      margin-top: var(--medium-space);
-    }
-  }
-
-  & > header {
-    grid-area: header;
-  }
-
-  & > div {
-    grid-area: review;
-  }
-
-  & > aside {
-    grid-area: sidebar;
-  }
-
-  .film-page-review {
-    position: relative;
-
-    .film-review-content p {
-      font-family: "Chris Hand", sans-serif;
-      font-size: var(--font-size-xlarge);
-    }
-
-    & > h3 {
-      margin-bottom: 0;
-    }
-
-    & > p {
-      margin-top: 0;
-
-      span:not(:first-child) {
-        margin-left: var(--smedium-space);
-      }
-    }
-  }
-
-  aside {
-    z-index: 1;
-    background: var(--background-colour);
-    display: flex;
-    flex-direction: column;
-    border: 2px solid var(--accent-colour);
-    max-width: 300px;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    gap: var(--smedium-space);
-    padding-bottom: var(--medium-space);
-
-    img {
-      border-bottom: 2px solid var(--accent-colour);
-    }
-
-    p, a {
-      margin: 0 var(--small-space);
-      font-size: var(--font-size-small);
-      text-align: center;
-      background: none;
-
-      &.release-date {
-        color: var(--text-alt-colour);
-      }
-    }
-  }
 }

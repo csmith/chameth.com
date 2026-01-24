@@ -1,55 +1,50 @@
 body {
-  background: url(/background.png) var(--background-colour);
-  color: var(--text-colour);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  min-height: 100vh;
-  min-width: 100vw;
+    background: url(/background.png) var(--background-colour);
+    color: var(--text-colour);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-height: 100vh;
+    min-width: 100vw;
 
-  /* In chromium, 100vw includes the space taken by the vertical scrollbar, so
+    /* In chromium, 100vw includes the space taken by the vertical scrollbar, so
      having any content that's 100vw wide will cause horizontal scrolling.
      There's no good way to fix this, AFAICT. So just hide the overflow. */
-  overflow-x: hidden;
+    overflow-x: hidden;
 }
 
 main {
-  width: var(--content-width);
-  margin: 0 auto;
-  flex-grow: 1;
+    width: var(--content-width);
+    margin: 0 auto;
+    flex-grow: 1;
 }
 
 hr {
-  border: 0;
-  border-top: 5px solid var(--accent-colour);
-  margin: var(--large-space) 0;
-  width: 100%;
+    border: 0;
+    border-top: 5px solid var(--accent-colour);
+    margin: var(--large-space) 0;
+    width: 100%;
 }
 
 ol {
-  list-style-type: decimal;
-  padding-left: 2em;
+    list-style-type: decimal;
+    padding-left: 2em;
 
-  li {
-    padding-left: 0.5em;
-    margin-bottom: var(--small-space);
-  }
+    li {
+        padding-left: 0.5em;
+        margin-bottom: var(--small-space);
+    }
 }
 
 ul {
-  list-style-type: disc;
-  padding-left: 1.5em;
+    list-style-type: disc;
+    padding-left: 1.5em;
 }
 
-.footnote-ref {
-  font-size: var(--font-size-tiny);
-  vertical-align: super;
-  padding: 0.2em;
-  a {
+.footnote-ref a {
     text-decoration-thickness: 2px;
-  }
 }
 
 *[hidden] {
-  display: none;
+    display: none;
 }

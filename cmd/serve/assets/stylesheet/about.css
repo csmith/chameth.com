@@ -1,214 +1,214 @@
 .about {
-  /* Centers the trading card when it's not floated */
-  text-align: center;
+    /* Centers the trading card when it's not floated */
+    text-align: center;
 
-  * {
-    text-align: left;
-  }
-
-  & > :last-child {
-    flex: 100%;
-    margin-right: var(--small-space);
-    padding-top: var(--small-space);
-
-    @media (max-width: 500px) {
-      margin-right: 0;
+    * {
+        text-align: left;
     }
 
-    p:first-child {
-      margin-top: var(--small-space);
-      margin-bottom: var(--small-space);
-      font-size: var(--font-size-large);
-      line-height: 1.8em;
-    }
+    & > :last-child {
+        flex: 100%;
+        margin-right: var(--small-space);
+        padding-top: var(--small-space);
 
-    .drop {
-      font-family: "Chris Hand", sans-serif;
-      color: var(--text-highlight-colour);
-      font-weight: 800;
-      font-size: var(--font-size-giant);
-      margin-right: var(--small-space);
-      vertical-align: baseline;
-      line-height: 0;
+        @media (max-width: 500px) {
+            margin-right: 0;
+        }
+
+        p:first-child {
+            margin-top: var(--small-space);
+            margin-bottom: var(--small-space);
+            font-size: var(--font-size-large);
+            line-height: 1.8em;
+        }
+
+        .drop {
+            font-family: "Chris Hand", sans-serif;
+            color: var(--text-highlight-colour);
+            font-weight: 800;
+            font-size: var(--font-size-giant);
+            margin-right: var(--small-space);
+            vertical-align: baseline;
+            line-height: 0;
+        }
     }
-  }
 }
 
 .tcg-outer {
-  float: right;
-  position: relative;
-  width: min-content;
-  cursor: help;
+    float: right;
+    position: relative;
+    width: min-content;
+    cursor: help;
 
-  transform: rotate(4deg) translateY(40px);
-  margin-left: var(--large-space);
-  margin-bottom: var(--medium-space);
+    transform: rotate(4deg) translateY(40px);
+    margin-left: var(--large-space);
+    margin-bottom: var(--medium-space);
 
-  @media (max-width: 1200px) {
-    float: none;
-    margin-bottom: var(--large-space);
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  @media (max-width: 800px) {
-    transform: rotate(0deg);
-  }
-
-  .tcg-front {
-    transform: rotateY(0deg);
-  }
-
-  .tcg-back {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transform: rotateY(180deg);
-    background-color: var(--accent-colour);
-
-    .tcg-back-emboss {
-      position: absolute;
-      font-size: var(--font-size-xlarge);
-      top: 30%;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      text-transform: uppercase;
-      font-weight: bolder;
-      color: color-mix(in srgb, var(--accent-colour), black 20%);
+    @media (max-width: 1200px) {
+        float: none;
+        margin-bottom: var(--large-space);
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    .tcg-back-hello {
-      position: absolute;
-      margin: 0;
-      bottom: 0;
-      right: 0;
-      font-size: var(--font-size-tiny);
-      color: color-mix(in srgb, var(--accent-colour), black 20%);
+    @media (max-width: 800px) {
+        transform: rotate(0deg);
     }
-  }
 
-  .tcg-flip {
-    transform-style: preserve-3d;
-    transition: transform 800ms 400ms;
-  }
+    .tcg-front {
+        transform: rotateY(0deg);
+    }
 
-  &:hover .tcg-flip {
-    transform: rotateY(180deg);
-  }
+    .tcg-back {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transform: rotateY(180deg);
+        background-color: var(--accent-colour);
 
-  .tcg-front, .tcg-back {
-    /* Firefox doesn't do anti-aliasing in a 3D context, which looks terrible
+        .tcg-back-emboss {
+            position: absolute;
+            font-size: var(--font-size-xlarge);
+            top: 30%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: bolder;
+            color: color-mix(in srgb, var(--accent-colour), black 20%);
+        }
+
+        .tcg-back-hello {
+            position: absolute;
+            margin: 0;
+            bottom: 0;
+            right: 0;
+            font-size: var(--font-size-tiny);
+            color: color-mix(in srgb, var(--accent-colour), black 20%);
+        }
+    }
+
+    .tcg-flip {
+        transform-style: preserve-3d;
+        transition: transform 800ms 400ms;
+    }
+
+    &:hover .tcg-flip {
+        transform: rotateY(180deg);
+    }
+
+    .tcg-front,
+    .tcg-back {
+        /* Firefox doesn't do anti-aliasing in a 3D context, which looks terrible
        as the card is rotated a bit. Adding a transparent outline somehow
        fixes it. https://stackoverflow.com/a/9333891 */
-    outline: 1px solid transparent;
-    border: 12px solid var(--accent-colour);
-    border-radius: var(--border-radius);
-    box-shadow: 20px 20px 5px black;
-    backface-visibility: hidden;
+        outline: 1px solid transparent;
+        border: 12px solid var(--accent-colour);
+        border-radius: var(--border-radius);
+        box-shadow: 20px 20px 5px black;
+        backface-visibility: hidden;
 
-    @media (max-width: 500px) {
-      box-shadow: 10px 10px 5px black;
+        @media (max-width: 500px) {
+            box-shadow: 10px 10px 5px black;
+        }
+
+        &::before {
+            position: absolute;
+            top: -12px;
+            left: -12px;
+            right: -12px;
+            bottom: -12px;
+            content: " ";
+            border-radius: var(--border-radius);
+
+            transform: translateZ(1.41px);
+            overflow: hidden;
+
+            background-image: radial-gradient(
+                farthest-corner circle at 300px 400px,
+                hsla(0, 0%, 100%, 0.8) 10%,
+                hsla(0, 0%, 100%, 0.65) 20%,
+                hsla(0, 0%, 0%, 0.5) 90%
+            );
+
+            mix-blend-mode: overlay;
+        }
     }
 
-    &::before {
-      position: absolute;
-      top: -12px;
-      left: -12px;
-      right: -12px;
-      bottom: -12px;
-      content: ' ';
-      border-radius: var(--border-radius);
+    .tcg-inner {
+        width: 300px;
+        margin: -4px;
+        background-color: var(--background-alt-colour);
+        border-radius: var(--border-radius);
+        overflow: hidden;
 
-      transform: translateZ(1.41px);
-      overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
 
-      background-image: radial-gradient(
-                      farthest-corner circle at 300px 400px,
-                      hsla(0, 0%, 100%, 0.8) 10%,
-                      hsla(0, 0%, 100%, 0.65) 20%,
-                      hsla(0, 0%, 0%, 0.5) 90%
-      );
-
-      mix-blend-mode: overlay;
-    }
-  }
-
-  .tcg-inner {
-    width: 300px;
-    margin: -4px;
-    background-color: var(--background-alt-colour);
-    border-radius: var(--border-radius);
-    overflow: hidden;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    font-size: var(--font-size-tiny);
-
-    img {
-      width: 100%;
-      border-bottom: 6px solid var(--accent-colour);
-    }
-
-    .tcg-properties {
-      width: 100%;
-      display: grid;
-      grid-template-columns: auto 1fr auto 1fr;
-      padding: 10px;
-      grid-column-gap: var(--small-space);
-      align-items: baseline;
-
-      dt {
-        font-weight: bold;
-        text-align: right;
-      }
-    }
-
-    .tcg-skills {
-      margin: 0 10px;
-      /* Safari doesn't like to calculate the width properly by itself...? */
-      max-width: calc(100% - 20px);
-      border-bottom: 0;
-
-      td {
-        border: 0;
-        padding: 4px;
         font-size: var(--font-size-tiny);
 
-        &:first-child {
-          // Types
-          text-align: center;
-        }
-      }
-
-      em {
-        font-style: normal;
-        font-weight: bold;
-
-        /* The global style adds underscores around emphasis, but we don't want that here */
-        &::before {
-          display: none;
+        img {
+            width: 100%;
+            border-bottom: 6px solid var(--accent-colour);
         }
 
-        &::after {
-          display: none;
+        .tcg-properties {
+            width: 100%;
+            display: grid;
+            grid-template-columns: auto 1fr auto 1fr;
+            padding: 10px;
+            grid-column-gap: var(--small-space);
+            align-items: baseline;
+
+            dt {
+                font-weight: bold;
+                text-align: right;
+            }
         }
-      }
+
+        .tcg-skills {
+            margin: 0 10px;
+            /* Safari doesn't like to calculate the width properly by itself...? */
+            max-width: calc(100% - 20px);
+            border-bottom: 0;
+
+            td {
+                border: 0;
+                padding: 4px;
+                font-size: var(--font-size-tiny);
+
+                &:first-child {
+                    text-align: center;
+                }
+            }
+
+            em {
+                font-style: normal;
+                font-weight: bold;
+
+                /* The global style adds underscores around emphasis, but we don't want that here */
+                &::before {
+                    display: none;
+                }
+
+                &::after {
+                    display: none;
+                }
+            }
+        }
+
+        footer {
+            width: 100%;
+            border-top: 2px solid var(--accent-colour);
+            margin-top: 10px;
+            padding: 5px 10px 5px 10px;
+            font-size: var(--font-size-tiny);
+            font-style: italic;
+            display: flex;
+            justify-content: right;
+        }
     }
-
-    footer {
-      width: 100%;
-      border-top: 2px solid var(--accent-colour);
-      margin-top: 10px;
-      padding: 5px 10px 5px 10px;
-      font-size: var(--font-size-tiny);
-      font-style: italic;
-      display: flex;
-      justify-content: right;
-    }
-  }
 }

@@ -1,132 +1,140 @@
 blockquote {
-  padding: var(--small-space) calc(var(--content-margin) + var(--medium-space));
-  background-color: var(--background-alt-colour);
-  border-radius: 0;
-  margin: 0 calc(-1 * var(--content-margin));
-  width: 100vw;
-  position: relative;
+    padding: var(--small-space)
+        calc(var(--content-margin) + var(--medium-space));
+    background-color: var(--background-alt-colour);
+    border-radius: 0;
+    margin: 0 calc(-1 * var(--content-margin));
+    width: 100vw;
+    position: relative;
 
-  &::before {
-    position: absolute;
-    top: var(--medium-space);
-    left: var(--content-margin);
-    content: '“';
-    display: block;
-    color: var(--accent-colour);
-    font-size: var(--font-size-giant);
-    line-height: var(--font-size-giant);
-  }
+    &::before {
+        position: absolute;
+        top: var(--medium-space);
+        left: var(--content-margin);
+        content: "“";
+        display: block;
+        color: var(--accent-colour);
+        font-size: var(--font-size-giant);
+        line-height: var(--font-size-giant);
+    }
 
-  &::after {
-    position: absolute;
-    bottom: 0;
-    right: var(--content-margin);
-    content: '”';
-    display: block;
-    color: var(--accent-colour);
-    font-size: var(--font-size-giant);
-    line-height: var(--font-size-giant);
-  }
+    &::after {
+        position: absolute;
+        bottom: 0;
+        right: var(--content-margin);
+        content: "”";
+        display: block;
+        color: var(--accent-colour);
+        font-size: var(--font-size-giant);
+        line-height: var(--font-size-giant);
+    }
 
-  p {
-    margin-left: calc(var(--small-space) + 2ex);
-    margin-right: calc(var(--small-space) + 2ex);
-  }
+    p {
+        margin-left: calc(var(--small-space) + 2ex);
+        margin-right: calc(var(--small-space) + 2ex);
+    }
 }
 
 aside.update {
-  clear: both;
-  background-color: var(--background-alt-colour);
-  border-radius: var(--border-radius);
-  padding: var(--medium-space);
-  border: 3px solid var(--accent-colour);
-  box-shadow: 0 0 20px var(--accent-colour);
-  margin: var(--large-space) 0;
-
-  ins {
-    text-decoration: none;
-  }
-
-  h5 {
-    &::before {
-      font-size: var(--font-size-large);
-      content: '';
-      margin: 0;
-    }
-
-    text-transform: uppercase;
-    color: var(--text-alt-colour);
-    font-size: var(--font-size-large);
-    margin-top: 0;
-    margin-bottom: var(--small-space);
-
-    & + p {
-      margin-top: var(--small-space);
-    }
-  }
-
-  *:last-child {
-    margin-bottom: 0;
-  }
-}
-
-aside.warning {
-  clear: both;
-  background-image: repeating-linear-gradient(-45deg,red 0, red 10px, white 10px, white 20px, red 20px);
-  border-radius: var(--border-radius);
-  padding: 10px;
-  box-shadow: 0 0 20px var(--accent-colour);
-  margin: var(--medium-space) 0;
-  color: black;
-
-  & > div {
-    background-color: rgba(255, 255, 255, 0.95);
+    clear: both;
+    background-color: var(--background-alt-colour);
     border-radius: var(--border-radius);
-    width: 100%;
-    padding: calc(var(--medium-space) / 2);
+    padding: var(--medium-space);
+    border: 3px solid var(--accent-colour);
+    box-shadow: 0 0 20px var(--accent-colour);
+    margin: var(--large-space) 0;
+
+    ins {
+        text-decoration: none;
+    }
 
     h5 {
-      &::before {
+        &::before {
+            font-size: var(--font-size-large);
+            content: "";
+            margin: 0;
+        }
+
+        text-transform: uppercase;
+        color: var(--text-alt-colour);
         font-size: var(--font-size-large);
-        content: '⚠';
-        margin: 0;
-        color: inherit;
-      }
+        margin-top: 0;
+        margin-bottom: var(--small-space);
 
-      color: inherit;
-      text-transform: uppercase;
-      font-family: inherit;
-      font-weight: 800;
-      font-size: var(--font-size-large);
-      margin-top: 0;
-      margin-bottom: var(--small-space);
-
-      & + p {
-        margin-top: var(--small-space);
-      }
+        & + p {
+            margin-top: var(--small-space);
+        }
     }
 
     *:last-child {
-      margin-bottom: 0;
+        margin-bottom: 0;
     }
-  }
+}
+
+aside.warning {
+    clear: both;
+    background-image: repeating-linear-gradient(
+        -45deg,
+        red 0,
+        red 10px,
+        white 10px,
+        white 20px,
+        red 20px
+    );
+    border-radius: var(--border-radius);
+    padding: 10px;
+    box-shadow: 0 0 20px var(--accent-colour);
+    margin: var(--medium-space) 0;
+    color: black;
+
+    & > div {
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: var(--border-radius);
+        width: 100%;
+        padding: calc(var(--medium-space) / 2);
+
+        h5 {
+            &::before {
+                font-size: var(--font-size-large);
+                content: "⚠";
+                margin: 0;
+                color: inherit;
+            }
+
+            color: inherit;
+            text-transform: uppercase;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: var(--font-size-large);
+            margin-top: 0;
+            margin-bottom: var(--small-space);
+
+            & + p {
+                margin-top: var(--small-space);
+            }
+        }
+
+        *:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
 
 aside.sidenote {
-  border-left: 10px solid var(--background-alt-colour);
-  padding-left: 15px;
+    border-left: 10px solid var(--background-alt-colour);
+    padding-left: 15px;
 
-  h5 {
-    &::before {
-      content: '';
-      margin: 0;
+    h5 {
+        &::before {
+            content: "";
+            margin: 0;
+        }
     }
-  }
 }
 
 aside.old-post-warning {
-  background: var(--background-alt-colour);
-  padding: var(--small-space) var(--medium-space);
-  margin: var(--medium-space) 0;
-  border-radius: var(--border-radius);
+    background: var(--background-alt-colour);
+    padding: var(--small-space) var(--medium-space);
+    margin: var(--medium-space) 0;
+    border-radius: var(--border-radius);
 }

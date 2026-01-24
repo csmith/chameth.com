@@ -1,21 +1,26 @@
 .snippets {
-  columns: 400px 2;
-  column-fill: balance;
+    columns: 400px 2;
+    column-fill: balance;
 
-  section {
-    margin-bottom: var(--medium-space);
-    -webkit-column-break-inside: avoid;
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
+    section {
+        margin-bottom: var(--medium-space);
+        -webkit-column-break-inside: avoid;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
 
-  h1, h2, h3, h4, h5, h6 {
-    margin-top: 0;
-  }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin-top: 0;
+    }
 
-  a {
-    font-family: "Berkeley Mono", monospace;
-    font-size: var(--font-size-small);
-    text-decoration-thickness: 1px;
-  }
+    a {
+        font-family: "Berkeley Mono", monospace;
+        font-size: var(--font-size-small);
+        text-decoration-thickness: 1px;
+    }
 }

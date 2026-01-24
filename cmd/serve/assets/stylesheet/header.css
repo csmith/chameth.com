@@ -1,60 +1,60 @@
 body > header {
-  padding: var(--small-space) 0;
-  width: var(--content-width);
-  margin: var(--large-space) auto 2em auto;
+    padding: var(--small-space) 0;
+    width: var(--content-width);
+    margin: var(--large-space) auto 2em auto;
 
-  display: flex;
-  justify-content: space-between;
-
-  @media (max-width: 1200px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--medium-space);
-  }
-
-  & > a {
-    /* Safari underlines block level elements within an A... */
-    text-decoration: none;
-  }
-
-  h1 {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-start;
-    color: var(--text-highlight-colour);
-    font-family: "Berkeley Mono", monospace;
-    text-transform: uppercase;
-    text-wrap: nowrap;
-
-    .prelude {
-      font-size: var(--font-size-small);
-      line-height: 1;
-      color: var(--text-alt-colour);
-      text-decoration: none;
-    }
-
-    .title {
-      font-size: var(--font-size-giant);
-      line-height: 1;
-    }
-
-    border-bottom: 4px solid var(--accent-colour);
-  }
-
-  nav {
     display: flex;
-    gap: 20px;
-    align-items: flex-end;
+    justify-content: space-between;
 
-    a {
-      font-family: "Berkeley Mono", monospace;
-      text-transform: uppercase;
-      white-space: nowrap;
+    @media (max-width: 1200px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--medium-space);
     }
 
-    @media (max-width: 700px) {
-      flex-direction: column;
-      align-items: flex-start;
+    & > a {
+        /* Safari underlines block level elements within an A... */
+        text-decoration: none;
     }
-  }
+
+    h1 {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        color: var(--text-highlight-colour);
+        font-family: "Berkeley Mono", monospace;
+        text-transform: uppercase;
+        text-wrap: nowrap;
+
+        .prelude {
+            font-size: var(--font-size-small);
+            line-height: 1;
+            color: var(--text-alt-colour);
+            text-decoration: none;
+        }
+
+        .title {
+            font-size: var(--font-size-giant);
+            line-height: 1;
+        }
+
+        border-bottom: 4px solid var(--accent-colour);
+    }
+
+    nav {
+        display: flex;
+        gap: 20px;
+        align-items: flex-end;
+
+        a {
+            font-family: "Berkeley Mono", monospace;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 700px) {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
 }
