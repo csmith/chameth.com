@@ -7,7 +7,7 @@ require (
 	github.com/anthonynsimon/bild v0.14.0
 	github.com/csmith/aca v1.2.0
 	github.com/csmith/envflag/v2 v2.0.0
-	github.com/csmith/middleware v1.0.0
+	github.com/csmith/middleware v1.1.0
 	github.com/csmith/slogflags v1.1.0
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/jmoiron/sqlx v1.4.0
