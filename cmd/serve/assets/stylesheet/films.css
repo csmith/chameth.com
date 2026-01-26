@@ -287,17 +287,24 @@ a.film-list {
     }
 }
 
-ol.recent-films {
+ol.recent-films,
+ol.watched-films {
     list-style-type: none;
-    display: flex;
-    flex-direction: row;
-    overflow-x: hidden;
     gap: var(--small-space);
-
     margin: var(--small-space) 0;
     padding: 0;
 
-    mask: linear-gradient(to right, black, black 95%, transparent 100%);
+    &.recent-films {
+        display: flex;
+        flex-direction: row;
+        overflow-x: hidden;
+        mask: linear-gradient(to right, black, black 95%, transparent 100%);
+    }
+
+    &.watched-films {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(133px, 1fr));
+    }
 
     li {
         margin: 0;

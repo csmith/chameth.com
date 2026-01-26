@@ -22,6 +22,7 @@ import (
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/update"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/video"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/warning"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/watchedfilms"
 )
 
 const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering failed]</div>\n\n"
@@ -29,20 +30,21 @@ const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering
 type renderer func([]string, *context.Context) (string, error)
 
 var renderers = map[string]renderer{
-	"sidenote":    sidenote.RenderFromText,
-	"update":      update.RenderFromText,
-	"warning":     warning.RenderFromText,
-	"audio":       audio.RenderFromText,
-	"video":       video.RenderFromText,
-	"figure":      figure.RenderFromText,
-	"filmreview":  filmreview.RenderFromText,
-	"filmreviews": filmreviews.RenderFromText,
-	"filmlist":    filmlist.RenderFromText,
-	"recentfilms": recentfilms.RenderFromText,
-	"rating":      rating.RenderFromText,
-	"postlink":    postlink.RenderFromText,
-	"recentposts": recentposts.RenderFromText,
-	"syndication": syndication.RenderFromText,
+	"sidenote":     sidenote.RenderFromText,
+	"update":       update.RenderFromText,
+	"warning":      warning.RenderFromText,
+	"audio":        audio.RenderFromText,
+	"video":        video.RenderFromText,
+	"figure":       figure.RenderFromText,
+	"filmreview":   filmreview.RenderFromText,
+	"filmreviews":  filmreviews.RenderFromText,
+	"filmlist":     filmlist.RenderFromText,
+	"recentfilms":  recentfilms.RenderFromText,
+	"watchedfilms": watchedfilms.RenderFromText,
+	"rating":       rating.RenderFromText,
+	"postlink":     postlink.RenderFromText,
+	"recentposts":  recentposts.RenderFromText,
+	"syndication":  syndication.RenderFromText,
 }
 
 var tagRegexp = regexp.MustCompile(`\{%\s*(\w+)(.*?)\s*%\}`)
