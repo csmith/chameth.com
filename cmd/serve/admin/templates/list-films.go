@@ -21,11 +21,14 @@ type ListFilmsData struct {
 }
 
 type FilmSummary struct {
-	ID        int
-	Title     string
-	Year      string
-	Rating    string
-	Published bool
+	ID            int
+	Title         string
+	Year          string
+	Rating        string
+	Published     bool
+	PosterMediaID *int
+	ReviewCount   int
+	LastWatched   *string
 }
 
 func RenderListFilms(w http.ResponseWriter, data ListFilmsData) error {

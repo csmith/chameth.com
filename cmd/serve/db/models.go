@@ -187,6 +187,14 @@ type FilmWithReview struct {
 	Review *FilmReview
 }
 
+type FilmWithReviewAndPoster struct {
+	FilmWithReview
+	PosterPath    *string
+	PosterMediaID *int
+	ReviewCount   int
+	LastWatched   *string
+}
+
 type FilmReviewWithFilmAndPoster struct {
 	FilmReview `db:"filmreview"`
 	Film       `db:"film"`

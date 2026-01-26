@@ -35,14 +35,64 @@ func generateFilmPath(title string, year int) string {
 	return "/films/" + cleaned + "/"
 }
 
+func updateOrCreateFilmPoster(filmID int, filmTitle, posterPath string) error {
+	if posterPath == "" {
+		return fmt.Errorf("poster path is empty")
+	}
+
+	mediaRelations, err := db.GetMediaRelationsForEntity("film", filmID)
+	if err != nil {
+		return fmt.Errorf("failed to get media relations: %w", err)
+	}
+
+	for _, rel := range mediaRelations {
+		if rel.Role != nil && *rel.Role == "poster" {
+			if err := db.DeleteMediaRelation("film", filmID, rel.Path); err != nil {
+				return fmt.Errorf("failed to delete existing media relation: %w", err)
+			}
+			if err := db.DeleteMedia(rel.MediaID); err != nil {
+				return fmt.Errorf("failed to delete existing media: %w", err)
+			}
+			break
+		}
+	}
+
+	posterData, err := tmdb.DownloadPoster(*tmdbAPIKey, posterPath, 500)
+	if err != nil {
+		return fmt.Errorf("failed to download poster: %w", err)
+	}
+
+	ext := ".jpg"
+	if posterData.ContentType == "image/png" {
+		ext = ".png"
+	}
+	filename := fmt.Sprintf("%d%s", filmID, ext)
+	mediaRelationsPath := fmt.Sprintf("/films/%d/poster%s", filmID, ext)
+
+	mediaID, err := db.CreateMedia(posterData.ContentType, filename, posterData.Data, &posterData.Width, &posterData.Height, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create media: %w", err)
+	}
+
+	description := fmt.Sprintf("Poster of %s", filmTitle)
+	caption := filmTitle
+	role := "poster"
+	if err := db.CreateMediaRelation("film", filmID, mediaID, mediaRelationsPath, &caption, &description, &role); err != nil {
+		return fmt.Errorf("failed to create media relation: %w", err)
+	}
+
+	return nil
+}
+
 var (
 	tmdbAPIKey = flag.String("tmdb-api-key", "", "TMDB API key")
 )
 
 func ListFilmsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		films, err := db.GetAllFilmsWithReviews()
+		films, err := db.GetAllFilmsWithReviewsAndPosters()
 		if err != nil {
+			slog.Error("Failed to retrieve films", "error", err)
 			http.Error(w, "Failed to retrieve films", http.StatusInternalServerError)
 			return
 		}
@@ -50,8 +100,8 @@ func ListFilmsHandler() func(http.ResponseWriter, *http.Request) {
 		filmSummaries := make([]templates.FilmSummary, len(films))
 		for i, film := range films {
 			year := ""
-			if film.Year != nil {
-				year = strconv.Itoa(*film.Year)
+			if film.Film.Year != nil {
+				year = strconv.Itoa(*film.Film.Year)
 			}
 
 			rating := ""
@@ -60,11 +110,14 @@ func ListFilmsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 
 			filmSummaries[i] = templates.FilmSummary{
-				ID:        film.ID,
-				Title:     film.Title,
-				Year:      year,
-				Rating:    rating,
-				Published: film.Published,
+				ID:            film.Film.ID,
+				Title:         film.Film.Title,
+				Year:          year,
+				Rating:        rating,
+				Published:     film.Film.Published,
+				PosterMediaID: film.PosterMediaID,
+				ReviewCount:   film.ReviewCount,
+				LastWatched:   film.LastWatched,
 			}
 		}
 
@@ -173,31 +226,8 @@ func CreateFilmHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if posterPath != "" {
-			posterData, err := tmdb.DownloadPoster(*tmdbAPIKey, posterPath, 500)
-			if err != nil {
-				slog.Error("Failed to download poster", "error", err)
-			} else {
-				ext := ".jpg"
-				if posterData.ContentType == "image/png" {
-					ext = ".png"
-				}
-				filename := fmt.Sprintf("%d%s", filmID, ext)
-				mediaRelationsPath := fmt.Sprintf("/films/%d/poster%s", filmID, ext)
-
-				mediaID, err := db.CreateMedia(posterData.ContentType, filename, posterData.Data, &posterData.Width, &posterData.Height, nil)
-				if err != nil {
-					slog.Error("Failed to create media", "error", err)
-				} else {
-					description := fmt.Sprintf("Poster of %s", movie.Title)
-					caption := movie.Title
-					role := "poster"
-					err := db.CreateMediaRelation("film", filmID, mediaID, mediaRelationsPath, &caption, &description, &role)
-					if err != nil {
-						slog.Error("Failed to create media relation", "error", err)
-					}
-				}
-			}
+		if err := updateOrCreateFilmPoster(filmID, movie.Title, posterPath); err != nil {
+			slog.Error("Failed to update film poster", "error", err)
 		}
 
 		reviewID, err := db.CreateFilmReview(filmID, 0, time.Now(), false, false, false, "")
@@ -365,6 +395,49 @@ func DeleteFilmHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		http.Redirect(w, r, "/films", http.StatusSeeOther)
+	}
+}
+
+func FetchFilmPosterHandler() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if *tmdbAPIKey == "" {
+			http.Error(w, "TMDB API key not configured", http.StatusInternalServerError)
+			return
+		}
+
+		idStr := r.PathValue("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid film ID", http.StatusBadRequest)
+			return
+		}
+
+		film, err := db.GetFilmByID(id)
+		if err != nil {
+			slog.Error("Failed to get film", "error", err)
+			http.Error(w, "Film not found", http.StatusNotFound)
+			return
+		}
+
+		if film.TMDBID == nil {
+			http.Error(w, "Film has no TMDB ID", http.StatusBadRequest)
+			return
+		}
+
+		movie, err := tmdb.GetMovie(*tmdbAPIKey, *film.TMDBID)
+		if err != nil {
+			slog.Error("Failed to get movie from TMDB", "error", err)
+			http.Error(w, "Failed to fetch movie from TMDB", http.StatusInternalServerError)
+			return
+		}
+
+		if err := updateOrCreateFilmPoster(id, film.Title, movie.PosterPath); err != nil {
+			slog.Error("Failed to update film poster", "error", err)
+			http.Error(w, "Failed to update film poster", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, fmt.Sprintf("/films/edit/%d", id), http.StatusSeeOther)
 	}
 }
 

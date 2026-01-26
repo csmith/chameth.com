@@ -94,6 +94,7 @@ func Start() error {
 	httpsMux.HandleFunc("GET /films/edit/{id}", handlers.EditFilmHandler())
 	httpsMux.HandleFunc("POST /films/edit/{id}", handlers.UpdateFilmHandler())
 	httpsMux.HandleFunc("POST /films/delete/{id}", handlers.DeleteFilmHandler())
+	httpsMux.HandleFunc("POST /films/fetch-poster/{id}", handlers.FetchFilmPosterHandler())
 	httpsMux.HandleFunc("GET /film-reviews/edit/{id}", handlers.EditFilmReviewHandler())
 	httpsMux.HandleFunc("POST /film-reviews/create/{id}", handlers.CreateFilmReviewHandler())
 	httpsMux.HandleFunc("POST /film-reviews/edit/{id}", handlers.UpdateFilmReviewHandler())

@@ -19,9 +19,20 @@
         <input type="submit" />
     </form>
 
+    <form method="POST" action="/films/delete/{{.ID}}" style="margin-top: 20px;">
+        <button type="submit">Delete Film</button>
+    </form>
+
     {{if .Poster}}
     <h2>Poster</h2>
     <img src="/media/view/{{.Poster.ID}}" alt="{{.Title}} poster" style="max-width: 300px;" />
+    {{end}}
+
+    {{if .TMDBID}}
+    <h2>Fetch Poster</h2>
+    <form method="POST" action="/films/fetch-poster/{{.ID}}">
+        <button type="submit">Fetch Poster from TMDB</button>
+    </form>
     {{end}}
 
     <h2>Reviews</h2>

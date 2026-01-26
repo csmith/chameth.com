@@ -178,3 +178,8 @@ func CreateMediaRelation(entityType string, entityID, mediaID int, path string, 
 	`, path, mediaID, caption, description, role, entityType, entityID)
 	return err
 }
+
+func DeleteMedia(id int) error {
+	_, err := db.Exec("DELETE FROM media WHERE id = $1", id)
+	return err
+}

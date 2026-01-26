@@ -1,5 +1,11 @@
 {{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.ListFilmsData */}}
 {{define "content"}}
+    <h2>Add Film by TMDB ID</h2>
+    <form method="POST" action="/films">
+        <input type="text" name="tmdb_id" placeholder="TMDB ID" />
+        <button type="submit">Add Film</button>
+    </form>
+
     <h2>Search TMDB</h2>
     <form id="tmdb-search-form">
         <input type="text" id="tmdb-search-input" name="q" placeholder="Search for a movie..." />
@@ -12,8 +18,11 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Poster</th>
                 <th>Title</th>
                 <th>Year</th>
+                <th>Reviews</th>
+                <th>Last Watched</th>
                 <th>Rating</th>
                 <th>Published</th>
                 <th>Actions</th>
@@ -23,15 +32,19 @@
             {{range .Films}}
             <tr>
                 <td>{{.ID}}</td>
+                <td>
+                    {{if .PosterMediaID}}
+                    <img src="/media/view/{{.PosterMediaID}}" alt="{{.Title}} poster" style="max-width: 50px; max-height: 75px;" loading="lazy" />
+                    {{end}}
+                </td>
                 <td>{{.Title}}</td>
                 <td>{{.Year}}</td>
+                <td>{{.ReviewCount}}</td>
+                <td>{{if .LastWatched}}{{.LastWatched}}{{end}}</td>
                 <td>{{.Rating}}</td>
                 <td>{{.Published}}</td>
                 <td>
                     <a href="/films/edit/{{.ID}}">Edit</a>
-                    <form method="POST" action="/films/delete/{{.ID}}" style="display:inline">
-                        <button type="submit">Delete</button>
-                    </form>
                 </td>
             </tr>
             {{end}}
