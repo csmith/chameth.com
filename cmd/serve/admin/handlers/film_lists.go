@@ -304,3 +304,23 @@ func UpdateEntryPositionHandler() func(http.ResponseWriter, *http.Request) {
 		http.Redirect(w, r, fmt.Sprintf("/film-lists/%d/edit", id), http.StatusSeeOther)
 	}
 }
+
+func ReorderFilmListEntriesHandler() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := r.PathValue("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			slog.Error("Invalid film list ID", "id_str", idStr, "error", err)
+			http.Error(w, "Invalid film list ID", http.StatusBadRequest)
+			return
+		}
+
+		if err := db.ReorderFilmListEntries(id); err != nil {
+			slog.Error("Failed to reorder film list entries", "id", id, "error", err)
+			http.Error(w, "Failed to reorder entries", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, fmt.Sprintf("/film-lists/%d/edit", id), http.StatusSeeOther)
+	}
+}

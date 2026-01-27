@@ -30,6 +30,10 @@
     </form>
 
     {{if .Entries}}
+    <form method="POST" action="/film-lists/{{.ID}}/entries/reorder" style="margin: 1em 0;">
+        <button type="submit">Reorder entries to be contiguous</button>
+    </form>
+
     <table>
         <thead>
             <tr>

@@ -343,3 +343,20 @@ func GetFilmListsContainingFilm(filmID int) ([]FilmList, error) {
 	}
 	return lists, nil
 }
+
+func ReorderFilmListEntries(listID int) error {
+	_, err := db.Exec(`
+		UPDATE film_list_entries AS fle
+		SET position = sub.rn
+		FROM (
+			SELECT id, row_number() OVER (ORDER BY position) as rn
+			FROM film_list_entries
+			WHERE film_list_id = $1
+		) AS sub
+		WHERE fle.id = sub.id
+	`, listID)
+	if err != nil {
+		return fmt.Errorf("failed to reorder film list entries: %w", err)
+	}
+	return nil
+}
