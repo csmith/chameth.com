@@ -1,0 +1,49 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.Step2Data */}}
+{{define "content"}}
+<h2>Add Watched Film - Step 2: Position in Ranked List</h2>
+
+<div class="workflow-progress">
+  <div class="step completed">1. Select Film</div>
+  <div class="step current">2. Position</div>
+  <div class="step">3. Letterboxd List</div>
+  <div class="step">4. Write Review</div>
+  <div class="step">5. Copy to Letterboxd</div>
+  <div class="step">6. Add Syndication</div>
+  <div class="step">7. Additional Lists</div>
+</div>
+
+<p>Selected film: <strong>{{.Film.Title}} ({{.Film.Year}})</strong></p>
+<p>Click a button to insert this film at that position:</p>
+
+<form method="POST">
+  <input type="hidden" name="default_rating" id="default_rating" value="10">
+  <div class="ranked-list">
+    <button type="submit" name="position" value="1" class="insert-button" data-rating="10">Insert here</button>
+
+    <ol>
+      {{range .Entries}}
+        <li class="ranked-entry">
+          {{if .PosterMediaID}}
+            <img src="/media/view/{{.PosterMediaID}}" alt="{{.Film.Title}} poster" class="poster">
+          {{end}}
+          <span class="film-info">
+            {{.Film.Title}} ({{.Film.Year}})
+            {{if .RatingHTML}}<span class="rating-stars">{{.RatingHTML}}</span>{{end}}
+          </span>
+        </li>
+        <button type="submit" name="position" value="{{add .Entry.Position 1}}" class="insert-button" data-rating="{{.AverageRating}}">Insert here</button>
+      {{end}}
+    </ol>
+
+    <button type="submit" name="position" value="{{.EndPosition}}" class="insert-button" data-rating="1">Insert here</button>
+  </div>
+</form>
+
+<script>
+  document.querySelectorAll('.insert-button').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.getElementById('default_rating').value = this.getAttribute('data-rating');
+    });
+  });
+</script>
+{{end}}

@@ -1,0 +1,36 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.Step6Data */}}
+{{define "content"}}
+<h2>Add Watched Film - Step 6: Add Syndication Link</h2>
+
+<div class="workflow-progress">
+  <div class="step completed">1. Select Film</div>
+  <div class="step completed">2. Position</div>
+  <div class="step completed">3. Letterboxd List</div>
+  <div class="step completed">4. Write Review</div>
+  <div class="step completed">5. Copy to Letterboxd</div>
+  <div class="step current">6. Add Syndication</div>
+  <div class="step">7. Additional Lists</div>
+</div>
+
+<p>Film: <strong>{{.Film.Title}}</strong></p>
+
+<form method="POST">
+  <label>
+    Path:
+    <input type="text" value="{{.Film.Path}}" readonly>
+  </label>
+
+  <label>
+    Letterboxd Review URL:
+    <input type="url" name="syndication_url" placeholder="https://letterboxd.com/chameth/film/your-film/review/...">
+  </label>
+
+  <label>
+    Name:
+    <input type="text" name="syndication_name" value="Letterboxd">
+  </label>
+
+  <button type="submit" name="action" value="add">Add Syndication</button>
+  <button type="submit" name="action" value="skip">Skip</button>
+</form>
+{{end}}

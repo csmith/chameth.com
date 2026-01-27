@@ -199,8 +199,35 @@ func GetEntryByID(entryID int) (*FilmListEntry, error) {
 }
 
 func AddFilmToList(listID, filmID int, position int) (int, error) {
+	// Start a transaction to shift positions if needed
+	tx, err := db.Begin()
+	if err != nil {
+		return 0, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
+
+	_, err = tx.Exec("SET CONSTRAINTS ALL DEFERRED")
+	if err != nil {
+		return 0, fmt.Errorf("failed to defer constraints: %w", err)
+	}
+
+	// Shift all positions >= target position down by 1
+	_, err = tx.Exec(`
+		UPDATE film_list_entries
+		SET position = position + 1
+		WHERE film_list_id = $1 AND position >= $2
+	`, listID, position)
+	if err != nil {
+		return 0, fmt.Errorf("failed to shift positions: %w", err)
+	}
+
+	// Now insert the new entry
 	var id int
-	err := db.QueryRow(`
+	err = tx.QueryRow(`
 		INSERT INTO film_list_entries (film_list_id, film_id, position)
 		VALUES ($1, $2, $3)
 		RETURNING id
@@ -208,6 +235,11 @@ func AddFilmToList(listID, filmID int, position int) (int, error) {
 	if err != nil {
 		return 0, fmt.Errorf("failed to add film to list: %w", err)
 	}
+
+	if err := tx.Commit(); err != nil {
+		return 0, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
 	return id, nil
 }
 

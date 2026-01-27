@@ -14,6 +14,9 @@
     <div id="tmdb-search-results"></div>
 
     <h2>Films</h2>
+    <div class="actions">
+        <a href="/films/workflow/step/1" class="btn-primary">Add Watched Film (Workflow)</a>
+    </div>
     <table>
         <thead>
             <tr>

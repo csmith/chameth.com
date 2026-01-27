@@ -575,3 +575,137 @@ label:has(input[type="checkbox"]) {
     font-weight: 600;
     color: #333;
 }
+
+/* Workflow progress indicator */
+.workflow-progress {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.workflow-progress .step {
+    padding: 0.5rem 1rem;
+    background: #e0e0e0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    position: relative;
+}
+
+.workflow-progress .step.completed {
+    background: #a8d5a8;
+    color: #3d5a3d;
+}
+
+.workflow-progress .step.current {
+    background: #87ceeb;
+    color: #1a3a4a;
+    font-weight: bold;
+    box-shadow: 0 0 8px rgba(135, 206, 235, 0.5);
+}
+
+.workflow-progress .step:not(.completed):not(.current) {
+    opacity: 0.5;
+}
+
+.workflow-progress .step:not(.current) {
+    color: #666;
+}
+
+/* Ranked list for workflow step 2 */
+.ranked-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 1rem 0;
+    counter-reset: rank-counter;
+}
+
+.ranked-list > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ranked-list ol {
+    margin: 0;
+    flex-grow: 1;
+}
+
+.ranked-list ol {
+    list-style: none;
+    padding-left: 0;
+    counter-reset: rank-counter;
+}
+
+.ranked-list li {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background: #f9f9f9;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    counter-increment: rank-counter;
+}
+
+.ranked-list li::before {
+    content: counter(rank-counter) ". ";
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+.ranked-list .film-info {
+    flex-grow: 1;
+}
+
+.ranked-list .poster {
+    max-width: 60px;
+    max-height: 90px;
+    margin-right: 1rem;
+    border-radius: 4px;
+}
+
+.ranked-list .rating-stars {
+    margin-left: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.ranked-list .insert-button {
+    padding: 0.5rem 1rem;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.ranked-list .insert-button:hover {
+    background: #0052a3;
+}
+
+/* Action buttons container */
+.actions {
+    margin: 1rem 0;
+}
+
+.btn-primary {
+    padding: 0.75rem 1.5rem;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s;
+}
+
+.btn-primary:hover {
+    background: #218838;
+}

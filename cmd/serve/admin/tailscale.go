@@ -107,6 +107,20 @@ func Start() error {
 	httpsMux.HandleFunc("POST /film-lists/{id}/entries/position/{entryId}", handlers.UpdateEntryPositionHandler())
 	httpsMux.HandleFunc("POST /film-lists/{id}/entries/reorder", handlers.ReorderFilmListEntriesHandler())
 	httpsMux.HandleFunc("GET /api/films/reviews/", handlers.GetFilmsWithReviewsHandler())
+	httpsMux.HandleFunc("GET /films/workflow/step/1", handlers.FilmReviewWorkflowStep1Handler())
+	httpsMux.HandleFunc("POST /films/workflow/step/1", handlers.FilmReviewWorkflowStep1Handler())
+	httpsMux.HandleFunc("GET /films/workflow/step/2", handlers.FilmReviewWorkflowStep2Handler())
+	httpsMux.HandleFunc("POST /films/workflow/step/2", handlers.FilmReviewWorkflowStep2Handler())
+	httpsMux.HandleFunc("GET /films/workflow/step/3", handlers.FilmReviewWorkflowStep3Handler())
+	httpsMux.HandleFunc("POST /films/workflow/step/3", handlers.FilmReviewWorkflowStep3Handler())
+	httpsMux.HandleFunc("GET /films/workflow/step/4", handlers.FilmReviewWorkflowStep4Handler())
+	httpsMux.HandleFunc("POST /films/workflow/step/4", handlers.FilmReviewWorkflowStep4Handler())
+	httpsMux.HandleFunc("GET /films/workflow/step/5", handlers.FilmReviewWorkflowStep5Handler())
+	httpsMux.HandleFunc("POST /films/workflow/step/5", handlers.FilmReviewWorkflowStep5Handler())
+	httpsMux.HandleFunc("GET /films/workflow/step/6", handlers.FilmReviewWorkflowStep6Handler())
+	httpsMux.HandleFunc("POST /films/workflow/step/6", handlers.FilmReviewWorkflowStep6Handler())
+	httpsMux.HandleFunc("GET /films/workflow/step/7", handlers.FilmReviewWorkflowStep7Handler())
+	httpsMux.HandleFunc("POST /films/workflow/step/7", handlers.FilmReviewWorkflowStep7Handler())
 	httpsMux.HandleFunc("GET /videogames", handlers.ListVideoGamesHandler())
 	httpsMux.HandleFunc("POST /videogames", handlers.CreateVideoGameHandler())
 	httpsMux.HandleFunc("GET /videogames/edit/{id}", handlers.EditVideoGameHandler())
@@ -134,6 +148,9 @@ func Start() error {
 					}),
 				),
 				middleware.CrossOriginProtection(),
+				middleware.Recover(middleware.WithPanicLogger(func(r *http.Request, err any) {
+					slog.Error("Panic serving admin site", "url", r.RequestURI, "error", err)
+				})),
 			),
 		)(httpsMux),
 	}
