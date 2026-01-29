@@ -15,3 +15,5 @@ jobs:
     uses: meta/workflows/.forgejo/workflows/image-build.yml@master
     runs-on: docker
     secrets: inherit
+    with:
+      github: csmith/chameth.com
