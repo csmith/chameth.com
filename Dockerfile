@@ -1,4 +1,4 @@
-FROM golang:1.25.5 AS go
+FROM golang:1.25.6 AS go
 WORKDIR /usr/src/app
 ADD go.mod go.sum /usr/src/app/
 ADD cmd /usr/src/app/cmd
