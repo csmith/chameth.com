@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"regexp"
 	"sync"
 
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
@@ -17,24 +18,17 @@ import (
 
 var (
 	ollamaEndpoint = flag.String("ollama-endpoint", "http://ollama:11434", "Ollama API endpoint")
-	ollamaModel    = flag.String("ollama-model", "mxbai-embed-large", "Ollama embedding model")
+	ollamaModel    = flag.String("ollama-model", "qwen3-embedding:8b", "Ollama embedding model")
 
 	embeddingMutex sync.Mutex
+
+	codeRemovalRegex = regexp.MustCompile(`(?s)<code>.*?</code>`)
 )
 
 // GenerateAndStoreEmbedding generates an embedding for a post and stores it in the database
 func GenerateAndStoreEmbedding(postPath string) error {
 	embeddingMutex.Lock()
 	defer embeddingMutex.Unlock()
-
-	type ollamaEmbeddingRequest struct {
-		Model  string `json:"model"`
-		Prompt string `json:"prompt"`
-	}
-
-	type ollamaEmbeddingResponse struct {
-		Embedding []float32 `json:"embedding"`
-	}
 
 	post, err := db.GetPostByPath(postPath)
 	if err != nil {
@@ -46,16 +40,17 @@ func GenerateAndStoreEmbedding(postPath string) error {
 		return fmt.Errorf("failed to render post content: %w", err)
 	}
 
-	textContent := markdown.StripHTMLTags(string(renderedHTML))
+	content := markdown.StripHTMLTags(codeRemovalRegex.ReplaceAllString(string(renderedHTML), ""))
 
-	embeddingText := fmt.Sprintf("%s\n\n%s", post.Title, textContent)
-
-	reqBody := ollamaEmbeddingRequest{
-		Model:  *ollamaModel,
-		Prompt: embeddingText,
-	}
-
-	jsonData, err := json.Marshal(reqBody)
+	jsonData, err := json.Marshal(struct {
+		Model      string `json:"model"`
+		Prompt     string `json:"prompt"`
+		Dimensions int    `json:"dimensions"`
+	}{
+		Model:      *ollamaModel,
+		Prompt:     fmt.Sprintf("%s\n\n%s", post.Title, content),
+		Dimensions: 4096,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to marshal request: %w", err)
 	}
@@ -77,14 +72,14 @@ func GenerateAndStoreEmbedding(postPath string) error {
 		return fmt.Errorf("ollama API returned status %d", resp.StatusCode)
 	}
 
-	var ollamaResp ollamaEmbeddingResponse
+	var ollamaResp = struct {
+		Embedding []float32 `json:"embedding"`
+	}{}
 	if err := json.NewDecoder(resp.Body).Decode(&ollamaResp); err != nil {
 		return fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	embedding := pgvector.NewVector(ollamaResp.Embedding)
-
-	if err := db.UpdatePostEmbedding(postPath, embedding); err != nil {
+	if err := db.UpdatePostEmbedding(postPath, pgvector.NewVector(ollamaResp.Embedding)); err != nil {
 		return err
 	}
 
