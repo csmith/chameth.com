@@ -86,6 +86,18 @@ func analyzePost(content string) postAnalysis {
 
 	for _, word := range words {
 		word = strings.ToLower(word)
+
+		letters := 0
+		for _, r := range word {
+			if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') {
+				letters++
+			}
+		}
+
+		if letters < 4 {
+			continue
+		}
+
 		analysis.WordCounts[word]++
 	}
 
