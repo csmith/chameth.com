@@ -47,13 +47,13 @@ func GetSyndicationsByPath(path string) ([]Syndication, error) {
 	return res, nil
 }
 
-func CreateSyndication(path, externalURL, name string) (int, error) {
+func CreateSyndication(path, externalURL, name string, published bool) (int, error) {
 	var id int
 	err := db.QueryRow(`
 		INSERT INTO syndications (path, external_url, name, published)
-		VALUES ($1, $2, $3, false)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id
-	`, path, externalURL, name).Scan(&id)
+	`, path, externalURL, name, published).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create syndication: %w", err)
 	}

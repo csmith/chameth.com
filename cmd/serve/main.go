@@ -45,9 +45,8 @@ func main() {
 		}
 	}()
 
-	go func() {
-		content.UpdateAllPostEmbeddings()
-	}()
+	go content.UpdateAllPostEmbeddings()
+	go content.SyndicateAllPostsToATProto()
 
 	go func() {
 		if err := admin.Start(); err != nil {

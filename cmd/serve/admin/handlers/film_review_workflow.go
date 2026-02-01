@@ -423,7 +423,7 @@ func FilmReviewWorkflowStep6Handler() func(http.ResponseWriter, *http.Request) {
 			syndicationName := r.FormValue("syndication_name")
 
 			if syndicationURL != "" {
-				_, err := db.CreateSyndication(film.Path, syndicationURL, syndicationName)
+				_, err := db.CreateSyndication(film.Path, syndicationURL, syndicationName, true)
 				if err != nil {
 					slog.Error("Failed to create syndication", "error", err)
 				}

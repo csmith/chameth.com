@@ -206,11 +206,17 @@ func UpdatePostHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		go func() {
-			if err := content.GenerateAndStoreEmbedding(path); err != nil {
-				slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
-			}
-		}()
+		if published {
+			go func() {
+				if err := content.GenerateAndStoreEmbedding(path); err != nil {
+					slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
+				}
+			}()
+
+			go func() {
+				content.SyndicateAllPostsToATProto()
+			}()
+		}
 
 		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
 	}

@@ -171,7 +171,22 @@ func GetRelatedPostsByID(postID int, limit int) ([]PostMetadata, error) {
 		LIMIT $2
 	`, postID, limit)
 	if err != nil {
-		return nil, fmt.Errorf("failed to query related posts: %w", err)
+		return nil, err
+	}
+	return posts, nil
+}
+
+func GetPostsNotSyndicatedToATProto() ([]PostMetadata, error) {
+	var posts []PostMetadata
+	err := db.Select(&posts, `
+		SELECT id, path, title, date, format, published
+		FROM posts
+		WHERE published AND path NOT IN (
+			SELECT path FROM syndications WHERE name = 'Bluesky'
+		)
+	`)
+	if err != nil {
+		return nil, err
 	}
 	return posts, nil
 }

@@ -38,6 +38,26 @@ func GetMediaRelationsForEntity(entityType string, entityID int) ([]MediaRelatio
 	return relations, nil
 }
 
+func GetOpenGraphDetailsForEntity(entityType string, entityID int) (*MediaRelationWithDetails, error) {
+	var relation MediaRelationWithDetails
+	err := db.Get(&relation, `
+		SELECT
+			mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id,
+			m.id, m.content_type, m.original_filename, m.width, m.height, m.parent_media_id, m.data
+		FROM media_relations mr
+		JOIN media m ON mr.media_id = m.id
+		WHERE mr.entity_type = $1 AND mr.entity_id = $2 AND mr.role = 'opengraph'
+		LIMIT 1
+	`, entityType, entityID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &relation, nil
+}
+
 // GetOpenGraphImageForEntity returns the OpenGraph image path for a given entity, or empty string if none exists.
 func GetOpenGraphImageForEntity(entityType string, entityID int) (string, error) {
 	var path string

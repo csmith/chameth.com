@@ -101,7 +101,7 @@ func CreateSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		id, err := db.CreateSyndication(path, externalURL, name)
+		id, err := db.CreateSyndication(path, externalURL, name, false)
 		if err != nil {
 			http.Error(w, "Failed to create syndication", http.StatusInternalServerError)
 			return
