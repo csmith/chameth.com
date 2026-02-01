@@ -23,6 +23,8 @@
             {{block "article" .}}{{end}}
         </div>
 
+        {{ .SyndicationInfo }}
+
         <hr class="end-of-post">
 
         <aside><div data-nod></div></aside>

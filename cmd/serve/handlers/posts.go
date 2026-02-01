@@ -2,12 +2,14 @@ package handlers
 
 import (
 	"fmt"
+	"html/template"
 	"log/slog"
 	"net/http"
 	"time"
 
 	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/syndication"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
 	"chameth.com/chameth.com/cmd/serve/templates/includes"
@@ -33,29 +35,31 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Calculate age warning
 	yearsOld := int(time.Since(post.Date).Hours() / 24 / 365)
 	showWarning := yearsOld >= 5
 
-	// Get first paragraph or snippet for summary
 	summary := post.Content
 	if len(summary) > 200 {
 		summary = summary[:200] + "..."
 	}
 
-	// Get OpenGraph image
 	var ogImage string
 	ogPath, err := db.GetOpenGraphImageForEntity("post", post.ID)
 	if err == nil && ogPath != "" {
 		ogImage = fmt.Sprintf("https://chameth.com%s", ogPath)
 	}
 
-	// Get related posts
 	relatedPosts, err := content.GetRelatedPosts(post.ID)
 	if err != nil {
 		slog.Error("Failed to get related posts", "post_id", post.ID, "error", err)
 		// Continue without related posts rather than erroring
 		relatedPosts = nil
+	}
+
+	syndicationInfo, err := syndication.Render(post.Path)
+	if err != nil {
+		slog.Error("Failed to get syndication markup", "post_id", post.ID, "error", err)
+		syndicationInfo = ""
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -83,6 +87,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 				},
 				RecentPosts: content.RecentPosts(),
 			},
+			SyndicationInfo: template.HTML(syndicationInfo),
 		},
 	})
 	if err != nil {
