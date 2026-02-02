@@ -2,13 +2,14 @@ package filmlist
 
 import (
 	"bytes"
+	"context"
 	"embed"
 	"fmt"
 	"html/template"
 	"strconv"
 
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
 
@@ -17,7 +18,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("filmlist.html.gotpl").ParseFS(templates, "filmlist.html.gotpl"))
 
-func RenderFromText(args []string, _ *context.Context) (string, error) {
+func RenderFromText(args []string, ctx *common.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("filmlist requires at least 1 argument (id)")
 	}
@@ -27,11 +28,11 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		return "", fmt.Errorf("invalid film list ID: %s", args[0])
 	}
 
-	return Render(id)
+	return Render(ctx.Context, id)
 }
 
-func Render(id int) (string, error) {
-	list, count, entries, err := db.GetFilmListWithFilms(id)
+func Render(ctx context.Context, id int) (string, error) {
+	list, count, entries, err := db.GetFilmListWithFilms(ctx, id)
 	if err != nil {
 		return "", fmt.Errorf("failed to get film list: %w", err)
 	}

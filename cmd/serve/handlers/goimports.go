@@ -10,7 +10,7 @@ import (
 )
 
 func GoImport(w http.ResponseWriter, r *http.Request) {
-	goimport, err := db.GetGoImportByPrefix(r.URL.Path)
+	goimport, err := db.GetGoImportByPrefix(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find goimport by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)

@@ -29,42 +29,42 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 		var entityPath string
 		switch entityType {
 		case "post":
-			post, err := db.GetPostByID(entityID)
+			post, err := db.GetPostByID(r.Context(), entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return
 			}
 			entityPath = post.Path
 		case "poem":
-			poem, err := db.GetPoemByID(entityID)
+			poem, err := db.GetPoemByID(r.Context(), entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return
 			}
 			entityPath = poem.Path
 		case "snippet":
-			snippet, err := db.GetSnippetByID(entityID)
+			snippet, err := db.GetSnippetByID(r.Context(), entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return
 			}
 			entityPath = snippet.Path
 		case "staticpage":
-			page, err := db.GetStaticPageByID(entityID)
+			page, err := db.GetStaticPageByID(r.Context(), entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return
 			}
 			entityPath = page.Path
 		case "film":
-			film, err := db.GetFilmByID(entityID)
+			film, err := db.GetFilmByID(r.Context(), entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return
 			}
 			entityPath = fmt.Sprintf("/film-%d/", film.ID)
 		case "videogame":
-			game, err := db.GetVideoGameByID(entityID)
+			game, err := db.GetVideoGameByID(r.Context(), entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return
@@ -76,7 +76,7 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Fetch media relations for this entity
-		mediaRelations, err := db.GetMediaRelationsForEntity(entityType, entityID)
+		mediaRelations, err := db.GetMediaRelationsForEntity(r.Context(), entityType, entityID)
 		if err != nil {
 			http.Error(w, "Failed to retrieve media relations", http.StatusInternalServerError)
 			return
@@ -132,7 +132,7 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Fetch available media (not yet attached to this entity)
-		availableMedia, err := db.GetAvailableMediaForEntity(entityType, entityID)
+		availableMedia, err := db.GetAvailableMediaForEntity(r.Context(), entityType, entityID)
 		if err != nil {
 			http.Error(w, "Failed to retrieve available media", http.StatusInternalServerError)
 			return
@@ -205,14 +205,14 @@ func UpdateMediaRelationHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Update the primary media relation
-		if err := db.UpdateMediaRelation(entityType, entityID, path, titlePtr, altTextPtr, rolePtr); err != nil {
+		if err := db.UpdateMediaRelation(r.Context(), entityType, entityID, path, titlePtr, altTextPtr, rolePtr); err != nil {
 			http.Error(w, "Failed to update media relation", http.StatusInternalServerError)
 			return
 		}
 
 		// Also update all variants with the same title and alt text
 		// (This will do nothing if the media has no variants)
-		if err := db.UpdateMediaRelationVariants(entityType, entityID, mediaID, titlePtr, altTextPtr); err != nil {
+		if err := db.UpdateMediaRelationVariants(r.Context(), entityType, entityID, mediaID, titlePtr, altTextPtr); err != nil {
 			http.Error(w, "Failed to update variant media relations", http.StatusInternalServerError)
 			return
 		}
@@ -239,7 +239,7 @@ func RemoveMediaRelationHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if err := db.DeleteMediaRelation(entityType, entityID, path); err != nil {
+		if err := db.DeleteMediaRelation(r.Context(), entityType, entityID, path); err != nil {
 			http.Error(w, "Failed to remove media relation", http.StatusInternalServerError)
 			return
 		}
@@ -275,7 +275,7 @@ func AddMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 
 			// Get media metadata to get filename and check if it's a variant
-			media, err := db.GetMediaByID(mediaID)
+			media, err := db.GetMediaByID(r.Context(), mediaID)
 			if err != nil {
 				continue // Skip if media not found
 			}
@@ -291,7 +291,7 @@ func AddMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 
 			// Create the media relation
-			if err := db.CreateMediaRelation(entityType, entityID, mediaID, path, nil, nil, rolePtr); err != nil {
+			if err := db.CreateMediaRelation(r.Context(), entityType, entityID, mediaID, path, nil, nil, rolePtr); err != nil {
 				http.Error(w, "Failed to create media relation", http.StatusInternalServerError)
 				return
 			}

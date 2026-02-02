@@ -1,31 +1,32 @@
 package db
 
 import (
+	"context"
 	"fmt"
 	"time"
 )
 
-func GetVideoGameReviewByID(id int) (*VideoGameReview, error) {
+func GetVideoGameReviewByID(ctx context.Context, id int) (*VideoGameReview, error) {
 	var review VideoGameReview
-	err := db.Get(&review, "SELECT id, video_game_id, played_date, rating, playtime, completion_status, notes, published FROM video_game_reviews WHERE id = $1", id)
+	err := db.GetContext(ctx, &review, "SELECT id, video_game_id, played_date, rating, playtime, completion_status, notes, published FROM video_game_reviews WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
 	return &review, nil
 }
 
-func GetVideoGameReviewsByVideoGameID(gameID int) ([]VideoGameReview, error) {
+func GetVideoGameReviewsByVideoGameID(ctx context.Context, gameID int) ([]VideoGameReview, error) {
 	var reviews []VideoGameReview
-	err := db.Select(&reviews, "SELECT id, video_game_id, played_date, rating, playtime, completion_status, notes, published FROM video_game_reviews WHERE video_game_id = $1 ORDER BY played_date DESC", gameID)
+	err := db.SelectContext(ctx, &reviews, "SELECT id, video_game_id, played_date, rating, playtime, completion_status, notes, published FROM video_game_reviews WHERE video_game_id = $1 ORDER BY played_date DESC", gameID)
 	if err != nil {
 		return nil, err
 	}
 	return reviews, nil
 }
 
-func CreateVideoGameReview(gameID int, rating int, playedDate time.Time, playtime *int, completionStatus *string, published bool, notes string) (int, error) {
+func CreateVideoGameReview(ctx context.Context, gameID int, rating int, playedDate time.Time, playtime *int, completionStatus *string, published bool, notes string) (int, error) {
 	var id int
-	err := db.QueryRow(`
+	err := db.QueryRowContext(ctx, `
 		INSERT INTO video_game_reviews (video_game_id, rating, played_date, playtime, completion_status, notes, published)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id
@@ -36,8 +37,8 @@ func CreateVideoGameReview(gameID int, rating int, playedDate time.Time, playtim
 	return id, nil
 }
 
-func UpdateVideoGameReview(id int, rating int, playedDate string, playtime *int, completionStatus *string, published bool, notes string) error {
-	_, err := db.Exec(`
+func UpdateVideoGameReview(ctx context.Context, id int, rating int, playedDate string, playtime *int, completionStatus *string, published bool, notes string) error {
+	_, err := db.ExecContext(ctx, `
 		UPDATE video_game_reviews
 		SET rating = $1, played_date = $2, playtime = $3, completion_status = $4, notes = $5, published = $6
 		WHERE id = $7
@@ -48,7 +49,7 @@ func UpdateVideoGameReview(id int, rating int, playedDate string, playtime *int,
 	return nil
 }
 
-func GetVideoGameReviewWithGameAndPoster(reviewID int) (*VideoGameReviewWithGameAndPoster, error) {
+func GetVideoGameReviewWithGameAndPoster(ctx context.Context, reviewID int) (*VideoGameReviewWithGameAndPoster, error) {
 	query := `
 		SELECT
 			vgr.id as "videogamereview.id", vgr.video_game_id as "videogamereview.video_game_id", vgr.played_date as "videogamereview.played_date",
@@ -69,7 +70,7 @@ func GetVideoGameReviewWithGameAndPoster(reviewID int) (*VideoGameReviewWithGame
 	`
 
 	var result VideoGameReviewWithGameAndPoster
-	err := db.Get(&result, query, reviewID)
+	err := db.GetContext(ctx, &result, query, reviewID)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +78,7 @@ func GetVideoGameReviewWithGameAndPoster(reviewID int) (*VideoGameReviewWithGame
 	return &result, nil
 }
 
-func GetAllPublishedVideoGameReviewsWithGameAndPosters() ([]VideoGameReviewWithGameAndPoster, error) {
+func GetAllPublishedVideoGameReviewsWithGameAndPosters(ctx context.Context) ([]VideoGameReviewWithGameAndPoster, error) {
 	query := `
 		SELECT
 			vgr.id as "videogamereview.id", vgr.video_game_id as "videogamereview.video_game_id", vgr.played_date as "videogamereview.played_date",
@@ -99,7 +100,7 @@ func GetAllPublishedVideoGameReviewsWithGameAndPosters() ([]VideoGameReviewWithG
 	`
 
 	var results []VideoGameReviewWithGameAndPoster
-	err := db.Select(&results, query)
+	err := db.SelectContext(ctx, &results, query)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +108,7 @@ func GetAllPublishedVideoGameReviewsWithGameAndPosters() ([]VideoGameReviewWithG
 	return results, nil
 }
 
-func GetRecentPublishedVideoGameReviewsWithGameAndPosters(limit int) ([]VideoGameReviewWithGameAndPoster, error) {
+func GetRecentPublishedVideoGameReviewsWithGameAndPosters(ctx context.Context, limit int) ([]VideoGameReviewWithGameAndPoster, error) {
 	query := `
 		SELECT
 			vgr.id as "videogamereview.id", vgr.video_game_id as "videogamereview.video_game_id", vgr.played_date as "videogamereview.played_date",
@@ -130,7 +131,7 @@ func GetRecentPublishedVideoGameReviewsWithGameAndPosters(limit int) ([]VideoGam
 	`
 
 	var results []VideoGameReviewWithGameAndPoster
-	err := db.Select(&results, query, limit)
+	err := db.SelectContext(ctx, &results, query, limit)
 	if err != nil {
 		return nil, err
 	}

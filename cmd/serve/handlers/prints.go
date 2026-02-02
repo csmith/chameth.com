@@ -13,7 +13,7 @@ import (
 )
 
 func PrintsList(w http.ResponseWriter, r *http.Request) {
-	prints, err := db.GetAllPrints()
+	prints, err := db.GetAllPrints(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all prints", "error", err)
 		ServerError(w, r)
@@ -23,7 +23,7 @@ func PrintsList(w http.ResponseWriter, r *http.Request) {
 	var printDetails []templates.PrintDetails
 	for _, p := range prints {
 		// Get links
-		links, err := db.GetPrintLinks(p.ID)
+		links, err := db.GetPrintLinks(r.Context(), p.ID)
 		if err != nil {
 			slog.Error("Failed to get print links", "print_id", p.ID, "error", err)
 			ServerError(w, r)
@@ -39,7 +39,7 @@ func PrintsList(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Get media relations
-		mediaRelations, err := db.GetMediaRelationsForEntity("print", p.ID)
+		mediaRelations, err := db.GetMediaRelationsForEntity(r.Context(), "print", p.ID)
 		if err != nil {
 			slog.Error("Failed to get media relations", "print_id", p.ID, "error", err)
 			ServerError(w, r)

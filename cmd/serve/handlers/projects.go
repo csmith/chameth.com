@@ -13,7 +13,7 @@ import (
 )
 
 func ProjectsList(w http.ResponseWriter, r *http.Request) {
-	sections, err := db.GetAllProjectSections()
+	sections, err := db.GetAllProjectSections(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all project sections", "error", err)
 		ServerError(w, r)
@@ -24,7 +24,7 @@ func ProjectsList(w http.ResponseWriter, r *http.Request) {
 	for _, section := range sections {
 		var projectDetails []templates.ProjectDetails
 
-		projects, err := db.GetProjectsInSection(section.ID)
+		projects, err := db.GetProjectsInSection(r.Context(), section.ID)
 		if err != nil {
 			slog.Error("Failed to get projects in section", "section", section.ID, "error", err)
 			ServerError(w, r)

@@ -13,14 +13,14 @@ import (
 
 func ListFilmListsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := db.GetDraftFilmLists()
+		drafts, err := db.GetDraftFilmLists(r.Context())
 		if err != nil {
 			slog.Error("Failed to retrieve draft film lists", "error", err)
 			http.Error(w, "Failed to retrieve draft film lists", http.StatusInternalServerError)
 			return
 		}
 
-		lists, err := db.GetAllFilmLists()
+		lists, err := db.GetAllFilmLists(r.Context())
 		if err != nil {
 			slog.Error("Failed to retrieve film lists", "error", err)
 			http.Error(w, "Failed to retrieve film lists", http.StatusInternalServerError)
@@ -70,7 +70,7 @@ func CreateFilmListHandler() func(http.ResponseWriter, *http.Request) {
 		name := gen.Generate()
 		path := fmt.Sprintf("/films/lists/%s/", name)
 
-		id, err := db.CreateFilmList(path, name, "")
+		id, err := db.CreateFilmList(r.Context(), path, name, "")
 		if err != nil {
 			slog.Error("Failed to create film list", "error", err)
 			http.Error(w, "Failed to create film list", http.StatusInternalServerError)
@@ -90,14 +90,14 @@ func EditFilmListHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		list, entries, err := db.GetFilmListWithEntries(id)
+		list, entries, err := db.GetFilmListWithEntries(r.Context(), id)
 		if err != nil {
 			slog.Error("Failed to get film list with entries", "id", id, "error", err)
 			http.Error(w, "Film list not found", http.StatusNotFound)
 			return
 		}
 
-		allFilms, err := db.GetAllFilms()
+		allFilms, err := db.GetAllFilms(r.Context())
 		if err != nil {
 			slog.Error("Failed to get all films", "error", err)
 			http.Error(w, "Failed to get films", http.StatusInternalServerError)
@@ -180,7 +180,7 @@ func UpdateFilmListHandler() func(http.ResponseWriter, *http.Request) {
 		description := r.FormValue("description")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdateFilmList(id, path, title, description, published); err != nil {
+		if err := db.UpdateFilmList(r.Context(), id, path, title, description, published); err != nil {
 			slog.Error("Failed to update film list", "id", id, "error", err)
 			http.Error(w, "Failed to update film list", http.StatusInternalServerError)
 			return
@@ -219,14 +219,14 @@ func AddFilmToListHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		position, err := db.GetNextPosition(id)
+		position, err := db.GetNextPosition(r.Context(), id)
 		if err != nil {
 			slog.Error("Failed to get next position for film list", "id", id, "error", err)
 			http.Error(w, "Failed to get next position", http.StatusInternalServerError)
 			return
 		}
 
-		_, err = db.AddFilmToList(id, filmID, position)
+		_, err = db.AddFilmToList(r.Context(), id, filmID, position)
 		if err != nil {
 			slog.Error("Failed to add film to list", "list_id", id, "film_id", filmID, "error", err)
 			http.Error(w, "Failed to add film to list", http.StatusInternalServerError)
@@ -253,7 +253,7 @@ func RemoveFilmFromListHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if err := db.RemoveFilmFromList(entryID); err != nil {
+		if err := db.RemoveFilmFromList(r.Context(), entryID); err != nil {
 			slog.Error("Failed to remove film from list", "list_id", id, "entry_id", entryID, "error", err)
 			http.Error(w, "Failed to remove film from list", http.StatusInternalServerError)
 			return
@@ -295,7 +295,7 @@ func UpdateEntryPositionHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if err := db.UpdateEntryPosition(entryID, position); err != nil {
+		if err := db.UpdateEntryPosition(r.Context(), entryID, position); err != nil {
 			slog.Error("Failed to update entry position", "entry_id", entryID, "new_position", position, "error", err)
 			http.Error(w, "Failed to update position", http.StatusInternalServerError)
 			return
@@ -315,7 +315,7 @@ func ReorderFilmListEntriesHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if err := db.ReorderFilmListEntries(id); err != nil {
+		if err := db.ReorderFilmListEntries(r.Context(), id); err != nil {
 			slog.Error("Failed to reorder film list entries", "id", id, "error", err)
 			http.Error(w, "Failed to reorder entries", http.StatusInternalServerError)
 			return

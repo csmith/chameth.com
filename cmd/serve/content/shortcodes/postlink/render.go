@@ -7,7 +7,7 @@ import (
 	"html/template"
 
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
 
@@ -16,21 +16,21 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("postlink.html.gotpl").ParseFS(templates, "postlink.html.gotpl"))
 
-func RenderFromText(args []string, _ *context.Context) (string, error) {
+func RenderFromText(args []string, ctx *common.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("postlink requires at least 1 argument (path)")
 	}
 
 	path := args[0]
 
-	post, err := db.GetPostByPath(path)
+	post, err := db.GetPostByPath(ctx.Context, path)
 	if err != nil {
 		return "", fmt.Errorf("failed to get post by path %s: %w", path, err)
 	}
 
 	summary := markdown.FirstParagraph(post.Content)
 
-	imageVariants, err := db.GetOpenGraphImageVariantsForEntity("post", post.ID)
+	imageVariants, err := db.GetOpenGraphImageVariantsForEntity(ctx.Context, "post", post.ID)
 	var images []Image
 	if err == nil {
 		for _, variant := range imageVariants {

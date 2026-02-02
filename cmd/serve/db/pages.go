@@ -1,13 +1,16 @@
 package db
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // GetStaticPageByPath returns a static page for the given path.
 // It handles cases where the path may or may not have a trailing slash.
 // Returns nil if no static page is found with that path.
-func GetStaticPageByPath(path string) (*StaticPage, error) {
+func GetStaticPageByPath(ctx context.Context, path string) (*StaticPage, error) {
 	var page StaticPage
-	err := db.Get(&page, "SELECT id, path, title, content, raw FROM staticpages WHERE path = $1 OR path = $2", path, path+"/")
+	err := db.GetContext(ctx, &page, "SELECT id, path, title, content, raw FROM staticpages WHERE path = $1 OR path = $2", path, path+"/")
 	if err != nil {
 		return nil, err
 	}
@@ -15,9 +18,9 @@ func GetStaticPageByPath(path string) (*StaticPage, error) {
 }
 
 // GetStaticPageByID returns a static page for the given ID.
-func GetStaticPageByID(id int) (*StaticPage, error) {
+func GetStaticPageByID(ctx context.Context, id int) (*StaticPage, error) {
 	var page StaticPage
-	err := db.Get(&page, "SELECT id, path, title, content, published, raw FROM staticpages WHERE id = $1", id)
+	err := db.GetContext(ctx, &page, "SELECT id, path, title, content, published, raw FROM staticpages WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -25,9 +28,9 @@ func GetStaticPageByID(id int) (*StaticPage, error) {
 }
 
 // GetAllStaticPages returns all published static pages without their content.
-func GetAllStaticPages() ([]StaticPageMetadata, error) {
+func GetAllStaticPages(ctx context.Context) ([]StaticPageMetadata, error) {
 	var pages []StaticPageMetadata
-	err := db.Select(&pages, "SELECT id, path, title, published, raw FROM staticpages WHERE published = true ORDER BY title ASC")
+	err := db.SelectContext(ctx, &pages, "SELECT id, path, title, published, raw FROM staticpages WHERE published = true ORDER BY title ASC")
 	if err != nil {
 		return nil, err
 	}
@@ -35,9 +38,9 @@ func GetAllStaticPages() ([]StaticPageMetadata, error) {
 }
 
 // GetDraftStaticPages returns all unpublished static pages without their content.
-func GetDraftStaticPages() ([]StaticPageMetadata, error) {
+func GetDraftStaticPages(ctx context.Context) ([]StaticPageMetadata, error) {
 	var pages []StaticPageMetadata
-	err := db.Select(&pages, "SELECT id, path, title, published, raw FROM staticpages WHERE published = false ORDER BY title ASC")
+	err := db.SelectContext(ctx, &pages, "SELECT id, path, title, published, raw FROM staticpages WHERE published = false ORDER BY title ASC")
 	if err != nil {
 		return nil, err
 	}
@@ -45,9 +48,9 @@ func GetDraftStaticPages() ([]StaticPageMetadata, error) {
 }
 
 // CreateStaticPage creates a new unpublished static page in the database and returns its ID.
-func CreateStaticPage(path, title string) (int, error) {
+func CreateStaticPage(ctx context.Context, path, title string) (int, error) {
 	var id int
-	err := db.QueryRow(`
+	err := db.QueryRowContext(ctx, `
 		INSERT INTO staticpages (path, title, content, published)
 		VALUES ($1, $2, '', false)
 		RETURNING id
@@ -59,8 +62,8 @@ func CreateStaticPage(path, title string) (int, error) {
 }
 
 // UpdateStaticPage updates a static page in the database.
-func UpdateStaticPage(id int, path, title, content string, published, raw bool) error {
-	_, err := db.Exec(`
+func UpdateStaticPage(ctx context.Context, id int, path, title, content string, published, raw bool) error {
+	_, err := db.ExecContext(ctx, `
 		UPDATE staticpages
 		SET path = $1, title = $2, content = $3, published = $4, raw = $5
 		WHERE id = $6

@@ -14,7 +14,7 @@ import (
 )
 
 func Paste(w http.ResponseWriter, r *http.Request) {
-	paste, err := db.GetPasteByPath(r.URL.Path)
+	paste, err := db.GetPasteByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find paste by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)

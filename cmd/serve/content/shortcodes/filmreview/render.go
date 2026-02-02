@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/rating"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
@@ -18,7 +18,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("filmreview.html.gotpl").ParseFS(templates, "filmreview.html.gotpl"))
 
-func RenderFromText(args []string, _ *context.Context) (string, error) {
+func RenderFromText(args []string, ctx *common.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("filmreview requires at least 1 argument (id)")
 	}
@@ -28,7 +28,7 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		return "", fmt.Errorf("invalid film review ID: %s", args[0])
 	}
 
-	data, err := db.GetFilmReviewWithFilmAndPoster(id)
+	data, err := db.GetFilmReviewWithFilmAndPoster(ctx.Context, id)
 	if err != nil {
 		return "", fmt.Errorf("failed to get film review: %w", err)
 	}

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -35,22 +36,22 @@ func generateFilmPath(title string, year int) string {
 	return "/films/" + cleaned + "/"
 }
 
-func updateOrCreateFilmPoster(filmID int, filmTitle, posterPath string) error {
+func updateOrCreateFilmPoster(ctx context.Context, filmID int, filmTitle, posterPath string) error {
 	if posterPath == "" {
 		return fmt.Errorf("poster path is empty")
 	}
 
-	mediaRelations, err := db.GetMediaRelationsForEntity("film", filmID)
+	mediaRelations, err := db.GetMediaRelationsForEntity(ctx, "film", filmID)
 	if err != nil {
 		return fmt.Errorf("failed to get media relations: %w", err)
 	}
 
 	for _, rel := range mediaRelations {
 		if rel.Role != nil && *rel.Role == "poster" {
-			if err := db.DeleteMediaRelation("film", filmID, rel.Path); err != nil {
+			if err := db.DeleteMediaRelation(ctx, "film", filmID, rel.Path); err != nil {
 				return fmt.Errorf("failed to delete existing media relation: %w", err)
 			}
-			if err := db.DeleteMedia(rel.MediaID); err != nil {
+			if err := db.DeleteMedia(ctx, rel.MediaID); err != nil {
 				return fmt.Errorf("failed to delete existing media: %w", err)
 			}
 			break
@@ -69,7 +70,7 @@ func updateOrCreateFilmPoster(filmID int, filmTitle, posterPath string) error {
 	filename := fmt.Sprintf("%d%s", filmID, ext)
 	mediaRelationsPath := fmt.Sprintf("/films/%d/poster%s", filmID, ext)
 
-	mediaID, err := db.CreateMedia(posterData.ContentType, filename, posterData.Data, &posterData.Width, &posterData.Height, nil)
+	mediaID, err := db.CreateMedia(ctx, posterData.ContentType, filename, posterData.Data, &posterData.Width, &posterData.Height, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create media: %w", err)
 	}
@@ -77,7 +78,7 @@ func updateOrCreateFilmPoster(filmID int, filmTitle, posterPath string) error {
 	description := fmt.Sprintf("Poster of %s", filmTitle)
 	caption := filmTitle
 	role := "poster"
-	if err := db.CreateMediaRelation("film", filmID, mediaID, mediaRelationsPath, &caption, &description, &role); err != nil {
+	if err := db.CreateMediaRelation(ctx, "film", filmID, mediaID, mediaRelationsPath, &caption, &description, &role); err != nil {
 		return fmt.Errorf("failed to create media relation: %w", err)
 	}
 
@@ -90,7 +91,7 @@ var (
 
 func ListFilmsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		films, err := db.GetAllFilmsWithReviewsAndPosters()
+		films, err := db.GetAllFilmsWithReviewsAndPosters(r.Context())
 		if err != nil {
 			slog.Error("Failed to retrieve films", "error", err)
 			http.Error(w, "Failed to retrieve films", http.StatusInternalServerError)
@@ -219,18 +220,18 @@ func CreateFilmHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		path := generateFilmPath(movie.Title, yearInt)
-		filmID, err := db.CreateFilm(movie.ID, movie.Title, year, path, movie.Overview, movie.Runtime)
+		filmID, err := db.CreateFilm(r.Context(), movie.ID, movie.Title, year, path, movie.Overview, movie.Runtime)
 		if err != nil {
 			slog.Error("Failed to create film", "error", err)
 			http.Error(w, "Failed to create film", http.StatusInternalServerError)
 			return
 		}
 
-		if err := updateOrCreateFilmPoster(filmID, movie.Title, posterPath); err != nil {
+		if err := updateOrCreateFilmPoster(r.Context(), filmID, movie.Title, posterPath); err != nil {
 			slog.Error("Failed to update film poster", "error", err)
 		}
 
-		reviewID, err := db.CreateFilmReview(filmID, 0, time.Now(), false, false, false, "")
+		reviewID, err := db.CreateFilmReview(r.Context(), filmID, 0, time.Now(), false, false, false, "")
 		if err != nil {
 			slog.Error("Failed to create film review", "error", err)
 			http.Redirect(w, r, fmt.Sprintf("/films/edit/%d", filmID), http.StatusSeeOther)
@@ -250,13 +251,13 @@ func EditFilmHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		film, err := db.GetFilmByID(id)
+		film, err := db.GetFilmByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Film not found", http.StatusNotFound)
 			return
 		}
 
-		mediaRelations, err := db.GetMediaRelationsForEntity("film", id)
+		mediaRelations, err := db.GetMediaRelationsForEntity(r.Context(), "film", id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve media relations", http.StatusInternalServerError)
 			return
@@ -276,7 +277,7 @@ func EditFilmHandler() func(http.ResponseWriter, *http.Request) {
 			}
 		}
 
-		reviews, err := db.GetFilmReviewsByFilmID(id)
+		reviews, err := db.GetFilmReviewsByFilmID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve film reviews", http.StatusInternalServerError)
 			return
@@ -370,7 +371,7 @@ func UpdateFilmHandler() func(http.ResponseWriter, *http.Request) {
 		}
 		path := generateFilmPath(title, yearInt)
 
-		if err := db.UpdateFilm(id, tmdbID, title, year, path, overview, runtime, published); err != nil {
+		if err := db.UpdateFilm(r.Context(), id, tmdbID, title, year, path, overview, runtime, published); err != nil {
 			http.Error(w, "Failed to update film", http.StatusInternalServerError)
 			return
 		}
@@ -388,7 +389,7 @@ func DeleteFilmHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if err := db.DeleteFilm(id); err != nil {
+		if err := db.DeleteFilm(r.Context(), id); err != nil {
 			slog.Error("Failed to delete film", "error", err, "id", id)
 			http.Error(w, "Failed to delete film", http.StatusInternalServerError)
 			return
@@ -412,7 +413,7 @@ func FetchFilmPosterHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		film, err := db.GetFilmByID(id)
+		film, err := db.GetFilmByID(r.Context(), id)
 		if err != nil {
 			slog.Error("Failed to get film", "error", err)
 			http.Error(w, "Film not found", http.StatusNotFound)
@@ -431,7 +432,7 @@ func FetchFilmPosterHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if err := updateOrCreateFilmPoster(id, film.Title, movie.PosterPath); err != nil {
+		if err := updateOrCreateFilmPoster(r.Context(), id, film.Title, movie.PosterPath); err != nil {
 			slog.Error("Failed to update film poster", "error", err)
 			http.Error(w, "Failed to update film poster", http.StatusInternalServerError)
 			return
@@ -443,7 +444,7 @@ func FetchFilmPosterHandler() func(http.ResponseWriter, *http.Request) {
 
 func GetFilmsWithReviewsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		films, err := db.GetAllFilmsWithReviews()
+		films, err := db.GetAllFilmsWithReviews(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve films", http.StatusInternalServerError)
 			return

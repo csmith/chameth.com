@@ -13,19 +13,19 @@ import (
 
 func ListProjectsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := db.GetDraftProjects()
+		drafts, err := db.GetDraftProjects(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve draft projects", http.StatusInternalServerError)
 			return
 		}
 
-		projects, err := db.GetAllProjects()
+		projects, err := db.GetAllProjects(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve projects", http.StatusInternalServerError)
 			return
 		}
 
-		sections, err := db.GetAllProjectSections()
+		sections, err := db.GetAllProjectSections(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve sections", http.StatusInternalServerError)
 			return
@@ -87,7 +87,7 @@ func CreateProjectHandler() func(http.ResponseWriter, *http.Request) {
 		}
 		name := gen.Generate()
 
-		id, err := db.CreateProject(name)
+		id, err := db.CreateProject(r.Context(), name)
 		if err != nil {
 			http.Error(w, "Failed to create project", http.StatusInternalServerError)
 			return
@@ -106,13 +106,13 @@ func EditProjectHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		project, err := db.GetProjectByID(id)
+		project, err := db.GetProjectByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Project not found", http.StatusNotFound)
 			return
 		}
 
-		sections, err := db.GetAllProjectSections()
+		sections, err := db.GetAllProjectSections(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve sections", http.StatusInternalServerError)
 			return
@@ -169,7 +169,7 @@ func UpdateProjectHandler() func(http.ResponseWriter, *http.Request) {
 		pinned := r.FormValue("pinned") == "true"
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdateProject(id, name, icon, description, section, pinned, published); err != nil {
+		if err := db.UpdateProject(r.Context(), id, name, icon, description, section, pinned, published); err != nil {
 			http.Error(w, "Failed to update project", http.StatusInternalServerError)
 			return
 		}

@@ -1,13 +1,14 @@
 package db
 
 import (
+	"context"
 	"fmt"
 )
 
 // GetAllPosts returns all published posts without their content.
-func GetAllPosts() ([]PostMetadata, error) {
+func GetAllPosts(ctx context.Context) ([]PostMetadata, error) {
 	var posts []PostMetadata
-	err := db.Select(&posts, "SELECT id, path, title, date, format, published FROM posts WHERE published = true ORDER BY date DESC")
+	err := db.SelectContext(ctx, &posts, "SELECT id, path, title, date, format, published FROM posts WHERE published = true ORDER BY date DESC")
 	if err != nil {
 		return nil, err
 	}
@@ -15,9 +16,9 @@ func GetAllPosts() ([]PostMetadata, error) {
 }
 
 // GetDraftPosts returns all unpublished posts without their content.
-func GetDraftPosts() ([]PostMetadata, error) {
+func GetDraftPosts(ctx context.Context) ([]PostMetadata, error) {
 	var posts []PostMetadata
-	err := db.Select(&posts, "SELECT id, path, title, date, format, published FROM posts WHERE published = false ORDER BY date DESC")
+	err := db.SelectContext(ctx, &posts, "SELECT id, path, title, date, format, published FROM posts WHERE published = false ORDER BY date DESC")
 	if err != nil {
 		return nil, err
 	}
@@ -26,10 +27,10 @@ func GetDraftPosts() ([]PostMetadata, error) {
 
 // GetPostByID returns a post for the given ID.
 // Returns an error if no post is found with that ID.
-func GetPostByID(id int) (*Post, error) {
+func GetPostByID(ctx context.Context, id int) (*Post, error) {
 	var post Post
 
-	err := db.Get(&post, `
+	err := db.GetContext(ctx, &post, `
 		SELECT id, path, title, content, date, format, published
 		FROM posts
 		WHERE id = $1
@@ -42,9 +43,9 @@ func GetPostByID(id int) (*Post, error) {
 }
 
 // CreatePost creates a new unpublished post in the database and returns its ID.
-func CreatePost(path, title string) (int, error) {
+func CreatePost(ctx context.Context, path, title string) (int, error) {
 	var id int
-	err := db.QueryRow(`
+	err := db.QueryRowContext(ctx, `
 		INSERT INTO posts (path, title, content, date, format, published)
 		VALUES ($1, $2, '', CURRENT_DATE, 'long', false)
 		RETURNING id
@@ -56,8 +57,8 @@ func CreatePost(path, title string) (int, error) {
 }
 
 // UpdatePost updates a post in the database.
-func UpdatePost(id int, path, title, content, date, format string, published bool) error {
-	_, err := db.Exec(`
+func UpdatePost(ctx context.Context, id int, path, title, content, date, format string, published bool) error {
+	_, err := db.ExecContext(ctx, `
 		UPDATE posts
 		SET path = $1, title = $2, content = $3, date = $4, format = $5, published = $6
 		WHERE id = $7
@@ -71,10 +72,10 @@ func UpdatePost(id int, path, title, content, date, format string, published boo
 // GetPostByPath returns a post for the given path.
 // It handles cases where the path may or may not have a trailing slash.
 // Returns nil if no post is found with that path.
-func GetPostByPath(path string) (*Post, error) {
+func GetPostByPath(ctx context.Context, path string) (*Post, error) {
 	var post Post
 
-	err := db.Get(&post, `
+	err := db.GetContext(ctx, &post, `
 		SELECT id, path, title, content, date, format
 		FROM posts
 		WHERE path = $1 OR path = $2
@@ -87,9 +88,9 @@ func GetPostByPath(path string) (*Post, error) {
 }
 
 // GetRecentPosts returns the N most recent posts.
-func GetRecentPosts(limit int) ([]PostMetadata, error) {
+func GetRecentPosts(ctx context.Context, limit int) ([]PostMetadata, error) {
 	var posts []PostMetadata
-	err := db.Select(&posts, `
+	err := db.SelectContext(ctx, &posts, `
 		SELECT id, path, title, date, format, published
 		FROM posts
 		WHERE published = true
@@ -104,9 +105,9 @@ func GetRecentPosts(limit int) ([]PostMetadata, error) {
 }
 
 // GetRecentPostsWithContent returns the N most recent posts with full content.
-func GetRecentPostsWithContent(limit int) ([]Post, error) {
+func GetRecentPostsWithContent(ctx context.Context, limit int) ([]Post, error) {
 	var posts []Post
-	err := db.Select(&posts, `
+	err := db.SelectContext(ctx, &posts, `
 		SELECT id, path, title, date, format, content
 		FROM posts
 		WHERE published = true
@@ -121,9 +122,9 @@ func GetRecentPostsWithContent(limit int) ([]Post, error) {
 }
 
 // GetRecentPostsWithContentByFormat returns the N most recent posts with full content filtered by format.
-func GetRecentPostsWithContentByFormat(limit int, format string) ([]Post, error) {
+func GetRecentPostsWithContentByFormat(ctx context.Context, limit int, format string) ([]Post, error) {
 	var posts []Post
-	err := db.Select(&posts, `
+	err := db.SelectContext(ctx, &posts, `
 		SELECT id, path, title, date, format, content
 		FROM posts
 		WHERE format = $1 AND published = true
@@ -138,8 +139,8 @@ func GetRecentPostsWithContentByFormat(limit int, format string) ([]Post, error)
 }
 
 // UpdatePostEmbedding updates the embedding for a post identified by path.
-func UpdatePostEmbedding(path string, embedding interface{}) error {
-	_, err := db.Exec("UPDATE posts SET embedding = $1 WHERE path = $2", embedding, path)
+func UpdatePostEmbedding(ctx context.Context, path string, embedding interface{}) error {
+	_, err := db.ExecContext(ctx, "UPDATE posts SET embedding = $1 WHERE path = $2", embedding, path)
 	if err != nil {
 		return fmt.Errorf("failed to update embedding for post %s: %w", path, err)
 	}
@@ -147,9 +148,9 @@ func UpdatePostEmbedding(path string, embedding interface{}) error {
 }
 
 // GetPostPathsWithoutEmbeddings returns paths of all posts that don't have embeddings.
-func GetPostPathsWithoutEmbeddings() ([]string, error) {
+func GetPostPathsWithoutEmbeddings(ctx context.Context) ([]string, error) {
 	var paths []string
-	err := db.Select(&paths, "SELECT path FROM posts WHERE embedding IS NULL AND published = true ORDER BY date DESC")
+	err := db.SelectContext(ctx, &paths, "SELECT path FROM posts WHERE embedding IS NULL AND published = true ORDER BY date DESC")
 	if err != nil {
 		return nil, err
 	}
@@ -158,9 +159,9 @@ func GetPostPathsWithoutEmbeddings() ([]string, error) {
 
 // GetRelatedPostsByID returns posts that are semantically similar to the given post.
 // Returns up to limit posts, ordered by similarity (closest first).
-func GetRelatedPostsByID(postID int, limit int) ([]PostMetadata, error) {
+func GetRelatedPostsByID(ctx context.Context, postID int, limit int) ([]PostMetadata, error) {
 	var posts []PostMetadata
-	err := db.Select(&posts, `
+	err := db.SelectContext(ctx, &posts, `
 		SELECT id, path, title, date, format, published
 		FROM posts
 		WHERE id != $1
@@ -176,9 +177,9 @@ func GetRelatedPostsByID(postID int, limit int) ([]PostMetadata, error) {
 	return posts, nil
 }
 
-func GetPostsNotSyndicatedToATProto() ([]PostMetadata, error) {
+func GetPostsNotSyndicatedToATProto(ctx context.Context) ([]PostMetadata, error) {
 	var posts []PostMetadata
-	err := db.Select(&posts, `
+	err := db.SelectContext(ctx, &posts, `
 		SELECT id, path, title, date, format, published
 		FROM posts
 		WHERE published AND path NOT IN (

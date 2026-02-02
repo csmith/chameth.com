@@ -14,7 +14,7 @@ import (
 )
 
 func Poem(w http.ResponseWriter, r *http.Request) {
-	poem, err := db.GetPoemByPath(r.URL.Path)
+	poem, err := db.GetPoemByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find poem by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)

@@ -12,13 +12,13 @@ import (
 
 func ListPoemsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := db.GetDraftPoems()
+		drafts, err := db.GetDraftPoems(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve draft poems", http.StatusInternalServerError)
 			return
 		}
 
-		poems, err := db.GetAllPoems()
+		poems, err := db.GetAllPoems(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve poems", http.StatusInternalServerError)
 			return
@@ -64,7 +64,7 @@ func EditPoemHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		poem, err := db.GetPoemByID(id)
+		poem, err := db.GetPoemByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Poem not found", http.StatusNotFound)
 			return
@@ -98,7 +98,7 @@ func CreatePoemHandler() func(http.ResponseWriter, *http.Request) {
 		path := fmt.Sprintf("/%s/", name)
 
 		// Create the new poem
-		id, err := db.CreatePoem(path, name)
+		id, err := db.CreatePoem(r.Context(), path, name)
 		if err != nil {
 			http.Error(w, "Failed to create poem", http.StatusInternalServerError)
 			return
@@ -130,7 +130,7 @@ func UpdatePoemHandler() func(http.ResponseWriter, *http.Request) {
 		date := r.FormValue("date")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdatePoem(id, path, title, poemContent, notes, date, published); err != nil {
+		if err := db.UpdatePoem(r.Context(), id, path, title, poemContent, notes, date, published); err != nil {
 			http.Error(w, "Failed to update poem", http.StatusInternalServerError)
 			return
 		}

@@ -13,7 +13,7 @@ import (
 
 func ListVideoGamesHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		games, err := db.GetAllVideoGamesWithReviews()
+		games, err := db.GetAllVideoGamesWithReviews(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve video games", http.StatusInternalServerError)
 			return
@@ -54,7 +54,7 @@ func CreateVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 		}
 		name := gen.Generate()
 		path := fmt.Sprintf("/videogames/%s/", name)
-		gameID, err := db.CreateVideoGame(name, "", "", path)
+		gameID, err := db.CreateVideoGame(r.Context(), name, "", "", path)
 		if err != nil {
 			slog.Error("Failed to create video game", "error", err)
 			http.Error(w, "Failed to create video game", http.StatusInternalServerError)
@@ -74,13 +74,13 @@ func EditVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		game, err := db.GetVideoGameByID(id)
+		game, err := db.GetVideoGameByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Video game not found", http.StatusNotFound)
 			return
 		}
 
-		mediaRelations, err := db.GetMediaRelationsForEntity("videogame", id)
+		mediaRelations, err := db.GetMediaRelationsForEntity(r.Context(), "videogame", id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve media relations", http.StatusInternalServerError)
 			return
@@ -100,7 +100,7 @@ func EditVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 			}
 		}
 
-		reviews, err := db.GetVideoGameReviewsByVideoGameID(id)
+		reviews, err := db.GetVideoGameReviewsByVideoGameID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve video game reviews", http.StatusInternalServerError)
 			return
@@ -171,7 +171,7 @@ func UpdateVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if err := db.UpdateVideoGame(id, title, platform, overview, path, published); err != nil {
+		if err := db.UpdateVideoGame(r.Context(), id, title, platform, overview, path, published); err != nil {
 			http.Error(w, "Failed to update video game", http.StatusInternalServerError)
 			return
 		}
@@ -189,7 +189,7 @@ func DeleteVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if err := db.DeleteVideoGame(id); err != nil {
+		if err := db.DeleteVideoGame(r.Context(), id); err != nil {
 			slog.Error("Failed to delete video game", "error", err, "id", id)
 			http.Error(w, "Failed to delete video game", http.StatusInternalServerError)
 			return

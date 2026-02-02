@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"strconv"
 
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/rating"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
@@ -17,7 +17,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("recentfilms.html.gotpl").ParseFS(templates, "recentfilms.html.gotpl"))
 
-func RenderFromText(args []string, _ *context.Context) (string, error) {
+func RenderFromText(args []string, ctx *common.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("recentfilms requires at least 1 argument (count)")
 	}
@@ -27,7 +27,7 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		return "", fmt.Errorf("invalid recent films count: %s", args[0])
 	}
 
-	reviews, err := db.GetRecentPublishedFilmReviewsWithFilmAndPosters(count)
+	reviews, err := db.GetRecentPublishedFilmReviewsWithFilmAndPosters(ctx.Context, count)
 	if err != nil {
 		return "", fmt.Errorf("failed to get recent film reviews: %w", err)
 	}

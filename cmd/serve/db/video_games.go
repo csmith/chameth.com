@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"regexp"
@@ -23,25 +24,25 @@ func generateVideoGamePath(title string) string {
 	return "/videogames/" + cleaned + "/"
 }
 
-func GetVideoGameByID(id int) (*VideoGame, error) {
+func GetVideoGameByID(ctx context.Context, id int) (*VideoGame, error) {
 	var game VideoGame
-	err := db.Get(&game, "SELECT id, title, platform, overview, published, path FROM video_games WHERE id = $1", id)
+	err := db.GetContext(ctx, &game, "SELECT id, title, platform, overview, published, path FROM video_games WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
 	return &game, nil
 }
 
-func GetAllVideoGames() ([]VideoGame, error) {
+func GetAllVideoGames(ctx context.Context) ([]VideoGame, error) {
 	var games []VideoGame
-	err := db.Select(&games, "SELECT id, title, platform, overview, published, path FROM video_games ORDER BY title")
+	err := db.SelectContext(ctx, &games, "SELECT id, title, platform, overview, published, path FROM video_games ORDER BY title")
 	if err != nil {
 		return nil, err
 	}
 	return games, nil
 }
 
-func GetAllVideoGamesWithReviews() ([]VideoGameWithReview, error) {
+func GetAllVideoGamesWithReviews(ctx context.Context) ([]VideoGameWithReview, error) {
 	query := `
 		SELECT
 			vg.id, vg.title, vg.platform, vg.overview, vg.published, vg.path,
@@ -56,7 +57,7 @@ func GetAllVideoGamesWithReviews() ([]VideoGameWithReview, error) {
 		ORDER BY vg.title
 	`
 
-	rows, err := db.Query(query)
+	rows, err := db.QueryContext(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -105,9 +106,9 @@ func GetAllVideoGamesWithReviews() ([]VideoGameWithReview, error) {
 	return games, nil
 }
 
-func CreateVideoGame(title, platform, overview, path string) (int, error) {
+func CreateVideoGame(ctx context.Context, title, platform, overview, path string) (int, error) {
 	var id int
-	err := db.QueryRow(`
+	err := db.QueryRowContext(ctx, `
 		INSERT INTO video_games (title, platform, overview, published, path)
 		VALUES ($1, $2, $3, false, $4)
 		RETURNING id
@@ -118,8 +119,8 @@ func CreateVideoGame(title, platform, overview, path string) (int, error) {
 	return id, nil
 }
 
-func UpdateVideoGame(id int, title, platform, overview, path string, published bool) error {
-	_, err := db.Exec(`
+func UpdateVideoGame(ctx context.Context, id int, title, platform, overview, path string, published bool) error {
+	_, err := db.ExecContext(ctx, `
 		UPDATE video_games
 		SET title = $1, platform = $2, overview = $3, published = $4, path = $5
 		WHERE id = $6
@@ -130,17 +131,17 @@ func UpdateVideoGame(id int, title, platform, overview, path string, published b
 	return nil
 }
 
-func GetVideoGameByPath(path string) (*VideoGame, error) {
+func GetVideoGameByPath(ctx context.Context, path string) (*VideoGame, error) {
 	var game VideoGame
-	err := db.Get(&game, "SELECT id, title, platform, overview, published, path FROM video_games WHERE path = $1 OR path = $2", path, path+"/")
+	err := db.GetContext(ctx, &game, "SELECT id, title, platform, overview, published, path FROM video_games WHERE path = $1 OR path = $2", path, path+"/")
 	if err != nil {
 		return nil, err
 	}
 	return &game, nil
 }
 
-func DeleteVideoGame(id int) error {
-	_, err := db.Exec("DELETE FROM video_games WHERE id = $1", id)
+func DeleteVideoGame(ctx context.Context, id int) error {
+	_, err := db.ExecContext(ctx, "DELETE FROM video_games WHERE id = $1", id)
 	if err != nil {
 		return fmt.Errorf("failed to delete video game: %w", err)
 	}

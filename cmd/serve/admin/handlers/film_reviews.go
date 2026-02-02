@@ -20,13 +20,13 @@ func EditFilmReviewHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		review, err := db.GetFilmReviewByID(id)
+		review, err := db.GetFilmReviewByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Review not found", http.StatusNotFound)
 			return
 		}
 
-		film, err := db.GetFilmByID(review.FilmID)
+		film, err := db.GetFilmByID(r.Context(), review.FilmID)
 		if err != nil {
 			http.Error(w, "Film not found", http.StatusNotFound)
 			return
@@ -59,13 +59,13 @@ func CreateFilmReviewHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		_, err = db.GetFilmByID(id)
+		_, err = db.GetFilmByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Film not found", http.StatusNotFound)
 			return
 		}
 
-		reviewID, err := db.CreateFilmReview(id, 0, time.Now(), false, false, false, "")
+		reviewID, err := db.CreateFilmReview(r.Context(), id, 0, time.Now(), false, false, false, "")
 		if err != nil {
 			slog.Error("Failed to create film review", "error", err)
 			http.Error(w, "Failed to create film review", http.StatusInternalServerError)
@@ -102,12 +102,12 @@ func UpdateFilmReviewHandler() func(http.ResponseWriter, *http.Request) {
 		reviewText := r.FormValue("review_text")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdateFilmReview(id, rating, watchedDate, isRewatch, hasSpoilers, published, reviewText); err != nil {
+		if err := db.UpdateFilmReview(r.Context(), id, rating, watchedDate, isRewatch, hasSpoilers, published, reviewText); err != nil {
 			http.Error(w, "Failed to update film review", http.StatusInternalServerError)
 			return
 		}
 
-		review, err := db.GetFilmReviewByID(id)
+		review, err := db.GetFilmReviewByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve review", http.StatusInternalServerError)
 			return

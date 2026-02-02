@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"image"
 	_ "image/jpeg"
@@ -20,7 +21,7 @@ import (
 
 func MediaHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		mediaList, err := db.GetAllMedia()
+		mediaList, err := db.GetAllMedia(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve media", http.StatusInternalServerError)
 			return
@@ -67,7 +68,7 @@ func UploadMediaHandler() func(http.ResponseWriter, *http.Request) {
 
 		// Process each group
 		for baseName, group := range fileGroups {
-			if err := processMediaGroup(baseName, group); err != nil {
+			if err := processMediaGroup(r.Context(), baseName, group); err != nil {
 				slog.Error("Failed to process media group", "baseName", baseName, "error", err)
 				http.Error(w, "Failed to process uploaded files", http.StatusInternalServerError)
 				return
@@ -109,7 +110,7 @@ func isImage(ext string) bool {
 }
 
 // processMediaGroup processes a group of related files (same base name)
-func processMediaGroup(baseName string, files []fileInfo) error {
+func processMediaGroup(ctx context.Context, baseName string, files []fileInfo) error {
 	// Find the original image (png/jpg/jpeg) if present
 	var originalFile *fileInfo
 	for i := range files {
@@ -133,7 +134,7 @@ func processMediaGroup(baseName string, files []fileInfo) error {
 	// First pass: create the original image (if present)
 	var parentMediaID *int
 	if originalFile != nil {
-		id, err := createMediaFromFile(originalFile.header, width, height, nil)
+		id, err := createMediaFromFile(ctx, originalFile.header, width, height, nil)
 		if err != nil {
 			return err
 		}
@@ -153,7 +154,7 @@ func processMediaGroup(baseName string, files []fileInfo) error {
 			w, h = width, height
 		}
 
-		id, err := createMediaFromFile(files[i].header, w, h, parentMediaID)
+		id, err := createMediaFromFile(ctx, files[i].header, w, h, parentMediaID)
 		if err != nil {
 			return err
 		}
@@ -185,7 +186,7 @@ func getImageDimensions(fileHeader *multipart.FileHeader) (int, int, error) {
 }
 
 // createMediaFromFile creates a media entry from a multipart file
-func createMediaFromFile(fileHeader *multipart.FileHeader, width, height, parentMediaID *int) (int, error) {
+func createMediaFromFile(ctx context.Context, fileHeader *multipart.FileHeader, width, height, parentMediaID *int) (int, error) {
 	file, err := fileHeader.Open()
 	if err != nil {
 		return 0, err
@@ -202,7 +203,7 @@ func createMediaFromFile(fileHeader *multipart.FileHeader, width, height, parent
 		contentType = "application/octet-stream"
 	}
 
-	return db.CreateMedia(contentType, fileHeader.Filename, data, width, height, parentMediaID)
+	return db.CreateMedia(ctx, contentType, fileHeader.Filename, data, width, height, parentMediaID)
 }
 
 func ViewMediaHandler() func(http.ResponseWriter, *http.Request) {
@@ -214,7 +215,7 @@ func ViewMediaHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		media, err := db.GetMediaByID(id)
+		media, err := db.GetMediaByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Media not found", http.StatusNotFound)
 			return

@@ -2,11 +2,12 @@ package syndication
 
 import (
 	"bytes"
+	"context"
 	"embed"
 	"fmt"
 	"html/template"
 
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
 
@@ -24,12 +25,12 @@ type Data struct {
 	Syndications []SyndicationLink
 }
 
-func RenderFromText(args []string, ctx *context.Context) (string, error) {
-	return Render(ctx.URL)
+func RenderFromText(args []string, ctx *common.Context) (string, error) {
+	return Render(ctx.Context, ctx.URL)
 }
 
-func Render(url string) (string, error) {
-	syndications, err := db.GetSyndicationsByPath(url)
+func Render(ctx context.Context, url string) (string, error) {
+	syndications, err := db.GetSyndicationsByPath(ctx, url)
 	if err != nil {
 		return "", fmt.Errorf("failed to get syndications for path %s: %w", url, err)
 	}

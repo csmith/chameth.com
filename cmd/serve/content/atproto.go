@@ -1,6 +1,7 @@
 package content
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -15,14 +16,14 @@ var (
 	atprotoPassword = flag.String("atproto-password", "", "App-specific password ofr the account on the ATProto PDS")
 )
 
-func SyndicateAllPostsToATProto() {
+func SyndicateAllPostsToATProto(ctx context.Context) {
 	client, err := newClient()
 	if err != nil {
 		slog.Error("Failed to create ATProto client", "error", err)
 		return
 	}
 
-	posts, err := db.GetPostsNotSyndicatedToATProto()
+	posts, err := db.GetPostsNotSyndicatedToATProto(ctx)
 	if err != nil {
 		slog.Error("Failed to get posts needing AT Proto syndication", "error", err)
 		return
@@ -34,20 +35,20 @@ func SyndicateAllPostsToATProto() {
 	}
 
 	for _, p := range posts {
-		if err := syndicatePost(client, p); err != nil {
+		if err := syndicatePost(ctx, client, p); err != nil {
 			slog.Error("Unable to syndicate post to ATProto", "error", err, "path", p.Path)
 			continue
 		}
 	}
 }
 
-func SyndicatePostToATProto(post db.PostMetadata) error {
+func SyndicatePostToATProto(ctx context.Context, post db.PostMetadata) error {
 	client, err := newClient()
 	if err != nil {
 		return err
 	}
 
-	return syndicatePost(client, post)
+	return syndicatePost(ctx, client, post)
 }
 
 func newClient() (*atproto.Client, error) {
@@ -58,8 +59,8 @@ func newClient() (*atproto.Client, error) {
 	return atproto.NewClient(*atprotoPdsUrl, *atprotoHandle, *atprotoPassword)
 }
 
-func syndicatePost(client *atproto.Client, post db.PostMetadata) error {
-	openGraph, err := db.GetOpenGraphDetailsForEntity("post", post.ID)
+func syndicatePost(ctx context.Context, client *atproto.Client, post db.PostMetadata) error {
+	openGraph, err := db.GetOpenGraphDetailsForEntity(ctx, "post", post.ID)
 	if err != nil {
 		return err
 	}
@@ -79,6 +80,6 @@ func syndicatePost(client *atproto.Client, post db.PostMetadata) error {
 	}
 
 	slog.Info("Automatically created Bluesky syndication", "path", post.Path, "url", uri)
-	_, err = db.CreateSyndication(post.Path, uri, "Bluesky", true)
+	_, err = db.CreateSyndication(ctx, post.Path, uri, "Bluesky", true)
 	return err
 }

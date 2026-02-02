@@ -1,55 +1,58 @@
 package db
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
-func GetSyndicationByID(id int) (*Syndication, error) {
+func GetSyndicationByID(ctx context.Context, id int) (*Syndication, error) {
 	var syndication Syndication
-	err := db.Get(&syndication, "SELECT id, path, external_url, name, published FROM syndications WHERE id = $1", id)
+	err := db.GetContext(ctx, &syndication, "SELECT id, path, external_url, name, published FROM syndications WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
 	return &syndication, nil
 }
 
-func GetAllSyndications() ([]Syndication, error) {
+func GetAllSyndications(ctx context.Context) ([]Syndication, error) {
 	var res []Syndication
-	err := db.Select(&res, "SELECT id, path, external_url, name, published FROM syndications WHERE published = true ORDER BY id")
+	err := db.SelectContext(ctx, &res, "SELECT id, path, external_url, name, published FROM syndications WHERE published = true ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-func GetUnpublishedSyndications() ([]Syndication, error) {
+func GetUnpublishedSyndications(ctx context.Context) ([]Syndication, error) {
 	var res []Syndication
-	err := db.Select(&res, "SELECT id, path, external_url, name, published FROM syndications WHERE published = false ORDER BY id")
+	err := db.SelectContext(ctx, &res, "SELECT id, path, external_url, name, published FROM syndications WHERE published = false ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-func GetAllSyndicationsWithUnpublished() ([]Syndication, error) {
+func GetAllSyndicationsWithUnpublished(ctx context.Context) ([]Syndication, error) {
 	var res []Syndication
-	err := db.Select(&res, "SELECT id, path, external_url, name, published FROM syndications ORDER BY id")
+	err := db.SelectContext(ctx, &res, "SELECT id, path, external_url, name, published FROM syndications ORDER BY id")
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-func GetSyndicationsByPath(path string) ([]Syndication, error) {
+func GetSyndicationsByPath(ctx context.Context, path string) ([]Syndication, error) {
 	var res []Syndication
-	err := db.Select(&res, "SELECT id, path, external_url, name, published FROM syndications WHERE path = $1 AND published = true", path)
+	err := db.SelectContext(ctx, &res, "SELECT id, path, external_url, name, published FROM syndications WHERE path = $1 AND published = true", path)
 	if err != nil {
 		return nil, err
 	}
 	return res, nil
 }
 
-func CreateSyndication(path, externalURL, name string, published bool) (int, error) {
+func CreateSyndication(ctx context.Context, path, externalURL, name string, published bool) (int, error) {
 	var id int
-	err := db.QueryRow(`
+	err := db.QueryRowContext(ctx, `
 		INSERT INTO syndications (path, external_url, name, published)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id
@@ -60,8 +63,8 @@ func CreateSyndication(path, externalURL, name string, published bool) (int, err
 	return id, nil
 }
 
-func UpdateSyndication(id int, path, externalURL, name string, published bool) error {
-	_, err := db.Exec(`
+func UpdateSyndication(ctx context.Context, id int, path, externalURL, name string, published bool) error {
+	_, err := db.ExecContext(ctx, `
 		UPDATE syndications
 		SET path = $1, external_url = $2, name = $3, published = $4
 		WHERE id = $5
@@ -72,8 +75,8 @@ func UpdateSyndication(id int, path, externalURL, name string, published bool) e
 	return nil
 }
 
-func DeleteSyndication(id int) error {
-	_, err := db.Exec("DELETE FROM syndications WHERE id = $1", id)
+func DeleteSyndication(ctx context.Context, id int) error {
+	_, err := db.ExecContext(ctx, "DELETE FROM syndications WHERE id = $1", id)
 	if err != nil {
 		return fmt.Errorf("failed to delete syndication: %w", err)
 	}

@@ -1,53 +1,54 @@
 package db
 
 import (
+	"context"
 	"fmt"
 )
 
-func GetAllFilmLists() ([]FilmList, error) {
+func GetAllFilmLists(ctx context.Context) ([]FilmList, error) {
 	var lists []FilmList
-	err := db.Select(&lists, "SELECT id, title, description, published, path FROM film_lists WHERE published = true ORDER BY title")
+	err := db.SelectContext(ctx, &lists, "SELECT id, title, description, published, path FROM film_lists WHERE published = true ORDER BY title")
 	if err != nil {
 		return nil, err
 	}
 	return lists, nil
 }
 
-func GetDraftFilmLists() ([]FilmList, error) {
+func GetDraftFilmLists(ctx context.Context) ([]FilmList, error) {
 	var lists []FilmList
-	err := db.Select(&lists, "SELECT id, title, description, published, path FROM film_lists WHERE published = false ORDER BY title")
+	err := db.SelectContext(ctx, &lists, "SELECT id, title, description, published, path FROM film_lists WHERE published = false ORDER BY title")
 	if err != nil {
 		return nil, err
 	}
 	return lists, nil
 }
 
-func GetFilmListByID(id int) (*FilmList, error) {
+func GetFilmListByID(ctx context.Context, id int) (*FilmList, error) {
 	var list FilmList
-	err := db.Get(&list, "SELECT id, title, description, published, path FROM film_lists WHERE id = $1", id)
+	err := db.GetContext(ctx, &list, "SELECT id, title, description, published, path FROM film_lists WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
 	return &list, nil
 }
 
-func GetFilmListByPath(path string) (*FilmList, error) {
+func GetFilmListByPath(ctx context.Context, path string) (*FilmList, error) {
 	var list FilmList
-	err := db.Get(&list, "SELECT id, title, description, published, path FROM film_lists WHERE path = $1 OR path = $2", path, path+"/")
+	err := db.GetContext(ctx, &list, "SELECT id, title, description, published, path FROM film_lists WHERE path = $1 OR path = $2", path, path+"/")
 	if err != nil {
 		return nil, err
 	}
 	return &list, nil
 }
 
-func GetFilmListWithEntries(id int) (*FilmList, []FilmListEntryWithFilm, error) {
-	list, err := GetFilmListByID(id)
+func GetFilmListWithEntries(ctx context.Context, id int) (*FilmList, []FilmListEntryWithFilm, error) {
+	list, err := GetFilmListByID(ctx, id)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	var entries []FilmListEntryWithFilm
-	err = db.Select(&entries, `
+	err = db.SelectContext(ctx, &entries, `
 		SELECT
 			fle.id, fle.film_list_id, fle.film_id, fle.position,
 			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title",
@@ -65,9 +66,9 @@ func GetFilmListWithEntries(id int) (*FilmList, []FilmListEntryWithFilm, error) 
 	return list, entries, nil
 }
 
-func GetFilmListEntriesWithDetails(listID int) ([]FilmListEntryWithDetails, error) {
+func GetFilmListEntriesWithDetails(ctx context.Context, listID int) ([]FilmListEntryWithDetails, error) {
 	var entries []FilmListEntryWithDetails
-	err := db.Select(&entries, `
+	err := db.SelectContext(ctx, &entries, `
 		SELECT
 			fle.id, fle.film_list_id, fle.film_id, fle.position,
 			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title",
@@ -93,7 +94,7 @@ func GetFilmListEntriesWithDetails(listID int) ([]FilmListEntryWithDetails, erro
 	return entries, nil
 }
 
-func GetFilmListWithFilms(listID int) (*FilmList, int, []FilmListEntryWithPoster, error) {
+func GetFilmListWithFilms(ctx context.Context, listID int) (*FilmList, int, []FilmListEntryWithPoster, error) {
 	var list struct {
 		ID          int    `db:"id"`
 		Title       string `db:"title"`
@@ -102,7 +103,7 @@ func GetFilmListWithFilms(listID int) (*FilmList, int, []FilmListEntryWithPoster
 		Path        string `db:"path"`
 		Count       int    `db:"count"`
 	}
-	err := db.Get(&list, `
+	err := db.GetContext(ctx, &list, `
 		SELECT
 			fl.id, fl.title, fl.description, fl.published, fl.path,
 			COUNT(fle.id) as count
@@ -116,7 +117,7 @@ func GetFilmListWithFilms(listID int) (*FilmList, int, []FilmListEntryWithPoster
 	}
 
 	var entries []FilmListEntryWithPoster
-	err = db.Select(&entries, `
+	err = db.SelectContext(ctx, &entries, `
 		SELECT
 			fle.id, fle.position,
 			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title",
@@ -145,9 +146,9 @@ func GetFilmListWithFilms(listID int) (*FilmList, int, []FilmListEntryWithPoster
 	return filmList, list.Count, entries, nil
 }
 
-func CreateFilmList(path, title, description string) (int, error) {
+func CreateFilmList(ctx context.Context, path, title, description string) (int, error) {
 	var id int
-	err := db.QueryRow(`
+	err := db.QueryRowContext(ctx, `
 		INSERT INTO film_lists (path, title, description, published)
 		VALUES ($1, $2, $3, false)
 		RETURNING id
@@ -158,8 +159,8 @@ func CreateFilmList(path, title, description string) (int, error) {
 	return id, nil
 }
 
-func UpdateFilmList(id int, path, title, description string, published bool) error {
-	_, err := db.Exec(`
+func UpdateFilmList(ctx context.Context, id int, path, title, description string, published bool) error {
+	_, err := db.ExecContext(ctx, `
 		UPDATE film_lists
 		SET path = $1, title = $2, description = $3, published = $4
 		WHERE id = $5
@@ -170,9 +171,9 @@ func UpdateFilmList(id int, path, title, description string, published bool) err
 	return nil
 }
 
-func GetEntriesForList(listID int) ([]FilmListEntryWithFilm, error) {
+func GetEntriesForList(ctx context.Context, listID int) ([]FilmListEntryWithFilm, error) {
 	var entries []FilmListEntryWithFilm
-	err := db.Select(&entries, `
+	err := db.SelectContext(ctx, &entries, `
 		SELECT
 			fle.id, fle.film_list_id, fle.film_id, fle.position,
 			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title",
@@ -189,18 +190,18 @@ func GetEntriesForList(listID int) ([]FilmListEntryWithFilm, error) {
 	return entries, nil
 }
 
-func GetEntryByID(entryID int) (*FilmListEntry, error) {
+func GetEntryByID(ctx context.Context, entryID int) (*FilmListEntry, error) {
 	var entry FilmListEntry
-	err := db.Get(&entry, "SELECT id, film_list_id, film_id, position FROM film_list_entries WHERE id = $1", entryID)
+	err := db.GetContext(ctx, &entry, "SELECT id, film_list_id, film_id, position FROM film_list_entries WHERE id = $1", entryID)
 	if err != nil {
 		return nil, err
 	}
 	return &entry, nil
 }
 
-func AddFilmToList(listID, filmID int, position int) (int, error) {
+func AddFilmToList(ctx context.Context, listID, filmID int, position int) (int, error) {
 	// Start a transaction to shift positions if needed
-	tx, err := db.Begin()
+	tx, err := db.BeginTxx(ctx, nil)
 	if err != nil {
 		return 0, fmt.Errorf("failed to begin transaction: %w", err)
 	}
@@ -243,13 +244,13 @@ func AddFilmToList(listID, filmID int, position int) (int, error) {
 	return id, nil
 }
 
-func RemoveFilmFromList(entryID int) error {
-	entry, err := GetEntryByID(entryID)
+func RemoveFilmFromList(ctx context.Context, entryID int) error {
+	entry, err := GetEntryByID(ctx, entryID)
 	if err != nil {
 		return fmt.Errorf("failed to get entry: %w", err)
 	}
 
-	tx, err := db.Begin()
+	tx, err := db.BeginTxx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
@@ -285,8 +286,8 @@ func RemoveFilmFromList(entryID int) error {
 	return nil
 }
 
-func UpdateEntryPosition(entryID, newPosition int) error {
-	entry, err := GetEntryByID(entryID)
+func UpdateEntryPosition(ctx context.Context, entryID, newPosition int) error {
+	entry, err := GetEntryByID(ctx, entryID)
 	if err != nil {
 		return fmt.Errorf("failed to get entry: %w", err)
 	}
@@ -297,7 +298,7 @@ func UpdateEntryPosition(entryID, newPosition int) error {
 		return nil
 	}
 
-	tx, err := db.Begin()
+	tx, err := db.BeginTxx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
@@ -348,9 +349,9 @@ func UpdateEntryPosition(entryID, newPosition int) error {
 	return nil
 }
 
-func GetNextPosition(listID int) (int, error) {
+func GetNextPosition(ctx context.Context, listID int) (int, error) {
 	var position int
-	err := db.Get(&position, `
+	err := db.GetContext(ctx, &position, `
 		SELECT COALESCE(MAX(position), 0) + 1
 		FROM film_list_entries
 		WHERE film_list_id = $1
@@ -361,9 +362,9 @@ func GetNextPosition(listID int) (int, error) {
 	return position, nil
 }
 
-func GetFilmListsContainingFilm(filmID int) ([]FilmList, error) {
+func GetFilmListsContainingFilm(ctx context.Context, filmID int) ([]FilmList, error) {
 	var lists []FilmList
-	err := db.Select(&lists, `
+	err := db.SelectContext(ctx, &lists, `
 		SELECT DISTINCT fl.id, fl.title, fl.description, fl.published, fl.path
 		FROM film_lists fl
 		JOIN film_list_entries fle ON fl.id = fle.film_list_id
@@ -376,8 +377,8 @@ func GetFilmListsContainingFilm(filmID int) ([]FilmList, error) {
 	return lists, nil
 }
 
-func ReorderFilmListEntries(listID int) error {
-	_, err := db.Exec(`
+func ReorderFilmListEntries(ctx context.Context, listID int) error {
+	_, err := db.ExecContext(ctx, `
 		UPDATE film_list_entries AS fle
 		SET position = sub.rn
 		FROM (

@@ -12,7 +12,7 @@ import (
 )
 
 func Snippet(w http.ResponseWriter, r *http.Request) {
-	snippet, err := db.GetSnippetByPath(r.URL.Path)
+	snippet, err := db.GetSnippetByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find snippet by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)
@@ -24,7 +24,7 @@ func Snippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedContent, err := content.RenderContent("snippet", 0, snippet.Content, snippet.Path)
+	renderedContent, err := content.RenderContent(r.Context(), "snippet", 0, snippet.Content, snippet.Path)
 	if err != nil {
 		slog.Error("Failed to render markdown for snippet content", "snippet", snippet.Title, "error", err)
 		ServerError(w, r)
@@ -50,7 +50,7 @@ func Snippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func SnippetsList(w http.ResponseWriter, r *http.Request) {
-	snippets, err := db.GetAllSnippets()
+	snippets, err := db.GetAllSnippets(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all snippets", "error", err)
 		ServerError(w, r)

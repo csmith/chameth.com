@@ -7,7 +7,7 @@ import (
 	"html/template"
 
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
 
@@ -16,7 +16,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("figure.html.gotpl").ParseFS(templates, "figure.html.gotpl"))
 
-func RenderFromText(args []string, ctx *context.Context) (string, error) {
+func RenderFromText(args []string, ctx *common.Context) (string, error) {
 	if len(args) < 2 {
 		return "", fmt.Errorf("figure requires at least 2 arguments (class, description)")
 	}

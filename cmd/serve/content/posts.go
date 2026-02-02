@@ -1,6 +1,7 @@
 package content
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"log/slog"
@@ -13,7 +14,7 @@ import (
 )
 
 var recentPostsCache = NewCache(time.Minute*10, func() []templates.RecentPost {
-	posts, err := db.GetRecentPosts(4)
+	posts, err := db.GetRecentPosts(context.Background(), 4)
 	if err != nil {
 		slog.Error("Failed to update recent posts", "err", err)
 		return nil
@@ -36,7 +37,7 @@ func RecentPosts() []templates.RecentPost {
 }
 
 var postLinksCache = NewKeyedCache(time.Hour*24, func(path string) *includes.PostLinkData {
-	post, err := db.GetPostByPath(path)
+	post, err := db.GetPostByPath(context.Background(), path)
 	if err != nil {
 		slog.Error("Failed to get post by path", "err", err)
 		return nil
@@ -44,7 +45,7 @@ var postLinksCache = NewKeyedCache(time.Hour*24, func(path string) *includes.Pos
 
 	summary := markdown.FirstParagraph(post.Content)
 
-	imageVariants, err := db.GetOpenGraphImageVariantsForEntity("post", post.ID)
+	imageVariants, err := db.GetOpenGraphImageVariantsForEntity(context.Background(), "post", post.ID)
 	var images []includes.PostLinkImage
 	if err == nil {
 		for _, variant := range imageVariants {

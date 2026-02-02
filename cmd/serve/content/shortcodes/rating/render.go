@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"strconv"
 
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
 )
 
 //go:embed *.gotpl
@@ -15,7 +15,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("rating.html.gotpl").ParseFS(templates, "rating.html.gotpl"))
 
-func RenderFromText(args []string, _ *context.Context) (string, error) {
+func RenderFromText(args []string, _ *common.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("rating requires at least 1 argument (value)")
 	}

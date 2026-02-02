@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -11,8 +12,8 @@ import (
 	"chameth.com/chameth.com/cmd/serve/templates"
 )
 
-func buildSiteMapData(pageData templates.PageData) (templates.SiteMapData, error) {
-	poems, err := db.GetAllPoems()
+func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templates.SiteMapData, error) {
+	poems, err := db.GetAllPoems(ctx)
 	if err != nil {
 		return templates.SiteMapData{}, fmt.Errorf("failed to get all poems: %w", err)
 	}
@@ -29,7 +30,7 @@ func buildSiteMapData(pageData templates.PageData) (templates.SiteMapData, error
 		})
 	}
 
-	snippets, err := db.GetAllSnippets()
+	snippets, err := db.GetAllSnippets(ctx)
 	if err != nil {
 		return templates.SiteMapData{}, fmt.Errorf("failed to get all snippets: %w", err)
 	}
@@ -42,7 +43,7 @@ func buildSiteMapData(pageData templates.PageData) (templates.SiteMapData, error
 		})
 	}
 
-	posts, err := db.GetAllPosts()
+	posts, err := db.GetAllPosts(ctx)
 	if err != nil {
 		return templates.SiteMapData{}, fmt.Errorf("failed to get all posts: %w", err)
 	}
@@ -59,7 +60,7 @@ func buildSiteMapData(pageData templates.PageData) (templates.SiteMapData, error
 		})
 	}
 
-	filmReviews, err := db.GetAllPublishedFilmReviewsWithFilmAndPosters()
+	filmReviews, err := db.GetAllPublishedFilmReviewsWithFilmAndPosters(ctx)
 	if err != nil {
 		return templates.SiteMapData{}, fmt.Errorf("failed to get all film reviews: %w", err)
 	}
@@ -76,7 +77,7 @@ func buildSiteMapData(pageData templates.PageData) (templates.SiteMapData, error
 		})
 	}
 
-	filmLists, err := db.GetAllFilmLists()
+	filmLists, err := db.GetAllFilmLists(ctx)
 	if err != nil {
 		return templates.SiteMapData{}, fmt.Errorf("failed to get all film lists: %w", err)
 	}
@@ -107,7 +108,7 @@ func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 		RecentPosts:  content.RecentPosts(),
 	}
 
-	siteMapData, err := buildSiteMapData(pageData)
+	siteMapData, err := buildSiteMapData(r.Context(), pageData)
 	if err != nil {
 		slog.Error("Failed to build site map data", "error", err)
 		ServerError(w, r)
@@ -123,7 +124,7 @@ func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
 }
 
 func XmlSiteMap(w http.ResponseWriter, r *http.Request) {
-	siteMapData, err := buildSiteMapData(templates.PageData{})
+	siteMapData, err := buildSiteMapData(r.Context(), templates.PageData{})
 	if err != nil {
 		slog.Error("Failed to build site map data", "error", err)
 		ServerError(w, r)

@@ -1,10 +1,13 @@
-package context
+package common
 
 import (
+	"context"
+
 	"chameth.com/chameth.com/cmd/serve/db"
 )
 
 type Context struct {
+	context.Context
 	Media []db.MediaRelationWithDetails
 	URL   string
 }

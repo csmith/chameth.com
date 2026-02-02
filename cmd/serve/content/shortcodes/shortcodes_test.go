@@ -1,9 +1,10 @@
 package shortcodes
 
 import (
+	"context"
 	"testing"
 
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
 )
 
 func TestSplitArguments(t *testing.T) {
@@ -81,7 +82,7 @@ func TestSplitArguments(t *testing.T) {
 
 func TestRenderUnknownShortcode(t *testing.T) {
 	input := "prefix {%unknown%} suffix"
-	result := Render(input, &context.Context{URL: "/test/url"})
+	result := Render(input, &common.Context{URL: "/test/url", Context: context.Background()})
 	expected := "prefix " + shortcodesError + " suffix"
 	if result != expected {
 		t.Errorf("Render() = %q, want %q (unknown shortcode should be replaced with error)", result, expected)
@@ -90,7 +91,7 @@ func TestRenderUnknownShortcode(t *testing.T) {
 
 func TestRenderEndTagWhitespace(t *testing.T) {
 	input := "prefix {%warning%} content {%end warning%} suffix"
-	result := Render(input, &context.Context{URL: "/test/url"})
+	result := Render(input, &common.Context{URL: "/test/url", Context: context.Background()})
 	if result == input {
 		t.Errorf("Render() returned unchanged input, end tag with whitespace not recognized")
 	}

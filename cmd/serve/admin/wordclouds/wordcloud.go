@@ -2,6 +2,7 @@ package wordclouds
 
 import (
 	"bytes"
+	"context"
 	_ "embed"
 	"fmt"
 	"maps"
@@ -39,9 +40,9 @@ type postAnalysis struct {
 
 // GenerateWordcloud generates a word cloud image for a post identified by postID.
 // It returns the PNG image as a byte slice.
-func GenerateWordcloud(postID int) ([]byte, error) {
+func GenerateWordcloud(ctx context.Context, postID int) ([]byte, error) {
 	// Get the target post
-	targetPost, err := db.GetPostByID(postID)
+	targetPost, err := db.GetPostByID(ctx, postID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get post: %w", err)
 	}
@@ -51,7 +52,7 @@ func GenerateWordcloud(postID int) ([]byte, error) {
 	targetAnalysis.ID = targetPost.ID
 
 	// Get all published posts for baseline corpus
-	allPosts, err := db.GetRecentPostsWithContent(1000) // Get up to 1000 posts
+	allPosts, err := db.GetRecentPostsWithContent(ctx, 1000) // Get up to 1000 posts
 	if err != nil {
 		return nil, fmt.Errorf("failed to get all posts: %w", err)
 	}

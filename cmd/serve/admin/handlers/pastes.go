@@ -12,13 +12,13 @@ import (
 
 func ListPastesHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := db.GetDraftPastes()
+		drafts, err := db.GetDraftPastes(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve draft pastes", http.StatusInternalServerError)
 			return
 		}
 
-		pastes, err := db.GetAllPastes()
+		pastes, err := db.GetAllPastes(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve pastes", http.StatusInternalServerError)
 			return
@@ -64,7 +64,7 @@ func EditPasteHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		paste, err := db.GetPasteByID(id)
+		paste, err := db.GetPasteByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Paste not found", http.StatusNotFound)
 			return
@@ -98,7 +98,7 @@ func CreatePasteHandler() func(http.ResponseWriter, *http.Request) {
 		path := fmt.Sprintf("/paste/%s/", name)
 
 		// Create the new paste
-		id, err := db.CreatePaste(path, name)
+		id, err := db.CreatePaste(r.Context(), path, name)
 		if err != nil {
 			http.Error(w, "Failed to create paste", http.StatusInternalServerError)
 			return
@@ -130,7 +130,7 @@ func UpdatePasteHandler() func(http.ResponseWriter, *http.Request) {
 		date := r.FormValue("date")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdatePaste(id, path, title, language, pasteContent, date, published); err != nil {
+		if err := db.UpdatePaste(r.Context(), id, path, title, language, pasteContent, date, published); err != nil {
 			http.Error(w, "Failed to update paste", http.StatusInternalServerError)
 			return
 		}

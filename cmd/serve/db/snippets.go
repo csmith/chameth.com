@@ -1,13 +1,16 @@
 package db
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // GetSnippetByPath returns a snippet for the given path.
 // It handles cases where the path may or may not have a trailing slash.
 // Returns nil if no snippet is found with that path.
-func GetSnippetByPath(path string) (*Snippet, error) {
+func GetSnippetByPath(ctx context.Context, path string) (*Snippet, error) {
 	var snippet Snippet
-	err := db.Get(&snippet, "SELECT id, path, title, topic, content, published FROM snippets WHERE path = $1 OR path = $2", path, path+"/")
+	err := db.GetContext(ctx, &snippet, "SELECT id, path, title, topic, content, published FROM snippets WHERE path = $1 OR path = $2", path, path+"/")
 	if err != nil {
 		return nil, err
 	}
@@ -15,9 +18,9 @@ func GetSnippetByPath(path string) (*Snippet, error) {
 }
 
 // GetSnippetByID returns a snippet for the given ID.
-func GetSnippetByID(id int) (*Snippet, error) {
+func GetSnippetByID(ctx context.Context, id int) (*Snippet, error) {
 	var snippet Snippet
-	err := db.Get(&snippet, "SELECT id, path, title, topic, content, published FROM snippets WHERE id = $1", id)
+	err := db.GetContext(ctx, &snippet, "SELECT id, path, title, topic, content, published FROM snippets WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -25,9 +28,9 @@ func GetSnippetByID(id int) (*Snippet, error) {
 }
 
 // GetAllSnippets returns all published snippets without their content.
-func GetAllSnippets() ([]SnippetMetadata, error) {
+func GetAllSnippets(ctx context.Context) ([]SnippetMetadata, error) {
 	var snippets []SnippetMetadata
-	err := db.Select(&snippets, "SELECT id, path, title, topic, published FROM snippets WHERE published = true ORDER BY topic, title")
+	err := db.SelectContext(ctx, &snippets, "SELECT id, path, title, topic, published FROM snippets WHERE published = true ORDER BY topic, title")
 	if err != nil {
 		return nil, err
 	}
@@ -35,9 +38,9 @@ func GetAllSnippets() ([]SnippetMetadata, error) {
 }
 
 // GetDraftSnippets returns all unpublished snippets without their content.
-func GetDraftSnippets() ([]SnippetMetadata, error) {
+func GetDraftSnippets(ctx context.Context) ([]SnippetMetadata, error) {
 	var snippets []SnippetMetadata
-	err := db.Select(&snippets, "SELECT id, path, title, topic, published FROM snippets WHERE published = false ORDER BY topic, title")
+	err := db.SelectContext(ctx, &snippets, "SELECT id, path, title, topic, published FROM snippets WHERE published = false ORDER BY topic, title")
 	if err != nil {
 		return nil, err
 	}
@@ -45,9 +48,9 @@ func GetDraftSnippets() ([]SnippetMetadata, error) {
 }
 
 // CreateSnippet creates a new unpublished snippet in the database and returns its ID.
-func CreateSnippet(path, title string) (int, error) {
+func CreateSnippet(ctx context.Context, path, title string) (int, error) {
 	var id int
-	err := db.QueryRow(`
+	err := db.QueryRowContext(ctx, `
 		INSERT INTO snippets (path, title, topic, content, published)
 		VALUES ($1, $2, '', '', false)
 		RETURNING id
@@ -59,8 +62,8 @@ func CreateSnippet(path, title string) (int, error) {
 }
 
 // UpdateSnippet updates a snippet in the database.
-func UpdateSnippet(id int, path, title, topic, content string, published bool) error {
-	_, err := db.Exec(`
+func UpdateSnippet(ctx context.Context, id int, path, title, topic, content string, published bool) error {
+	_, err := db.ExecContext(ctx, `
 		UPDATE snippets
 		SET path = $1, title = $2, topic = $3, content = $4, published = $5
 		WHERE id = $6
@@ -72,9 +75,9 @@ func UpdateSnippet(id int, path, title, topic, content string, published bool) e
 }
 
 // GetAllTopics returns all unique topics from snippets.
-func GetAllTopics() ([]string, error) {
+func GetAllTopics(ctx context.Context) ([]string, error) {
 	var topics []string
-	err := db.Select(&topics, "SELECT DISTINCT topic FROM snippets WHERE topic != '' ORDER BY topic")
+	err := db.SelectContext(ctx, &topics, "SELECT DISTINCT topic FROM snippets WHERE topic != '' ORDER BY topic")
 	if err != nil {
 		return nil, err
 	}
@@ -82,9 +85,9 @@ func GetAllTopics() ([]string, error) {
 }
 
 // GetRecentSnippetsWithContent returns the N most recent snippets with full content.
-func GetRecentSnippetsWithContent(limit int) ([]Snippet, error) {
+func GetRecentSnippetsWithContent(ctx context.Context, limit int) ([]Snippet, error) {
 	var snippets []Snippet
-	err := db.Select(&snippets, `
+	err := db.SelectContext(ctx, &snippets, `
 		SELECT id, path, title, topic, content, published
 		FROM snippets
 		WHERE published = true

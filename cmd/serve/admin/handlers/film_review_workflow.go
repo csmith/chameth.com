@@ -50,7 +50,7 @@ func FilmReviewWorkflowStep1Handler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "GET" {
 			// Show film selection
-			films, err := db.GetAllFilms()
+			films, err := db.GetAllFilms(r.Context())
 			if err != nil {
 				slog.Error("Failed to get films", "error", err)
 				http.Error(w, "Failed to load films", http.StatusInternalServerError)
@@ -105,7 +105,7 @@ func FilmReviewWorkflowStep1Handler() func(http.ResponseWriter, *http.Request) {
 			}
 
 			path := generateFilmPath(movie.Title, yearInt)
-			filmID, err = db.CreateFilm(movie.ID, movie.Title, year, path, movie.Overview, movie.Runtime)
+			filmID, err = db.CreateFilm(r.Context(), movie.ID, movie.Title, year, path, movie.Overview, movie.Runtime)
 			if err != nil {
 				slog.Error("Failed to create film", "error", err)
 				http.Error(w, "Failed to create film", http.StatusInternalServerError)
@@ -114,7 +114,7 @@ func FilmReviewWorkflowStep1Handler() func(http.ResponseWriter, *http.Request) {
 
 			// Download and create poster
 			if posterPath != "" {
-				if err := updateOrCreateFilmPoster(filmID, movie.Title, posterPath); err != nil {
+				if err := updateOrCreateFilmPoster(r.Context(), filmID, movie.Title, posterPath); err != nil {
 					slog.Error("Failed to update film poster", "error", err)
 				}
 			}
@@ -145,7 +145,7 @@ func FilmReviewWorkflowStep2Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		film, err := db.GetFilmByID(filmID)
+		film, err := db.GetFilmByID(r.Context(), filmID)
 		if err != nil {
 			http.Error(w, "Film not found", http.StatusNotFound)
 			return
@@ -153,7 +153,7 @@ func FilmReviewWorkflowStep2Handler() func(http.ResponseWriter, *http.Request) {
 
 		if r.Method == "GET" {
 			// Get current entries with poster info in one query
-			entries, err := db.GetFilmListEntriesWithDetails(1)
+			entries, err := db.GetFilmListEntriesWithDetails(r.Context(), 1)
 			if err != nil {
 				entries = []db.FilmListEntryWithDetails{}
 			}
@@ -220,7 +220,7 @@ func FilmReviewWorkflowStep2Handler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Add film to list ID 1 at specified position
-		_, err = db.AddFilmToList(1, filmID, position)
+		_, err = db.AddFilmToList(r.Context(), 1, filmID, position)
 		if err != nil {
 			slog.Error("Failed to add film to list", "error", err)
 			http.Error(w, "Failed to add to list", http.StatusInternalServerError)
@@ -244,14 +244,14 @@ func FilmReviewWorkflowStep3Handler() func(http.ResponseWriter, *http.Request) {
 			defaultRating = 10
 		}
 
-		film, err := db.GetFilmByID(filmID)
+		film, err := db.GetFilmByID(r.Context(), filmID)
 		if err != nil {
 			http.Error(w, "Film not found", http.StatusNotFound)
 			return
 		}
 
 		// Get Letterboxd URL from syndications for the ranking list
-		syndications, err := db.GetSyndicationsByPath("/films/lists/ranking/")
+		syndications, err := db.GetSyndicationsByPath(r.Context(), "/films/lists/ranking/")
 		if err != nil {
 			slog.Warn("Failed to get syndications for ranking list", "path", "/films/lists/ranking/", "error", err)
 		}
@@ -290,7 +290,7 @@ func FilmReviewWorkflowStep4Handler() func(http.ResponseWriter, *http.Request) {
 			defaultRating = 10
 		}
 
-		film, err := db.GetFilmByID(filmID)
+		film, err := db.GetFilmByID(r.Context(), filmID)
 		if err != nil {
 			http.Error(w, "Film not found", http.StatusNotFound)
 			return
@@ -329,7 +329,7 @@ func FilmReviewWorkflowStep4Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		reviewID, err := db.CreateFilmReview(filmID, rating, watchedDate, isRewatch, hasSpoilers, published, reviewText)
+		reviewID, err := db.CreateFilmReview(r.Context(), filmID, rating, watchedDate, isRewatch, hasSpoilers, published, reviewText)
 		if err != nil {
 			slog.Error("Failed to create review", "error", err)
 			http.Error(w, "Failed to create review", http.StatusInternalServerError)
@@ -351,13 +351,13 @@ func FilmReviewWorkflowStep5Handler() func(http.ResponseWriter, *http.Request) {
 		filmID, _ := strconv.Atoi(filmIDStr)
 		reviewID, _ := strconv.Atoi(reviewIDStr)
 
-		film, err := db.GetFilmByID(filmID)
+		film, err := db.GetFilmByID(r.Context(), filmID)
 		if err != nil {
 			http.Error(w, "Film not found", http.StatusNotFound)
 			return
 		}
 
-		review, err := db.GetFilmReviewByID(reviewID)
+		review, err := db.GetFilmReviewByID(r.Context(), reviewID)
 		if err != nil {
 			http.Error(w, "Review not found", http.StatusNotFound)
 			return
@@ -393,7 +393,7 @@ func FilmReviewWorkflowStep6Handler() func(http.ResponseWriter, *http.Request) {
 		filmIDStr := r.URL.Query().Get("film_id")
 		filmID, _ := strconv.Atoi(filmIDStr)
 
-		film, err := db.GetFilmByID(filmID)
+		film, err := db.GetFilmByID(r.Context(), filmID)
 		if err != nil {
 			http.Error(w, "Film not found", http.StatusNotFound)
 			return
@@ -423,7 +423,7 @@ func FilmReviewWorkflowStep6Handler() func(http.ResponseWriter, *http.Request) {
 			syndicationName := r.FormValue("syndication_name")
 
 			if syndicationURL != "" {
-				_, err := db.CreateSyndication(film.Path, syndicationURL, syndicationName, true)
+				_, err := db.CreateSyndication(r.Context(), film.Path, syndicationURL, syndicationName, true)
 				if err != nil {
 					slog.Error("Failed to create syndication", "error", err)
 				}
@@ -441,14 +441,14 @@ func FilmReviewWorkflowStep7Handler() func(http.ResponseWriter, *http.Request) {
 		filmIDStr := r.URL.Query().Get("film_id")
 		filmID, _ := strconv.Atoi(filmIDStr)
 
-		film, err := db.GetFilmByID(filmID)
+		film, err := db.GetFilmByID(r.Context(), filmID)
 		if err != nil {
 			http.Error(w, "Film not found", http.StatusNotFound)
 			return
 		}
 
 		if r.Method == "GET" {
-			allLists, err := db.GetAllFilmLists()
+			allLists, err := db.GetAllFilmLists(r.Context())
 			if err != nil {
 				allLists = []db.FilmList{}
 			}
@@ -457,7 +457,7 @@ func FilmReviewWorkflowStep7Handler() func(http.ResponseWriter, *http.Request) {
 			listsWithUrls := make([]templates.FilmListWithLetterboxd, 0, len(allLists))
 			for _, list := range allLists {
 				// Get syndications for this list
-				syndications, err := db.GetSyndicationsByPath(list.Path)
+				syndications, err := db.GetSyndicationsByPath(r.Context(), list.Path)
 				if err != nil {
 					slog.Warn("Failed to get syndications for list", "path", list.Path, "error", err)
 				}
@@ -498,8 +498,8 @@ func FilmReviewWorkflowStep7Handler() func(http.ResponseWriter, *http.Request) {
 			for _, listIDStr := range listIDs {
 				listID, _ := strconv.Atoi(listIDStr)
 				if listID != 1 { // Skip "Watched films ranked" (already added)
-					position, _ := db.GetNextPosition(listID)
-					db.AddFilmToList(listID, filmID, position)
+					position, _ := db.GetNextPosition(r.Context(), listID)
+					db.AddFilmToList(r.Context(), listID, filmID, position)
 				}
 			}
 		}

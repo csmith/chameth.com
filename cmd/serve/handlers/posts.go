@@ -16,7 +16,7 @@ import (
 )
 
 func Post(w http.ResponseWriter, r *http.Request) {
-	post, err := db.GetPostByPath(r.URL.Path)
+	post, err := db.GetPostByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find post by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)
@@ -28,7 +28,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedContent, err := content.RenderContent("post", post.ID, post.Content, post.Path)
+	renderedContent, err := content.RenderContent(r.Context(), "post", post.ID, post.Content, post.Path)
 	if err != nil {
 		slog.Error("Failed to render post content", "post", post.Title, "error", err)
 		ServerError(w, r)
@@ -44,19 +44,19 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var ogImage string
-	ogPath, err := db.GetOpenGraphImageForEntity("post", post.ID)
+	ogPath, err := db.GetOpenGraphImageForEntity(r.Context(), "post", post.ID)
 	if err == nil && ogPath != "" {
 		ogImage = fmt.Sprintf("https://chameth.com%s", ogPath)
 	}
 
-	relatedPosts, err := content.GetRelatedPosts(post.ID)
+	relatedPosts, err := content.GetRelatedPosts(r.Context(), post.ID)
 	if err != nil {
 		slog.Error("Failed to get related posts", "post_id", post.ID, "error", err)
 		// Continue without related posts rather than erroring
 		relatedPosts = nil
 	}
 
-	syndicationInfo, err := syndication.Render(post.Path)
+	syndicationInfo, err := syndication.Render(r.Context(), post.Path)
 	if err != nil {
 		slog.Error("Failed to get syndication markup", "post_id", post.ID, "error", err)
 		syndicationInfo = ""
@@ -96,7 +96,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostsList(w http.ResponseWriter, r *http.Request) {
-	posts, err := db.GetAllPosts()
+	posts, err := db.GetAllPosts(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all posts", "error", err)
 		ServerError(w, r)

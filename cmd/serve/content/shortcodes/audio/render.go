@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"html/template"
 
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
 )
 
 //go:embed *.gotpl
@@ -14,7 +14,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("audio.html.gotpl").ParseFS(templates, "audio.html.gotpl"))
 
-func RenderFromText(args []string, ctx *context.Context) (string, error) {
+func RenderFromText(args []string, ctx *common.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("audio requires at least 1 argument (description)")
 	}

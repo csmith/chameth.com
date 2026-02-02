@@ -18,7 +18,7 @@ import (
 )
 
 func Film(w http.ResponseWriter, r *http.Request) {
-	film, err := db.GetFilmWithPosterByPath(r.URL.Path)
+	film, err := db.GetFilmWithPosterByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find film by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)
@@ -30,7 +30,7 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reviews, err := db.GetFilmReviewsByFilmID(film.ID)
+	reviews, err := db.GetFilmReviewsByFilmID(r.Context(), film.ID)
 	if err != nil {
 		slog.Error("Failed to get film reviews", "film_id", film.ID, "error", err)
 		ServerError(w, r)
@@ -104,14 +104,14 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		posterPath = *film.PosterPath
 	}
 
-	lists, err := db.GetFilmListsContainingFilm(film.ID)
+	lists, err := db.GetFilmListsContainingFilm(r.Context(), film.ID)
 	if err != nil {
 		slog.Error("Failed to get film lists containing film", "film_id", film.ID, "error", err)
 	}
 
 	var filmLists []template.HTML
 	for _, list := range lists {
-		listHTML, err := filmlist.Render(list.ID)
+		listHTML, err := filmlist.Render(r.Context(), list.ID)
 		if err != nil {
 			slog.Error("Failed to render film list", "list_id", list.ID, "error", err)
 		} else {
@@ -119,7 +119,7 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	syndicationHTML, err := syndication.Render(film.Path)
+	syndicationHTML, err := syndication.Render(r.Context(), film.Path)
 	if err != nil {
 		slog.Error("Failed to render syndications", "path", film.Path, "error", err)
 	}
@@ -150,7 +150,7 @@ func Film(w http.ResponseWriter, r *http.Request) {
 }
 
 func FilmList(w http.ResponseWriter, r *http.Request) {
-	filmList, err := db.GetFilmListByPath(r.URL.Path)
+	filmList, err := db.GetFilmListByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find film list by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)
@@ -162,7 +162,7 @@ func FilmList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entries, err := db.GetFilmListEntriesWithDetails(filmList.ID)
+	entries, err := db.GetFilmListEntriesWithDetails(r.Context(), filmList.ID)
 	if err != nil {
 		slog.Error("Failed to get film list entries", "list_id", filmList.ID, "error", err)
 		ServerError(w, r)
@@ -213,7 +213,7 @@ func FilmList(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	syndicationHTML, err := syndication.Render(filmList.Path)
+	syndicationHTML, err := syndication.Render(r.Context(), filmList.Path)
 	if err != nil {
 		slog.Error("Failed to render syndications", "path", filmList.Path, "error", err)
 	}

@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/postlink"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
@@ -22,7 +22,7 @@ type Data struct {
 	Posts template.HTML
 }
 
-func RenderFromText(args []string, _ *context.Context) (string, error) {
+func RenderFromText(args []string, ctx *common.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("recentposts requires at least 1 argument (count)")
 	}
@@ -36,7 +36,7 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		return "", fmt.Errorf("recentposts requires a positive number")
 	}
 
-	posts, err := db.GetRecentPostsWithContent(count)
+	posts, err := db.GetRecentPostsWithContent(ctx.Context, count)
 	if err != nil {
 		return "", fmt.Errorf("failed to get recent posts: %w", err)
 	}
@@ -45,7 +45,7 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 	for _, post := range posts {
 		summary := markdown.FirstParagraph(post.Content)
 
-		imageVariants, err := db.GetOpenGraphImageVariantsForEntity("post", post.ID)
+		imageVariants, err := db.GetOpenGraphImageVariantsForEntity(ctx.Context, "post", post.ID)
 		var images []postlink.Image
 		if err == nil {
 			for _, variant := range imageVariants {

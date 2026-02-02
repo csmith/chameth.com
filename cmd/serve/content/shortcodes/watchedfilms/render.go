@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"time"
 
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/rating"
 	"chameth.com/chameth.com/cmd/serve/db"
 )
@@ -17,7 +17,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("watchedfilms.html.gotpl").ParseFS(templates, "watchedfilms.html.gotpl"))
 
-func RenderFromText(args []string, _ *context.Context) (string, error) {
+func RenderFromText(args []string, ctx *common.Context) (string, error) {
 	if len(args) < 2 {
 		return "", fmt.Errorf("watchedfilms requires 2 arguments (start_date, end_date) in YYYY-MM-DD format")
 	}
@@ -32,7 +32,7 @@ func RenderFromText(args []string, _ *context.Context) (string, error) {
 		return "", fmt.Errorf("invalid end date: %s (expected YYYY-MM-DD)", args[1])
 	}
 
-	reviews, err := db.GetPublishedFilmReviewsWithFilmAndPostersByDateRange(startDate, endDate)
+	reviews, err := db.GetPublishedFilmReviewsWithFilmAndPostersByDateRange(ctx.Context, startDate, endDate)
 	if err != nil {
 		return "", fmt.Errorf("failed to get film reviews by date range: %w", err)
 	}

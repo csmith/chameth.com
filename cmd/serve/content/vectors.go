@@ -2,6 +2,7 @@ package content
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -26,16 +27,16 @@ var (
 )
 
 // GenerateAndStoreEmbedding generates an embedding for a post and stores it in the database
-func GenerateAndStoreEmbedding(postPath string) error {
+func GenerateAndStoreEmbedding(ctx context.Context, postPath string) error {
 	embeddingMutex.Lock()
 	defer embeddingMutex.Unlock()
 
-	post, err := db.GetPostByPath(postPath)
+	post, err := db.GetPostByPath(ctx, postPath)
 	if err != nil {
 		return fmt.Errorf("failed to get post by path %s: %w", postPath, err)
 	}
 
-	renderedHTML, err := RenderContent("post", post.ID, post.Content, post.Path)
+	renderedHTML, err := RenderContent(ctx, "post", post.ID, post.Content, post.Path)
 	if err != nil {
 		return fmt.Errorf("failed to render post content: %w", err)
 	}
@@ -79,7 +80,7 @@ func GenerateAndStoreEmbedding(postPath string) error {
 		return fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	if err := db.UpdatePostEmbedding(postPath, pgvector.NewVector(ollamaResp.Embedding)); err != nil {
+	if err := db.UpdatePostEmbedding(ctx, postPath, pgvector.NewVector(ollamaResp.Embedding)); err != nil {
 		return err
 	}
 
@@ -88,10 +89,10 @@ func GenerateAndStoreEmbedding(postPath string) error {
 }
 
 // UpdateAllPostEmbeddings generates embeddings for all posts that don't have one
-func UpdateAllPostEmbeddings() {
+func UpdateAllPostEmbeddings(ctx context.Context) {
 	slog.Info("Starting to update post embeddings")
 
-	paths, err := db.GetPostPathsWithoutEmbeddings()
+	paths, err := db.GetPostPathsWithoutEmbeddings(ctx)
 	if err != nil {
 		slog.Error("Failed to query posts without embeddings", "error", err)
 		return
@@ -110,7 +111,7 @@ func UpdateAllPostEmbeddings() {
 	for i, path := range paths {
 		slog.Info("Generating embedding", "progress", fmt.Sprintf("%d/%d", i+1, len(paths)), "path", path)
 
-		if err := GenerateAndStoreEmbedding(path); err != nil {
+		if err := GenerateAndStoreEmbedding(ctx, path); err != nil {
 			slog.Error("Failed to generate embedding for post", "path", path, "error", err)
 			failureCount++
 		} else {
@@ -123,8 +124,8 @@ func UpdateAllPostEmbeddings() {
 
 // GetRelatedPosts finds posts that are semantically similar to the given post.
 // Returns up to 3 related posts, ordered by similarity (closest first).
-func GetRelatedPosts(postID int) ([]includes.PostLinkData, error) {
-	posts, err := db.GetRelatedPostsByID(postID, 3)
+func GetRelatedPosts(ctx context.Context, postID int) ([]includes.PostLinkData, error) {
+	posts, err := db.GetRelatedPostsByID(ctx, postID, 3)
 	if err != nil {
 		return nil, err
 	}

@@ -20,13 +20,13 @@ func EditVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		review, err := db.GetVideoGameReviewByID(id)
+		review, err := db.GetVideoGameReviewByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Review not found", http.StatusNotFound)
 			return
 		}
 
-		game, err := db.GetVideoGameByID(review.VideoGameID)
+		game, err := db.GetVideoGameByID(r.Context(), review.VideoGameID)
 		if err != nil {
 			http.Error(w, "Video game not found", http.StatusNotFound)
 			return
@@ -69,13 +69,13 @@ func CreateVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		_, err = db.GetVideoGameByID(id)
+		_, err = db.GetVideoGameByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Video game not found", http.StatusNotFound)
 			return
 		}
 
-		reviewID, err := db.CreateVideoGameReview(id, 0, time.Now(), nil, nil, false, "")
+		reviewID, err := db.CreateVideoGameReview(r.Context(), id, 0, time.Now(), nil, nil, false, "")
 		if err != nil {
 			slog.Error("Failed to create video game review", "error", err)
 			http.Error(w, "Failed to create video game review", http.StatusInternalServerError)
@@ -128,12 +128,12 @@ func UpdateVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 		notes := r.FormValue("notes")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdateVideoGameReview(id, rating, playedDate, playtime, completionStatus, published, notes); err != nil {
+		if err := db.UpdateVideoGameReview(r.Context(), id, rating, playedDate, playtime, completionStatus, published, notes); err != nil {
 			http.Error(w, "Failed to update video game review", http.StatusInternalServerError)
 			return
 		}
 
-		review, err := db.GetVideoGameReviewByID(id)
+		review, err := db.GetVideoGameReviewByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve review", http.StatusInternalServerError)
 			return

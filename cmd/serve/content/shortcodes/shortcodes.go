@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/audio"
-	"chameth.com/chameth.com/cmd/serve/content/shortcodes/context"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/figure"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmlist"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmreview"
@@ -27,7 +27,7 @@ import (
 
 const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering failed]</div>\n\n"
 
-type renderer func([]string, *context.Context) (string, error)
+type renderer func([]string, *common.Context) (string, error)
 
 var renderers = map[string]renderer{
 	"sidenote":     sidenote.RenderFromText,
@@ -49,7 +49,7 @@ var renderers = map[string]renderer{
 
 var tagRegexp = regexp.MustCompile(`\{%\s*(\w+)(.*?)\s*%\}`)
 
-func Render(input string, ctx *context.Context) string {
+func Render(input string, ctx *common.Context) string {
 	var res bytes.Buffer
 	lastTag := 0
 

@@ -12,13 +12,13 @@ import (
 
 func ListSnippetsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := db.GetDraftSnippets()
+		drafts, err := db.GetDraftSnippets(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve draft snippets", http.StatusInternalServerError)
 			return
 		}
 
-		snippets, err := db.GetAllSnippets()
+		snippets, err := db.GetAllSnippets(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve snippets", http.StatusInternalServerError)
 			return
@@ -64,13 +64,13 @@ func EditSnippetHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		snippet, err := db.GetSnippetByID(id)
+		snippet, err := db.GetSnippetByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Snippet not found", http.StatusNotFound)
 			return
 		}
 
-		topics, err := db.GetAllTopics()
+		topics, err := db.GetAllTopics(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve topics", http.StatusInternalServerError)
 			return
@@ -104,7 +104,7 @@ func CreateSnippetHandler() func(http.ResponseWriter, *http.Request) {
 		path := fmt.Sprintf("/snippets/%s/", name)
 
 		// Create the new snippet
-		id, err := db.CreateSnippet(path, name)
+		id, err := db.CreateSnippet(r.Context(), path, name)
 		if err != nil {
 			http.Error(w, "Failed to create snippet", http.StatusInternalServerError)
 			return
@@ -140,7 +140,7 @@ func UpdateSnippetHandler() func(http.ResponseWriter, *http.Request) {
 			topic = r.FormValue("topic")
 		}
 
-		if err := db.UpdateSnippet(id, path, title, topic, snippetContent, published); err != nil {
+		if err := db.UpdateSnippet(r.Context(), id, path, title, topic, snippetContent, published); err != nil {
 			http.Error(w, "Failed to update snippet", http.StatusInternalServerError)
 			return
 		}

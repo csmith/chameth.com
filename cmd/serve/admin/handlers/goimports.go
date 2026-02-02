@@ -11,13 +11,13 @@ import (
 
 func ListGoImportsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := db.GetDraftGoImports()
+		drafts, err := db.GetDraftGoImports(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve draft goimports", http.StatusInternalServerError)
 			return
 		}
 
-		goimports, err := db.GetAllGoImports()
+		goimports, err := db.GetAllGoImports(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve goimports", http.StatusInternalServerError)
 			return
@@ -63,7 +63,7 @@ func EditGoImportHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		goimport, err := db.GetGoImportByID(id)
+		goimport, err := db.GetGoImportByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Go import not found", http.StatusNotFound)
 			return
@@ -100,7 +100,7 @@ func CreateGoImportHandler() func(http.ResponseWriter, *http.Request) {
 		vcs := "git"
 		repoUrl := "https://github.com/csmith/" + project
 
-		id, err := db.CreateGoImport(path, vcs, repoUrl)
+		id, err := db.CreateGoImport(r.Context(), path, vcs, repoUrl)
 		if err != nil {
 			http.Error(w, "Failed to create goimport", http.StatusInternalServerError)
 			return
@@ -129,7 +129,7 @@ func UpdateGoImportHandler() func(http.ResponseWriter, *http.Request) {
 		repoUrl := r.FormValue("repo_url")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdateGoImport(id, path, vcs, repoUrl, published); err != nil {
+		if err := db.UpdateGoImport(r.Context(), id, path, vcs, repoUrl, published); err != nil {
 			http.Error(w, "Failed to update goimport", http.StatusInternalServerError)
 			return
 		}

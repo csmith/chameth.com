@@ -1,9 +1,13 @@
 package db
 
+import (
+	"context"
+)
+
 // GetAllPrints returns all prints ordered by name.
-func GetAllPrints() ([]Print, error) {
+func GetAllPrints(ctx context.Context) ([]Print, error) {
 	var prints []Print
-	err := db.Select(&prints, "SELECT id, name, description FROM prints WHERE published = true ORDER BY name")
+	err := db.SelectContext(ctx, &prints, "SELECT id, name, description FROM prints WHERE published = true ORDER BY name")
 	if err != nil {
 		return nil, err
 	}
@@ -11,9 +15,9 @@ func GetAllPrints() ([]Print, error) {
 }
 
 // GetPrintLinks returns all links for a given print ID.
-func GetPrintLinks(printID int) ([]PrintLink, error) {
+func GetPrintLinks(ctx context.Context, printID int) ([]PrintLink, error) {
 	var links []PrintLink
-	err := db.Select(&links, "SELECT id, print_id, name, address FROM prints_links WHERE print_id = $1", printID)
+	err := db.SelectContext(ctx, &links, "SELECT id, print_id, name, address FROM prints_links WHERE print_id = $1", printID)
 	if err != nil {
 		return nil, err
 	}

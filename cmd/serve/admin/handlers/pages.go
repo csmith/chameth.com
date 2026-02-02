@@ -12,13 +12,13 @@ import (
 
 func ListPagesHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := db.GetDraftStaticPages()
+		drafts, err := db.GetDraftStaticPages(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve draft pages", http.StatusInternalServerError)
 			return
 		}
 
-		pages, err := db.GetAllStaticPages()
+		pages, err := db.GetAllStaticPages(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve pages", http.StatusInternalServerError)
 			return
@@ -62,14 +62,14 @@ func EditPageHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		page, err := db.GetStaticPageByID(id)
+		page, err := db.GetStaticPageByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Page not found", http.StatusNotFound)
 			return
 		}
 
 		// Fetch media relations for this page
-		mediaRelations, err := db.GetMediaRelationsForEntity("staticpage", id)
+		mediaRelations, err := db.GetMediaRelationsForEntity(r.Context(), "staticpage", id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve media", http.StatusInternalServerError)
 			return
@@ -163,7 +163,7 @@ func CreatePageHandler() func(http.ResponseWriter, *http.Request) {
 		path := fmt.Sprintf("/%s/", name)
 
 		// Create the new page
-		id, err := db.CreateStaticPage(path, name)
+		id, err := db.CreateStaticPage(r.Context(), path, name)
 		if err != nil {
 			http.Error(w, "Failed to create page", http.StatusInternalServerError)
 			return
@@ -194,7 +194,7 @@ func UpdatePageHandler() func(http.ResponseWriter, *http.Request) {
 		published := r.FormValue("published") == "true"
 		raw := r.FormValue("raw") == "true"
 
-		if err := db.UpdateStaticPage(id, path, title, pageContent, published, raw); err != nil {
+		if err := db.UpdateStaticPage(r.Context(), id, path, title, pageContent, published, raw); err != nil {
 			http.Error(w, "Failed to update page", http.StatusInternalServerError)
 			return
 		}

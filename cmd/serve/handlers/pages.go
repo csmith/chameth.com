@@ -12,7 +12,7 @@ import (
 )
 
 func StaticPage(w http.ResponseWriter, r *http.Request) {
-	page, err := db.GetStaticPageByPath(r.URL.Path)
+	page, err := db.GetStaticPageByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find static page by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)
@@ -25,7 +25,7 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if page.Raw {
-		renderedContent, err := content.RenderContent("rawpage", page.ID, page.Content, page.Path)
+		renderedContent, err := content.RenderContent(r.Context(), "rawpage", page.ID, page.Content, page.Path)
 		if err != nil {
 			slog.Error("Failed to render raw page content", "page", page.Title, "error", err)
 			ServerError(w, r)
@@ -50,7 +50,7 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedContent, err := content.RenderContent("staticpage", page.ID, page.Content, page.Path)
+	renderedContent, err := content.RenderContent(r.Context(), "staticpage", page.ID, page.Content, page.Path)
 	if err != nil {
 		slog.Error("Failed to render static page content", "page", page.Title, "error", err)
 		ServerError(w, r)

@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"embed"
 	"errors"
@@ -59,12 +60,12 @@ func Init() error {
 // If path is "/foo", it will also check for "/foo/" in the database.
 // For prefix matches (goimports), it will match subpaths like "/foo/bar".
 // Returns "", nil if no matching path is found.
-func FindContentByPath(path string) (string, error) {
+func FindContentByPath(ctx context.Context, path string) (string, error) {
 	var contentType string
-	err := db.Get(&contentType, `
-		SELECT content_type FROM paths 
+	err := db.GetContext(ctx, &contentType, `
+		SELECT content_type FROM paths
 		WHERE path = $1 OR path = $2 OR (prefix_match AND $1 LIKE path || '%')
-		ORDER BY 
+		ORDER BY
 			prefix_match ASC,
 			LENGTH(path) DESC
 		LIMIT 1

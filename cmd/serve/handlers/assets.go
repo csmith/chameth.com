@@ -50,7 +50,7 @@ func Stylesheet(w http.ResponseWriter, r *http.Request) {
 }
 
 func Media(w http.ResponseWriter, r *http.Request) {
-	m, err := db.GetMediaByPath(r.URL.Path)
+	m, err := db.GetMediaByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find media by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)

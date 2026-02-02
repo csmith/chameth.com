@@ -1,11 +1,14 @@
 package db
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 // GetAllProjectSections returns all project sections ordered by sort.
-func GetAllProjectSections() ([]ProjectSection, error) {
+func GetAllProjectSections(ctx context.Context) ([]ProjectSection, error) {
 	var sections []ProjectSection
-	err := db.Select(&sections, "SELECT id, name, sort, description FROM project_sections ORDER BY sort")
+	err := db.SelectContext(ctx, &sections, "SELECT id, name, sort, description FROM project_sections ORDER BY sort")
 	if err != nil {
 		return nil, err
 	}
@@ -13,9 +16,9 @@ func GetAllProjectSections() ([]ProjectSection, error) {
 }
 
 // GetProjectsInSection returns all projects in a section ordered by pinned (descending), then name (case-insensitive).
-func GetProjectsInSection(sectionID int) ([]Project, error) {
+func GetProjectsInSection(ctx context.Context, sectionID int) ([]Project, error) {
 	var projects []Project
-	err := db.Select(&projects, "SELECT id, section, name, icon, pinned, description FROM projects WHERE section = $1 AND published = true ORDER BY pinned DESC, LOWER(name)", sectionID)
+	err := db.SelectContext(ctx, &projects, "SELECT id, section, name, icon, pinned, description FROM projects WHERE section = $1 AND published = true ORDER BY pinned DESC, LOWER(name)", sectionID)
 	if err != nil {
 		return nil, err
 	}
@@ -23,9 +26,9 @@ func GetProjectsInSection(sectionID int) ([]Project, error) {
 }
 
 // GetAllProjects returns all published projects.
-func GetAllProjects() ([]Project, error) {
+func GetAllProjects(ctx context.Context) ([]Project, error) {
 	var projects []Project
-	err := db.Select(&projects, "SELECT id, section, name, icon, pinned, description FROM projects WHERE published = true ORDER BY section, pinned DESC, LOWER(name)")
+	err := db.SelectContext(ctx, &projects, "SELECT id, section, name, icon, pinned, description FROM projects WHERE published = true ORDER BY section, pinned DESC, LOWER(name)")
 	if err != nil {
 		return nil, err
 	}
@@ -33,9 +36,9 @@ func GetAllProjects() ([]Project, error) {
 }
 
 // GetDraftProjects returns all unpublished projects.
-func GetDraftProjects() ([]Project, error) {
+func GetDraftProjects(ctx context.Context) ([]Project, error) {
 	var projects []Project
-	err := db.Select(&projects, "SELECT id, section, name, icon, pinned, description FROM projects WHERE published = false ORDER BY section, pinned DESC, LOWER(name)")
+	err := db.SelectContext(ctx, &projects, "SELECT id, section, name, icon, pinned, description FROM projects WHERE published = false ORDER BY section, pinned DESC, LOWER(name)")
 	if err != nil {
 		return nil, err
 	}
@@ -43,9 +46,9 @@ func GetDraftProjects() ([]Project, error) {
 }
 
 // GetProjectByID returns a project for the given ID.
-func GetProjectByID(id int) (*Project, error) {
+func GetProjectByID(ctx context.Context, id int) (*Project, error) {
 	var project Project
-	err := db.Get(&project, "SELECT id, section, name, icon, pinned, description, published FROM projects WHERE id = $1", id)
+	err := db.GetContext(ctx, &project, "SELECT id, section, name, icon, pinned, description, published FROM projects WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -54,8 +57,8 @@ func GetProjectByID(id int) (*Project, error) {
 
 // CreateProject creates a new project in the database and returns its ID.
 // The project is created with the first section by sort order, unpublished, not pinned.
-func CreateProject(name string) (int, error) {
-	sections, err := GetAllProjectSections()
+func CreateProject(ctx context.Context, name string) (int, error) {
+	sections, err := GetAllProjectSections(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("failed to get sections: %w", err)
 	}
@@ -65,7 +68,7 @@ func CreateProject(name string) (int, error) {
 	defaultSection := sections[0].ID
 
 	var id int
-	err = db.QueryRow(`
+	err = db.QueryRowContext(ctx, `
 		INSERT INTO projects (section, name, icon, pinned, description, published)
 		VALUES ($1, $2, '', false, '', false)
 		RETURNING id
@@ -77,8 +80,8 @@ func CreateProject(name string) (int, error) {
 }
 
 // UpdateProject updates a project in the database.
-func UpdateProject(id int, name, icon, description string, section int, pinned, published bool) error {
-	_, err := db.Exec(`
+func UpdateProject(ctx context.Context, id int, name, icon, description string, section int, pinned, published bool) error {
+	_, err := db.ExecContext(ctx, `
 		UPDATE projects
 		SET section = $1, name = $2, icon = $3, pinned = $4, description = $5, published = $6
 		WHERE id = $7

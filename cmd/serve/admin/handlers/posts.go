@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -15,13 +16,13 @@ import (
 
 func ListPostsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := db.GetDraftPosts()
+		drafts, err := db.GetDraftPosts(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve draft posts", http.StatusInternalServerError)
 			return
 		}
 
-		posts, err := db.GetAllPosts()
+		posts, err := db.GetAllPosts(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve posts", http.StatusInternalServerError)
 			return
@@ -67,14 +68,14 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		post, err := db.GetPostByID(id)
+		post, err := db.GetPostByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Post not found", http.StatusNotFound)
 			return
 		}
 
 		// Fetch media relations for this post
-		mediaRelations, err := db.GetMediaRelationsForEntity("post", id)
+		mediaRelations, err := db.GetMediaRelationsForEntity(r.Context(), "post", id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve media", http.StatusInternalServerError)
 			return
@@ -169,7 +170,7 @@ func CreatePostHandler() func(http.ResponseWriter, *http.Request) {
 		path := fmt.Sprintf("/%s/", name)
 
 		// Create the new post
-		id, err := db.CreatePost(path, name)
+		id, err := db.CreatePost(r.Context(), path, name)
 		if err != nil {
 			http.Error(w, "Failed to create post", http.StatusInternalServerError)
 			return
@@ -201,21 +202,19 @@ func UpdatePostHandler() func(http.ResponseWriter, *http.Request) {
 		format := r.FormValue("format")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdatePost(id, path, title, postContent, date, format, published); err != nil {
+		if err := db.UpdatePost(r.Context(), id, path, title, postContent, date, format, published); err != nil {
 			http.Error(w, "Failed to update post", http.StatusInternalServerError)
 			return
 		}
 
 		if published {
 			go func() {
-				if err := content.GenerateAndStoreEmbedding(path); err != nil {
+				if err := content.GenerateAndStoreEmbedding(context.Background(), path); err != nil {
 					slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
 				}
 			}()
 
-			go func() {
-				content.SyndicateAllPostsToATProto()
-			}()
+			go content.SyndicateAllPostsToATProto(context.Background())
 		}
 
 		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
@@ -232,7 +231,7 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Generate the wordcloud image
-		imageData, err := wordclouds.GenerateWordcloud(id)
+		imageData, err := wordclouds.GenerateWordcloud(r.Context(), id)
 		if err != nil {
 			slog.Error("Failed to generate wordcloud", "post_id", id, "error", err)
 			http.Error(w, "Failed to generate wordcloud", http.StatusInternalServerError)
@@ -240,7 +239,7 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		// Get the post to construct the path
-		post, err := db.GetPostByID(id)
+		post, err := db.GetPostByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Post not found", http.StatusNotFound)
 			return
@@ -249,7 +248,7 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 		// Insert the image into the media table (wordcloud dimensions are 400x300)
 		width := 400
 		height := 300
-		mediaID, err := db.CreateMedia("image/png", "wordcloud.png", imageData, &width, &height, nil)
+		mediaID, err := db.CreateMedia(r.Context(), "image/png", "wordcloud.png", imageData, &width, &height, nil)
 		if err != nil {
 			slog.Error("Failed to create media", "error", err)
 			http.Error(w, "Failed to save wordcloud", http.StatusInternalServerError)
@@ -262,7 +261,7 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 		// Create media relation with role=opengraph
 		description := "Word cloud showing frequently used words in the post"
 		role := "opengraph"
-		err = db.CreateMediaRelation("post", id, mediaID, mediaPath, nil, &description, &role)
+		err = db.CreateMediaRelation(r.Context(), "post", id, mediaID, mediaPath, nil, &description, &role)
 		if err != nil {
 			slog.Error("Failed to create media relation", "error", err)
 			http.Error(w, "Failed to attach wordcloud to post", http.StatusInternalServerError)
