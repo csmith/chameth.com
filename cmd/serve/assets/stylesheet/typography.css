@@ -7,7 +7,7 @@
     --font-size-xxlarge: 32pt;
     --font-size-giant: 40pt;
 
-    @media (max-width: 500px) and (min-resolution: 2dppx) {
+    @media (width <= 500px) and (min-resolution: 2dppx) {
         --font-size-tiny: 8pt;
         --font-size-small: 9pt;
         --font-size-regular: 12pt;
@@ -16,7 +16,7 @@
         --font-size-xxlarge: 25pt;
     }
 
-    @media (max-width: 500px) {
+    @media (width <= 500px) {
         --font-size-giant: 30pt;
     }
 }

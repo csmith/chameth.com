@@ -37,7 +37,7 @@ body > footer {
   }
 }
 
-@media (max-width: 2000px) {
+@media (width <= 2000px) {
   body > main {
     padding-bottom: 150px;
   }

@@ -11,7 +11,7 @@
         margin-right: var(--small-space);
         padding-top: var(--small-space);
 
-        @media (max-width: 500px) {
+        @media (width <= 500px) {
             margin-right: 0;
         }
 
@@ -44,14 +44,14 @@
     margin-left: var(--large-space);
     margin-bottom: var(--medium-space);
 
-    @media (max-width: 1200px) {
+    @media (width <= 1200px) {
         float: none;
         margin-bottom: var(--large-space);
         margin-left: auto;
         margin-right: auto;
     }
 
-    @media (max-width: 800px) {
+    @media (width <= 800px) {
         transform: rotate(0deg);
     }
 
@@ -110,7 +110,7 @@
         box-shadow: 20px 20px 5px black;
         backface-visibility: hidden;
 
-        @media (max-width: 500px) {
+        @media (width <= 500px) {
             box-shadow: 10px 10px 5px black;
         }
 

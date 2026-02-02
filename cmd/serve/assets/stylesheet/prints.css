@@ -11,7 +11,7 @@ section.print {
     grid-template-columns: 200px auto 200px;
     grid-gap: 20px;
 
-    @media (max-width: 800px) {
+    @media (width <= 800px) {
         grid-template-columns: 200px auto 200px;
 
         img:first-child {

@@ -6,7 +6,7 @@ nav ol {
     padding: 0;
     margin: var(--medium-space) 0 0 0;
 
-    @media (max-width: 800px) {
+    @media (width <= 800px) {
         flex-direction: column;
         align-items: flex-start;
         gap: var(--small-space);
@@ -53,7 +53,7 @@ nav.readmore {
         clear: both;
     }
 
-    @media (min-width: 1200px) {
+    @media (width >= 1200px) {
         p.date + figure.right {
             margin-top: calc(
                 -1 *
