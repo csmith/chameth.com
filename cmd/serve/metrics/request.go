@@ -8,8 +8,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"runtime/debug"
-
 	"github.com/csmith/aca"
 
 	"golang.org/x/text/language"
@@ -24,23 +22,6 @@ var (
 
 	buildVersion string
 )
-
-func init() {
-	info, ok := debug.ReadBuildInfo()
-	if !ok {
-		buildVersion = "master"
-		return
-	}
-
-	for _, setting := range info.Settings {
-		if setting.Key == "vcs.revision" {
-			buildVersion = setting.Value
-			return
-		}
-	}
-
-	buildVersion = "master"
-}
 
 type request struct {
 	start   time.Time
@@ -139,7 +120,9 @@ func injectStats(requestID string, content string) string {
 	}
 
 	shortCommit := buildVersion
-	if len(buildVersion) > 7 {
+	if buildVersion == "" {
+		shortCommit = "unknown"
+	} else if len(buildVersion) > 7 {
 		shortCommit = buildVersion[:7]
 	}
 
@@ -148,7 +131,7 @@ func injectStats(requestID string, content string) string {
 		content,
 		"[[STATS_GO_HERE]]",
 		p.Sprintf(
-			`Request ID <code>%s</code> served by chameth.com build <code>%s</code> in %dμs using %d db queries`,
+			`Request ID <code>%s</code> served by chameth.com <code>%s</code> in %dμs using %d db queries`,
 			requestID,
 			shortCommit,
 			duration.Microseconds(),

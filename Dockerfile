@@ -1,9 +1,8 @@
 FROM golang:1.25.6-alpine AS go
-RUN apk add git # Needed for Go to embed VCS information
+RUN apk add git
 WORKDIR /usr/src/app
-ADD go.mod go.sum /usr/src/app/
-ADD cmd /usr/src/app/cmd
-RUN CGO_ENABLED=0 go build -v -o /serve ./cmd/serve && mkdir /tailscale
+ADD . .
+RUN CGO_ENABLED=0 go build -v -ldflags="-X 'chameth.com/chameth.com/cmd/serve/metrics.buildVersion=$(git rev-parse HEAD)'" -o /serve ./cmd/serve && mkdir /tailscale
 
 FROM ghcr.io/greboid/dockerbase/nonroot:1.20250803.0
 COPY --from=go /serve /serve
