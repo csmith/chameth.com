@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"context"
-	"log/slog"
 	"net/http"
 	"strings"
 	"sync"
@@ -63,7 +62,6 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 
 			next.ServeHTTP(writer, r.WithContext(context.WithValue(r.Context(), requestIdKey, requestId)))
 
-			slog.Info("Finished request", "rid", requestId)
 			writer.Flush()
 		})
 	}
