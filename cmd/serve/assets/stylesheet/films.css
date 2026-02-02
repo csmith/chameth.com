@@ -303,7 +303,7 @@ ol.watched-films {
 
     &.watched-films {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(133px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
 
     li {
