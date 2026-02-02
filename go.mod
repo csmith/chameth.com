@@ -13,7 +13,7 @@ require (
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/lib/pq v1.10.9
 	github.com/pgvector/pgvector-go v0.3.0
-	github.com/yuin/goldmark v1.7.14
+	github.com/yuin/goldmark v1.7.15
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	golang.org/x/image v0.34.0
 	golang.org/x/net v0.48.0
@@ -69,5 +69,5 @@ require (
 
 require (
 	github.com/kljensen/snowball v0.10.0
-	golang.org/x/text v0.32.0 // indirect
+	golang.org/x/text v0.32.0
 )
