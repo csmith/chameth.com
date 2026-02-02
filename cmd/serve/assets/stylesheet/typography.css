@@ -164,6 +164,10 @@ a {
     font-family: "Berkeley Mono", monospace;
     font-size: var(--font-size-tiny);
     color: var(--text-alt-colour);
+
+    @media (width <= 600px) {
+        font-size: 6pt;
+    }
 }
 
 em {
