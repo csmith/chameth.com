@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"chameth.com/chameth.com/cmd/serve/metrics"
 )
 
 func generateVideoGamePath(title string) string {
@@ -25,6 +27,7 @@ func generateVideoGamePath(title string) string {
 }
 
 func GetVideoGameByID(ctx context.Context, id int) (*VideoGame, error) {
+	metrics.LogQuery(ctx)
 	var game VideoGame
 	err := db.GetContext(ctx, &game, "SELECT id, title, platform, overview, published, path FROM video_games WHERE id = $1", id)
 	if err != nil {
@@ -34,6 +37,7 @@ func GetVideoGameByID(ctx context.Context, id int) (*VideoGame, error) {
 }
 
 func GetAllVideoGames(ctx context.Context) ([]VideoGame, error) {
+	metrics.LogQuery(ctx)
 	var games []VideoGame
 	err := db.SelectContext(ctx, &games, "SELECT id, title, platform, overview, published, path FROM video_games ORDER BY title")
 	if err != nil {
@@ -43,6 +47,7 @@ func GetAllVideoGames(ctx context.Context) ([]VideoGame, error) {
 }
 
 func GetAllVideoGamesWithReviews(ctx context.Context) ([]VideoGameWithReview, error) {
+	metrics.LogQuery(ctx)
 	query := `
 		SELECT
 			vg.id, vg.title, vg.platform, vg.overview, vg.published, vg.path,
@@ -107,6 +112,7 @@ func GetAllVideoGamesWithReviews(ctx context.Context) ([]VideoGameWithReview, er
 }
 
 func CreateVideoGame(ctx context.Context, title, platform, overview, path string) (int, error) {
+	metrics.LogQuery(ctx)
 	var id int
 	err := db.QueryRowContext(ctx, `
 		INSERT INTO video_games (title, platform, overview, published, path)
@@ -120,6 +126,7 @@ func CreateVideoGame(ctx context.Context, title, platform, overview, path string
 }
 
 func UpdateVideoGame(ctx context.Context, id int, title, platform, overview, path string, published bool) error {
+	metrics.LogQuery(ctx)
 	_, err := db.ExecContext(ctx, `
 		UPDATE video_games
 		SET title = $1, platform = $2, overview = $3, published = $4, path = $5
@@ -132,6 +139,7 @@ func UpdateVideoGame(ctx context.Context, id int, title, platform, overview, pat
 }
 
 func GetVideoGameByPath(ctx context.Context, path string) (*VideoGame, error) {
+	metrics.LogQuery(ctx)
 	var game VideoGame
 	err := db.GetContext(ctx, &game, "SELECT id, title, platform, overview, published, path FROM video_games WHERE path = $1 OR path = $2", path, path+"/")
 	if err != nil {
@@ -141,6 +149,7 @@ func GetVideoGameByPath(ctx context.Context, path string) (*VideoGame, error) {
 }
 
 func DeleteVideoGame(ctx context.Context, id int) error {
+	metrics.LogQuery(ctx)
 	_, err := db.ExecContext(ctx, "DELETE FROM video_games WHERE id = $1", id)
 	if err != nil {
 		return fmt.Errorf("failed to delete video game: %w", err)

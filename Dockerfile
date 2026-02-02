@@ -1,4 +1,5 @@
-FROM golang:1.25.6 AS go
+FROM golang:1.25.6-alpine AS go
+RUN apk add git # Needed for Go to embed VCS information
 WORKDIR /usr/src/app
 ADD go.mod go.sum /usr/src/app/
 ADD cmd /usr/src/app/cmd

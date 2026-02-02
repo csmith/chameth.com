@@ -3,12 +3,15 @@ package db
 import (
 	"context"
 	"fmt"
+
+	"chameth.com/chameth.com/cmd/serve/metrics"
 )
 
 // GetPoemByPath returns a poem for the given path.
 // It handles cases where the path may or may not have a trailing slash.
 // Returns nil if no poem is found with that path.
 func GetPoemByPath(ctx context.Context, path string) (*Poem, error) {
+	metrics.LogQuery(ctx)
 	var poem Poem
 	err := db.GetContext(ctx, &poem, "SELECT id, path, title, poem, notes, date, published FROM poems WHERE path = $1 OR path = $2", path, path+"/")
 	if err != nil {
@@ -19,6 +22,7 @@ func GetPoemByPath(ctx context.Context, path string) (*Poem, error) {
 
 // GetPoemByID returns a poem for the given ID.
 func GetPoemByID(ctx context.Context, id int) (*Poem, error) {
+	metrics.LogQuery(ctx)
 	var poem Poem
 	err := db.GetContext(ctx, &poem, "SELECT id, path, title, poem, notes, date, published FROM poems WHERE id = $1", id)
 	if err != nil {
@@ -29,6 +33,7 @@ func GetPoemByID(ctx context.Context, id int) (*Poem, error) {
 
 // GetAllPoems returns all published poems without their content.
 func GetAllPoems(ctx context.Context) ([]PoemMetadata, error) {
+	metrics.LogQuery(ctx)
 	var res []PoemMetadata
 	err := db.SelectContext(ctx, &res, "SELECT id, path, title, date, published FROM poems WHERE published = true ORDER BY date DESC")
 	if err != nil {
@@ -39,6 +44,7 @@ func GetAllPoems(ctx context.Context) ([]PoemMetadata, error) {
 
 // GetDraftPoems returns all unpublished poems without their content.
 func GetDraftPoems(ctx context.Context) ([]PoemMetadata, error) {
+	metrics.LogQuery(ctx)
 	var poems []PoemMetadata
 	err := db.SelectContext(ctx, &poems, "SELECT id, path, title, date, published FROM poems WHERE published = false ORDER BY date DESC")
 	if err != nil {
@@ -49,6 +55,7 @@ func GetDraftPoems(ctx context.Context) ([]PoemMetadata, error) {
 
 // CreatePoem creates a new unpublished poem in the database and returns its ID.
 func CreatePoem(ctx context.Context, path, title string) (int, error) {
+	metrics.LogQuery(ctx)
 	var id int
 	err := db.QueryRowContext(ctx, `
 		INSERT INTO poems (path, title, poem, notes, date, published)
@@ -63,6 +70,7 @@ func CreatePoem(ctx context.Context, path, title string) (int, error) {
 
 // UpdatePoem updates a poem in the database.
 func UpdatePoem(ctx context.Context, id int, path, title, poem, notes, date string, published bool) error {
+	metrics.LogQuery(ctx)
 	_, err := db.ExecContext(ctx, `
 		UPDATE poems
 		SET path = $1, title = $2, poem = $3, notes = $4, date = $5, published = $6
@@ -76,6 +84,7 @@ func UpdatePoem(ctx context.Context, id int, path, title, poem, notes, date stri
 
 // GetRecentPoemsWithContent returns the N most recent poems with full content.
 func GetRecentPoemsWithContent(ctx context.Context, limit int) ([]Poem, error) {
+	metrics.LogQuery(ctx)
 	var poems []Poem
 	err := db.SelectContext(ctx, &poems, `
 		SELECT id, path, title, poem, notes, date, published

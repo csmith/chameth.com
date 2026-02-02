@@ -17,6 +17,7 @@ import (
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/handlers"
+	"chameth.com/chameth.com/cmd/serve/metrics"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
 	"github.com/csmith/slogflags"
@@ -98,6 +99,7 @@ func main() {
 						"video/*":          time.Hour * 24 * 365,
 					}),
 				),
+				metrics.CollectRequestStats(),
 				middleware.Compress(),
 				middleware.Headers(
 					middleware.WithHeader("X-Content-Type-Options", "nosniff"),

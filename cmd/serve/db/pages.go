@@ -3,12 +3,15 @@ package db
 import (
 	"context"
 	"fmt"
+
+	"chameth.com/chameth.com/cmd/serve/metrics"
 )
 
 // GetStaticPageByPath returns a static page for the given path.
 // It handles cases where the path may or may not have a trailing slash.
 // Returns nil if no static page is found with that path.
 func GetStaticPageByPath(ctx context.Context, path string) (*StaticPage, error) {
+	metrics.LogQuery(ctx)
 	var page StaticPage
 	err := db.GetContext(ctx, &page, "SELECT id, path, title, content, raw FROM staticpages WHERE path = $1 OR path = $2", path, path+"/")
 	if err != nil {
@@ -19,6 +22,7 @@ func GetStaticPageByPath(ctx context.Context, path string) (*StaticPage, error) 
 
 // GetStaticPageByID returns a static page for the given ID.
 func GetStaticPageByID(ctx context.Context, id int) (*StaticPage, error) {
+	metrics.LogQuery(ctx)
 	var page StaticPage
 	err := db.GetContext(ctx, &page, "SELECT id, path, title, content, published, raw FROM staticpages WHERE id = $1", id)
 	if err != nil {
@@ -29,6 +33,7 @@ func GetStaticPageByID(ctx context.Context, id int) (*StaticPage, error) {
 
 // GetAllStaticPages returns all published static pages without their content.
 func GetAllStaticPages(ctx context.Context) ([]StaticPageMetadata, error) {
+	metrics.LogQuery(ctx)
 	var pages []StaticPageMetadata
 	err := db.SelectContext(ctx, &pages, "SELECT id, path, title, published, raw FROM staticpages WHERE published = true ORDER BY title ASC")
 	if err != nil {
@@ -39,6 +44,7 @@ func GetAllStaticPages(ctx context.Context) ([]StaticPageMetadata, error) {
 
 // GetDraftStaticPages returns all unpublished static pages without their content.
 func GetDraftStaticPages(ctx context.Context) ([]StaticPageMetadata, error) {
+	metrics.LogQuery(ctx)
 	var pages []StaticPageMetadata
 	err := db.SelectContext(ctx, &pages, "SELECT id, path, title, published, raw FROM staticpages WHERE published = false ORDER BY title ASC")
 	if err != nil {
@@ -49,6 +55,7 @@ func GetDraftStaticPages(ctx context.Context) ([]StaticPageMetadata, error) {
 
 // CreateStaticPage creates a new unpublished static page in the database and returns its ID.
 func CreateStaticPage(ctx context.Context, path, title string) (int, error) {
+	metrics.LogQuery(ctx)
 	var id int
 	err := db.QueryRowContext(ctx, `
 		INSERT INTO staticpages (path, title, content, published)
@@ -63,6 +70,7 @@ func CreateStaticPage(ctx context.Context, path, title string) (int, error) {
 
 // UpdateStaticPage updates a static page in the database.
 func UpdateStaticPage(ctx context.Context, id int, path, title, content string, published, raw bool) error {
+	metrics.LogQuery(ctx)
 	_, err := db.ExecContext(ctx, `
 		UPDATE staticpages
 		SET path = $1, title = $2, content = $3, published = $4, raw = $5

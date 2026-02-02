@@ -151,6 +151,10 @@
             <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a> licence.
         </p>
     </section>
+    <section class="stats">
+        <span class="stats-details">[[STATS_GO_HERE]]</span>
+        <span class="stats-rollover" tabindex="0">π</span>
+    </section>
     <section class="h-card" hidden="hidden">
         <a class="p-name u-url" href="https://chameth.com/">Chris Smith</a>
         <img class="u-photo" src="https://chameth.com/avatar.webp" alt="Photo of Chris Smith">

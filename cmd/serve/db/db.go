@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	"chameth.com/chameth.com/cmd/serve/metrics"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
@@ -61,6 +62,7 @@ func Init() error {
 // For prefix matches (goimports), it will match subpaths like "/foo/bar".
 // Returns "", nil if no matching path is found.
 func FindContentByPath(ctx context.Context, path string) (string, error) {
+	metrics.LogQuery(ctx)
 	var contentType string
 	err := db.GetContext(ctx, &contentType, `
 		SELECT content_type FROM paths

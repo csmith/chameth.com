@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 	"time"
+
+	"chameth.com/chameth.com/cmd/serve/metrics"
 )
 
 func GetVideoGameReviewByID(ctx context.Context, id int) (*VideoGameReview, error) {
+	metrics.LogQuery(ctx)
 	var review VideoGameReview
 	err := db.GetContext(ctx, &review, "SELECT id, video_game_id, played_date, rating, playtime, completion_status, notes, published FROM video_game_reviews WHERE id = $1", id)
 	if err != nil {
@@ -16,6 +19,7 @@ func GetVideoGameReviewByID(ctx context.Context, id int) (*VideoGameReview, erro
 }
 
 func GetVideoGameReviewsByVideoGameID(ctx context.Context, gameID int) ([]VideoGameReview, error) {
+	metrics.LogQuery(ctx)
 	var reviews []VideoGameReview
 	err := db.SelectContext(ctx, &reviews, "SELECT id, video_game_id, played_date, rating, playtime, completion_status, notes, published FROM video_game_reviews WHERE video_game_id = $1 ORDER BY played_date DESC", gameID)
 	if err != nil {
@@ -25,6 +29,7 @@ func GetVideoGameReviewsByVideoGameID(ctx context.Context, gameID int) ([]VideoG
 }
 
 func CreateVideoGameReview(ctx context.Context, gameID int, rating int, playedDate time.Time, playtime *int, completionStatus *string, published bool, notes string) (int, error) {
+	metrics.LogQuery(ctx)
 	var id int
 	err := db.QueryRowContext(ctx, `
 		INSERT INTO video_game_reviews (video_game_id, rating, played_date, playtime, completion_status, notes, published)
@@ -38,6 +43,7 @@ func CreateVideoGameReview(ctx context.Context, gameID int, rating int, playedDa
 }
 
 func UpdateVideoGameReview(ctx context.Context, id int, rating int, playedDate string, playtime *int, completionStatus *string, published bool, notes string) error {
+	metrics.LogQuery(ctx)
 	_, err := db.ExecContext(ctx, `
 		UPDATE video_game_reviews
 		SET rating = $1, played_date = $2, playtime = $3, completion_status = $4, notes = $5, published = $6
@@ -50,6 +56,7 @@ func UpdateVideoGameReview(ctx context.Context, id int, rating int, playedDate s
 }
 
 func GetVideoGameReviewWithGameAndPoster(ctx context.Context, reviewID int) (*VideoGameReviewWithGameAndPoster, error) {
+	metrics.LogQuery(ctx)
 	query := `
 		SELECT
 			vgr.id as "videogamereview.id", vgr.video_game_id as "videogamereview.video_game_id", vgr.played_date as "videogamereview.played_date",
@@ -79,6 +86,7 @@ func GetVideoGameReviewWithGameAndPoster(ctx context.Context, reviewID int) (*Vi
 }
 
 func GetAllPublishedVideoGameReviewsWithGameAndPosters(ctx context.Context) ([]VideoGameReviewWithGameAndPoster, error) {
+	metrics.LogQuery(ctx)
 	query := `
 		SELECT
 			vgr.id as "videogamereview.id", vgr.video_game_id as "videogamereview.video_game_id", vgr.played_date as "videogamereview.played_date",
@@ -109,6 +117,7 @@ func GetAllPublishedVideoGameReviewsWithGameAndPosters(ctx context.Context) ([]V
 }
 
 func GetRecentPublishedVideoGameReviewsWithGameAndPosters(ctx context.Context, limit int) ([]VideoGameReviewWithGameAndPoster, error) {
+	metrics.LogQuery(ctx)
 	query := `
 		SELECT
 			vgr.id as "videogamereview.id", vgr.video_game_id as "videogamereview.video_game_id", vgr.played_date as "videogamereview.played_date",

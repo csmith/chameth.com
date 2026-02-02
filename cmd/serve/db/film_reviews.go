@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 	"time"
+
+	"chameth.com/chameth.com/cmd/serve/metrics"
 )
 
 func GetFilmReviewByID(ctx context.Context, id int) (*FilmReview, error) {
+	metrics.LogQuery(ctx)
 	var review FilmReview
 	err := db.GetContext(ctx, &review, "SELECT id, film_id, watched_date, rating, is_rewatch, has_spoilers, review_text, published FROM film_reviews WHERE id = $1", id)
 	if err != nil {
@@ -16,6 +19,7 @@ func GetFilmReviewByID(ctx context.Context, id int) (*FilmReview, error) {
 }
 
 func GetFilmReviewsByFilmID(ctx context.Context, filmID int) ([]FilmReview, error) {
+	metrics.LogQuery(ctx)
 	var reviews []FilmReview
 	err := db.SelectContext(ctx, &reviews, "SELECT id, film_id, watched_date, rating, is_rewatch, has_spoilers, review_text, published FROM film_reviews WHERE film_id = $1 ORDER BY watched_date DESC", filmID)
 	if err != nil {
@@ -25,6 +29,7 @@ func GetFilmReviewsByFilmID(ctx context.Context, filmID int) ([]FilmReview, erro
 }
 
 func CreateFilmReview(ctx context.Context, filmID int, rating int, watchedDate time.Time, isRewatch, hasSpoilers, published bool, reviewText string) (int, error) {
+	metrics.LogQuery(ctx)
 	var id int
 	err := db.QueryRowContext(ctx, `
 		INSERT INTO film_reviews (film_id, rating, watched_date, is_rewatch, has_spoilers, review_text, published)
@@ -38,6 +43,7 @@ func CreateFilmReview(ctx context.Context, filmID int, rating int, watchedDate t
 }
 
 func UpdateFilmReview(ctx context.Context, id int, rating int, watchedDate string, isRewatch, hasSpoilers, published bool, reviewText string) error {
+	metrics.LogQuery(ctx)
 	_, err := db.ExecContext(ctx, `
 		UPDATE film_reviews
 		SET rating = $1, watched_date = $2, is_rewatch = $3, has_spoilers = $4, review_text = $5, published = $6
@@ -50,6 +56,7 @@ func UpdateFilmReview(ctx context.Context, id int, rating int, watchedDate strin
 }
 
 func GetFilmReviewWithFilmAndPoster(ctx context.Context, reviewID int) (*FilmReviewWithFilmAndPoster, error) {
+	metrics.LogQuery(ctx)
 	query := `
 		SELECT
 			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",
@@ -80,6 +87,7 @@ func GetFilmReviewWithFilmAndPoster(ctx context.Context, reviewID int) (*FilmRev
 }
 
 func GetAllPublishedFilmReviewsWithFilmAndPosters(ctx context.Context) ([]FilmReviewWithFilmAndPoster, error) {
+	metrics.LogQuery(ctx)
 	query := `
 		SELECT
 			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",
@@ -110,6 +118,7 @@ func GetAllPublishedFilmReviewsWithFilmAndPosters(ctx context.Context) ([]FilmRe
 }
 
 func GetRecentPublishedFilmReviewsWithFilmAndPosters(ctx context.Context, limit int) ([]FilmReviewWithFilmAndPoster, error) {
+	metrics.LogQuery(ctx)
 	query := `
 		SELECT
 			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",
@@ -141,6 +150,7 @@ func GetRecentPublishedFilmReviewsWithFilmAndPosters(ctx context.Context, limit 
 }
 
 func GetPublishedFilmReviewsWithFilmAndPostersByDateRange(ctx context.Context, startDate, endDate time.Time) ([]FilmReviewWithFilmAndPoster, error) {
+	metrics.LogQuery(ctx)
 	query := `
 		SELECT
 			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",
