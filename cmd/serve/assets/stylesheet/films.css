@@ -190,6 +190,13 @@ a.film-list {
     background: var(--background-alt-colour);
     box-shadow: 0 0 3px var(--accent-colour);
 
+    @media (width <= 800px) {
+        grid-template-areas: "header" "description" "images" "meta";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+        max-height: inherit;
+    }
+
     &,
     &:hover,
     &:focus,
@@ -249,11 +256,15 @@ a.film-list {
     }
 
     .poster-stack {
-        --overlap: 0.4;
+        --overlap: 0.3;
         grid-area: images;
         position: relative;
         width: calc(133px + (133px * 4 * var(--overlap)));
         height: 200px;
+
+        @media (width < 400px) {
+            --overlap: 0.2;
+        }
 
         img {
             max-height: 200px;
