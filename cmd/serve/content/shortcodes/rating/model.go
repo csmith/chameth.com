@@ -1,7 +1,7 @@
 package rating
 
 type Data struct {
-	FilledStars int
+	FilledStars []int
 	HalfStar    bool
 	EmptyStars  int
 }

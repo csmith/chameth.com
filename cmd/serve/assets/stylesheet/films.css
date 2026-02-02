@@ -480,10 +480,6 @@ ol.watched-films {
 
     img:nth-child(2) {
         rotate: 5deg;
-
-        &[src="/star.png"] {
-            transform: scaleX(-1);
-        }
     }
 
     img:nth-child(3) {
@@ -496,5 +492,21 @@ ol.watched-films {
 
     img:nth-child(5) {
         rotate: 15deg;
+    }
+
+    .rot-1 {
+        transform: rotate(70deg);
+    }
+
+    .rot-2 {
+        transform: rotate(140deg);
+    }
+
+    .rot-3 {
+        transform: rotate(210deg);
+    }
+
+    .rot-4 {
+        transform: rotate(280deg);
     }
 }

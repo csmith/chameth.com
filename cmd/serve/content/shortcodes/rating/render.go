@@ -5,6 +5,7 @@ import (
 	"embed"
 	"fmt"
 	"html/template"
+	"math/rand"
 	"strconv"
 
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/common"
@@ -13,7 +14,9 @@ import (
 //go:embed *.gotpl
 var templates embed.FS
 
-var tmpl = template.Must(template.New("rating.html.gotpl").ParseFS(templates, "rating.html.gotpl"))
+var tmpl = template.Must(template.New("rating.html.gotpl").Funcs(template.FuncMap{
+	"mod": func(a, b int) int { return a % b },
+}).ParseFS(templates, "rating.html.gotpl"))
 
 func RenderFromText(args []string, _ *common.Context) (string, error) {
 	if len(args) < 1 {
@@ -29,8 +32,14 @@ func RenderFromText(args []string, _ *common.Context) (string, error) {
 }
 
 func Render(rating int) (string, error) {
+	filledStars := rating / 2
+	rotations := make([]int, filledStars)
+	for i := range rotations {
+		rotations[i] = rand.Intn(15)
+	}
+
 	return renderTemplate(Data{
-		FilledStars: rating / 2,
+		FilledStars: rotations,
 		HalfStar:    rating%2 == 1,
 		EmptyStars:  5 - ((rating + 1) / 2),
 	})
