@@ -153,7 +153,7 @@
             padding: 0;
         }
 
-        img {
+        & > img {
             grid-area: image;
             max-height: 200px;
             border-radius: var(--border-radius);
@@ -330,7 +330,7 @@ ol.watched-films {
                     color: var(--text-colour);
                 }
 
-                img {
+                & > img {
                     border-color: var(--text-colour);
                 }
             }
@@ -342,7 +342,7 @@ ol.watched-films {
                 transition: color 200ms ease-in-out;
             }
 
-            img {
+            & > img {
                 max-height: 200px;
                 max-width: 133px;
                 border: 4px solid var(--background-alt-colour);
@@ -464,5 +464,37 @@ ol.watched-films {
                 color: var(--text-alt-colour);
             }
         }
+    }
+}
+
+.star-rating {
+    vertical-align: middle;
+
+    img:not(:first-child) {
+        margin-left: -3px;
+    }
+
+    img:first-child {
+        rotate: -3deg;
+    }
+
+    img:nth-child(2) {
+        rotate: 5deg;
+
+        &[src="/star.png"] {
+            transform: scaleX(-1);
+        }
+    }
+
+    img:nth-child(3) {
+        rotate: 10deg;
+    }
+
+    img:nth-child(4) {
+        rotate: -10deg;
+    }
+
+    img:nth-child(5) {
+        rotate: 15deg;
     }
 }
