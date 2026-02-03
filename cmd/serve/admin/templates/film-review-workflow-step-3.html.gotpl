@@ -13,6 +13,7 @@
 </div>
 
 <p>Film: <strong>{{.Film.Title}}</strong></p>
+<p>Position: <strong>{{.Position}}</strong></p>
 
 {{if .LetterboxdListURL}}
   <p>Click the link below to update your Letterboxd ranked list, then come back and continue:</p>

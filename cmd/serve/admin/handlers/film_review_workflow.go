@@ -227,8 +227,8 @@ func FilmReviewWorkflowStep2Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/films/workflow/step/3?film_id=%d&default_rating=%d",
-			filmID, defaultRating), http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("/films/workflow/step/3?film_id=%d&default_rating=%d&position=%d",
+			filmID, defaultRating, position), http.StatusSeeOther)
 	}
 }
 
@@ -243,6 +243,8 @@ func FilmReviewWorkflowStep3Handler() func(http.ResponseWriter, *http.Request) {
 		if defaultRating == 0 {
 			defaultRating = 10
 		}
+		positionStr := r.URL.Query().Get("position")
+		position, _ := strconv.Atoi(positionStr)
 
 		film, err := db.GetFilmByID(r.Context(), filmID)
 		if err != nil {
@@ -265,6 +267,7 @@ func FilmReviewWorkflowStep3Handler() func(http.ResponseWriter, *http.Request) {
 				FilmID:            filmID,
 				Film:              filmToBasic(film),
 				LetterboxdListURL: letterboxdURL,
+				Position:          position,
 			}
 
 			if err := templates.RenderFilmReviewWorkflowStep3(w, data); err != nil {

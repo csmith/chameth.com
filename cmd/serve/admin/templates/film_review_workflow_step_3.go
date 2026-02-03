@@ -9,6 +9,7 @@ type Step3Data struct {
 	FilmID            int
 	Film              FilmBasic
 	LetterboxdListURL string
+	Position          int
 }
 
 var filmReviewWorkflowStep3Template = template.Must(
