@@ -521,3 +521,67 @@ ol.watched-films {
         transform: rotate(280deg);
     }
 }
+
+[data-film-id="37735"] {
+    h2::before {
+        content: "A.";
+        color: red;
+    }
+
+    h3::before {
+        content: "AA.";
+        color: red;
+    }
+}
+
+[data-film-id="44214"] {
+    .star-rating img {
+        filter: invert(1) grayscale(1) contrast(400%);
+    }
+}
+
+[data-film-id="545611"] {
+    blockquote p:last-child::after {
+        content: " 🥯";
+        font-size: var(--font-size-large);
+        filter: grayscale(1) invert(1);
+    }
+}
+
+[data-film-id="603"] {
+    blockquote {
+        background-color: black;
+        color: lawngreen;
+        p {
+            font-family: "Berkeley Mono", monospace !important;
+
+            &:last-child::after {
+                content: " █";
+                animation: terminal-blink 1s step-end infinite;
+            }
+        }
+
+        &::before,
+        &::after {
+            color: lawngreen;
+        }
+    }
+}
+
+[data-film-id="7326"] {
+    & + hr {
+        background: repeating-linear-gradient(
+            -45deg,
+            white 0,
+            white 10px,
+            #f15c22 10px,
+            #f15c22 20px
+        );
+    }
+}
+
+@keyframes terminal-blink {
+    50% {
+        opacity: 0;
+    }
+}

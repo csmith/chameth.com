@@ -1,6 +1,6 @@
  {{/* gotype: chameth.com/chameth.com/cmd/serve/templates.FilmData*/}}
 {{define "content"}}
-    <article class="film-page">
+    <article class="film-page" data-film-id="{{ .TMDBID }}">
         <header>
             <h2><a href="/films/">Films</a> &raquo; {{.Title}}</h2>
             <p class="meta">Watched {{.TimesWatched}} time{{if ne .TimesWatched 1}}s{{end}}, average rating {{.AverageRating}}</p>
@@ -54,4 +54,3 @@
 
     <aside><div data-nod></div></aside>
 {{end}}
-
