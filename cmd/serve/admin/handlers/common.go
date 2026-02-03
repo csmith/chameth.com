@@ -1,11 +1,16 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
+	"log/slog"
 	"net/http"
+	"path/filepath"
 
 	"chameth.com/chameth.com/cmd/serve/admin/assets"
 	"chameth.com/chameth.com/cmd/serve/admin/templates"
+	publicAssets "chameth.com/chameth.com/cmd/serve/assets"
 )
 
 func RedirectHandler(hostname func() string) func(http.ResponseWriter, *http.Request) {
@@ -29,4 +34,26 @@ func IndexHandler() func(http.ResponseWriter, *http.Request) {
 			http.Error(w, "Failed to render template", http.StatusInternalServerError)
 		}
 	}
+}
+
+func StaticAsset(w http.ResponseWriter, r *http.Request) {
+	stat, err := fs.Stat(publicAssets.Static, filepath.Join("static", r.URL.Path))
+	if err != nil {
+		if errors.Is(err, fs.ErrNotExist) {
+			http.NotFound(w, r)
+			return
+		}
+
+		slog.Error("Failed to open static asset", "error", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	if stat.IsDir() {
+		http.NotFound(w, r)
+		return
+	}
+
+	w.Header().Set("Cache-Control", "public, max-age=86400")
+	http.ServeFileFS(w, r, publicAssets.Static, filepath.Join("static", r.URL.Path))
 }

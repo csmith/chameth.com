@@ -51,7 +51,7 @@ func Start() error {
 
 	httpsMux := http.NewServeMux()
 	httpsMux.Handle("GET /assets/", http.StripPrefix("/assets/", handlers.AssetsHandler()))
-	httpsMux.HandleFunc("GET /", handlers.IndexHandler())
+	httpsMux.HandleFunc("GET /{$}", handlers.IndexHandler())
 	httpsMux.HandleFunc("GET /posts", handlers.ListPostsHandler())
 	httpsMux.HandleFunc("POST /posts", handlers.CreatePostHandler())
 	httpsMux.HandleFunc("GET /posts/edit/{id}", handlers.EditPostHandler())
@@ -134,6 +134,7 @@ func Start() error {
 	httpsMux.HandleFunc("GET /syndications/edit/{id}", handlers.EditSyndicationHandler())
 	httpsMux.HandleFunc("POST /syndications/edit/{id}", handlers.UpdateSyndicationHandler())
 	httpsMux.HandleFunc("POST /syndications/delete/{id}", handlers.DeleteSyndicationHandler())
+	httpsMux.HandleFunc("GET /", handlers.StaticAsset)
 
 	httpsServer := &http.Server{
 		Handler: middleware.Chain(
