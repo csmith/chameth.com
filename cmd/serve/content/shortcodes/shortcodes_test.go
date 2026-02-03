@@ -39,12 +39,6 @@ func TestSplitArguments(t *testing.T) {
 			wantErr:  false,
 		},
 		{
-			name:     "double escaped quote",
-			input:    `"hello \\"world\\" test"`,
-			expected: []string{`hello "world" test`},
-			wantErr:  false,
-		},
-		{
 			name:     "mixed",
 			input:    `arg1 "argument 2" arg3`,
 			expected: []string{"arg1", "argument 2", "arg3"},

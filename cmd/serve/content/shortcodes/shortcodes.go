@@ -131,11 +131,6 @@ func splitArguments(input string) ([]string, error) {
 				i++
 				continue
 			}
-			if next == '\\' && i+2 < len(input) && input[i+2] == '"' {
-				buf.WriteByte('"')
-				i += 2
-				continue
-			}
 			if next == '\\' {
 				buf.WriteByte('\\')
 				i++
