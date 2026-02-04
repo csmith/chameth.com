@@ -7,12 +7,19 @@
 body > footer {
     position: relative;
     margin-top: 0;
-    padding: var(--small-space) var(--content-margin) var(--small-space)
-        var(--content-margin);
+    padding: var(--small-space) var(--medium-space);
     background-color: var(--background-alt-colour);
 
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    .columns {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+
+        @media (width <= 1400px) {
+            display: flex;
+            flex-direction: column;
+        }
+    }
 
     li p {
         font-family: "Berkeley Mono", monospace;
@@ -20,15 +27,8 @@ body > footer {
         color: var(--text-alt-colour);
     }
 
-    /* Other links */
-    section:nth-child(2) {
-        text-align: right;
-    }
-
-    /* Licenses */
-    section:nth-child(3) {
+    section.licence {
         margin-top: var(--medium-space);
-        grid-column: 1 / span 2;
         text-align: center;
 
         font-family: "Berkeley Mono", monospace;
@@ -42,17 +42,9 @@ body > footer {
         }
     }
 
-    @media (width <= 1000px) {
-        display: flex;
-        flex-direction: column;
-
-        section:nth-child(2) {
-            text-align: left;
-        }
-    }
-
     h2 {
         font-size: var(--font-size-xlarge);
+        margin: var(--smedium-space) 0;
 
         &:has(a) {
             display: flex;
@@ -101,7 +93,6 @@ body > footer {
     ul.icons {
         display: flex;
         flex-direction: row;
-        justify-content: right;
         gap: 25px;
 
         a {
