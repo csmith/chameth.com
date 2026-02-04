@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"net/http"
 
-	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/db"
@@ -57,11 +56,6 @@ func ProjectsList(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderProjects(w, templates.ProjectsData{
 		ProjectGroups: groups,
-		PageData: templates.PageData{
-			Title:        "Projects · Chameth.com",
-			Stylesheet:   assets.GetStylesheetPath(),
-			CanonicalUrl: "https://chameth.com/projects/",
-			RecentPosts:  content.RecentPosts(),
-		},
+		PageData:      content.CreatePageData("Projects", "/projects/", templates.OpenGraphHeaders{}),
 	})
 }

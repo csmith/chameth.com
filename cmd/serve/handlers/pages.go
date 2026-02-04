@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 
-	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
@@ -37,12 +35,7 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 
 		err = templates.RenderRawPage(w, templates.RawPageData{
 			RawContent: renderedContent,
-			PageData: templates.PageData{
-				Title:        fmt.Sprintf("%s · Chameth.com", page.Title),
-				Stylesheet:   assets.GetStylesheetPath(),
-				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", page.Path),
-				RecentPosts:  content.RecentPosts(),
-			},
+			PageData:   content.CreatePageData(page.Title, page.Path, templates.OpenGraphHeaders{}),
 		})
 		if err != nil {
 			slog.Error("Failed to render raw page template", "error", err, "path", r.URL.Path)
@@ -63,12 +56,7 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 	err = templates.RenderStaticPage(w, templates.StaticPageData{
 		StaticTitle:   page.Title,
 		StaticContent: renderedContent,
-		PageData: templates.PageData{
-			Title:        fmt.Sprintf("%s · Chameth.com", page.Title),
-			Stylesheet:   assets.GetStylesheetPath(),
-			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", page.Path),
-			RecentPosts:  content.RecentPosts(),
-		},
+		PageData:      content.CreatePageData(page.Title, page.Path, templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render static page template", "error", err, "path", r.URL.Path)

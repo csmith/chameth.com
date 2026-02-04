@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/syndication"
 	"chameth.com/chameth.com/cmd/serve/db"
@@ -77,16 +76,10 @@ func Post(w http.ResponseWriter, r *http.Request) {
 				YearsOld:    yearsOld,
 			},
 			RelatedPosts: relatedPosts,
-			PageData: templates.PageData{
-				Title:        fmt.Sprintf("%s · Chameth.com", post.Title),
-				Stylesheet:   assets.GetStylesheetPath(),
-				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", post.Path),
-				OpenGraph: templates.OpenGraphHeaders{
-					Image: ogImage,
-					Type:  "article",
-				},
-				RecentPosts: content.RecentPosts(),
-			},
+			PageData: content.CreatePageData(post.Title, post.Path, templates.OpenGraphHeaders{
+				Image: ogImage,
+				Type:  "article",
+			}),
 			SyndicationInfo: template.HTML(syndicationInfo),
 		},
 	})
@@ -111,13 +104,8 @@ func PostsList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderPosts(w, templates.PostsData{
-		Posts: postLinks,
-		PageData: templates.PageData{
-			Title:        "Posts · Chameth.com",
-			Stylesheet:   assets.GetStylesheetPath(),
-			CanonicalUrl: "https://chameth.com/posts/",
-			RecentPosts:  content.RecentPosts(),
-		},
+		Posts:    postLinks,
+		PageData: content.CreatePageData("Posts", "/posts/", templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render posts template", "error", err)

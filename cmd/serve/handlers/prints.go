@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"path"
 
-	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
@@ -77,13 +76,8 @@ func PrintsList(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderPrints(w, templates.PrintsData{
-		Prints: printDetails,
-		PageData: templates.PageData{
-			Title:        "3D Prints · Chameth.com",
-			Stylesheet:   assets.GetStylesheetPath(),
-			CanonicalUrl: "https://chameth.com/prints/",
-			RecentPosts:  content.RecentPosts(),
-		},
+		Prints:   printDetails,
+		PageData: content.CreatePageData("3D Prints", "/prints/", templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render prints template", "error", err)

@@ -1,12 +1,10 @@
 package handlers
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
 
-	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/db"
@@ -68,12 +66,7 @@ func Paste(w http.ResponseWriter, r *http.Request) {
 				Friendly:    paste.Date.Format("Jan 2, 2006"),
 				ShowWarning: false,
 			},
-			PageData: templates.PageData{
-				Title:        fmt.Sprintf("%s · Chameth.com", paste.Title),
-				Stylesheet:   assets.GetStylesheetPath(),
-				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", paste.Path),
-				RecentPosts:  content.RecentPosts(),
-			},
+			PageData: content.CreatePageData(paste.Title, paste.Path, templates.OpenGraphHeaders{}),
 		},
 	})
 	if err != nil {

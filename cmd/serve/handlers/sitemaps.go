@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"net/http"
 
-	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
@@ -101,14 +100,7 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templat
 }
 
 func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
-	pageData := templates.PageData{
-		Title:        "Sitemap · Chameth.com",
-		Stylesheet:   assets.GetStylesheetPath(),
-		CanonicalUrl: "https://chameth.com/sitemap/",
-		RecentPosts:  content.RecentPosts(),
-	}
-
-	siteMapData, err := buildSiteMapData(r.Context(), pageData)
+	siteMapData, err := buildSiteMapData(r.Context(), content.CreatePageData("Sitemap", "/sitemap/", templates.OpenGraphHeaders{}))
 	if err != nil {
 		slog.Error("Failed to build site map data", "error", err)
 		ServerError(w, r)

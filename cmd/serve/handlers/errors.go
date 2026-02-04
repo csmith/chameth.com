@@ -4,7 +4,6 @@ import (
 	"log/slog"
 	"net/http"
 
-	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/templates"
 )
@@ -15,11 +14,7 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusNotFound)
 	err := templates.RenderNotFound(w, templates.NotFoundData{
-		PageData: templates.PageData{
-			Title:       "Not found · Chameth.com",
-			Stylesheet:  assets.GetStylesheetPath(),
-			RecentPosts: content.RecentPosts(),
-		},
+		PageData: content.CreatePageData("Not found", "", templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render not found template", "error", err)
@@ -32,11 +27,7 @@ func ServerError(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusInternalServerError)
 	err := templates.RenderServerError(w, templates.ServerErrorData{
-		PageData: templates.PageData{
-			Title:       "Server error · Chameth.com",
-			Stylesheet:  assets.GetStylesheetPath(),
-			RecentPosts: content.RecentPosts(),
-		},
+		PageData: content.CreatePageData("Server error", "", templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render not found template", "error", err)

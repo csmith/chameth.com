@@ -7,7 +7,6 @@ import (
 	"math"
 	"net/http"
 
-	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmlist"
@@ -137,12 +136,7 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		PosterPath:    posterPath,
 		FilmLists:     filmLists,
 		Syndications:  template.HTML(syndicationHTML),
-		PageData: templates.PageData{
-			Title:        fmt.Sprintf("%s (%s) · Chameth.com", film.Title, year),
-			Stylesheet:   assets.GetStylesheetPath(),
-			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", film.Path),
-			RecentPosts:  content.RecentPosts(),
-		},
+		PageData:      content.CreatePageData(fmt.Sprintf("%s (%s)", film.Title, year), film.Path, templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render film template", "error", err, "path", r.URL.Path)
@@ -225,12 +219,7 @@ func FilmList(w http.ResponseWriter, r *http.Request) {
 		Description:  renderedDescription,
 		Entries:      filmListItems,
 		Syndications: template.HTML(syndicationHTML),
-		PageData: templates.PageData{
-			Title:        fmt.Sprintf("%s · Chameth.com", filmList.Title),
-			Stylesheet:   assets.GetStylesheetPath(),
-			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", filmList.Path),
-			RecentPosts:  content.RecentPosts(),
-		},
+		PageData:     content.CreatePageData(filmList.Title, filmList.Path, templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render film list template", "error", err, "path", r.URL.Path)

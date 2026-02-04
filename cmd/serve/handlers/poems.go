@@ -1,12 +1,10 @@
 package handlers
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
 
-	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
 	"chameth.com/chameth.com/cmd/serve/db"
@@ -46,12 +44,7 @@ func Poem(w http.ResponseWriter, r *http.Request) {
 				Friendly:    poem.Date.Format("Jan 2, 2006"),
 				ShowWarning: false,
 			},
-			PageData: templates.PageData{
-				Title:        fmt.Sprintf("%s · Chameth.com", poem.Title),
-				Stylesheet:   assets.GetStylesheetPath(),
-				CanonicalUrl: fmt.Sprintf("https://chameth.com%s", poem.Path),
-				RecentPosts:  content.RecentPosts(),
-			},
+			PageData: content.CreatePageData(poem.Title, poem.Path, templates.OpenGraphHeaders{}),
 		},
 	})
 	if err != nil {

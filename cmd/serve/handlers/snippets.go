@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 
-	"chameth.com/chameth.com/cmd/serve/assets"
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/db"
 	"chameth.com/chameth.com/cmd/serve/templates"
@@ -37,12 +35,7 @@ func Snippet(w http.ResponseWriter, r *http.Request) {
 		SnippetTitle:   snippet.Title,
 		SnippetGroup:   snippet.Topic,
 		SnippetContent: renderedContent,
-		PageData: templates.PageData{
-			Title:        fmt.Sprintf("%s · Chameth.com", snippet.Title),
-			Stylesheet:   assets.GetStylesheetPath(),
-			CanonicalUrl: fmt.Sprintf("https://chameth.com%s", snippet.Path),
-			RecentPosts:  content.RecentPosts(),
-		},
+		PageData:       content.CreatePageData(snippet.Title, snippet.Path, templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render snippet template", "error", err, "path", r.URL.Path)
@@ -72,11 +65,6 @@ func SnippetsList(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderSnippets(w, templates.SnippetsData{
 		SnippetGroups: groups,
-		PageData: templates.PageData{
-			Title:        "Snippets · Chameth.com",
-			Stylesheet:   assets.GetStylesheetPath(),
-			CanonicalUrl: "https://chameth.com/snippets/",
-			RecentPosts:  content.RecentPosts(),
-		},
+		PageData:      content.CreatePageData("Snippets", "/snippets/", templates.OpenGraphHeaders{}),
 	})
 }
