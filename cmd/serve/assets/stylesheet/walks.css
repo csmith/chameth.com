@@ -1,0 +1,41 @@
+.walks-table {
+    border-bottom: none;
+
+    td {
+        white-space: nowrap;
+    }
+
+    tr {
+        background-color: transparent;
+    }
+
+    time {
+        color: var(--text-alt-colour);
+    }
+
+    svg {
+        vertical-align: middle;
+    }
+
+    .distance-bar-cell {
+        width: 100%;
+
+        .distance-bar-container {
+            display: inline-block;
+            overflow: hidden;
+            border-radius: 5px;
+            background-color: var(--background-alt-colour);
+            box-shadow: 2px 2px 5px black;
+            height: 0.5em;
+            width: 100%;
+            vertical-align: middle;
+
+            .distance-bar-fill {
+                display: block;
+                background-color: var(--accent-colour);
+                min-height: 100%;
+                border-radius: 5px;
+            }
+        }
+    }
+}

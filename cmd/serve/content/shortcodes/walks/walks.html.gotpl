@@ -1,0 +1,18 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/walks.Data*/}}
+<table class="walks-table">
+  <tbody>
+{{- range .Walks }}
+    <tr>
+      <td><time>{{ .Date }}</time></td>
+      <td class="distance-bar-cell">
+        <div class="distance-bar-container">
+          <div class="distance-bar-fill" style="width: {{ .DistanceBarWidth }}%;"></div>
+        </div>
+      </td>
+      <td title="Distance walked"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-ruler-3"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19.875 8c.621 0 1.125 .512 1.125 1.143v5.714c0 .631 -.504 1.143 -1.125 1.143h-15.875a1 1 0 0 1 -1 -1v-5.857c0 -.631 .504 -1.143 1.125 -1.143h15.75" /><path d="M9 8v2" /><path d="M6 8v3" /><path d="M12 8v3" /><path d="M18 8v3" /><path d="M15 8v2" /></svg> {{ printf "%.2f" .DistanceKm }}km</td>
+      <td title="Elevation"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-up"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 15l6 -6l6 6" /></svg> {{ printf "%.0f" .ElevationGainM }}m</td>
+      <td title="Time"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-stopwatch"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 13a7 7 0 1 0 14 0a7 7 0 0 0 -14 0" /><path d="M14.5 10.5l-2.5 2.5" /><path d="M17 8l1 -1" /><path d="M14 3h-4" /></svg> {{ .Duration }}</td>
+    </tr>
+{{- end }}
+  </tbody>
+</table>

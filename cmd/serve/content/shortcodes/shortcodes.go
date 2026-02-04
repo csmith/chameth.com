@@ -21,6 +21,7 @@ import (
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/syndication"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/update"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/video"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/walks"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/warning"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/watchedfilms"
 )
@@ -45,6 +46,7 @@ var renderers = map[string]renderer{
 	"postlink":     postlink.RenderFromText,
 	"recentposts":  recentposts.RenderFromText,
 	"syndication":  syndication.RenderFromText,
+	"walks":        walks.RenderFromText,
 }
 
 var tagRegexp = regexp.MustCompile(`\{%\s*(\w+)(.*?)\s*%\}`)

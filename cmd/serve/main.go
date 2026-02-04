@@ -103,7 +103,7 @@ func main() {
 				middleware.Compress(),
 				middleware.Headers(
 					middleware.WithHeader("X-Content-Type-Options", "nosniff"),
-					middleware.WithHeader("Content-Security-Policy", "default-src 'self' https://chameth.com/ https://contact.chameth.com https://u.c5h.io/ 'nonce-littlefoot-ae805b14';"),
+					middleware.WithHeader("Content-Security-Policy", "default-src 'self' https://chameth.com/ https://u.c5h.io/ 'nonce-littlefoot-ae805b14'; style-src 'self' 'unsafe-inline';"),
 					middleware.WithHeader("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload"),
 					middleware.WithHeader("Referrer-Policy", "no-referrer-when-downgrade"),
 				),

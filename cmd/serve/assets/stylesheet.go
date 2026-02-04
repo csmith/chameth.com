@@ -35,6 +35,7 @@ var includeOrder = []string{
 	"syntax.css",
 	"tables.css",
 	"typography.css",
+	"walks.css",
 }
 
 type mood struct {
