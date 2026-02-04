@@ -40,3 +40,14 @@ func GetAllWalks(ctx context.Context) ([]Walk, error) {
 	}
 	return walks, nil
 }
+
+// GetTotalDistanceKm returns the total distance walked in kilometers
+func GetTotalDistanceKm(ctx context.Context) (float64, error) {
+	metrics.LogQuery(ctx)
+	var totalDistance float64
+	err := db.GetContext(ctx, &totalDistance, "SELECT COALESCE(SUM(distance_km), 0) FROM walks")
+	if err != nil {
+		return 0, err
+	}
+	return totalDistance, nil
+}

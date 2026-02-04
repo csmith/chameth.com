@@ -39,3 +39,66 @@
         }
     }
 }
+
+.walking-stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--smedium-space);
+}
+
+.walkingdistance-badge {
+    display: inline-grid;
+    grid-template-areas:
+        "image title"
+        "image reps"
+        "progress progress";
+
+    grid-template-columns: auto 1fr;
+
+    background-color: var(--background-alt-colour);
+    border-radius: var(--border-radius);
+    padding: var(--smedium-space);
+    row-gap: var(--small-space);
+    column-gap: var(--smedium-space);
+
+    svg {
+        grid-area: image;
+        fill: var(--text-colour);
+        width: 64px;
+        height: 64px;
+    }
+
+    h4 {
+        grid-area: title;
+        font-size: var(--font-size-regular);
+        font-family: inherit;
+        margin: 0;
+
+        &::before {
+            content: none;
+        }
+    }
+
+    .times {
+        grid-area: reps;
+        margin: 0;
+        font-size: var(--font-size-large);
+
+        span {
+            color: var(--text-alt-colour);
+        }
+    }
+
+    .progress-container {
+        grid-area: progress;
+        border-radius: 5px;
+        height: 0.5em;
+        background-color: var(--background-colour);
+
+        .progress-bar {
+            border-radius: 5px;
+            height: 0.5em;
+            background-color: var(--accent-colour);
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/walkingdistance.Data*/}}
+<div class="walkingdistance-badge">
+	{{ .SVG }}
+	<h4>{{ .Name }}</h4>
+	<p class="times">{{ printf "%.2f" .TimesCompleted }}× <span>{{ printf "%.0f" .DistanceKm }}km</span></p>
+	<div class="progress-container">
+		<div class="progress-bar" style="width: {{ .ProgressPercent }}%;"></div>
+	</div>
+</div>
