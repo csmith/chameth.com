@@ -118,6 +118,11 @@
         border-radius: calc((var(--button-size) + var(--smedium-space)) / 2);
         padding: var(--smedium-space);
 
+        @media (width <= 600px) {
+            border-top-right-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+        }
+
         &:hover,
         &:active,
         &:focus {
@@ -277,6 +282,22 @@
             line-height: var(--font-size-xlarge);
             margin: 0;
             padding: 0;
+
+            @media (width <= 900px) {
+                font-size: var(--font-size-large);
+                line-height: var(--font-size-large);
+            }
+
+            @media (width <= 800px) {
+                font-size: var(--font-size-regular);
+                line-height: var(--font-size-regular);
+            }
+
+            @media (width <= 600px) {
+                font-family: inherit;
+                font-size: var(--font-size-tiny);
+                line-height: var(--font-size-tiny);
+            }
         }
     }
 }
