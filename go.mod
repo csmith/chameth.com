@@ -69,5 +69,5 @@ require (
 
 require (
 	github.com/kljensen/snowball v0.10.0
-	golang.org/x/text v0.32.0
+	golang.org/x/text v0.33.0
 )
