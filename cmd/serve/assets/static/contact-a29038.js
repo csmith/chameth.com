@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <form class="nod" role="button" tabindex="0">
                 <button type="submit" class="submit">nod</button>
                 <div>
-                    <p>Liked this page? Just want to declare you that reached the end? Like pressing buttons?</p>
+                    <p>Liked this page? Just want to declare that you reached the end? Like pressing buttons?</p>
                     <p>Give me a nod to let me know you were here. No tracking, no counters, etc, just a nod in passing.</p>
                 </div>
             </form>
