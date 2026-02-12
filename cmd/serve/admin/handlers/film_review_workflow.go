@@ -366,7 +366,7 @@ func FilmReviewWorkflowStep5Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		letterboxdURL := fmt.Sprintf("https://letterboxd.com/tmdb/%d", film.TMDBID)
+		letterboxdURL := fmt.Sprintf("https://letterboxd.com/tmdb/%d", *film.TMDBID)
 
 		if r.Method == "GET" {
 			data := templates.Step5Data{
