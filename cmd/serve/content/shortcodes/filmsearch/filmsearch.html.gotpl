@@ -1,0 +1,4 @@
+{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/filmsearch.Data*/}}
+<div data-form-search>
+    <noscript>JavaScript required for film search</noscript>
+</div>

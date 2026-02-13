@@ -282,3 +282,12 @@ type Walk struct {
 	DistanceKm          float64   `db:"distance_km"`
 	ElevationGainMeters float64   `db:"elevation_gain_meters"`
 }
+
+type FilmSearchResult struct {
+	ID            int      `db:"id"`
+	Title         string   `db:"title"`
+	Path          string   `db:"path"`
+	PosterPath    *string  `db:"poster_path"`
+	TimesWatched  int      `db:"times_watched"`
+	AverageRating *float64 `db:"average_rating"`
+}

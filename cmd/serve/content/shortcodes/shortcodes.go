@@ -13,6 +13,7 @@ import (
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmlist"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmreview"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmreviews"
+	"chameth.com/chameth.com/cmd/serve/content/shortcodes/filmsearch"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/postlink"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/rating"
 	"chameth.com/chameth.com/cmd/serve/content/shortcodes/recentfilms"
@@ -41,6 +42,7 @@ var renderers = map[string]renderer{
 	"filmreview":      filmreview.RenderFromText,
 	"filmreviews":     filmreviews.RenderFromText,
 	"filmlist":        filmlist.RenderFromText,
+	"filmsearch":      filmsearch.RenderFromText,
 	"recentfilms":     recentfilms.RenderFromText,
 	"watchedfilms":    watchedfilms.RenderFromText,
 	"rating":          rating.RenderFromText,

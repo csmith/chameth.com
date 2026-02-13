@@ -522,6 +522,87 @@ ol.watched-films {
     }
 }
 
+.film-search {
+    input {
+        width: 100%;
+        font-size: var(--font-size-large);
+        padding: var(--small-space);
+        anchor-name: --film-search-box;
+        background-color: var(--background-alt-colour);
+        border: 2px solid var(--accent-alt-colour);
+        border-radius: var(--border-radius);
+        color: var(--text-alt-colour);
+
+        &:has(+ .results:not(:empty)) {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            box-shadow: 0 5px 5px var(--accent-colour);
+        }
+
+        &:focus,
+        &:active {
+            border-color: var(--accent-colour);
+            outline: none;
+        }
+    }
+
+    .results {
+        background-color: var(--background-alt-colour);
+        padding: var(--small-space);
+        max-height: 400px;
+        overflow-y: auto;
+        position: absolute;
+        position-anchor: --film-search-box;
+        position-area: bottom span-all;
+        position-visibility: always;
+        width: anchor-size();
+        border: 2px solid var(--accent-colour);
+        border-top: none;
+        border-bottom-left-radius: var(--border-radius);
+        border-bottom-right-radius: var(--border-radius);
+        z-index: 10;
+        box-shadow: 0 5px 5px var(--accent-colour);
+
+        a {
+            display: flex;
+            flex-direction: row;
+            padding: var(--small-space);
+            gap: var(--small-space);
+            border: 0;
+            background: none;
+            text-decoration: none;
+
+            &:hover,
+            &:focus,
+            &:active {
+                background-color: var(--accent-colour);
+            }
+
+            img {
+                max-height: 100px;
+                max-width: 66px;
+            }
+
+            h3 {
+                margin: 0;
+                padding: 0 0 var(--small-space) 0;
+                font-family: "IBM Plex Sans", serif;
+                font-size: var(--font-size-large);
+
+                &::before {
+                    content: none;
+                }
+            }
+
+            p {
+                color: var(--text-alt-colour);
+                padding: 0 0 var(--small-space) 0;
+                margin: 0;
+            }
+        }
+    }
+}
+
 [data-film-id="37735"] {
     h2::before {
         content: "A.";

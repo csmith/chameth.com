@@ -253,3 +253,26 @@ func DeleteFilm(ctx context.Context, id int) error {
 	}
 	return nil
 }
+
+func SearchFilms(ctx context.Context, query string) ([]FilmSearchResult, error) {
+	metrics.LogQuery(ctx)
+	var results []FilmSearchResult
+	err := db.SelectContext(ctx, &results, `
+		SELECT
+			f.id,
+			f.title,
+			f.path,
+			mr.path as poster_path,
+			(SELECT COUNT(*) FROM film_reviews WHERE film_id = f.id AND published = true) as times_watched,
+			(SELECT AVG(rating) FROM film_reviews WHERE film_id = f.id AND published = true) as average_rating
+		FROM films f
+		LEFT JOIN media_relations mr ON mr.entity_type = 'film' AND mr.entity_id = f.id AND mr.role = 'poster'
+		WHERE EXISTS (SELECT 1 FROM film_reviews WHERE film_id = f.id AND published = true)
+			AND f.title ILIKE $1
+		ORDER BY f.title
+	`, "%"+query+"%")
+	if err != nil {
+		return nil, err
+	}
+	return results, nil
+}

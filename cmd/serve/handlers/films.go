@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"log/slog"
 	"math"
 	"net/http"
+	"strings"
 
 	"chameth.com/chameth.com/cmd/serve/content"
 	"chameth.com/chameth.com/cmd/serve/content/markdown"
@@ -223,5 +225,61 @@ func FilmList(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		slog.Error("Failed to render film list template", "error", err, "path", r.URL.Path)
+	}
+}
+
+type filmSearchResult struct {
+	ID          int     `json:"id"`
+	Title       string  `json:"title"`
+	Path        string  `json:"path"`
+	PosterPath  *string `json:"poster_path"`
+	TimesWatched int    `json:"times_watched"`
+	RatingHTML  string  `json:"rating_html"`
+}
+
+func SearchFilms(w http.ResponseWriter, r *http.Request) {
+	query := strings.TrimSpace(r.URL.Query().Get("q"))
+	if len(query) < 2 {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(`{"error": "query must be at least 2 characters"}`))
+		return
+	}
+
+	results, err := db.SearchFilms(r.Context(), query)
+	if err != nil {
+		slog.Error("Failed to search films", "query", query, "error", err)
+		ServerError(w, r)
+		return
+	}
+
+	response := make([]filmSearchResult, len(results))
+	for i, result := range results {
+		var ratingHTML string
+		if result.AverageRating != nil {
+			roundedRating := int(math.Round(*result.AverageRating))
+			stars, err := rating.Render(roundedRating)
+			if err != nil {
+				slog.Error("Failed to render rating", "error", err, "rating", roundedRating)
+			} else {
+				ratingHTML = stars
+			}
+		}
+
+		response[i] = filmSearchResult{
+			ID:          result.ID,
+			Title:       result.Title,
+			Path:        result.Path,
+			PosterPath:  result.PosterPath,
+			TimesWatched: result.TimesWatched,
+			RatingHTML:  ratingHTML,
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(response)
+	if err != nil {
+		slog.Error("Failed to encode search results", "error", err)
 	}
 }
