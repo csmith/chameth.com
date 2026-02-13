@@ -40,6 +40,15 @@ body > footer {
                 margin-bottom: var(--medium-space);
             }
         }
+
+        p + p {
+            margin-top: var(--small-space);
+        }
+
+        svg {
+            fill: var(--text-colour);
+            vertical-align: bottom;
+        }
     }
 
     h2 {
