@@ -99,7 +99,7 @@ func UpdateStylesheet() error {
 			return err
 		}
 
-		builder.WriteString(fmt.Sprintf("\n\n/* =========================== %s ========================== */\n\n", includes[i]))
+		fmt.Fprintf(builder, "\n\n/* =========================== %s ========================== */\n\n", includes[i])
 		builder.Write(b)
 	}
 

@@ -46,6 +46,11 @@ func main() {
 		}
 	}()
 
+	if err := assets.UpdateScripts(); err != nil {
+		slog.Error("Failed to update scripts", "error", err)
+		os.Exit(1)
+	}
+
 	go content.UpdateAllPostEmbeddings(context.Background())
 	go content.SyndicateAllPostsToATProto(context.Background())
 
@@ -60,6 +65,7 @@ func main() {
 	mux.Handle("POST /api/contact", http.HandlerFunc(handlers.ContactForm))
 	mux.Handle("POST /api/nod", http.HandlerFunc(handlers.Nod))
 	mux.Handle("GET /assets/stylesheets/", http.HandlerFunc(handlers.Stylesheet))
+	mux.Handle("GET /assets/scripts/", http.HandlerFunc(handlers.Scripts))
 	mux.Handle("GET /index.xml", http.HandlerFunc(handlers.FullFeed))
 	mux.Handle("GET /short.xml", http.HandlerFunc(handlers.ShortPostsFeed))
 	mux.Handle("GET /long.xml", http.HandlerFunc(handlers.LongPostsFeed))

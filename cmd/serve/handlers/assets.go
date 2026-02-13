@@ -49,6 +49,20 @@ func Stylesheet(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte(assets.GetStylesheet()))
 }
 
+func Scripts(w http.ResponseWriter, r *http.Request) {
+	p := r.URL.Path
+	if path.Base(p) != assets.GetScriptPath() {
+		w.Header().Set("Cache-Control", "private, no-cache, must-revalidate")
+		http.Redirect(w, r, path.Join(path.Dir(p), assets.GetScriptPath()), http.StatusFound)
+		return
+	}
+
+	w.Header().Set("Cache-Control", "public, max-age=86400")
+	w.Header().Set("Content-Type", "application/javascript; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte(assets.GetScripts()))
+}
+
 func Media(w http.ResponseWriter, r *http.Request) {
 	m, err := db.GetMediaByPath(r.Context(), r.URL.Path)
 	if err != nil {

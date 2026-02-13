@@ -17,6 +17,7 @@ func CreatePageData(title, path string, ogHeaders templates.OpenGraphHeaders) te
 		Title:        fmt.Sprintf("%s · Chameth.com", title),
 		CanonicalUrl: canonicalUrl,
 		OpenGraph:    ogHeaders,
+		Scripts:      assets.GetScriptPath(),
 		Stylesheet:   assets.GetStylesheetPath(),
 		RecentPosts:  RecentPosts(),
 	}

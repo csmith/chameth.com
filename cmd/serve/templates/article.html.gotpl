@@ -67,11 +67,12 @@
         </section>
     </article>
 
-    <script src="/littlefoot.js"></script>
     <script type="application/javascript" nonce="littlefoot-ae805b14">
-        littlefoot.littlefoot({
-            activateDelay: 0,
-            buttonTemplate: `<sup id="fnref<% number %>" class="footnote-ref"><a href="#fn<% number %>" role="doc-noteref">[<% number %>]</a></sup>`,
+        document.addEventListener('DOMContentLoaded', () => {
+            littlefoot.littlefoot({
+                activateDelay: 0,
+                buttonTemplate: `<sup id="fnref<% number %>" class="footnote-ref"><a href="#fn<% number %>" role="doc-noteref">[<% number %>]</a></sup>`,
+            });
         });
     </script>
 {{end}}

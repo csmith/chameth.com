@@ -3,6 +3,7 @@ package templates
 type PageData struct {
 	Title        string
 	Stylesheet   string
+	Scripts      string
 	CanonicalUrl string
 	OpenGraph    OpenGraphHeaders
 	RecentPosts  []RecentPost
