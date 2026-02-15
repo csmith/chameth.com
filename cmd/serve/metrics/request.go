@@ -3,6 +3,7 @@ package metrics
 import (
 	"context"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -28,13 +29,21 @@ type request struct {
 	queries atomic.Int32
 }
 
+func normalizePath(path string) string {
+	// Limit label cardinality a bit by truncating to two segments
+	parts := strings.SplitN(path, "/", 4)
+	if len(parts) > 3 {
+		return strings.Join(parts[:3], "/") + "/..."
+	}
+	return path
+}
+
 func CollectRequestStats() func(http.Handler) http.Handler {
 	generator, _ := aca.NewDefaultGenerator()
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			requestId := generator.Generate()
 			startRequest(requestId)
-			defer pruneRequest(requestId)
 
 			writer := &StatsResponseWriter{
 				ResponseWriter: w,
@@ -43,7 +52,23 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 
 			next.ServeHTTP(writer, r.WithContext(context.WithValue(r.Context(), requestIdKey, requestId)))
 
-			writer.Flush()
+			duration, queries := func() (time.Duration, int32) {
+				inFlightRequestsMu.RLock()
+				defer inFlightRequestsMu.RUnlock()
+				details, ok := inFlightRequests[requestId]
+				if !ok {
+					return 0, 0
+				}
+				return time.Since(details.start), details.queries.Load()
+			}()
+
+			path := normalizePath(r.URL.Path)
+			status := writer.statusCode()
+			httpRequestsTotal.WithLabelValues(r.Method, path, status).Inc()
+			dbQueriesPerRequest.WithLabelValues(path).Observe(float64(queries))
+
+			writer.Flush(duration, queries)
+			pruneRequest(requestId)
 		})
 	}
 }
@@ -82,6 +107,7 @@ type StatsResponseWriter struct {
 	http.ResponseWriter
 	buffer      []byte
 	wroteHeader bool
+	code        int
 	requestID   string
 }
 
@@ -92,29 +118,26 @@ func (w *StatsResponseWriter) Write(b []byte) (int, error) {
 
 func (w *StatsResponseWriter) WriteHeader(statusCode int) {
 	w.wroteHeader = true
+	w.code = statusCode
 	w.ResponseWriter.WriteHeader(statusCode)
 }
 
-func (w *StatsResponseWriter) Flush() {
-	content := injectStats(w.requestID, string(w.buffer))
+func (w *StatsResponseWriter) statusCode() string {
+	if w.code == 0 {
+		return "200"
+	}
+	return strconv.Itoa(w.code)
+}
+
+func (w *StatsResponseWriter) Flush(duration time.Duration, queries int32) {
+	content := injectStats(w.requestID, string(w.buffer), duration, queries)
 	if !w.wroteHeader {
 		w.ResponseWriter.WriteHeader(http.StatusOK)
 	}
 	w.ResponseWriter.Write([]byte(content))
 }
 
-func injectStats(requestID string, content string) string {
-	duration, queries := func() (time.Duration, int32) {
-		inFlightRequestsMu.RLock()
-		defer inFlightRequestsMu.RUnlock()
-		details, ok := inFlightRequests[requestID]
-		if !ok {
-			return 0, 0
-		}
-
-		return time.Since(details.start), details.queries.Load()
-	}()
-
+func injectStats(requestID string, content string, duration time.Duration, queries int32) string {
 	if duration == 0 {
 		return strings.Replace(content, "[[STATS_GO_HERE]]", "There would be request stats here, but I seem to have misplaced them...", 1)
 	}
