@@ -33,7 +33,7 @@ var redirects = []redirect{
 	{regexp.MustCompile(`^/20[0-9][0-9]/[0-9][0-9]/[0-9][0-9]/(.*)/?$`), `/$1/`},
 	{regexp.MustCompile(`^/page/(.*)/?$`), `/posts/$1/`},
 	{regexp.MustCompile(`^/poem/(.*)/?$`), `/$1/`},
-	{regexp.MustCompile(`^/prints/(.*)/?$`), `/prints/`},
+	{regexp.MustCompile(`^/prints/([^/]*)/?$`), `/prints/`},
 	{regexp.MustCompile(`^/misc/snippets/?$`), `/snippets/`},
 	{regexp.MustCompile(`^/feed.xml$`), `/index.xml`},
 	{regexp.MustCompile(`^/posts/feed.xml$`), `/index.xml`},

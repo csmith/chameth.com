@@ -10,7 +10,9 @@
     <div class="print-list">
         {{ range .Prints -}}
             <section class="print">
-                <img src="{{.RenderPath}}" alt="Render of {{.Name}}">
+                {{ if .RenderPath -}}
+                    <img src="{{.RenderPath}}" alt="Render of {{.Name}}" loading="lazy">
+                {{ end -}}
                 <div>
                     <h3>{{.Name}}</h3>
                     <p>{{.Description}}</p>
@@ -21,7 +23,7 @@
                     </ul>
                 </div>
                 {{ if .PreviewPath -}}
-                    <img src="{{.PreviewPath}}" alt="Preview of {{.Name}}">
+                    <img src="{{.PreviewPath}}" alt="Preview of {{.Name}}" loading="lazy">
                 {{ end -}}
             </section>
         {{ end -}}

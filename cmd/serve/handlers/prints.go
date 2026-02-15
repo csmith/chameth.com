@@ -19,34 +19,32 @@ func PrintsList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	allLinks, err := db.GetAllPrintLinks(r.Context())
+	if err != nil {
+		slog.Error("Failed to get all print links", "error", err)
+		ServerError(w, r)
+		return
+	}
+
+	allMedia, err := db.GetAllPrintMediaRelations(r.Context())
+	if err != nil {
+		slog.Error("Failed to get all print media relations", "error", err)
+		ServerError(w, r)
+		return
+	}
+
 	var printDetails []templates.PrintDetails
 	for _, p := range prints {
-		// Get links
-		links, err := db.GetPrintLinks(r.Context(), p.ID)
-		if err != nil {
-			slog.Error("Failed to get print links", "print_id", p.ID, "error", err)
-			ServerError(w, r)
-			return
-		}
-
 		var printLinks []templates.PrintLink
-		for _, link := range links {
+		for _, link := range allLinks[p.ID] {
 			printLinks = append(printLinks, templates.PrintLink{
 				Name:    link.Name,
 				Address: link.Address,
 			})
 		}
 
-		// Get media relations
-		mediaRelations, err := db.GetMediaRelationsForEntity(r.Context(), "print", p.ID)
-		if err != nil {
-			slog.Error("Failed to get media relations", "print_id", p.ID, "error", err)
-			ServerError(w, r)
-			return
-		}
-
 		var renderPath, previewPath string
-		for _, mr := range mediaRelations {
+		for _, mr := range allMedia[p.ID] {
 			if mr.Role == nil {
 				continue
 			}
