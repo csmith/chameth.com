@@ -17,7 +17,7 @@ require (
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	golang.org/x/image v0.35.0
 	golang.org/x/net v0.49.0
-	tailscale.com v1.94.0
+	tailscale.com v1.94.1
 )
 
 require (
@@ -61,7 +61,6 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/pires/go-proxyproto v0.8.1 // indirect
 	github.com/prometheus-community/pro-bing v0.4.0 // indirect
-	github.com/prometheus/client_golang v1.23.2 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.66.1 // indirect
 	github.com/prometheus/procfs v0.16.1 // indirect
@@ -91,5 +90,6 @@ require (
 
 require (
 	github.com/kljensen/snowball v0.10.0
+	github.com/prometheus/client_golang v1.23.2
 	golang.org/x/text v0.33.0
 )
