@@ -3,8 +3,6 @@ package templates
 import (
 	"html/template"
 	"net/http"
-
-	"chameth.com/chameth.com/templates/includes"
 )
 
 var postsTemplate = template.Must(
@@ -14,13 +12,12 @@ var postsTemplate = template.Must(
 			templates,
 			"page.html.gotpl",
 			"posts.html.gotpl",
-			"includes/postlink.html.gotpl",
 		),
 )
 
 type PostsData struct {
 	PageData
-	Posts []includes.PostLinkData
+	Posts []template.HTML
 }
 
 func RenderPosts(w http.ResponseWriter, postsData PostsData) error {

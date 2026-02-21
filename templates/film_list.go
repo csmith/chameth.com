@@ -12,7 +12,6 @@ var filmListTemplate = template.Must(
 			templates,
 			"page.html.gotpl",
 			"film_list.html.gotpl",
-			"includes/postlink.html.gotpl",
 		),
 )
 

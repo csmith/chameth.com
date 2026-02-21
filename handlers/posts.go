@@ -11,7 +11,6 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/syndication"
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/templates"
-	"chameth.com/chameth.com/templates/includes"
 )
 
 func Post(w http.ResponseWriter, r *http.Request) {
@@ -96,7 +95,7 @@ func PostsList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var postLinks []includes.PostLinkData
+	var postLinks []template.HTML
 	for _, p := range posts {
 		postLinks = append(postLinks, content.CreatePostLink(p.Path))
 	}

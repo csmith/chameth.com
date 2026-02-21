@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/content/markdown"
+	"chameth.com/chameth.com/content/shortcodes/postlink"
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/templates"
-	"chameth.com/chameth.com/templates/includes"
 )
 
 var recentPostsCache = NewCache(time.Minute*10, func() []templates.RecentPost {
@@ -36,7 +36,7 @@ func RecentPosts() []templates.RecentPost {
 	return *recentPostsCache.Get()
 }
 
-var postLinksCache = NewKeyedCache(time.Hour*24, func(path string) *includes.PostLinkData {
+var postLinksCache = NewKeyedCache(time.Hour*24, func(path string) *template.HTML {
 	post, err := db.GetPostByPath(context.Background(), path)
 	if err != nil {
 		slog.Error("Failed to get post by path", "err", err)
@@ -46,24 +46,31 @@ var postLinksCache = NewKeyedCache(time.Hour*24, func(path string) *includes.Pos
 	summary := markdown.FirstParagraph(post.Content)
 
 	imageVariants, err := db.GetOpenGraphImageVariantsForEntity(context.Background(), "post", post.ID)
-	var images []includes.PostLinkImage
+	var images []postlink.Image
 	if err == nil {
 		for _, variant := range imageVariants {
-			images = append(images, includes.PostLinkImage{
+			images = append(images, postlink.Image{
 				Url:         fmt.Sprintf("https://chameth.com%s", variant.Path),
 				ContentType: variant.ContentType,
 			})
 		}
 	}
 
-	return &includes.PostLinkData{
+	rendered, err := postlink.Render(postlink.Data{
 		Url:     post.Path,
 		Title:   post.Title,
 		Summary: template.HTML(summary),
 		Images:  images,
+	})
+	if err != nil {
+		slog.Error("Failed to render post link", "err", err)
+		return nil
 	}
+
+	result := template.HTML(rendered)
+	return &result
 })
 
-func CreatePostLink(path string) includes.PostLinkData {
+func CreatePostLink(path string) template.HTML {
 	return *postLinksCache.Get(path)
 }

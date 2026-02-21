@@ -11,9 +11,10 @@ import (
 	"regexp"
 	"sync"
 
+	"html/template"
+
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/templates/includes"
 	"github.com/pgvector/pgvector-go"
 )
 
@@ -124,13 +125,13 @@ func UpdateAllPostEmbeddings(ctx context.Context) {
 
 // GetRelatedPosts finds posts that are semantically similar to the given post.
 // Returns up to 3 related posts, ordered by similarity (closest first).
-func GetRelatedPosts(ctx context.Context, postID int) ([]includes.PostLinkData, error) {
+func GetRelatedPosts(ctx context.Context, postID int) ([]template.HTML, error) {
 	posts, err := db.GetRelatedPostsByID(ctx, postID, 3)
 	if err != nil {
 		return nil, err
 	}
 
-	var relatedPosts []includes.PostLinkData
+	var relatedPosts []template.HTML
 	for _, post := range posts {
 		relatedPosts = append(relatedPosts, CreatePostLink(post.Path))
 	}

@@ -13,7 +13,6 @@ var pasteTemplate = template.Must(
 			"page.html.gotpl",
 			"article.html.gotpl",
 			"paste.html.gotpl",
-			"includes/postlink.html.gotpl",
 		),
 )
 

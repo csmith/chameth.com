@@ -9,7 +9,7 @@
 
     <section class="post-catalogue">
         {{- range .Posts }}
-            {{ template "postlink.html.gotpl" . }}
+            {{ . }}
         {{ end -}}
     </section>
 

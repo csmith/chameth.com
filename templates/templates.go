@@ -4,5 +4,5 @@ import (
 	"embed"
 )
 
-//go:embed *.gotpl includes/*.gotpl
+//go:embed *.gotpl
 var templates embed.FS

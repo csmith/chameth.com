@@ -1,17 +1,13 @@
 package templates
 
-import (
-	"html/template"
-
-	"chameth.com/chameth.com/templates/includes"
-)
+import "html/template"
 
 type ArticleData struct {
 	PageData
 	ArticleTitle    string
 	ArticleSummary  string
 	ArticleDate     ArticleDate
-	RelatedPosts    []includes.PostLinkData
+	RelatedPosts    []template.HTML
 	SyndicationInfo template.HTML
 }
 
