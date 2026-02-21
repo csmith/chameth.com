@@ -121,6 +121,14 @@ func CreateMedia(ctx context.Context, contentType, originalFilename string, data
 	return id, err
 }
 
+func UpdateMediaData(ctx context.Context, id int, data []byte, width, height *int) error {
+	metrics.LogQuery(ctx)
+	_, err := db.ExecContext(ctx, `
+		UPDATE media SET data = $1, width = $2, height = $3 WHERE id = $4
+	`, data, width, height, id)
+	return err
+}
+
 // GetAllMedia returns all media items ordered by ID descending (without binary data).
 func GetAllMedia(ctx context.Context) ([]MediaMetadata, error) {
 	metrics.LogQuery(ctx)

@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"chameth.com/chameth.com/admin/templates"
 	"chameth.com/chameth.com/admin/wordclouds"
@@ -230,45 +231,60 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		// Generate the wordcloud image
-		imageData, err := wordclouds.GenerateWordcloud(r.Context(), id)
+		imageData, usedWords, err := wordclouds.GenerateWordcloud(r.Context(), id)
 		if err != nil {
 			slog.Error("Failed to generate wordcloud", "post_id", id, "error", err)
 			http.Error(w, "Failed to generate wordcloud", http.StatusInternalServerError)
 			return
 		}
 
-		// Get the post to construct the path
-		post, err := db.GetPostByID(r.Context(), id)
-		if err != nil {
-			http.Error(w, "Post not found", http.StatusNotFound)
-			return
-		}
-
-		// Insert the image into the media table (wordcloud dimensions are 400x300)
+		description := fmt.Sprintf("Word cloud featuring: %s", strings.Join(usedWords, ", "))
 		width := 400
 		height := 300
-		mediaID, err := db.CreateMedia(r.Context(), "image/png", "wordcloud.png", imageData, &width, &height, nil)
+
+		// Check if there's an existing wordcloud to update
+		existing, err := db.GetOpenGraphDetailsForEntity(r.Context(), "post", id)
 		if err != nil {
-			slog.Error("Failed to create media", "error", err)
-			http.Error(w, "Failed to save wordcloud", http.StatusInternalServerError)
+			slog.Error("Failed to check for existing wordcloud", "error", err)
+			http.Error(w, "Failed to check for existing wordcloud", http.StatusInternalServerError)
 			return
 		}
 
-		// Construct path: post path + filename
-		mediaPath := post.Path + "wordcloud.png"
+		if existing != nil && existing.OriginalFilename == "wordcloud.png" {
+			if err := db.UpdateMediaData(r.Context(), existing.MediaID, imageData, &width, &height); err != nil {
+				slog.Error("Failed to update wordcloud", "error", err)
+				http.Error(w, "Failed to update wordcloud", http.StatusInternalServerError)
+				return
+			}
+			if err := db.UpdateMediaRelation(r.Context(), "post", id, existing.Path, nil, &description, existing.Role); err != nil {
+				slog.Error("Failed to update wordcloud description", "error", err)
+				http.Error(w, "Failed to update wordcloud description", http.StatusInternalServerError)
+				return
+			}
+		} else {
+			post, err := db.GetPostByID(r.Context(), id)
+			if err != nil {
+				http.Error(w, "Post not found", http.StatusNotFound)
+				return
+			}
 
-		// Create media relation with role=opengraph
-		description := "Word cloud showing frequently used words in the post"
-		role := "opengraph"
-		err = db.CreateMediaRelation(r.Context(), "post", id, mediaID, mediaPath, nil, &description, &role)
-		if err != nil {
-			slog.Error("Failed to create media relation", "error", err)
-			http.Error(w, "Failed to attach wordcloud to post", http.StatusInternalServerError)
-			return
+			mediaID, err := db.CreateMedia(r.Context(), "image/png", "wordcloud.png", imageData, &width, &height, nil)
+			if err != nil {
+				slog.Error("Failed to create media", "error", err)
+				http.Error(w, "Failed to save wordcloud", http.StatusInternalServerError)
+				return
+			}
+
+			mediaPath := post.Path + "wordcloud.png"
+			role := "opengraph"
+			err = db.CreateMediaRelation(r.Context(), "post", id, mediaID, mediaPath, nil, &description, &role)
+			if err != nil {
+				slog.Error("Failed to create media relation", "error", err)
+				http.Error(w, "Failed to attach wordcloud to post", http.StatusInternalServerError)
+				return
+			}
 		}
 
-		// Redirect back to the edit page
 		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
 	}
 }

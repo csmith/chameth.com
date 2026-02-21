@@ -40,24 +40,20 @@ type postAnalysis struct {
 
 // GenerateWordcloud generates a word cloud image for a post identified by postID.
 // It returns the PNG image as a byte slice.
-func GenerateWordcloud(ctx context.Context, postID int) ([]byte, error) {
-	// Get the target post
+func GenerateWordcloud(ctx context.Context, postID int) ([]byte, []string, error) {
 	targetPost, err := db.GetPostByID(ctx, postID)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get post: %w", err)
+		return nil, nil, fmt.Errorf("failed to get post: %w", err)
 	}
 
-	// Analyze the target post
 	targetAnalysis := analyzePost(targetPost.Content)
 	targetAnalysis.ID = targetPost.ID
 
-	// Get all published posts for baseline corpus
-	allPosts, err := db.GetRecentPostsWithContent(ctx, 1000) // Get up to 1000 posts
+	allPosts, err := db.GetRecentPostsWithContent(ctx, 1000)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get all posts: %w", err)
+		return nil, nil, fmt.Errorf("failed to get all posts: %w", err)
 	}
 
-	// Analyze all published posts for frequency calculation
 	var analyses []postAnalysis
 	for _, post := range allPosts {
 		analysis := analyzePost(post.Content)
@@ -65,14 +61,9 @@ func GenerateWordcloud(ctx context.Context, postID int) ([]byte, error) {
 		analyses = append(analyses, analysis)
 	}
 
-	// Calculate word frequencies across all published posts
-	freq := wordFrequency(analyses)
-
-	// Get best words for the target post
-	words := bestWords(targetAnalysis, freq)
-
-	// Generate and return the image
-	return generateImage(words)
+	words := bestWords(targetAnalysis, wordFrequency(analyses))
+	imageData, usedWords, err := generateImage(words)
+	return imageData, usedWords, err
 }
 
 // analyzePost extracts and counts words from post content
@@ -81,7 +72,6 @@ func analyzePost(content string) postAnalysis {
 		WordCounts: make(map[string]int),
 	}
 
-	// Remove links and macros, then extract words
 	clean := macroRegex.ReplaceAllString(linkRegex.ReplaceAllString(content, "$1"), "")
 	words := wordRegex.FindAllString(clean, -1)
 
@@ -163,9 +153,9 @@ func bestWords(analysis postAnalysis, frequencies map[string]float64) []string {
 }
 
 // generateImage creates a word cloud image from the given words
-func generateImage(words []string) ([]byte, error) {
+func generateImage(words []string) ([]byte, []string, error) {
 	if len(words) == 0 {
-		return nil, fmt.Errorf("no words to generate image")
+		return nil, nil, fmt.Errorf("no words to generate image")
 	}
 
 	im := image.NewNRGBA(image.Rect(0, 0, 500, 400))
@@ -195,7 +185,7 @@ func generateImage(words []string) ([]byte, error) {
 
 	f, err := opentype.Parse(fontBytes)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	face, err := opentype.NewFace(f, &opentype.FaceOptions{
@@ -204,7 +194,7 @@ func generateImage(words []string) ([]byte, error) {
 		Hinting: font.HintingFull,
 	})
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	d := font.Drawer{
@@ -271,6 +261,8 @@ func generateImage(words []string) ([]byte, error) {
 	d.Dot.Y = fixed.I(150 + 3*65)
 	fillLine()
 
+	usedWords := words[:min(nextWord, len(words))]
+
 	angle := -10.0
 	if rand.Float64() >= 0.5 {
 		angle = 10
@@ -280,8 +272,8 @@ func generateImage(words []string) ([]byte, error) {
 	b := &bytes.Buffer{}
 	err = png.Encode(b, dst)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return b.Bytes(), nil
+	return b.Bytes(), usedWords, nil
 }
