@@ -52,6 +52,7 @@ var postLinksCache = NewKeyedCache(time.Hour*24, func(path string) *template.HTM
 			images = append(images, postlink.Image{
 				Url:         fmt.Sprintf("https://chameth.com%s", variant.Path),
 				ContentType: variant.ContentType,
+				Alt:         variant.Description,
 			})
 		}
 	}

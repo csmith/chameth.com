@@ -138,10 +138,10 @@ type GoImport struct {
 	Published bool   `db:"published"`
 }
 
-// MediaImageVariant represents a media image with its URL and content type
 type MediaImageVariant struct {
 	Path        string `db:"path"`
 	ContentType string `db:"content_type"`
+	Description string `db:"description"`
 }
 
 type FilmMetadata struct {

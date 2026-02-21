@@ -7,7 +7,7 @@
         {{- range .Images -}}
         <source srcset="{{ .Url }}" type="{{ .ContentType }}">
         {{- end -}}
-        <img src="{{ (index .Images 0).Url }}" alt="Lead image for {{.Title}}">
+        <img src="{{ (index .Images 0).Url }}" alt="{{ .Alt }}">
       </picture>
       {{- else -}}
       <div aria-hidden="true" class="placeholder">

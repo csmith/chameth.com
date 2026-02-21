@@ -37,6 +37,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 			images = append(images, Image{
 				Url:         variant.Path,
 				ContentType: variant.ContentType,
+				Alt:         variant.Description,
 			})
 		}
 	}

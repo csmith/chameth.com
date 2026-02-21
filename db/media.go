@@ -90,12 +90,12 @@ func GetOpenGraphImageVariantsForEntity(ctx context.Context, entityType string, 
 	metrics.LogQuery(ctx)
 	var variants []MediaImageVariant
 	err := db.SelectContext(ctx, &variants, `
-		SELECT mr.path, m.content_type
+		SELECT mr.path, m.content_type, COALESCE(mr.description, '') AS description
 		FROM media_relations mr
 		JOIN media m ON mr.media_id = m.id
 		WHERE mr.entity_type = $1 AND mr.entity_id = $2 AND mr.role = 'opengraph'
 		UNION ALL
-		SELECT mr2.path, m2.content_type
+		SELECT mr2.path, m2.content_type, '' AS description
 		FROM media_relations mr
 		JOIN media m ON mr.media_id = m.id
 		JOIN media m2 ON m2.parent_media_id = m.id
