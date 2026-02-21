@@ -17,7 +17,7 @@ var postsTemplate = template.Must(
 
 type PostsData struct {
 	PageData
-	Posts []template.HTML
+	Posts []string
 }
 
 func RenderPosts(w http.ResponseWriter, postsData PostsData) error {

@@ -1,4 +1,4 @@
-package content
+package cache
 
 import (
 	"sync/atomic"
@@ -12,7 +12,7 @@ type Cache[T any] struct {
 	lastUpdate time.Time
 }
 
-func NewCache[T any](maxAge time.Duration, update func() T) *Cache[T] {
+func New[T any](maxAge time.Duration, update func() T) *Cache[T] {
 	return &Cache[T]{
 		maxAge: maxAge,
 		update: update,
@@ -34,7 +34,7 @@ type KeyedCache[T any] struct {
 	maxAge time.Duration
 }
 
-func NewKeyedCache[T any](maxAge time.Duration, update func(key string) *T) *KeyedCache[T] {
+func NewKeyed[T any](maxAge time.Duration, update func(key string) *T) *KeyedCache[T] {
 	return &KeyedCache[T]{
 		values: make(map[string]*Cache[*T]),
 		update: update,
@@ -45,7 +45,7 @@ func NewKeyedCache[T any](maxAge time.Duration, update func(key string) *T) *Key
 func (c *KeyedCache[T]) Get(key string) *T {
 	cache, ok := c.values[key]
 	if !ok {
-		cache = NewCache(c.maxAge, func() *T {
+		cache = New(c.maxAge, func() *T {
 			return c.update(key)
 		})
 		c.values[key] = cache

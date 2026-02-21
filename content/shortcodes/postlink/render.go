@@ -2,10 +2,14 @@ package postlink
 
 import (
 	"bytes"
+	"context"
 	"embed"
 	"fmt"
 	"html/template"
+	"log/slog"
+	"time"
 
+	"chameth.com/chameth.com/cache"
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/content/shortcodes/common"
 	"chameth.com/chameth.com/db"
@@ -16,21 +20,36 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("postlink.html.gotpl").ParseFS(templates, "postlink.html.gotpl"))
 
-func RenderFromText(args []string, ctx *common.Context) (string, error) {
+var postlinkCache = cache.NewKeyed(24*time.Hour, func(path string) *string {
+	result, err := renderForPath(path)
+	if err != nil {
+		slog.Error("Failed to render postlink", "path", path, "error", err)
+		return nil
+	}
+	return &result
+})
+
+func RenderFromText(args []string, _ *common.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("postlink requires at least 1 argument (path)")
 	}
 
-	path := args[0]
+	result := postlinkCache.Get(args[0])
+	if result == nil {
+		return "", fmt.Errorf("failed to render postlink for path %s", args[0])
+	}
+	return *result, nil
+}
 
-	post, err := db.GetPostByPath(ctx.Context, path)
+func renderForPath(path string) (string, error) {
+	post, err := db.GetPostByPath(context.Background(), path)
 	if err != nil {
 		return "", fmt.Errorf("failed to get post by path %s: %w", path, err)
 	}
 
 	summary := markdown.FirstParagraph(post.Content)
 
-	imageVariants, err := db.GetOpenGraphImageVariantsForEntity(ctx.Context, "post", post.ID)
+	imageVariants, err := db.GetOpenGraphImageVariantsForEntity(context.Background(), "post", post.ID)
 	var images []Image
 	if err == nil {
 		for _, variant := range imageVariants {

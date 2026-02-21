@@ -29,6 +29,12 @@ Reusable chunks of content are exposed as shortcodes, defined under
 markup. They can also expose a `Render()` function when the
 content is needed programatically.
 
+Shortcodes can also be called from Go templates via the `Component`
+function on `PageData`: `{{call .Component "shortcodename" arg1 arg2}}`.
+This avoids pre-rendering shortcode HTML in handlers. Arguments are
+converted to strings via `fmt.Sprint` so template values like ints
+can be passed directly.
+
 ### Configuration and secrets
 
 External URLs, usernames, passwords, etc should be defined as flags.

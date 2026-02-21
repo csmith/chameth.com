@@ -66,7 +66,7 @@ func Paste(w http.ResponseWriter, r *http.Request) {
 				Friendly:    paste.Date.Format("Jan 2, 2006"),
 				ShowWarning: false,
 			},
-			PageData: content.CreatePageData(paste.Title, paste.Path, templates.OpenGraphHeaders{}),
+			PageData: content.CreatePageData(r.Context(), paste.Title, paste.Path, templates.OpenGraphHeaders{}),
 		},
 	})
 	if err != nil {

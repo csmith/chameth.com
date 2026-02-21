@@ -17,10 +17,9 @@ var filmListTemplate = template.Must(
 
 type FilmListData struct {
 	PageData
-	ListTitle    string
-	Description  template.HTML
-	Entries      []FilmListItem
-	Syndications template.HTML
+	ListTitle   string
+	Description template.HTML
+	Entries     []FilmListItem
 }
 
 type FilmListItem struct {
@@ -31,7 +30,7 @@ type FilmListItem struct {
 	Year         string
 	TimesWatched int
 	RatingText   string
-	RatingHTML   template.HTML
+	Rating       int
 	LastWatched  string
 }
 

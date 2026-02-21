@@ -9,7 +9,7 @@
 
     <section class="post-catalogue">
         {{- range .Posts }}
-            {{ . }}
+            {{call $.Component "postlink" .}}
         {{ end -}}
     </section>
 

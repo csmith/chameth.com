@@ -75,7 +75,7 @@ func PrintsList(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderPrints(w, templates.PrintsData{
 		Prints:   printDetails,
-		PageData: content.CreatePageData("3D Prints", "/prints/", templates.OpenGraphHeaders{}),
+		PageData: content.CreatePageData(r.Context(), "3D Prints", "/prints/", templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render prints template", "error", err)

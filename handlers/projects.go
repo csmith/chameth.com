@@ -56,6 +56,6 @@ func ProjectsList(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderProjects(w, templates.ProjectsData{
 		ProjectGroups: groups,
-		PageData:      content.CreatePageData("Projects", "/projects/", templates.OpenGraphHeaders{}),
+		PageData:      content.CreatePageData(r.Context(), "Projects", "/projects/", templates.OpenGraphHeaders{}),
 	})
 }

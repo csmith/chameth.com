@@ -1,14 +1,11 @@
 package templates
 
-import "html/template"
-
 type ArticleData struct {
 	PageData
-	ArticleTitle    string
-	ArticleSummary  string
-	ArticleDate     ArticleDate
-	RelatedPosts    []template.HTML
-	SyndicationInfo template.HTML
+	ArticleTitle   string
+	ArticleSummary string
+	ArticleDate    ArticleDate
+	RelatedPosts   []string
 }
 
 type ArticleDate struct {

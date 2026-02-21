@@ -2,13 +2,11 @@ package handlers
 
 import (
 	"fmt"
-	"html/template"
 	"log/slog"
 	"net/http"
 	"time"
 
 	"chameth.com/chameth.com/content"
-	"chameth.com/chameth.com/content/shortcodes/syndication"
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/templates"
 )
@@ -54,12 +52,6 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		relatedPosts = nil
 	}
 
-	syndicationInfo, err := syndication.Render(r.Context(), post.Path)
-	if err != nil {
-		slog.Error("Failed to get syndication markup", "post_id", post.ID, "error", err)
-		syndicationInfo = ""
-	}
-
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderPost(w, templates.PostData{
@@ -75,11 +67,10 @@ func Post(w http.ResponseWriter, r *http.Request) {
 				YearsOld:    yearsOld,
 			},
 			RelatedPosts: relatedPosts,
-			PageData: content.CreatePageData(post.Title, post.Path, templates.OpenGraphHeaders{
+			PageData: content.CreatePageData(r.Context(), post.Title, post.Path, templates.OpenGraphHeaders{
 				Image: ogImage,
 				Type:  "article",
 			}),
-			SyndicationInfo: template.HTML(syndicationInfo),
 		},
 	})
 	if err != nil {
@@ -95,16 +86,16 @@ func PostsList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var postLinks []template.HTML
+	var postPaths []string
 	for _, p := range posts {
-		postLinks = append(postLinks, content.CreatePostLink(p.Path))
+		postPaths = append(postPaths, p.Path)
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderPosts(w, templates.PostsData{
-		Posts:    postLinks,
-		PageData: content.CreatePageData("Posts", "/posts/", templates.OpenGraphHeaders{}),
+		Posts:    postPaths,
+		PageData: content.CreatePageData(r.Context(), "Posts", "/posts/", templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render posts template", "error", err)

@@ -35,7 +35,7 @@ func Snippet(w http.ResponseWriter, r *http.Request) {
 		SnippetTitle:   snippet.Title,
 		SnippetGroup:   snippet.Topic,
 		SnippetContent: renderedContent,
-		PageData:       content.CreatePageData(snippet.Title, snippet.Path, templates.OpenGraphHeaders{}),
+		PageData:       content.CreatePageData(r.Context(), snippet.Title, snippet.Path, templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render snippet template", "error", err, "path", r.URL.Path)
@@ -65,6 +65,6 @@ func SnippetsList(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderSnippets(w, templates.SnippetsData{
 		SnippetGroups: groups,
-		PageData:      content.CreatePageData("Snippets", "/snippets/", templates.OpenGraphHeaders{}),
+		PageData:      content.CreatePageData(r.Context(), "Snippets", "/snippets/", templates.OpenGraphHeaders{}),
 	})
 }

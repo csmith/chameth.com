@@ -23,16 +23,14 @@ type FilmData struct {
 	Overview      template.HTML
 	Reviews       []FilmReviewData
 	TimesWatched  int
-	AverageRating template.HTML
+	AverageRating int
 	PosterPath    string
-	FilmLists     []template.HTML
-	Syndications  template.HTML
+	FilmLists     []int
 }
 
 type FilmReviewData struct {
 	WatchedDate string
 	Rating      int
-	RatingHTML  template.HTML
 	IsRewatch   bool
 	HasSpoilers bool
 	Content     template.HTML

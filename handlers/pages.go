@@ -35,7 +35,7 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 
 		err = templates.RenderRawPage(w, templates.RawPageData{
 			RawContent: renderedContent,
-			PageData:   content.CreatePageData(page.Title, page.Path, templates.OpenGraphHeaders{}),
+			PageData:   content.CreatePageData(r.Context(), page.Title, page.Path, templates.OpenGraphHeaders{}),
 		})
 		if err != nil {
 			slog.Error("Failed to render raw page template", "error", err, "path", r.URL.Path)
@@ -56,7 +56,7 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 	err = templates.RenderStaticPage(w, templates.StaticPageData{
 		StaticTitle:   page.Title,
 		StaticContent: renderedContent,
-		PageData:      content.CreatePageData(page.Title, page.Path, templates.OpenGraphHeaders{}),
+		PageData:      content.CreatePageData(r.Context(), page.Title, page.Path, templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render static page template", "error", err, "path", r.URL.Path)

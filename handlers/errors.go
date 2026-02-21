@@ -14,7 +14,7 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusNotFound)
 	err := templates.RenderNotFound(w, templates.NotFoundData{
-		PageData: content.CreatePageData("Not found", "", templates.OpenGraphHeaders{}),
+		PageData: content.CreatePageData(r.Context(), "Not found", "", templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render not found template", "error", err)
@@ -27,7 +27,7 @@ func ServerError(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusInternalServerError)
 	err := templates.RenderServerError(w, templates.ServerErrorData{
-		PageData: content.CreatePageData("Server error", "", templates.OpenGraphHeaders{}),
+		PageData: content.CreatePageData(r.Context(), "Server error", "", templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render not found template", "error", err)

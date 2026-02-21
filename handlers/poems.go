@@ -44,7 +44,7 @@ func Poem(w http.ResponseWriter, r *http.Request) {
 				Friendly:    poem.Date.Format("Jan 2, 2006"),
 				ShowWarning: false,
 			},
-			PageData: content.CreatePageData(poem.Title, poem.Path, templates.OpenGraphHeaders{}),
+			PageData: content.CreatePageData(r.Context(), poem.Title, poem.Path, templates.OpenGraphHeaders{}),
 		},
 	})
 	if err != nil {

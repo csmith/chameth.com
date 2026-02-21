@@ -100,7 +100,7 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templat
 }
 
 func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
-	siteMapData, err := buildSiteMapData(r.Context(), content.CreatePageData("Sitemap", "/sitemap/", templates.OpenGraphHeaders{}))
+	siteMapData, err := buildSiteMapData(r.Context(), content.CreatePageData(r.Context(), "Sitemap", "/sitemap/", templates.OpenGraphHeaders{}))
 	if err != nil {
 		slog.Error("Failed to build site map data", "error", err)
 		ServerError(w, r)

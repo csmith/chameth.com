@@ -1,5 +1,7 @@
 package templates
 
+import "html/template"
+
 type PageData struct {
 	Title        string
 	Stylesheet   string
@@ -7,6 +9,7 @@ type PageData struct {
 	CanonicalUrl string
 	OpenGraph    OpenGraphHeaders
 	RecentPosts  []RecentPost
+	Component    func(string, ...any) template.HTML
 }
 
 type OpenGraphHeaders struct {

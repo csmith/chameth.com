@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"log/slog"
 	"math"
 	"net/http"
@@ -11,9 +10,7 @@ import (
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/content/markdown"
-	"chameth.com/chameth.com/content/shortcodes/filmlist"
 	"chameth.com/chameth.com/content/shortcodes/rating"
-	"chameth.com/chameth.com/content/shortcodes/syndication"
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/templates"
 )
@@ -47,13 +44,6 @@ func Film(w http.ResponseWriter, r *http.Request) {
 
 	var reviewData []templates.FilmReviewData
 	for _, review := range publishedReviews {
-		ratingHTML, err := rating.Render(review.Rating)
-		if err != nil {
-			slog.Error("Failed to render rating", "review_id", review.ID, "error", err)
-			ServerError(w, r)
-			return
-		}
-
 		reviewTextHTML, err := markdown.Render(review.ReviewText)
 		if err != nil {
 			slog.Error("Failed to render review text", "review_id", review.ID, "error", err)
@@ -64,7 +54,6 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		reviewData = append(reviewData, templates.FilmReviewData{
 			WatchedDate: review.WatchedDate.Format("2006-01-02"),
 			Rating:      review.Rating,
-			RatingHTML:  template.HTML(ratingHTML),
 			IsRewatch:   review.IsRewatch,
 			HasSpoilers: review.HasSpoilers,
 			Content:     reviewTextHTML,
@@ -84,20 +73,13 @@ func Film(w http.ResponseWriter, r *http.Request) {
 	}
 
 	timesWatched := len(publishedReviews)
-	var ratingHTML string
+	var averageRating int
 	if len(publishedReviews) > 0 {
 		var sum int
 		for _, review := range publishedReviews {
 			sum += review.Rating
 		}
-		averageRating := float64(sum) / float64(len(publishedReviews))
-		roundedRating := int(math.Round(averageRating))
-		stars, err := rating.Render(roundedRating)
-		if err != nil {
-			slog.Error("Failed to render rating", "error", err, "rating", roundedRating)
-		} else {
-			ratingHTML = stars
-		}
+		averageRating = int(math.Round(float64(sum) / float64(len(publishedReviews))))
 	}
 
 	posterPath := ""
@@ -110,19 +92,9 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		slog.Error("Failed to get film lists containing film", "film_id", film.ID, "error", err)
 	}
 
-	var filmLists []template.HTML
+	var filmListIDs []int
 	for _, list := range lists {
-		listHTML, err := filmlist.Render(r.Context(), list.ID)
-		if err != nil {
-			slog.Error("Failed to render film list", "list_id", list.ID, "error", err)
-		} else {
-			filmLists = append(filmLists, template.HTML(listHTML))
-		}
-	}
-
-	syndicationHTML, err := syndication.Render(r.Context(), film.Path)
-	if err != nil {
-		slog.Error("Failed to render syndications", "path", film.Path, "error", err)
+		filmListIDs = append(filmListIDs, list.ID)
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -134,11 +106,10 @@ func Film(w http.ResponseWriter, r *http.Request) {
 		Overview:      renderedOverview,
 		Reviews:       reviewData,
 		TimesWatched:  timesWatched,
-		AverageRating: template.HTML(ratingHTML),
+		AverageRating: averageRating,
 		PosterPath:    posterPath,
-		FilmLists:     filmLists,
-		Syndications:  template.HTML(syndicationHTML),
-		PageData:      content.CreatePageData(fmt.Sprintf("%s (%s)", film.Title, year), film.Path, templates.OpenGraphHeaders{}),
+		FilmLists:     filmListIDs,
+		PageData:      content.CreatePageData(r.Context(), fmt.Sprintf("%s (%s)", film.Title, year), film.Path, templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render film template", "error", err, "path", r.URL.Path)
@@ -179,18 +150,12 @@ func FilmList(w http.ResponseWriter, r *http.Request) {
 			year = fmt.Sprintf("%d", *entry.Film.Year)
 		}
 
-		var ratingHTML string
+		var roundedRating int
 		var ratingText string
 		var lastWatched string
 		if entry.AverageRating != nil {
-			roundedRating := int(math.Round(*entry.AverageRating))
+			roundedRating = int(math.Round(*entry.AverageRating))
 			ratingText = fmt.Sprintf("%d/10", roundedRating)
-			stars, err := rating.Render(roundedRating)
-			if err != nil {
-				slog.Error("Failed to render rating", "error", err, "rating", roundedRating)
-			} else {
-				ratingHTML = stars
-			}
 		}
 		if entry.LastWatched != nil {
 			lastWatched = entry.LastWatched.Format("January 2, 2006")
@@ -204,24 +169,18 @@ func FilmList(w http.ResponseWriter, r *http.Request) {
 			Year:         year,
 			TimesWatched: entry.TimesWatched,
 			RatingText:   ratingText,
-			RatingHTML:   template.HTML(ratingHTML),
+			Rating:       roundedRating,
 			LastWatched:  lastWatched,
 		}
-	}
-
-	syndicationHTML, err := syndication.Render(r.Context(), filmList.Path)
-	if err != nil {
-		slog.Error("Failed to render syndications", "path", filmList.Path, "error", err)
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderFilmList(w, templates.FilmListData{
-		ListTitle:    filmList.Title,
-		Description:  renderedDescription,
-		Entries:      filmListItems,
-		Syndications: template.HTML(syndicationHTML),
-		PageData:     content.CreatePageData(filmList.Title, filmList.Path, templates.OpenGraphHeaders{}),
+		ListTitle:   filmList.Title,
+		Description: renderedDescription,
+		Entries:     filmListItems,
+		PageData:    content.CreatePageData(r.Context(), filmList.Title, filmList.Path, templates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render film list template", "error", err, "path", r.URL.Path)

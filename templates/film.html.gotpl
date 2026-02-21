@@ -3,7 +3,7 @@
     <article class="film-page" data-film-id="{{ .TMDBID }}">
         <header>
             <h2><a href="/films/">Films</a> &raquo; {{.Title}}</h2>
-            <p class="meta">Watched {{.TimesWatched}} time{{if ne .TimesWatched 1}}s{{end}}, average rating {{.AverageRating}}</p>
+            <p class="meta">Watched {{.TimesWatched}} time{{if ne .TimesWatched 1}}s{{end}}{{if .AverageRating}}, average rating {{call .Component "rating" .AverageRating}}{{end}}</p>
         </header>
 
         <div>
@@ -11,7 +11,7 @@
             <section class="h-review film-page-review">
                 <p class="film-review-meta">
                     <span>Watched on <time class="dt-published" datetime="{{.WatchedDate}}">{{.WatchedDate}}</time>.</span>
-                    <span>Rating: <data class="p-rating" value="{{.Rating}}">{{.RatingHTML}}</data></span>
+                    <span>Rating: <data class="p-rating" value="{{.Rating}}">{{call $.Component "rating" .Rating}}</data></span>
                     {{if .IsRewatch}}<span class="film-rewatch">Rewatch</span>{{end}}
                     {{if .HasSpoilers}}<span class="film-spoilers">Spoilers</span>{{end}}
                 </p>
@@ -24,13 +24,11 @@
             <section class="film-lists">
                 <h3>Appears in these lists</h3>
                 {{range .FilmLists}}
-                    {{.}}
+                    {{call $.Component "filmlist" .}}
                 {{end}}
             </section>
             {{end}}
-            {{if .Syndications}}
-            {{.Syndications}}
-            {{end}}
+            {{call .Component "syndication"}}
         </div>
 
         <aside class="film-sidebar">
