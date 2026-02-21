@@ -1,0 +1,28 @@
+{{/* gotype: chameth.com/chameth.com/admin/templates.EditSnippetData */}}
+{{define "content"}}
+    <h2>Edit snippet: {{.Title}}</h2>
+    <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
+    <form action="/snippets/edit/{{.ID}}" method="post">
+        <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>
+        <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
+        <label>
+            Topic:
+            <select name="topic">
+                <option value="">-- Select or enter custom --</option>
+                {{range .AvailableTopics}}
+                <option value="{{.}}" {{if eq . $.Topic}}selected{{end}}>{{.}}</option>
+                {{end}}
+            </select>
+            <input type="text" name="custom_topic" placeholder="Or enter custom topic" />
+        </label>
+        <label>
+            <input type="checkbox" name="published" value="true" {{if .Published}}checked{{end}} />
+            Published
+        </label>
+        <label>
+            Content:
+            <textarea name="content" id="editor">{{.Content}}</textarea>
+        </label>
+        <input type="submit" />
+    </form>
+{{end}}

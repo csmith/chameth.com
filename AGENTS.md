@@ -7,8 +7,8 @@ go templates for rendering content.
 ## Project structure
 
 - `cmd/serve` - main program code
-- `cmd/serve/db` - database handling code
-- `cmd/serve/admin` - admin interface. this is is exposed on tailscale,
+- `db` - database handling code
+- `admin` - admin interface. this is is exposed on tailscale,
   accessible only by the site admin
 
 ## Common patterns

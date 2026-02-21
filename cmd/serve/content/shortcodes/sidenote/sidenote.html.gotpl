@@ -1,5 +1,0 @@
-{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/sidenote.Data*/}}
-<aside class="sidenote">
-  <h5>Side note: {{ .Title }}</h5>
-  {{ .Content }}
-</aside>

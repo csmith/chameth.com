@@ -1,0 +1,19 @@
+{{/* gotype: chameth.com/chameth.com/admin/templates.EditSyndicationData */}}
+{{define "content"}}
+    <h2>Edit syndication: {{.Name}}</h2>
+    <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
+    <form action="/syndications/edit/{{.ID}}" method="post">
+        <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>
+        <label>External URL: <input type="text" name="external_url" value="{{.ExternalURL}}" /></label>
+        <label>Name: <input type="text" name="name" value="{{.Name}}" /></label>
+        <label>
+            <input type="checkbox" name="published" value="true" {{if .Published}}checked{{end}} />
+            Published
+        </label>
+        <input type="submit" value="Save" />
+    </form>
+    <form action="/syndications/delete/{{.ID}}" method="post" onsubmit="return confirm('Are you sure you want to delete this syndication?');">
+        <button type="submit">Delete</button>
+    </form>
+    <a href="/syndications">Back to list</a>
+{{end}}

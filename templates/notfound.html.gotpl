@@ -1,0 +1,34 @@
+{{/* gotype: chameth.com/chameth.com/templates.NotFoundData*/}}
+{{define "content"}}
+    <h2>Not found</h2>
+
+    <pre class="ascii-art">
+       444444444        000000000             444444444
+      4444444444      0000000000000          4444444444
+     44444444444    00000000000000000       44444444444
+    444444444444   0000000000000000000     444444444444
+   444444 444444   00000000   00000000    444444 444444
+  444444  444444   0000000     0000000   444444  444444
+ 444444   444444   0000000     0000000  444444   444444
+444444444444444444 0000000     0000000 444444444444444444
+444444444444444444 0000000     0000000 444444444444444444
+444444444444444444 0000000     0000000 444444444444444444
+          444444   0000000     0000000           444444
+          444444   00000000   00000000           444444
+          444444   0000000000000000000           444444
+        4444444444  00000000000000000          4444444444
+        4444444444    0000000000000            4444444444
+        4444444444      000000000              4444444444
+</pre>
+
+    <p>
+        The page you requested doesn't seem to exist. Sorry! Maybe you can find
+        what you're looking for in the <a href="/index/">sitemap</a>?
+    </p>
+
+    <p>
+        If you followed a link here that no longer works, please consider
+        <a href="/contact/">dropping me a message</a> so I can fix it! I believe that
+        <a href="https://www.w3.org/Provider/Style/URI">cool URIs don't change</a>, but sometimes mistakes happen!
+    </p>
+{{end}}

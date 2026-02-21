@@ -1,0 +1,8 @@
+{{/* gotype: chameth.com/chameth.com/templates.StaticPageData*/}}
+{{define "content"}}
+<h2>{{ .StaticTitle }}</h2>
+{{ .StaticContent }}
+<hr class="end-of-post">
+
+<aside><div data-nod></div></aside>
+{{end}}

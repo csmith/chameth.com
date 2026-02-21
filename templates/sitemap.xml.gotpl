@@ -1,0 +1,154 @@
+{{/* gotype: chameth.com/chameth.com/templates.SiteMapData*/}}<?xml version="1.0" encoding="utf-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://chameth.com/</loc>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/posts/</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/feeds/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/films/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/films/reviews/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.4</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/contact/</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/prints/</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/sitemap/</loc>
+        <changefreq>daily</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/snippets/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.2</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/uses/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+
+    <url>
+        <loc>https://chameth.com/interests/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/colophon/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/index.xml</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/short.xml</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.25</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/long.xml</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.25</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/snippets/feed.xml</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.25</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/poems/feed.xml</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.25</priority>
+    </url>
+
+    <url>
+        <loc>https://chameth.com/films/reviews/feed.xml</loc>
+        <changefreq>weekly</changefreq>
+        <priority>0.25</priority>
+    </url>
+
+    {{ range .Posts -}}
+        <url>
+            <loc>https://chameth.com{{ .Path }}</loc>
+            <changefreq>never</changefreq>
+            <priority>0.9</priority>
+            <lastmod>{{ .Date.Iso }}</lastmod>
+        </url>
+    {{- end }}
+
+    {{ range .Snippets -}}
+        <url>
+            <loc>https://chameth.com{{ .Path }}</loc>
+            <changefreq>yearly</changefreq>
+            <priority>0.4</priority>
+        </url>
+    {{- end }}
+
+    {{ range .Poems -}}
+        <url>
+            <loc>https://chameth.com{{ .Path }}</loc>
+            <changefreq>never</changefreq>
+            <priority>0.4</priority>
+            <lastmod>{{ .Date.Iso }}</lastmod>
+        </url>
+    {{- end }}
+
+    {{ range .Films -}}
+        <url>
+            <loc>https://chameth.com{{ .Path }}</loc>
+            <changefreq>yearly</changefreq>
+            <priority>0.2</priority>
+            <lastmod>{{ .Date.Iso }}</lastmod>
+        </url>
+    {{- end }}
+
+    {{ range .FilmLists -}}
+        <url>
+            <loc>https://chameth.com{{ .Path }}</loc>
+            <changefreq>monthly</changefreq>
+            <priority>0.1</priority>
+        </url>
+    {{- end }}
+</urlset>

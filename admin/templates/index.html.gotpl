@@ -1,0 +1,3 @@
+{{/* gotype: chameth.com/chameth.com/admin/templates.IndexData */}}
+{{define "content"}}
+{{end}}

@@ -1,0 +1,5 @@
+{{/* gotype: chameth.com/chameth.com/content/shortcodes/sidenote.Data*/}}
+<aside class="sidenote">
+  <h5>Side note: {{ .Title }}</h5>
+  {{ .Content }}
+</aside>

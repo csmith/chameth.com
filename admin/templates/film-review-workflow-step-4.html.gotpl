@@ -1,0 +1,50 @@
+{{/* gotype: chameth.com/chameth.com/admin/templates.Step4Data */}}
+{{define "content"}}
+<h2>Add Watched Film - Step 4: Write Review</h2>
+
+<div class="workflow-progress">
+  <div class="step completed">1. Select Film</div>
+  <div class="step completed">2. Position</div>
+  <div class="step completed">3. Letterboxd List</div>
+  <div class="step current">4. Write Review</div>
+  <div class="step">5. Copy to Letterboxd</div>
+  <div class="step">6. Add Syndication</div>
+  <div class="step">7. Additional Lists</div>
+</div>
+
+<p>Film: <strong>{{.Film.Title}}</strong></p>
+
+<form method="POST">
+  <label>
+    Watched Date:
+    <input type="date" name="watched_date" value="{{.WatchedDate}}" required>
+  </label>
+
+  <label>
+    Rating (1-10):
+    <input type="number" name="rating" min="1" max="10" value="{{.DefaultRating}}" required>
+  </label>
+
+  <label>
+    <input type="checkbox" name="is_rewatch">
+    This is a rewatch
+  </label>
+
+  <label>
+    <input type="checkbox" name="has_spoilers">
+    Contains spoilers
+  </label>
+
+  <label>
+    Review:
+    <textarea name="review_text" rows="10" cols="80"></textarea>
+  </label>
+
+  <label>
+    <input type="checkbox" name="published" checked>
+    Publish review
+  </label>
+
+  <button type="submit">Create Review</button>
+</form>
+{{end}}

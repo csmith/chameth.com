@@ -1,0 +1,7 @@
+{{/* gotype: chameth.com/chameth.com/content/shortcodes/warning.Data*/}}
+<aside class="warning">
+  <div>
+    <h5>Warning</h5>
+    {{ .Content }}
+  </div>
+</aside>

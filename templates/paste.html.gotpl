@@ -1,0 +1,8 @@
+{{/* gotype: chameth.com/chameth.com/templates.PasteData*/}}
+{{define "article"}}
+    <div class="paste-metadata">
+        {{if .Language}}<span class="language">{{.Language}}</span> · {{end}}{{.Size}} bytes · <a href="?raw">view raw</a>
+    </div>
+
+    <section class="paste">{{.Content}}</section>
+{{end}}

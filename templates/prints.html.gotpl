@@ -1,0 +1,41 @@
+{{/* gotype: chameth.com/chameth.com/templates.PrintsData*/}}
+{{define "content"}}
+    <h2>3D Prints</h2>
+
+    <p>
+        This is a selection of things I've designed from scratch for 3D printing,
+        that might be useful to other people.
+    </p>
+
+    <div class="print-list">
+        {{ range .Prints -}}
+            <section class="print">
+                {{ if .RenderPath -}}
+                    <img src="{{.RenderPath}}" alt="Render of {{.Name}}" loading="lazy">
+                {{ end -}}
+                <div>
+                    <h3>{{.Name}}</h3>
+                    <p>{{.Description}}</p>
+                    <ul class="links">
+                        {{ range .Links -}}
+                            <li><a href="{{.Address}}">{{.Name}}</a></li>
+                        {{ end -}}
+                    </ul>
+                </div>
+                {{ if .PreviewPath -}}
+                    <img src="{{.PreviewPath}}" alt="Preview of {{.Name}}" loading="lazy">
+                {{ end -}}
+            </section>
+        {{ end -}}
+    </div>
+
+    <p>
+        I am releasing these models under the
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>
+        licence. If you wish to make commercial use of them, please get in touch.
+    </p>
+
+    <hr class="end-of-post">
+
+    <aside><div data-nod></div></aside>
+{{end}}

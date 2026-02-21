@@ -1,0 +1,19 @@
+{{/* gotype: chameth.com/chameth.com/templates.PostsData*/}}
+{{define "content"}}
+    <h2>Posts</h2>
+    <p>
+        Here are all the posts I've written on this blog, from most recent
+        to the earliest. There's an <a href="/index.xml">RSS feed</a> available
+        if you want to keep up-to-date.
+    </p>
+
+    <section class="post-catalogue">
+        {{- range .Posts }}
+            {{ template "postlink.html.gotpl" . }}
+        {{ end -}}
+    </section>
+
+    <hr class="end-of-post">
+
+    <aside><div data-nod></div></aside>
+{{end}}}

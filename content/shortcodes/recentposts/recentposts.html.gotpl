@@ -1,0 +1,4 @@
+{{/* gotype: chameth.com/chameth.com/content/shortcodes/recentposts.Data*/}}
+<section class="recent-posts post-links-parent">
+  <div class="post-links">{{ .Posts }}</div>
+</section>

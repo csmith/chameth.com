@@ -1,0 +1,56 @@
+{{/* gotype: chameth.com/chameth.com/admin/templates.ListPastesData */}}
+{{define "content"}}
+    <form method="POST" action="/pastes">
+        <button type="submit">Create New Paste</button>
+    </form>
+
+    {{if .Drafts}}
+    <h2>Drafts</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Path</th>
+                <th>Title</th>
+                <th>Language</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Drafts}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Path}}</td>
+                <td>{{.Title}}</td>
+                <td>{{.Language}}</td>
+                <td><a href="/pastes/edit/{{.ID}}">Edit</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{end}}
+
+    <h2>Pastes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Path</th>
+                <th>Title</th>
+                <th>Language</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Pastes}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Path}}</td>
+                <td>{{.Title}}</td>
+                <td>{{.Language}}</td>
+                <td><a href="/pastes/edit/{{.ID}}">Edit</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+{{end}}

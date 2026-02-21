@@ -1,0 +1,23 @@
+{{/* gotype: chameth.com/chameth.com/templates.SnippetsData*/}}
+{{define "content"}}
+<h2>Snippets / How-tos</h2>
+
+<p>These are small snippets of code or other instructions that I find useful.</p>
+
+<section class="snippets">
+    {{ range .SnippetGroups -}}
+        <section>
+            <h3>{{ .Name }}</h3>
+            <ul>
+                {{ range .Snippets -}}
+                    <li><a href="{{.Path}}">{{.Name}}</a></li>
+                {{- end }}
+            </ul>
+        </section>
+    {{- end }}
+</section>
+
+<hr class="end-of-post">
+
+<aside><div data-nod></div></aside>
+{{end}}

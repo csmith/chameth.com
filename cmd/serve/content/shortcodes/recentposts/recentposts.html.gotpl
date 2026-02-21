@@ -1,4 +1,0 @@
-{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/recentposts.Data*/}}
-<section class="recent-posts post-links-parent">
-  <div class="post-links">{{ .Posts }}</div>
-</section>

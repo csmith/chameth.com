@@ -1,0 +1,56 @@
+ {{/* gotype: chameth.com/chameth.com/templates.FilmData*/}}
+{{define "content"}}
+    <article class="film-page" data-film-id="{{ .TMDBID }}">
+        <header>
+            <h2><a href="/films/">Films</a> &raquo; {{.Title}}</h2>
+            <p class="meta">Watched {{.TimesWatched}} time{{if ne .TimesWatched 1}}s{{end}}, average rating {{.AverageRating}}</p>
+        </header>
+
+        <div>
+            {{range .Reviews}}
+            <section class="h-review film-page-review">
+                <p class="film-review-meta">
+                    <span>Watched on <time class="dt-published" datetime="{{.WatchedDate}}">{{.WatchedDate}}</time>.</span>
+                    <span>Rating: <data class="p-rating" value="{{.Rating}}">{{.RatingHTML}}</data></span>
+                    {{if .IsRewatch}}<span class="film-rewatch">Rewatch</span>{{end}}
+                    {{if .HasSpoilers}}<span class="film-spoilers">Spoilers</span>{{end}}
+                </p>
+                <blockquote class="e-content film-review-content">
+                    {{.Content}}
+                </blockquote>
+            </section>
+            {{end}}
+            {{if .FilmLists}}
+            <section class="film-lists">
+                <h3>Appears in these lists</h3>
+                {{range .FilmLists}}
+                    {{.}}
+                {{end}}
+            </section>
+            {{end}}
+            {{if .Syndications}}
+            {{.Syndications}}
+            {{end}}
+        </div>
+
+        <aside class="film-sidebar">
+            {{if .PosterPath}}
+            <img src="{{.PosterPath}}" alt="{{.Title}} poster" class="film-poster">
+            {{end}}
+            {{if .Year}}
+            <p class="release-date">Released in <time datetime="{{ .Year }}">{{ .Year }}</time></p>
+            {{end}}
+            {{if .Overview}}
+            {{.Overview}}
+            {{end}}
+            {{if .TMDBID}}
+            <a href="https://www.themoviedb.org/movie/{{.TMDBID}}">View on TMDB</a><br>
+            <a href="https://letterboxd.com/tmdb/{{.TMDBID}}">View on Letterboxd</a>
+            {{end}}
+        </aside>
+    </article>
+
+    <hr class="end-of-post">
+
+    <aside><div data-nod></div></aside>
+{{end}}

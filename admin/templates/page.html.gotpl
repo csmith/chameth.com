@@ -1,0 +1,33 @@
+{{/* gotype: chameth.com/chameth.com/admin/templates.PageData */}}
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Chameth.com admin</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="/assets/style.css"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <script type="module" src="/assets/textarea.js"></script>
+</head>
+<body>
+<header>
+    <h1>Chameth.com admin</h1>
+    <nav>
+        <a href="/posts">Posts</a>
+        <a href="/pages">Pages</a>
+        <a href="/snippets">Snippets</a>
+        <a href="/poems">Poems</a>
+        <a href="/pastes">Pastes</a>
+        <a href="/projects">Projects</a>
+        <a href="/goimports">Go Imports</a>
+        <a href="/films">Films</a>
+        <a href="/film-lists">Film Lists</a>
+        <a href="/videogames">Video Games</a>
+        <a href="/syndications">Syndications</a>
+        <a href="/media">Media</a>
+    </nav>
+</header>
+<main>
+    {{block "content" .}}{{end}}
+</main>
+</body>
+</html>

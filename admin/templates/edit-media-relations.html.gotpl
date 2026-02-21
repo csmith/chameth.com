@@ -1,0 +1,162 @@
+{{/* gotype: chameth.com/chameth.com/admin/templates.EditMediaRelationsData */}}
+{{define "content"}}
+    <h2>Edit Media Relations</h2>
+    <p>Entity Type: <strong>{{.EntityType}}</strong> | Entity ID: <strong>{{.EntityID}}</strong></p>
+
+    {{if .Media}}
+    <table class="media-relations-table">
+        <thead>
+            <tr>
+                <th>Preview</th>
+                <th>Title</th>
+                <th>Alt Text</th>
+                <th>Dimensions</th>
+                <th>Role</th>
+                <th>Path</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Media}}
+            <tr{{if .IsVariant}} class="variant-row"{{end}}>
+                <form action="/media-relations/update" method="post">
+                    <input type="hidden" name="entity_type" value="{{$.EntityType}}" />
+                    <input type="hidden" name="entity_id" value="{{$.EntityID}}" />
+                    <input type="hidden" name="media_id" value="{{.MediaID}}" />
+                    <input type="hidden" name="path" value="{{.Path}}" />
+
+                    <td class="preview-cell">
+                        <a href="/media/view/{{.MediaID}}" target="_blank">
+                            {{if or (eq .ContentType "image/jpeg") (eq .ContentType "image/png") (eq .ContentType "image/webp") (eq .ContentType "image/avif") (eq .ContentType "image/gif")}}
+                                <img src="/media/view/{{.MediaID}}" alt="{{.AltText}}" />
+                            {{else if or (eq .ContentType "video/mp4") (eq .ContentType "video/webm")}}
+                                <video controls>
+                                    <source src="/media/view/{{.MediaID}}" type="{{.ContentType}}">
+                                </video>
+                            {{else if or (eq .ContentType "audio/mpeg") (eq .ContentType "audio/wav") (eq .ContentType "audio/ogg")}}
+                                <audio controls>
+                                    <source src="/media/view/{{.MediaID}}" type="{{.ContentType}}">
+                                </audio>
+                            {{else}}
+                                <span class="no-preview">No preview</span>
+                            {{end}}
+                        </a>
+                        {{if .IsVariant}}<span class="variant-label">Variant</span>{{end}}
+                    </td>
+                    <td>
+                        <input type="text" name="title" value="{{.Title}}" class="inline-input" {{if .IsVariant}}disabled{{end}} />
+                    </td>
+                    <td>
+                        <input type="text" name="alt_text" value="{{.AltText}}" class="inline-input" {{if .IsVariant}}disabled{{end}} />
+                    </td>
+                    <td>
+                        {{if and .Width .Height}}
+                            {{.Width}} &times; {{.Height}}
+                        {{else}}
+                            &mdash;
+                        {{end}}
+                    </td>
+                    <td>
+                        <input type="text" name="role" value="{{.Role}}" class="inline-input short" />
+                    </td>
+                    <td><code>{{.Path}}</code></td>
+                    <td class="actions-cell">
+                        <button type="submit" class="btn-update">Update</button>
+                </form>
+                <form action="/media-relations/remove" method="post" style="display: inline;">
+                    <input type="hidden" name="entity_type" value="{{$.EntityType}}" />
+                    <input type="hidden" name="entity_id" value="{{$.EntityID}}" />
+                    <input type="hidden" name="media_id" value="{{.MediaID}}" />
+                    <input type="hidden" name="path" value="{{.Path}}" />
+                    <button type="submit" class="btn-remove" onclick="return confirm('Remove this media relation?')">Remove</button>
+                </form>
+                    </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{else}}
+    <p>No media attached to this entity.</p>
+    {{end}}
+
+    <h3>Add Media</h3>
+    {{if .AvailableMedia}}
+    <form action="/media-relations/add" method="post">
+        <input type="hidden" name="entity_type" value="{{.EntityType}}" />
+        <input type="hidden" name="entity_id" value="{{.EntityID}}" />
+        <input type="hidden" name="entity_path" value="{{.EntityPath}}" />
+
+        <div class="media-picker">
+            <div class="media-picker-header">
+                <span id="selection-count">0 selected</span>
+                <button type="submit" class="btn-add-media">Add Selected Media</button>
+            </div>
+
+            <div class="media-grid" id="mediaGrid">
+                {{range $index, $media := .AvailableMedia}}
+                <label class="media-item" data-index="{{$index}}">
+                    <input type="checkbox" name="media_ids" value="{{$media.MediaID}}" onchange="updateSelectionCount()" />
+                    <div class="media-preview">
+                        {{if or (eq $media.ContentType "image/jpeg") (eq $media.ContentType "image/png") (eq $media.ContentType "image/webp") (eq $media.ContentType "image/avif") (eq $media.ContentType "image/gif")}}
+                            <img src="/media/view/{{$media.MediaID}}" alt="{{$media.OriginalFilename}}" />
+                        {{else if or (eq $media.ContentType "video/mp4") (eq $media.ContentType "video/webm")}}
+                            <video><source src="/media/view/{{$media.MediaID}}" type="{{$media.ContentType}}"></video>
+                        {{else if or (eq $media.ContentType "audio/mpeg") (eq $media.ContentType "audio/wav") (eq $media.ContentType "audio/ogg")}}
+                            <div class="audio-icon">🎵</div>
+                        {{else}}
+                            <div class="file-icon">📄</div>
+                        {{end}}
+                        {{if $media.IsVariant}}<span class="variant-badge">Variant</span>{{end}}
+                    </div>
+                    <div class="media-filename">{{$media.OriginalFilename}}</div>
+                </label>
+                {{end}}
+            </div>
+
+            <div class="pagination-controls">
+                <button type="button" id="prevPage" onclick="changePage(-1)">Previous</button>
+                <span id="pageInfo">Page 1</span>
+                <button type="button" id="nextPage" onclick="changePage(1)">Next</button>
+            </div>
+        </div>
+    </form>
+
+    <script>
+    const itemsPerPage = 50;
+    let currentPage = 1;
+    const mediaItems = document.querySelectorAll('.media-item');
+    const totalPages = Math.ceil(mediaItems.length / itemsPerPage);
+
+    function showPage(page) {
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+
+        mediaItems.forEach((item, index) => {
+            item.style.display = (index >= start && index < end) ? 'block' : 'none';
+        });
+
+        document.getElementById('pageInfo').textContent = `Page ${page} of ${totalPages}`;
+        document.getElementById('prevPage').disabled = page === 1;
+        document.getElementById('nextPage').disabled = page === totalPages;
+    }
+
+    function changePage(delta) {
+        const newPage = currentPage + delta;
+        if (newPage >= 1 && newPage <= totalPages) {
+            currentPage = newPage;
+            showPage(currentPage);
+        }
+    }
+
+    function updateSelectionCount() {
+        const checked = document.querySelectorAll('.media-picker input[type="checkbox"]:checked').length;
+        document.getElementById('selection-count').textContent = `${checked} selected`;
+    }
+
+    // Initialize pagination
+    showPage(1);
+    </script>
+    {{else}}
+    <p>No media available to add.</p>
+    {{end}}
+{{end}}

@@ -1,0 +1,20 @@
+{{/* gotype: chameth.com/chameth.com/admin/templates.EditPasteData */}}
+{{define "content"}}
+    <h2>Edit paste: {{.Title}}</h2>
+    <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
+    <form action="/pastes/edit/{{.ID}}" method="post">
+        <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>
+        <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
+        <label>Language: <input type="text" name="language" value="{{.Language}}" placeholder="e.g., go, python, javascript" /></label>
+        <label>Date: <input type="text" name="date" value="{{.Date}}" /></label>
+        <label>
+            <input type="checkbox" name="published" value="true" {{if .Published}}checked{{end}} />
+            Published
+        </label>
+        <label>
+            Content:
+            <textarea name="content" id="editor">{{.Content}}</textarea>
+        </label>
+        <input type="submit" />
+    </form>
+{{end}}

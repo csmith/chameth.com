@@ -1,0 +1,23 @@
+{{/* gotype: chameth.com/chameth.com/templates.AtomData*/}}<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="/feeds.xsl" type="text/xsl"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://chameth.com/">
+    <title>{{ .FeedTitle }}</title>
+    <subtitle>Personal homepage of Chris Smith</subtitle>
+    <link href="https://chameth.com/index.xml" rel="self"/>
+    <link href="https://chameth.com/"/>
+    <icon>https://chameth.com/favicon.png</icon>
+    <updated>{{ .FeedLastUpdated }}</updated>
+    <id>https://chameth.com/</id>
+    <author>
+        <name>Chris Smith</name>
+    </author>
+    {{- range .FeedItems }}
+    <entry>
+        <title>{{ .Title | escape }}</title>
+        <link href="{{ .Link | escape }}"/>
+        <updated>{{ .Updated }}</updated>
+        <id>{{ .Link | escape }}</id>
+        <content xml:lang="en" type="html">{{ .Content | escape }}</content>
+    </entry>
+    {{- end }}
+</feed>

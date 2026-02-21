@@ -1,0 +1,64 @@
+{{/* gotype: chameth.com/chameth.com/admin/templates.ListProjectsData */}}
+{{define "content"}}
+    <form method="POST" action="/projects">
+        <button type="submit">Create New Project</button>
+    </form>
+
+    {{if .Drafts}}
+    <h2>Drafts</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Icon</th>
+                <th>Name</th>
+                <th>Section</th>
+                <th>Description</th>
+                <th>Pinned</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Drafts}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Icon}}</td>
+                <td>{{.Name}}</td>
+                <td>{{.Section}}</td>
+                <td>{{.Description}}</td>
+                <td>{{if .Pinned}}Yes{{else}}No{{end}}</td>
+                <td><a href="/projects/edit/{{.ID}}">Edit</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{end}}
+
+    <h2>Projects</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Icon</th>
+                <th>Name</th>
+                <th>Section</th>
+                <th>Description</th>
+                <th>Pinned</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Projects}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Icon}}</td>
+                <td>{{.Name}}</td>
+                <td>{{.Section}}</td>
+                <td>{{.Description}}</td>
+                <td>{{if .Pinned}}Yes{{else}}No{{end}}</td>
+                <td><a href="/projects/edit/{{.ID}}">Edit</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+{{end}}

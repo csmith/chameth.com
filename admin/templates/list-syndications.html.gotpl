@@ -1,0 +1,59 @@
+{{/* gotype: chameth.com/chameth.com/admin/templates.ListSyndicationsData */}}
+{{define "content"}}
+    <form method="POST" action="/syndications/create">
+        <label>Path: <input type="text" name="path" placeholder="/posts/my-post/" /></label>
+        <label>External URL: <input type="text" name="external_url" placeholder="https://medium.com/@user/post" /></label>
+        <label>Name: <input type="text" name="name" placeholder="Medium" /></label>
+        <button type="submit">Create Syndication</button>
+    </form>
+
+    {{if .Unpublished}}
+    <h2>Drafts</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Path</th>
+                <th>Name</th>
+                <th>External URL</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Unpublished}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Path}}</td>
+                <td>{{.Name}}</td>
+                <td>{{.ExternalURL}}</td>
+                <td><a href="/syndications/edit/{{.ID}}">Edit</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{end}}
+
+    <h2>Syndications</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Path</th>
+                <th>Name</th>
+                <th>External URL</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Syndications}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Path}}</td>
+                <td>{{.Name}}</td>
+                <td>{{.ExternalURL}}</td>
+                <td><a href="/syndications/edit/{{.ID}}">Edit</a></td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+{{end}}

@@ -1,3 +1,0 @@
-{{/* gotype: chameth.com/chameth.com/cmd/serve/admin/templates.IndexData */}}
-{{define "content"}}
-{{end}}

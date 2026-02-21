@@ -1,0 +1,78 @@
+{{/* gotype: chameth.com/chameth.com/templates.ArticleData*/}}
+{{define "content"}}
+    <article class="h-entry">
+        <header>
+            <h2 class="p-name">{{ .ArticleTitle }}</h2>
+            <p class="date">Published on
+                <time class="dt-published" datetime="{{ .ArticleDate.Iso }}">{{ .ArticleDate.Friendly }}</time>
+            </p>
+        </header>
+
+        {{ if .ArticleDate.ShowWarning -}}
+            <aside class="old-post-warning">
+                <p>
+                    Warning: this post is over {{ .ArticleDate.YearsOld }} years old and might be out of date.
+                    Technology, society and my opinions may have shifted in the time since.
+                    Instructions may no longer make sense, software may no longer be available, etc.
+                    Caveat lector.
+                </p>
+            </aside>
+        {{- end }}
+
+        <div class="e-content">
+            {{block "article" .}}{{end}}
+        </div>
+
+        {{ .SyndicationInfo }}
+
+        <hr class="end-of-post">
+
+        <aside><div data-nod></div></aside>
+
+        <section>
+            <p>Have thoughts that transcend nodding? Send me a message!</p>
+            <div data-contact>
+                <noscript>
+                    Sorry, to reduce the amount of spam I receive, this contact form
+                    requires JavaScript. You can get in touch with me through
+                    <a href="https://bsky.app/profile/chameth.com">Bluesky</a>.
+                </noscript>
+            </div>
+        </section>
+
+        {{ if .RelatedPosts -}}
+            <section class="post-links-parent">
+                <h3>Related posts</h3>
+                <div class="post-links">
+                {{ range .RelatedPosts -}}
+                    {{template "postlink.html.gotpl" .}}
+                {{ end }}
+                </div>
+            </section>
+        {{- end }}
+
+        <section hidden>
+            <section class="h-card p-author" hidden="hidden">
+                <a class="p-name u-url" href="https://chameth.com/">Chris Smith</a>
+                <img class="u-photo" src="https://chameth.com/avatar.webp">
+                <span class="p-nickname">MD87</span>
+                #nobridge
+            </section>
+
+            <a class="u-url u-uid" href="{{ .PageData.CanonicalUrl }}"></a>
+
+            <p class="p-summary">
+                {{ .ArticleSummary }}
+            </p>
+        </section>
+    </article>
+
+    <script type="application/javascript" nonce="littlefoot-ae805b14">
+        document.addEventListener('DOMContentLoaded', () => {
+            littlefoot.littlefoot({
+                activateDelay: 0,
+                buttonTemplate: `<sup id="fnref<% number %>" class="footnote-ref"><a href="#fn<% number %>" role="doc-noteref">[<% number %>]</a></sup>`,
+            });
+        });
+    </script>
+{{end}}

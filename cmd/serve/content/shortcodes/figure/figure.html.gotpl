@@ -1,8 +1,0 @@
-{{/* gotype: chameth.com/chameth.com/cmd/serve/content/shortcodes/figure.Data*/}}
-<figure class="{{ .Class }}">
-  <picture>
-      {{range .Sources}}<source srcset="{{ .Src }}" type="{{ .Type }}">
-      {{end}}<img src="{{ .Src }}" alt="{{ .Description }}" loading="lazy" width="{{ .Width }}" height="{{ .Height }}">
-  </picture>
-  <figcaption>{{ .Caption }}</figcaption>
-</figure>

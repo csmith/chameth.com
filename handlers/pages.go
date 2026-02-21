@@ -1,0 +1,64 @@
+package handlers
+
+import (
+	"log/slog"
+	"net/http"
+
+	"chameth.com/chameth.com/content"
+	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/templates"
+)
+
+func StaticPage(w http.ResponseWriter, r *http.Request) {
+	page, err := db.GetStaticPageByPath(r.Context(), r.URL.Path)
+	if err != nil {
+		slog.Error("Failed to find static page by path", "error", err, "path", r.URL.Path)
+		ServerError(w, r)
+		return
+	}
+
+	if page.Path != r.URL.Path {
+		http.Redirect(w, r, page.Path, http.StatusPermanentRedirect)
+		return
+	}
+
+	if page.Raw {
+		renderedContent, err := content.RenderContent(r.Context(), "rawpage", page.ID, page.Content, page.Path)
+		if err != nil {
+			slog.Error("Failed to render raw page content", "page", page.Title, "error", err)
+			ServerError(w, r)
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+
+		err = templates.RenderRawPage(w, templates.RawPageData{
+			RawContent: renderedContent,
+			PageData:   content.CreatePageData(page.Title, page.Path, templates.OpenGraphHeaders{}),
+		})
+		if err != nil {
+			slog.Error("Failed to render raw page template", "error", err, "path", r.URL.Path)
+		}
+		return
+	}
+
+	renderedContent, err := content.RenderContent(r.Context(), "staticpage", page.ID, page.Content, page.Path)
+	if err != nil {
+		slog.Error("Failed to render static page content", "page", page.Title, "error", err)
+		ServerError(w, r)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+
+	err = templates.RenderStaticPage(w, templates.StaticPageData{
+		StaticTitle:   page.Title,
+		StaticContent: renderedContent,
+		PageData:      content.CreatePageData(page.Title, page.Path, templates.OpenGraphHeaders{}),
+	})
+	if err != nil {
+		slog.Error("Failed to render static page template", "error", err, "path", r.URL.Path)
+	}
+}
