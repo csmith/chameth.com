@@ -22,6 +22,23 @@ type nodRequest struct {
 	Page string `json:"page"`
 }
 
+func processNod(page string) error {
+	if len(page) == 0 || len(page) > 512 {
+		return fmt.Errorf("invalid page length: %d", len(page))
+	}
+
+	parsedURL, err := url.Parse(page)
+	if err != nil || parsedURL.Scheme == "" || parsedURL.Host == "" {
+		return fmt.Errorf("invalid URL format: %s", page)
+	}
+
+	if !strings.HasPrefix(parsedURL.Scheme, "http") {
+		return fmt.Errorf("invalid URL scheme: %s", parsedURL.Scheme)
+	}
+
+	return announceToIrc(fmt.Sprintf("\00311\002[CHAMETH.COM]\002\003 Someone nodded at %s", page))
+}
+
 func Nod(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("Content-Type") != "application/json" {
 		http.Error(w, http.StatusText(http.StatusUnsupportedMediaType), http.StatusUnsupportedMediaType)
@@ -43,32 +60,24 @@ func Nod(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(nr.Page) == 0 || len(nr.Page) > 512 {
-		slog.Error("Invalid page length for nod", "page", nr.Page, "length", len(nr.Page))
+	if err = processNod(nr.Page); err != nil {
+		slog.Error("Error processing nod", "error", err)
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
-
-	parsedURL, err := url.Parse(nr.Page)
-	if err != nil || parsedURL.Scheme == "" || parsedURL.Host == "" {
-		slog.Error("Invalid URL format for nod", "page", nr.Page, "error", err)
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
-
-	if !strings.HasPrefix(parsedURL.Scheme, "http") {
-		slog.Error("Invalid URL scheme for nod", "page", nr.Page, "scheme", parsedURL.Scheme)
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
-
-	if err = announceToIrc(fmt.Sprintf("\00311\002[CHAMETH.COM]\002\003 Someone nodded at %s", nr.Page)); err != nil {
-		slog.Error("Error announcing nod messages to IRC", "error", err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusAccepted)
+}
+
+func NodForm(w http.ResponseWriter, r *http.Request) {
+	if err := processNod(r.FormValue("page")); err != nil {
+		slog.Error("Error processing nod form", "error", err)
+		http.Error(w, "Something went wrong", http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	fmt.Fprint(w, "Your nod has been received and is appreciated")
 }
 
 func announceToIrc(message string) error {

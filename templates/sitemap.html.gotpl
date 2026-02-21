@@ -95,5 +95,5 @@
 
     <hr class="end-of-post">
 
-    <aside><div data-nod></div></aside>
+    {{call .Component "nod"}}
 {{end}}

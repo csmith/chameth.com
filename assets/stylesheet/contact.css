@@ -32,7 +32,7 @@
 }
 
 [data-contact],
-[data-nod] {
+.nod-container {
     position: relative;
 
     .loading,

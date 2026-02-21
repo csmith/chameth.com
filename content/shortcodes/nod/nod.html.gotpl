@@ -1,0 +1,11 @@
+{{/* gotype: chameth.com/chameth.com/content/shortcodes/nod.Data*/}}
+<aside class="nod-container">
+    <form class="nod" method="POST" action="/nod" role="button" tabindex="0">
+        <input type="hidden" name="page" value="https://chameth.com{{.Page}}" />
+        <button type="submit" class="submit">nod</button>
+        <div>
+            <p>Liked this page? Just want to declare that you reached the end? Like pressing buttons?</p>
+            <p>Give me a nod to let me know you were here. No tracking, no counters, etc, just a nod in passing.</p>
+        </div>
+    </form>
+</aside>

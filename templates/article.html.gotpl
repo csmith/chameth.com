@@ -27,7 +27,7 @@
 
         <hr class="end-of-post">
 
-        <aside><div data-nod></div></aside>
+        {{call .Component "nod"}}
 
         <section>
             <p>Have thoughts that transcend nodding? Send me a message!</p>

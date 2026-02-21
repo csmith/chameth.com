@@ -51,18 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     })
 
-    document.querySelectorAll('*[data-nod]').forEach((el) => {
-        el.innerHTML = `
-            <form class="nod" role="button" tabindex="0">
-                <button type="submit" class="submit">nod</button>
-                <div>
-                    <p>Liked this page? Just want to declare that you reached the end? Like pressing buttons?</p>
-                    <p>Give me a nod to let me know you were here. No tracking, no counters, etc, just a nod in passing.</p>
-                </div>
-            </form>
-        `
-
+    document.querySelectorAll('.nod-container').forEach((el) => {
         const form = el.querySelector('form')
+
         form.addEventListener('click', () => {
             form.querySelector('.submit').click()
         })
@@ -74,11 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
 
-        el.querySelector('form').addEventListener('submit', (e) => {
+        form.addEventListener('submit', (e) => {
             e.preventDefault()
 
             const payload = {
-                page: document.location.href
+                page: form.querySelector('input[name="page"]').value
             }
 
             const loadingContainer = document.createElement('div')
