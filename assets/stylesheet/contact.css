@@ -31,7 +31,7 @@
     }
 }
 
-[data-contact],
+.contact-container,
 .nod-container {
     position: relative;
 

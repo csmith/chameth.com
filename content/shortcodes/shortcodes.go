@@ -9,6 +9,7 @@ import (
 
 	"chameth.com/chameth.com/content/shortcodes/audio"
 	"chameth.com/chameth.com/content/shortcodes/common"
+	"chameth.com/chameth.com/content/shortcodes/contact"
 	"chameth.com/chameth.com/content/shortcodes/figure"
 	"chameth.com/chameth.com/content/shortcodes/nod"
 	"chameth.com/chameth.com/content/shortcodes/filmlist"
@@ -39,6 +40,7 @@ var renderers = map[string]renderer{
 	"warning":         warning.RenderFromText,
 	"audio":           audio.RenderFromText,
 	"video":           video.RenderFromText,
+	"contact":         contact.RenderFromText,
 	"figure":          figure.RenderFromText,
 	"filmreview":      filmreview.RenderFromText,
 	"filmreviews":     filmreviews.RenderFromText,

@@ -48,6 +48,43 @@ func init() {
 	}()
 }
 
+func processContact(cr contactRequest, r *http.Request) error {
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		host = r.RemoteAddr
+	}
+
+	if !checkRateLimit(host) {
+		slog.Info("Rate limit exceeded for contact form", "remoteAddr", host, "request", cr)
+		time.Sleep(5 * time.Second)
+		return fmt.Errorf("rate limit exceeded")
+	}
+
+	if isRandomCharacterSpam(cr.SenderName, cr.Message) {
+		slog.Info("Blocking random character spam", "remoteAddr", host, "request", cr)
+		time.Sleep(5 * time.Second)
+		return fmt.Errorf("spam detected")
+	}
+
+	spam, err := checkSpamhaus(host)
+	if err != nil {
+		slog.Error("Error checking Spamhaus", "error", err, "remoteAddr", host)
+	}
+
+	if spam.ExploitsBlockList {
+		slog.Info("Blocking contact form from XBL listed address", "remoteAddr", host, "request", cr)
+		time.Sleep(5 * time.Second)
+		return fmt.Errorf("blocked by spamhaus")
+	}
+
+	if err := sendContact(cr, messageBody(cr, r, spam)); err != nil {
+		slog.Error("Error sending contact form", "error", err, "request", cr)
+		return fmt.Errorf("failed to send: %w", err)
+	}
+
+	return nil
+}
+
 func ContactForm(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("Content-Type") != "application/json" {
 		http.Error(w, http.StatusText(http.StatusUnsupportedMediaType), http.StatusUnsupportedMediaType)
@@ -69,44 +106,29 @@ func ContactForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	host, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		host = r.RemoteAddr
-	}
-
-	if !checkRateLimit(host) {
-		slog.Info("Rate limit exceeded for contact form", "remoteAddr", host, "request", cr)
-		time.Sleep(5 * time.Second)
+	if err := processContact(cr, r); err != nil {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
-		return
-	}
-
-	if isRandomCharacterSpam(cr.SenderName, cr.Message) {
-		slog.Info("Blocking random character spam", "remoteAddr", host, "request", cr)
-		time.Sleep(5 * time.Second)
-		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
-		return
-	}
-
-	spam, err := checkSpamhaus(host)
-	if err != nil {
-		slog.Error("Error checking Spamhaus", "error", err, "remoteAddr", host)
-	}
-
-	if spam.ExploitsBlockList {
-		slog.Info("Blocking contact form from XBL listed address", "remoteAddr", host, "request", cr)
-		time.Sleep(5 * time.Second)
-		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
-		return
-	}
-
-	if err := sendContact(cr, messageBody(cr, r, spam)); err != nil {
-		slog.Error("Error sending contact form", "error", err, "request", cr)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusAccepted)
+}
+
+func ContactFormPost(w http.ResponseWriter, r *http.Request) {
+	cr := contactRequest{
+		Page:        r.FormValue("page"),
+		SenderName:  r.FormValue("name"),
+		SenderEmail: r.FormValue("email"),
+		Message:     r.FormValue("message"),
+	}
+
+	if err := processContact(cr, r); err != nil {
+		http.Error(w, "Something went wrong. Your message was not sent.", http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	fmt.Fprint(w, "Message sent! Thanks for getting in touch!")
 }
 
 func sendContact(req contactRequest, content string) error {

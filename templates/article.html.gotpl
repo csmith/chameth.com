@@ -31,13 +31,7 @@
 
         <section>
             <p>Have thoughts that transcend nodding? Send me a message!</p>
-            <div data-contact>
-                <noscript>
-                    Sorry, to reduce the amount of spam I receive, this contact form
-                    requires JavaScript. You can get in touch with me through
-                    <a href="https://bsky.app/profile/chameth.com">Bluesky</a>.
-                </noscript>
-            </div>
+            {{call .Component "contact"}}
         </section>
 
         {{ if .RelatedPosts -}}

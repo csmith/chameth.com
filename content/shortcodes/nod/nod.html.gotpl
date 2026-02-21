@@ -1,6 +1,6 @@
 {{/* gotype: chameth.com/chameth.com/content/shortcodes/nod.Data*/}}
 <aside class="nod-container">
-    <form class="nod" method="POST" action="/nod" role="button" tabindex="0">
+    <form class="nod" method="POST" action="/api/form/nod" role="button" tabindex="0">
         <input type="hidden" name="page" value="https://chameth.com{{.Page}}" />
         <button type="submit" class="submit">nod</button>
         <div>

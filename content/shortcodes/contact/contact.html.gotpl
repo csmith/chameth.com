@@ -1,0 +1,10 @@
+{{/* gotype: chameth.com/chameth.com/content/shortcodes/contact.Data*/}}
+<div class="contact-container">
+    <form class="contact" method="POST" action="/api/form/contact">
+        <input type="hidden" name="page" value="https://chameth.com{{.Page}}" />
+        <input type="text" name="name" placeholder="Your name/alias (optional)" />
+        <input type="email" name="email" placeholder="Your e-mail address (optional)" />
+        <textarea name="message" placeholder="Your message" required></textarea>
+        <button type="submit" class="submit">Submit</button>
+    </form>
+</div>
