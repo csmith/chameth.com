@@ -283,6 +283,20 @@ type Walk struct {
 	ElevationGainMeters float64   `db:"elevation_gain_meters"`
 }
 
+type BoardgameGame struct {
+	ID    string `db:"id"`
+	BggID int    `db:"bgg_id"`
+	Name  string `db:"name"`
+	Year  int    `db:"year"`
+	Status string `db:"status"`
+}
+
+type BoardgamePlay struct {
+	ID     string    `db:"id"`
+	GameID string    `db:"game_id"`
+	Date   time.Time `db:"date"`
+}
+
 type FilmSearchResult struct {
 	ID            int      `db:"id"`
 	Title         string   `db:"title"`

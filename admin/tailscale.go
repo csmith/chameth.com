@@ -108,6 +108,7 @@ func Start() error {
 	httpsMux.HandleFunc("POST /film-lists/{id}/entries/reorder", handlers.ReorderFilmListEntriesHandler())
 	httpsMux.HandleFunc("GET /api/films/reviews/", handlers.GetFilmsWithReviewsHandler())
 	httpsMux.HandleFunc("POST /api/walks/import", handlers.ImportWalksHandler())
+	httpsMux.HandleFunc("POST /api/boardgames/import", handlers.ImportBoardgamesHandler())
 	httpsMux.HandleFunc("GET /films/workflow/step/1", handlers.FilmReviewWorkflowStep1Handler())
 	httpsMux.HandleFunc("POST /films/workflow/step/1", handlers.FilmReviewWorkflowStep1Handler())
 	httpsMux.HandleFunc("GET /films/workflow/step/2", handlers.FilmReviewWorkflowStep2Handler())
