@@ -56,6 +56,9 @@ etc.
 - Use the `log/slog` package for logging when required
 - This is a personal website, it doesn't need unit tests or
   public API documentation.
+- Structs used for JSON encoding/decoding in a single function
+  should be defined inline within that function, not as
+  package-level types.
 
 ### Database
 
