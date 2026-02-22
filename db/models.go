@@ -288,7 +288,8 @@ type BoardgameGame struct {
 	BggID int    `db:"bgg_id"`
 	Name  string `db:"name"`
 	Year  int    `db:"year"`
-	Status string `db:"status"`
+	Status      string `db:"status"`
+	IsExpansion bool   `db:"is_expansion"`
 }
 
 type BoardgamePlay struct {

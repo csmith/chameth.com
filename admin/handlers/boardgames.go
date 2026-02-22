@@ -26,7 +26,8 @@ func ImportBoardgamesHandler() func(http.ResponseWriter, *http.Request) {
 				BggID    int    `json:"bggId"`
 				BggName  string `json:"bggName"`
 				BggYear  int    `json:"bggYear"`
-				URLImage string `json:"urlImage"`
+				URLImage    string `json:"urlImage"`
+				IsExpansion int    `json:"isExpansion"`
 				Copies   []struct {
 					StatusOwned     int `json:"statusOwned"`
 					StatusPrevOwned int `json:"statusPrevOwned"`
@@ -73,7 +74,8 @@ func ImportBoardgamesHandler() func(http.ResponseWriter, *http.Request) {
 				BggID:  g.BggID,
 				Name:   g.BggName,
 				Year:   g.BggYear,
-				Status: status,
+				Status:      status,
+				IsExpansion: g.IsExpansion == 1,
 			})
 			if err != nil {
 				slog.Error("Failed to upsert boardgame game", "uuid", g.UUID, "name", g.BggName, "error", err)
