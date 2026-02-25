@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"image"
-	_ "image/jpeg"
-	_ "image/png"
+	"image/jpeg"
+	"image/png"
 	"io"
 	"log/slog"
 	"net/http"
@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/db"
+	"golang.org/x/image/draw"
 )
 
 func ImportBoardgamesHandler() func(http.ResponseWriter, *http.Request) {
@@ -27,7 +28,7 @@ func ImportBoardgamesHandler() func(http.ResponseWriter, *http.Request) {
 				BggName  string `json:"bggName"`
 				BggYear  int    `json:"bggYear"`
 				URLImage    string `json:"urlImage"`
-				IsExpansion int    `json:"isExpansion"`
+				IsBaseGame  int    `json:"isBaseGame"`
 				Copies   []struct {
 					StatusOwned     int `json:"statusOwned"`
 					StatusPrevOwned int `json:"statusPrevOwned"`
@@ -75,7 +76,7 @@ func ImportBoardgamesHandler() func(http.ResponseWriter, *http.Request) {
 				Name:   g.BggName,
 				Year:   g.BggYear,
 				Status:      status,
-				IsExpansion: g.IsExpansion == 1,
+				IsExpansion: g.IsBaseGame != 1,
 			})
 			if err != nil {
 				slog.Error("Failed to upsert boardgame game", "uuid", g.UUID, "name", g.BggName, "error", err)
@@ -145,9 +146,34 @@ func downloadBoardgameImage(ctx context.Context, bggID int, name, imageURL strin
 		return fmt.Errorf("failed to decode image: %w", err)
 	}
 
-	contentType := "image/" + format
 	width := img.Bounds().Dx()
 	height := img.Bounds().Dy()
+
+	const maxShortSide = 500
+	shortSide := min(width, height)
+	if shortSide > maxShortSide {
+		scale := float64(maxShortSide) / float64(shortSide)
+		width = int(float64(width) * scale)
+		height = int(float64(height) * scale)
+		dst := image.NewRGBA(image.Rect(0, 0, width, height))
+		draw.CatmullRom.Scale(dst, dst.Bounds(), img, img.Bounds(), draw.Over, nil)
+		img = dst
+
+		var buf bytes.Buffer
+		switch format {
+		case "png":
+			err = png.Encode(&buf, img)
+		default:
+			err = jpeg.Encode(&buf, img, &jpeg.Options{Quality: 85})
+			format = "jpeg"
+		}
+		if err != nil {
+			return fmt.Errorf("failed to encode resized image: %w", err)
+		}
+		imgData = buf.Bytes()
+	}
+
+	contentType := "image/" + format
 	ext := path.Ext(imageURL)
 	if ext == "" {
 		ext = "." + format

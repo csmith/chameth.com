@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"chameth.com/chameth.com/content/shortcodes/bglist"
 	"chameth.com/chameth.com/content/shortcodes/audio"
 	"chameth.com/chameth.com/content/shortcodes/common"
 	"chameth.com/chameth.com/content/shortcodes/contact"
@@ -35,26 +36,27 @@ const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering
 type renderer func([]string, *common.Context) (string, error)
 
 var renderers = map[string]renderer{
-	"sidenote":        sidenote.RenderFromText,
-	"update":          update.RenderFromText,
-	"warning":         warning.RenderFromText,
 	"audio":           audio.RenderFromText,
-	"video":           video.RenderFromText,
+	"bglist":          bglist.RenderFromText,
 	"contact":         contact.RenderFromText,
 	"figure":          figure.RenderFromText,
+	"filmlist":        filmlist.RenderFromText,
 	"filmreview":      filmreview.RenderFromText,
 	"filmreviews":     filmreviews.RenderFromText,
-	"filmlist":        filmlist.RenderFromText,
-	"nod":             nod.RenderFromText,
 	"filmsearch":      filmsearch.RenderFromText,
-	"recentfilms":     recentfilms.RenderFromText,
-	"watchedfilms":    watchedfilms.RenderFromText,
-	"rating":          rating.RenderFromText,
+	"nod":             nod.RenderFromText,
 	"postlink":        postlink.RenderFromText,
+	"rating":          rating.RenderFromText,
+	"recentfilms":     recentfilms.RenderFromText,
 	"recentposts":     recentposts.RenderFromText,
+	"sidenote":        sidenote.RenderFromText,
 	"syndication":     syndication.RenderFromText,
+	"update":          update.RenderFromText,
+	"video":           video.RenderFromText,
 	"walks":           walks.RenderFromText,
 	"walkingdistance": walkingdistance.RenderFromText,
+	"warning":         warning.RenderFromText,
+	"watchedfilms":    watchedfilms.RenderFromText,
 }
 
 var tagRegexp = regexp.MustCompile(`\{%\s*(\w+)(.*?)\s*%\}`)

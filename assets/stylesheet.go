@@ -19,6 +19,7 @@ var includeOrder = []string{
 	"about.css",
 	"articles.css",
 	"asides.css",
+	"boardgames.css",
 	"contact.css",
 	"figures.css",
 	"films.css",

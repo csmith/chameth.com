@@ -1,0 +1,20 @@
+{{/* gotype: chameth.com/chameth.com/content/shortcodes/bglist.Data*/}}
+<ol class="boardgame-list">
+{{- range .Games }}
+  <li>
+    {{- if .ImagePath }}
+    <div class="image-container">
+      <img class="background" src="{{ .ImagePath }}" aria-hidden="true" loading="lazy">
+      <img class="foreground" src="{{ .ImagePath }}" alt="Box art of {{ .Name }}" loading="lazy">
+    </div>
+    {{- end }}
+    <div class="details">
+      <h3>{{ .Position }}. {{ .Name }} <span class="year">({{ .Year }})</span></h3>
+      <p>{{ .PlayCount }} play{{ if ne .PlayCount 1 }}s{{ end }}</p>
+      {{- if .LastPlayed }}
+      <p>Last played <time>{{ .LastPlayed }}</time></p>
+      {{ end -}}
+    </div>
+  </li>
+{{- end }}
+</ol>
