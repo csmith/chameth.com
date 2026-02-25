@@ -1,0 +1,14 @@
+{{/* gotype: chameth.com/chameth.com/content/shortcodes/playedbgs.Data*/}}
+<ul class="played-boardgames">
+{{- range .Games }}
+  <li>
+    {{- if .ImagePath }}
+    <div class="image-container" title="{{ .Name }} ({{ .Year }})">
+      <img class="background" src="{{ .ImagePath }}" aria-hidden="true" loading="lazy">
+      <img class="foreground" src="{{ .ImagePath }}" alt="Box art of {{ .Name }}" loading="lazy">
+    </div>
+    {{- end }}
+    <p>{{ .PlayCount }} play{{ if ne .PlayCount 1 }}s{{ end }}</p>
+  </li>
+{{- end }}
+</ul>

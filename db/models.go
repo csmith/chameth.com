@@ -300,6 +300,13 @@ type BoardgameGameWithStats struct {
 	LastPlayed *time.Time `db:"last_played"`
 }
 
+type BoardgameGameWithPlayCount struct {
+	Name      string  `db:"name"`
+	Year      int     `db:"year"`
+	ImagePath *string `db:"image_path"`
+	PlayCount int     `db:"play_count"`
+}
+
 type BoardgamePlay struct {
 	ID     string    `db:"id"`
 	GameID string    `db:"game_id"`
