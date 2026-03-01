@@ -24,7 +24,7 @@ func GetStaticPageByPath(ctx context.Context, path string) (*StaticPage, error) 
 func GetStaticPageByID(ctx context.Context, id int) (*StaticPage, error) {
 	metrics.LogQuery(ctx)
 	var page StaticPage
-	err := db.GetContext(ctx, &page, "SELECT id, path, title, content, published, raw FROM staticpages WHERE id = $1", id)
+	err := db.GetContext(ctx, &page, "SELECT id, path, title, content, published, raw, sitemap_frequency, sitemap_priority FROM staticpages WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func GetStaticPageByID(ctx context.Context, id int) (*StaticPage, error) {
 func GetAllStaticPages(ctx context.Context) ([]StaticPageMetadata, error) {
 	metrics.LogQuery(ctx)
 	var pages []StaticPageMetadata
-	err := db.SelectContext(ctx, &pages, "SELECT id, path, title, published, raw FROM staticpages WHERE published = true ORDER BY title ASC")
+	err := db.SelectContext(ctx, &pages, "SELECT id, path, title, published, raw, sitemap_frequency, sitemap_priority FROM staticpages WHERE published = true ORDER BY title ASC")
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func GetAllStaticPages(ctx context.Context) ([]StaticPageMetadata, error) {
 func GetDraftStaticPages(ctx context.Context) ([]StaticPageMetadata, error) {
 	metrics.LogQuery(ctx)
 	var pages []StaticPageMetadata
-	err := db.SelectContext(ctx, &pages, "SELECT id, path, title, published, raw FROM staticpages WHERE published = false ORDER BY title ASC")
+	err := db.SelectContext(ctx, &pages, "SELECT id, path, title, published, raw, sitemap_frequency, sitemap_priority FROM staticpages WHERE published = false ORDER BY title ASC")
 	if err != nil {
 		return nil, err
 	}
@@ -68,14 +68,25 @@ func CreateStaticPage(ctx context.Context, path, title string) (int, error) {
 	return id, nil
 }
 
+// GetSitemapStaticPages returns all published static pages that have sitemap fields set.
+func GetSitemapStaticPages(ctx context.Context) ([]StaticPageMetadata, error) {
+	metrics.LogQuery(ctx)
+	var pages []StaticPageMetadata
+	err := db.SelectContext(ctx, &pages, "SELECT id, path, title, published, raw, sitemap_frequency, sitemap_priority FROM staticpages WHERE published = true AND sitemap_frequency IS NOT NULL AND sitemap_priority IS NOT NULL ORDER BY path ASC")
+	if err != nil {
+		return nil, err
+	}
+	return pages, nil
+}
+
 // UpdateStaticPage updates a static page in the database.
-func UpdateStaticPage(ctx context.Context, id int, path, title, content string, published, raw bool) error {
+func UpdateStaticPage(ctx context.Context, id int, path, title, content string, published, raw bool, sitemapFrequency *string, sitemapPriority *float64) error {
 	metrics.LogQuery(ctx)
 	_, err := db.ExecContext(ctx, `
 		UPDATE staticpages
-		SET path = $1, title = $2, content = $3, published = $4, raw = $5
-		WHERE id = $6
-	`, path, title, content, published, raw, id)
+		SET path = $1, title = $2, content = $3, published = $4, raw = $5, sitemap_frequency = $6, sitemap_priority = $7
+		WHERE id = $8
+	`, path, title, content, published, raw, sitemapFrequency, sitemapPriority, id)
 	if err != nil {
 		return fmt.Errorf("failed to update static page: %w", err)
 	}

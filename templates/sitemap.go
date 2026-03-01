@@ -32,6 +32,13 @@ type SiteMapData struct {
 	Snippets  []SnippetDetails
 	Films     []ContentDetails
 	FilmLists []ContentDetails
+	Pages     []SiteMapPageDetails
+}
+
+type SiteMapPageDetails struct {
+	Path      string
+	Frequency string
+	Priority  string
 }
 
 type ContentDetails struct {

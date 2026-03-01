@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"chameth.com/chameth.com/admin/templates"
 	"chameth.com/chameth.com/db"
@@ -135,14 +136,25 @@ func EditPageHandler() func(http.ResponseWriter, *http.Request) {
 			mediaItems = append(mediaItems, *mediaMap[mediaID])
 		}
 
+		sitemapFrequency := ""
+		if page.SitemapFrequency != nil {
+			sitemapFrequency = *page.SitemapFrequency
+		}
+		sitemapPriority := ""
+		if page.SitemapPriority != nil {
+			sitemapPriority = fmt.Sprintf("%.1f", *page.SitemapPriority)
+		}
+
 		data := templates.EditPageData{
-			ID:        page.ID,
-			Title:     page.Title,
-			Path:      page.Path,
-			Content:   page.Content,
-			Published: page.Published,
-			Raw:       page.Raw,
-			Media:     mediaItems,
+			ID:               page.ID,
+			Title:            page.Title,
+			Path:             page.Path,
+			Content:          page.Content,
+			Published:        page.Published,
+			Raw:              page.Raw,
+			SitemapFrequency: sitemapFrequency,
+			SitemapPriority:  sitemapPriority,
+			Media:            mediaItems,
 		}
 
 		if err := templates.RenderEditPage(w, data); err != nil {
@@ -194,7 +206,18 @@ func UpdatePageHandler() func(http.ResponseWriter, *http.Request) {
 		published := r.FormValue("published") == "true"
 		raw := r.FormValue("raw") == "true"
 
-		if err := db.UpdateStaticPage(r.Context(), id, path, title, pageContent, published, raw); err != nil {
+		var sitemapFrequency *string
+		if v := strings.TrimSpace(r.FormValue("sitemap_frequency")); v != "" {
+			sitemapFrequency = &v
+		}
+		var sitemapPriority *float64
+		if v := strings.TrimSpace(r.FormValue("sitemap_priority")); v != "" {
+			if p, err := strconv.ParseFloat(v, 64); err == nil {
+				sitemapPriority = &p
+			}
+		}
+
+		if err := db.UpdateStaticPage(r.Context(), id, path, title, pageContent, published, raw, sitemapFrequency, sitemapPriority); err != nil {
 			http.Error(w, "Failed to update page", http.StatusInternalServerError)
 			return
 		}

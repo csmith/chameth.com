@@ -1,44 +1,16 @@
 {{/* gotype: chameth.com/chameth.com/templates.SiteMapData*/}}<?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url>
-        <loc>https://chameth.com/</loc>
-        <changefreq>daily</changefreq>
-        <priority>1.0</priority>
-    </url>
+    {{ range .Pages -}}
+        <url>
+            <loc>https://chameth.com{{ .Path }}</loc>
+            <changefreq>{{ .Frequency }}</changefreq>
+            <priority>{{ .Priority }}</priority>
+        </url>
+    {{- end }}
 
     <url>
         <loc>https://chameth.com/posts/</loc>
         <changefreq>daily</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://chameth.com/feeds/</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.4</priority>
-    </url>
-
-    <url>
-        <loc>https://chameth.com/films/</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.4</priority>
-    </url>
-
-    <url>
-        <loc>https://chameth.com/films/reviews/</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.4</priority>
-    </url>
-
-    <url>
-        <loc>https://chameth.com/contact/</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>https://chameth.com/prints/</loc>
-        <changefreq>monthly</changefreq>
         <priority>0.2</priority>
     </url>
 
@@ -55,22 +27,9 @@
     </url>
 
     <url>
-        <loc>https://chameth.com/uses/</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
-
-
-    <url>
-        <loc>https://chameth.com/interests/</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
-
-    <url>
-        <loc>https://chameth.com/colophon/</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
+        <loc>https://chameth.com/prints/</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.2</priority>
     </url>
 
     <url>

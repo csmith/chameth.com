@@ -89,12 +89,27 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templat
 		})
 	}
 
+	sitemapPages, err := db.GetSitemapStaticPages(ctx)
+	if err != nil {
+		return templates.SiteMapData{}, fmt.Errorf("failed to get sitemap pages: %w", err)
+	}
+
+	var pageDetails []templates.SiteMapPageDetails
+	for _, p := range sitemapPages {
+		pageDetails = append(pageDetails, templates.SiteMapPageDetails{
+			Path:      p.Path,
+			Frequency: *p.SitemapFrequency,
+			Priority:  fmt.Sprintf("%.1f", *p.SitemapPriority),
+		})
+	}
+
 	return templates.SiteMapData{
 		Posts:     postDetails,
 		Poems:     poemDetails,
 		Snippets:  snippetDetails,
 		Films:     filmDetails,
 		FilmLists: filmListDetails,
+		Pages:     pageDetails,
 		PageData:  pageData,
 	}, nil
 }

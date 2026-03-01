@@ -17,13 +17,15 @@ var editPageTemplate = template.Must(
 
 type EditPageData struct {
 	PageData
-	ID        int
-	Title     string
-	Path      string
-	Content   string
-	Published bool
-	Raw       bool
-	Media     []PageMediaItem
+	ID               int
+	Title            string
+	Path             string
+	Content          string
+	Published        bool
+	Raw              bool
+	SitemapFrequency string
+	SitemapPriority  string
+	Media            []PageMediaItem
 }
 
 type PageMediaItem struct {

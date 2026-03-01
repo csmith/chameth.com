@@ -14,6 +14,19 @@
             <input type="checkbox" name="raw" value="true" {{if .Raw}}checked{{end}} />
             Raw
         </label>
+        <label>Sitemap Frequency:
+            <select name="sitemap_frequency">
+                <option value="">—</option>
+                <option value="always" {{if eq .SitemapFrequency "always"}}selected{{end}}>always</option>
+                <option value="hourly" {{if eq .SitemapFrequency "hourly"}}selected{{end}}>hourly</option>
+                <option value="daily" {{if eq .SitemapFrequency "daily"}}selected{{end}}>daily</option>
+                <option value="weekly" {{if eq .SitemapFrequency "weekly"}}selected{{end}}>weekly</option>
+                <option value="monthly" {{if eq .SitemapFrequency "monthly"}}selected{{end}}>monthly</option>
+                <option value="yearly" {{if eq .SitemapFrequency "yearly"}}selected{{end}}>yearly</option>
+                <option value="never" {{if eq .SitemapFrequency "never"}}selected{{end}}>never</option>
+            </select>
+        </label>
+        <label>Sitemap Priority: <input type="text" name="sitemap_priority" value="{{.SitemapPriority}}" placeholder="e.g. 0.8 (blank to exclude)" /></label>
         <label>
             Content:
             <textarea name="content" id="editor">{{.Content}}</textarea>
