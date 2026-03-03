@@ -1,0 +1,35 @@
+.page-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--medium-space);
+    padding: var(--medium-space);
+    background: var(--background-alt-colour);
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    color: var(--text-colour);
+    border: 5px solid transparent;
+    transition: border-color 250ms ease-in-out;
+    width: min(100%, 400px);
+
+    &:hover {
+        border-color: var(--accent-colour);
+    }
+
+    svg:first-child {
+        color: var(--text-colour);
+        width: 32px;
+        height: 32px;
+    }
+
+    span {
+        font-family: "Berkeley Mono", monospace;
+        flex-grow: 1;
+        text-align: center;
+    }
+
+    svg.chevron {
+        color: var(--text-alt-colour);
+        width: 32px;
+        height: 32px;
+    }
+}

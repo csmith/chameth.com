@@ -1,0 +1,6 @@
+{{/* gotype: chameth.com/chameth.com/content/shortcodes/link.Data*/}}
+<a class="page-link" href="{{.Href}}">
+  {{ .Icon }}
+  <span>{{ .Href }}</span>
+  <svg xmlns="http://www.w3.org/2000/svg" class="chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6" /></svg>
+</a>

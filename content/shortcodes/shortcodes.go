@@ -12,12 +12,13 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/common"
 	"chameth.com/chameth.com/content/shortcodes/contact"
 	"chameth.com/chameth.com/content/shortcodes/figure"
-	"chameth.com/chameth.com/content/shortcodes/nod"
-	"chameth.com/chameth.com/content/shortcodes/playedbgs"
 	"chameth.com/chameth.com/content/shortcodes/filmlist"
 	"chameth.com/chameth.com/content/shortcodes/filmreview"
 	"chameth.com/chameth.com/content/shortcodes/filmreviews"
 	"chameth.com/chameth.com/content/shortcodes/filmsearch"
+	"chameth.com/chameth.com/content/shortcodes/link"
+	"chameth.com/chameth.com/content/shortcodes/nod"
+	"chameth.com/chameth.com/content/shortcodes/playedbgs"
 	"chameth.com/chameth.com/content/shortcodes/postlink"
 	"chameth.com/chameth.com/content/shortcodes/rating"
 	"chameth.com/chameth.com/content/shortcodes/recentfilms"
@@ -45,6 +46,7 @@ var renderers = map[string]renderer{
 	"filmreview":      filmreview.RenderFromText,
 	"filmreviews":     filmreviews.RenderFromText,
 	"filmsearch":      filmsearch.RenderFromText,
+	"link":            link.RenderFromText,
 	"nod":             nod.RenderFromText,
 	"playedbgs":       playedbgs.RenderFromText,
 	"postlink":        postlink.RenderFromText,

@@ -26,6 +26,7 @@ var includeOrder = []string{
 	"footer.css",
 	"global.css",
 	"header.css",
+	"links.css",
 	"littlefoot.css",
 	"pagination.css",
 	"postlinks.css",
