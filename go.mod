@@ -15,7 +15,7 @@ require (
 	github.com/pgvector/pgvector-go v0.3.0
 	github.com/yuin/goldmark v1.7.16
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
-	golang.org/x/image v0.35.0
+	golang.org/x/image v0.36.0
 	golang.org/x/net v0.49.0
 	tailscale.com v1.94.1
 )
@@ -91,5 +91,5 @@ require (
 require (
 	github.com/kljensen/snowball v0.10.0
 	github.com/prometheus/client_golang v1.23.2
-	golang.org/x/text v0.33.0
+	golang.org/x/text v0.34.0
 )
