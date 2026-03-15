@@ -17,6 +17,10 @@ main {
     width: var(--content-width);
     margin: 0 auto;
     flex-grow: 1;
+
+    & > h2 {
+        margin-top: 0;
+    }
 }
 
 hr {

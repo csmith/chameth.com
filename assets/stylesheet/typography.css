@@ -65,16 +65,63 @@ h4,
 h5,
 h6 {
     font-family: "Chris Hand", sans-serif;
-    font-size: var(--font-size-giant);
+    font-size: var(--font-size-xxlarge);
     color: var(--text-highlight-colour);
     margin: var(--medium-space) 0;
     line-height: 1;
 
-    &:before {
-        font-family: "Chris Hand", sans-serif;
-        font-size: var(--font-size-giant);
-        color: var(--accent-colour);
-        margin-right: 0.25em;
+    transform: rotate(-0.15deg);
+    padding: var(--smedium-space);
+    /* Poor man's text-box-trim */
+    padding-top: calc(var(--smedium-space) + 0.5ex);
+    font-weight: 800;
+    position: relative;
+
+    filter: drop-shadow(3px 3px 3px rgb(0, 0, 0));
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-color: var(--accent-colour);
+        background-image:
+            repeating-linear-gradient(
+                -45deg,
+                transparent 0px,
+                transparent 3px,
+                rgba(0, 0, 0, 0.02) 3px,
+                rgba(0, 0, 0, 0.02) 4px
+            ),
+            linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.14) 0%,
+                rgba(0, 0, 0, 0.06) 100%
+            );
+        clip-path: polygon(
+            0% 0%,
+            100% 0%,
+            calc(100% - 1px) 10%,
+            calc(100% + 2px) 20%,
+            calc(100% - 2px) 30%,
+            calc(100% + 1px) 40%,
+            calc(100% - 2px) 50%,
+            calc(100% + 2px) 60%,
+            calc(100% - 1px) 70%,
+            calc(100% + 2px) 80%,
+            calc(100% - 2px) 90%,
+            100% 100%,
+            0% 100%,
+            2px 90%,
+            -1px 80%,
+            2px 70%,
+            -2px 60%,
+            1px 50%,
+            -2px 40%,
+            2px 30%,
+            -1px 20%,
+            1px 10%
+        );
     }
 
     a {
@@ -91,20 +138,32 @@ h6 {
     }
 }
 
-h2:before {
-    content: "#";
+h3 {
+    font-size: calc(0.8 * var(--font-size-xxlarge));
+    &::before {
+        filter: brightness(0.8);
+    }
 }
-h3:before {
-    content: "##";
+
+h4 {
+    font-size: calc(0.6 * var(--font-size-xxlarge));
+    &::before {
+        filter: brightness(0.6);
+    }
 }
-h4:before {
-    content: "###";
+
+h5 {
+    font-size: calc(0.4 * var(--font-size-xxlarge));
+    &::before {
+        filter: brightness(0.4);
+    }
 }
-h5:before {
-    content: "####";
-}
-h6:before {
-    content: "#####";
+
+h6 {
+    font-size: calc(0.2 * var(--font-size-xxlarge));
+    &::before {
+        filter: brightness(0.2);
+    }
 }
 
 p {

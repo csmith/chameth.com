@@ -127,9 +127,11 @@
                 var(--background-alt-colour) 80%,
                 transparent
             );
+            filter: none;
+            transform: none;
 
             &::before {
-                display: none;
+                content: none;
             }
         }
 
