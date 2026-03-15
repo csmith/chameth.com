@@ -65,7 +65,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             littlefoot.littlefoot({
                 activateDelay: 0,
-                buttonTemplate: `<sup id="fnref<% number %>" class="footnote-ref"><a href="#fn<% number %>" role="doc-noteref">[<% number %>]</a></sup>`,
+                buttonTemplate: `<sup id="fnref:<% number %>" class="footnote-ref"><a href="#fn:<% number %>" role="doc-noteref">[<% number %>]</a></sup>`,
             });
         });
     </script>

@@ -56,3 +56,33 @@ hr.end-of-post {
         );
     }
 }
+
+.footnotes {
+    color: var(--text-alt-colour);
+    background-color: var(--background-colour);
+    border: 1px solid var(--background-alt-colour);
+    box-shadow: 3px 3px 5px black;
+    border-radius: var(--border-radius);
+    margin: var(--medium-space) 0;
+    padding: var(--small-space);
+    padding-top: calc(2 * var(--small-space) + var(--font-size-small));
+    position: relative;
+
+    &::before {
+        content: "Footnotes";
+        font-family: "Berkeley Mono", monospace;
+        text-transform: uppercase;
+        font-size: var(--font-size-small);
+        position: absolute;
+        top: 5px;
+        left: calc(5px + var(--border-radius) / 2);
+    }
+
+    p {
+        margin: var(--smedium-space) 0;
+    }
+
+    hr {
+        display: none;
+    }
+}

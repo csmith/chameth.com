@@ -190,7 +190,7 @@
 }
 
 @media not print {
-    .littlefoot--print {
+    sup.littlefoot--print {
         display: none;
     }
 }
