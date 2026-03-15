@@ -37,11 +37,11 @@ blockquote {
 
 aside.update {
     clear: both;
-    background-color: var(--background-alt-colour);
+    background: var(--background-colour);
+    border: 1px solid var(--background-alt-colour);
+    box-shadow: 3px 3px 5px black;
     border-radius: var(--border-radius);
     padding: var(--medium-space);
-    border: 3px solid var(--accent-colour);
-    box-shadow: 0 0 20px var(--accent-colour);
     margin: var(--large-space) 0;
 
     ins {
@@ -50,15 +50,15 @@ aside.update {
 
     h5 {
         &::before {
-            font-size: var(--font-size-large);
-            content: "";
-            margin: 0;
+            content: none;
         }
 
         text-transform: uppercase;
-        color: var(--text-alt-colour);
+        color: var(--text-highlight-colour);
         font-size: var(--font-size-large);
         margin-top: 0;
+        padding: 0;
+        filter: none;
         margin-bottom: var(--small-space);
 
         & + p {
@@ -83,7 +83,8 @@ aside.warning {
     );
     border-radius: var(--border-radius);
     padding: 10px;
-    box-shadow: 0 0 20px var(--accent-colour);
+    border: 1px solid var(--background-alt-colour);
+    box-shadow: 3px 3px 5px black;
     margin: var(--medium-space) 0;
     color: black;
 
@@ -95,10 +96,15 @@ aside.warning {
 
         h5 {
             &::before {
-                font-size: var(--font-size-large);
+                position: relative;
+                font-size: var(--font-size-xlarge);
+                font-family: "Berkeley Mono", monospace;
                 content: "⚠";
                 margin: 0;
                 color: inherit;
+                background: none;
+                filter: none;
+                clip-path: none;
             }
 
             color: inherit;
@@ -108,6 +114,8 @@ aside.warning {
             font-size: var(--font-size-large);
             margin-top: 0;
             margin-bottom: var(--small-space);
+            filter: none;
+            padding: 0;
 
             & + p {
                 margin-top: var(--small-space);
@@ -121,19 +129,34 @@ aside.warning {
 }
 
 aside.sidenote {
-    border-left: 10px solid var(--background-alt-colour);
-    padding-left: 15px;
+    background: var(--background-colour);
+    border: 1px solid var(--background-alt-colour);
+    box-shadow: 3px 3px 5px black;
+    border-radius: var(--border-radius);
+    padding: var(--small-space);
+    color: var(--text-alt-colour);
+
+    :first-child {
+        margin-top: 0;
+    }
+
+    :last-child {
+        margin-bottom: 0;
+    }
 
     h5 {
-        &::before {
-            content: "";
-            margin: 0;
-        }
+        margin: 0;
+    }
+
+    p {
+        margin: var(--smedium-space) 0;
     }
 }
 
 aside.old-post-warning {
-    background: var(--background-alt-colour);
+    background: var(--background-colour);
+    border: 1px solid var(--background-alt-colour);
+    box-shadow: 3px 3px 5px black;
     padding: var(--small-space) var(--medium-space);
     margin: var(--medium-space) 0;
     border-radius: var(--border-radius);

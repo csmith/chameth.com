@@ -12,7 +12,9 @@
         display: flex;
         flex-direction: column;
         height: 100%;
-        background-color: var(--background-alt-colour);
+        background: var(--background-colour);
+        border: 1px solid var(--background-alt-colour);
+        box-shadow: 3px 3px 5px black;
         border-radius: var(--border-radius);
         padding: var(--medium-space);
 

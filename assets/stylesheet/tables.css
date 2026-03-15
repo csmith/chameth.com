@@ -2,12 +2,16 @@
     width: 100%;
     max-width: 100%;
     overflow-x: auto;
-    margin: var(--medium-space) 0;
 }
 
 table {
     width: 100%;
-    border-bottom: 1px solid var(--accent-colour);
+    margin: var(--medium-space) 0;
+    background: var(--background-colour);
+    border: 1px solid var(--background-alt-colour);
+    box-shadow: 3px 3px 5px black;
+    border-radius: var(--border-radius);
+    border-collapse: separate;
 }
 
 td {
@@ -16,6 +20,7 @@ td {
 }
 
 th {
+    background-color: var(--background-colour);
     border-bottom: 2px solid var(--accent-colour);
     padding: 0.4em;
     text-align: left;
@@ -26,6 +31,6 @@ th {
     font-size: var(--font-size-tiny);
 }
 
-tr:nth-child(2n) {
+tr:nth-child(2n + 1) {
     background-color: var(--background-alt-colour);
 }

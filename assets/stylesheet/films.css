@@ -9,12 +9,13 @@
         "image body";
     grid-template-columns: auto 1fr;
     grid-template-rows: auto 1fr;
-    background-color: var(--background-alt-colour);
+    background: var(--background-colour);
+    border: 1px solid var(--background-alt-colour);
+    box-shadow: 3px 3px 5px black;
     border-radius: var(--border-radius);
     padding: 0;
     column-gap: var(--smedium-space);
     margin: var(--smedium-space) 0;
-    box-shadow: 0 0 3px var(--accent-colour);
     overflow: hidden;
 
     @container (width >= 700px) {
@@ -187,8 +188,10 @@ a.film-list {
     grid-template-columns: 1fr auto;
     grid-template-rows: auto 1fr auto;
     row-gap: var(--small-space);
-    background: var(--background-alt-colour);
-    box-shadow: 0 0 3px var(--accent-colour);
+    background: var(--background-colour);
+    border: 1px solid var(--background-alt-colour);
+    box-shadow: 3px 3px 5px black;
+    border-radius: var(--border-radius);
 
     @media (width <= 800px) {
         grid-template-areas: "header" "description" "images" "meta";
@@ -202,7 +205,6 @@ a.film-list {
     &:focus,
     &:active {
         padding: var(--smedium-space);
-        border: none;
         text-decoration: none;
         border-radius: var(--border-radius);
     }
@@ -223,7 +225,6 @@ a.film-list {
     *:focus {
         margin: 0;
         padding: 0;
-        border: none;
     }
 
     h3 {

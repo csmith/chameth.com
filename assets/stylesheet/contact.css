@@ -117,6 +117,7 @@
         background-color: var(--accent-alt-colour);
         border-radius: calc((var(--button-size) + var(--smedium-space)) / 2);
         padding: var(--smedium-space);
+        box-shadow: 3px 3px 5px black;
 
         @media (width <= 600px) {
             border-top-right-radius: var(--border-radius);

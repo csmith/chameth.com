@@ -43,6 +43,8 @@ hr.end-of-post {
         transparent 10px,
         transparent 20px
     );
+    box-shadow: 3px 3px 5px black;
+    border-radius: var(--border-radius);
 }
 
 @media (width >= 1200px) {
