@@ -13,9 +13,15 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("contact.html.gotpl").ParseFS(templates, "contact.html.gotpl"))
 
-func RenderFromText(_ []string, ctx *common.Context) (string, error) {
+func RenderFromText(args []string, ctx *common.Context) (string, error) {
+	preamble := ""
+	if len(args) > 0 {
+		preamble = args[0]
+	}
+
 	return renderTemplate(Data{
-		Page: ctx.URL,
+		Page:     ctx.URL,
+		Preamble: preamble,
 	})
 }
 

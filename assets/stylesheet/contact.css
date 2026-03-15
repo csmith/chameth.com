@@ -73,6 +73,31 @@
 
     form {
         transition: opacity 200ms ease-in-out;
+        margin: var(--smedium-space) 0;
+
+        p {
+            font-family: "Chris Hand", sans-serif;
+            font-size: var(--font-size-xlarge);
+            line-height: var(--font-size-xlarge);
+            margin: 0;
+            padding: 0;
+
+            @media (width <= 900px) {
+                font-size: var(--font-size-large);
+                line-height: var(--font-size-large);
+            }
+
+            @media (width <= 800px) {
+                font-size: var(--font-size-regular);
+                line-height: var(--font-size-regular);
+            }
+
+            @media (width <= 600px) {
+                font-family: inherit;
+                font-size: var(--font-size-tiny);
+                line-height: var(--font-size-tiny);
+            }
+        }
     }
 
     form.contact {
@@ -80,13 +105,23 @@
         flex-direction: column;
         gap: var(--small-space);
 
+        background: var(--background-colour);
+        border: 1px solid var(--background-alt-colour);
+        box-shadow: 3px 3px 5px black;
+        border-radius: var(--border-radius);
+        padding: var(--smedium-space);
+
+        p {
+            margin: var(--small-space) 0;
+        }
+
         input,
         textarea {
             font-size: var(--font-size-small);
             background-color: var(--background-alt-colour);
             color: var(--text-colour);
             border: 1px solid var(--accent-colour);
-            border-radius: 2px;
+            border-radius: var(--border-radius);
             padding: var(--small-space);
         }
 
@@ -102,7 +137,7 @@
             border: 0;
             text-transform: uppercase;
             padding: var(--small-space);
-            border-radius: 2px;
+            border-radius: var(--border-radius);
             cursor: pointer;
         }
     }
@@ -114,19 +149,20 @@
         display: grid;
         grid-template-columns: auto 1fr;
         gap: var(--smedium-space);
-        background-color: var(--accent-alt-colour);
-        border-radius: calc((var(--button-size) + var(--smedium-space)) / 2);
         padding: var(--smedium-space);
-        box-shadow: 3px 3px 5px black;
 
-        @media (width <= 600px) {
-            border-top-right-radius: var(--border-radius);
-            border-bottom-right-radius: var(--border-radius);
-        }
+        background: var(--background-colour);
+        border: 1px solid var(--background-alt-colour);
+        box-shadow: 3px 3px 5px black;
+        border-radius: var(--border-radius);
+        transition: box-shadow 400ms ease-in-out;
 
         &:hover,
         &:active,
         &:focus {
+            transition: box-shadow 400ms ease-in-out;
+            box-shadow: 0 0 10px var(--accent-colour);
+
             button {
                 box-shadow:
                     inset 0 calc(var(--button-size) / 24) 0
@@ -275,30 +311,6 @@
         div {
             align-self: center;
             text-align: center;
-        }
-
-        p {
-            font-family: "Chris Hand", sans-serif;
-            font-size: var(--font-size-xlarge);
-            line-height: var(--font-size-xlarge);
-            margin: 0;
-            padding: 0;
-
-            @media (width <= 900px) {
-                font-size: var(--font-size-large);
-                line-height: var(--font-size-large);
-            }
-
-            @media (width <= 800px) {
-                font-size: var(--font-size-regular);
-                line-height: var(--font-size-regular);
-            }
-
-            @media (width <= 600px) {
-                font-family: inherit;
-                font-size: var(--font-size-tiny);
-                line-height: var(--font-size-tiny);
-            }
         }
     }
 }

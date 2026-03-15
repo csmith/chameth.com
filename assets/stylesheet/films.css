@@ -69,6 +69,7 @@
                 content: none;
             }
 
+            padding: 0;
             font-size: var(--font-size-xlarge);
             line-height: var(--font-size-xlarge);
             margin: 0;
@@ -192,6 +193,7 @@ a.film-list {
     border: 1px solid var(--background-alt-colour);
     box-shadow: 3px 3px 5px black;
     border-radius: var(--border-radius);
+    transition: box-shadow 400ms ease-in-out;
 
     @media (width <= 800px) {
         grid-template-areas: "header" "description" "images" "meta";
@@ -212,7 +214,8 @@ a.film-list {
     &:hover,
     &:focus,
     &:active {
-        background: var(--accent-colour);
+        transition: box-shadow 400ms ease-in-out;
+        box-shadow: 0 0 10px var(--accent-colour);
     }
 
     & + & {

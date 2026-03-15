@@ -25,7 +25,6 @@
             overflow: hidden;
             border-radius: 5px;
             background-color: var(--background-alt-colour);
-            box-shadow: 2px 2px 5px black;
             height: 0.5em;
             width: 100%;
             vertical-align: middle;
@@ -55,7 +54,9 @@
 
     grid-template-columns: auto 1fr;
 
-    background-color: var(--background-alt-colour);
+    background: var(--background-colour);
+    border: 1px solid var(--background-alt-colour);
+    box-shadow: 3px 3px 5px black;
     border-radius: var(--border-radius);
     padding: var(--smedium-space);
     row-gap: var(--small-space);
@@ -73,6 +74,7 @@
         font-size: var(--font-size-regular);
         font-family: inherit;
         margin: 0;
+        padding: 0;
 
         &::before {
             content: none;
@@ -93,7 +95,7 @@
         grid-area: progress;
         border-radius: 5px;
         height: 0.5em;
-        background-color: var(--background-colour);
+        background-color: var(--background-alt-colour);
 
         .progress-bar {
             border-radius: 5px;

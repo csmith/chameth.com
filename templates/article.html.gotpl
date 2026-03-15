@@ -29,10 +29,7 @@
 
         {{call .Component "nod"}}
 
-        <section>
-            <p>Have thoughts that transcend nodding? Send me a message!</p>
-            {{call .Component "contact"}}
-        </section>
+        {{call .Component "contact" "Have thoughts that transcend nodding? Send me a message!"}}
 
         {{ if .RelatedPosts -}}
             <section class="post-links-parent">
