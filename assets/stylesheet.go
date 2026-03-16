@@ -11,6 +11,8 @@ import (
 )
 
 var includeOrder = []string{
+	"layers.css",
+
 	"reset.css",
 
 	"colours.css",
@@ -20,6 +22,7 @@ var includeOrder = []string{
 	"articles.css",
 	"asides.css",
 	"boardgames.css",
+	"components.css",
 	"contact.css",
 	"figures.css",
 	"films.css",

@@ -9,7 +9,7 @@
     </div>
     {{- end }}
     <div class="details">
-      <h3>{{ .Position }}. {{ .Name }} <span class="year">({{ .Year }})</span></h3>
+      <h3 class="plain-header">{{ .Position }}. {{ .Name }} <span class="year">({{ .Year }})</span></h3>
       <p>{{ .PlayCount }} play{{ if ne .PlayCount 1 }}s{{ end }}</p>
       {{- if .LastPlayed }}
       <p>Last played <time>{{ .LastPlayed }}</time></p>

@@ -30,23 +30,6 @@ article section + section {
     float: right;
 }
 
-hr.end-of-post {
-    clear: both;
-    border: 0;
-    width: 100%;
-    margin: var(--medium-space) 0;
-    height: var(--medium-space);
-    background: repeating-linear-gradient(
-        -45deg,
-        var(--accent-colour) 0,
-        var(--accent-colour) 10px,
-        transparent 10px,
-        transparent 20px
-    );
-    box-shadow: 3px 3px 5px black;
-    border-radius: var(--border-radius);
-}
-
 @media (width >= 1200px) {
     .e-content figure.right:first-child {
         margin-top: calc(
@@ -65,7 +48,7 @@ hr.end-of-post {
     border: 1px solid var(--background-alt-colour);
     box-shadow: 3px 3px 5px black;
     border-radius: var(--border-radius);
-    margin: var(--medium-space) 0;
+    margin: var(--smedium-space) 0;
     padding: var(--small-space);
     padding-top: calc(2 * var(--small-space) + var(--font-size-small));
     position: relative;

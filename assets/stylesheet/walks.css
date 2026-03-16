@@ -51,10 +51,6 @@
 
     grid-template-columns: auto 1fr;
 
-    background: var(--background-colour);
-    border: 1px solid var(--background-alt-colour);
-    box-shadow: 3px 3px 5px black;
-    border-radius: var(--border-radius);
     padding: var(--smedium-space);
     row-gap: var(--small-space);
     column-gap: var(--smedium-space);
@@ -72,10 +68,6 @@
         font-family: inherit;
         margin: 0;
         padding: 0;
-
-        &::before {
-            content: none;
-        }
     }
 
     .times {

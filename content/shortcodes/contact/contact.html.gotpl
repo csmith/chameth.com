@@ -1,6 +1,6 @@
 {{/* gotype: chameth.com/chameth.com/content/shortcodes/contact.Data*/}}
 <div class="contact-container">
-    <form class="contact" method="POST" action="/api/form/contact">
+    <form class="contact raised-box" method="POST" action="/api/form/contact">
         {{- if .Preamble }}<p>{{.Preamble}}</p>{{ end -}}
         <input type="hidden" name="page" value="https://chameth.com{{.Page}}" />
         <input type="text" name="name" placeholder="Your name/alias (optional)" />

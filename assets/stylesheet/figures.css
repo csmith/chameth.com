@@ -55,11 +55,10 @@ figure {
         &.left,
         &.right {
             position: relative;
-            box-shadow: -5px 5px 10px var(--background-colour);
+            box-shadow: 8px 8px 20px black;
             margin-bottom: var(--medium-space);
 
-            &::before,
-            &::after {
+            &::before {
                 content: "";
                 display: block;
                 position: absolute;
@@ -69,16 +68,8 @@ figure {
                 background-color: var(--accent-colour);
                 opacity: 0.15;
                 box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-            }
-
-            &::before {
                 top: -20px;
                 transform: rotate(4deg);
-            }
-
-            &::after {
-                bottom: -20px;
-                transform: rotate(-8deg);
             }
         }
     }

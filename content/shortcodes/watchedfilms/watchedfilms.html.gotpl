@@ -2,7 +2,7 @@
 <ol class="watched-films">
 {{- range .Films }}
   <li>
-    <a href="{{ .Path }}">
+    <a class="plain-link raised-box" href="{{ .Path }}">
       <img src="{{ .PosterPath }}" alt="Poster of {{ .Title }}" loading="lazy">
       <time>{{ .Date }}</time>
       <div>{{ .Stars }}</div>

@@ -31,7 +31,7 @@
             {{call .Component "syndication"}}
         </div>
 
-        <aside class="film-sidebar">
+        <aside class="film-sidebar raised-box">
             {{if .PosterPath}}
             <img src="{{.PosterPath}}" alt="{{.Title}} poster" class="film-poster">
             {{end}}
@@ -47,8 +47,6 @@
             {{end}}
         </aside>
     </article>
-
-    <hr class="end-of-post">
 
     {{call .Component "nod"}}
 {{end}}

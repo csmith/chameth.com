@@ -57,10 +57,6 @@
         }
 
         h3 {
-            &::before {
-                content: none;
-            }
-
             .year {
                 color: var(--text-alt-colour);
                 font-size: var(--font-size-large);

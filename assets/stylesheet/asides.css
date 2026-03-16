@@ -37,10 +37,6 @@ blockquote {
 
 aside.update {
     clear: both;
-    background: var(--background-colour);
-    border: 1px solid var(--background-alt-colour);
-    box-shadow: 3px 3px 5px black;
-    border-radius: var(--border-radius);
     padding: var(--medium-space);
     margin: var(--large-space) 0;
 
@@ -49,16 +45,11 @@ aside.update {
     }
 
     h5 {
-        &::before {
-            content: none;
-        }
-
         text-transform: uppercase;
         color: var(--text-highlight-colour);
         font-size: var(--font-size-large);
         margin-top: 0;
         padding: 0;
-        filter: none;
         margin-bottom: var(--small-space);
 
         & + p {
@@ -129,10 +120,6 @@ aside.warning {
 }
 
 aside.sidenote {
-    background: var(--background-colour);
-    border: 1px solid var(--background-alt-colour);
-    box-shadow: 3px 3px 5px black;
-    border-radius: var(--border-radius);
     padding: var(--small-space);
     color: var(--text-alt-colour);
 
@@ -154,10 +141,6 @@ aside.sidenote {
 }
 
 aside.old-post-warning {
-    background: var(--background-colour);
-    border: 1px solid var(--background-alt-colour);
-    box-shadow: 3px 3px 5px black;
     padding: var(--small-space) var(--medium-space);
     margin: var(--medium-space) 0;
-    border-radius: var(--border-radius);
 }

@@ -2,7 +2,6 @@
 {{define "content"}}
 <h2>{{ .StaticTitle }}</h2>
 {{ .StaticContent }}
-<hr class="end-of-post">
 
 {{call .Component "nod"}}
 {{end}}

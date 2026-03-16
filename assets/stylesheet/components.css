@@ -1,0 +1,16 @@
+.raised-box {
+    background-color: var(--background-colour);
+    border: 1px solid var(--background-alt-colour);
+    box-shadow: 3px 3px 5px black;
+    border-radius: var(--border-radius);
+
+    &:is(a, .raised-box-interactive) {
+        transition: box-shadow 400ms ease-in-out;
+
+        &:hover,
+        &:focus,
+        &:active {
+            box-shadow: 0 0 10px var(--accent-colour);
+        }
+    }
+}

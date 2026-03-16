@@ -14,8 +14,8 @@
 
         <div class="projects">
             {{ range .Projects -}}
-                <section class="project">
-                    <h4>
+                <section class="project raised-box">
+                    <h4 class="plain-header">
                         {{ .Icon }}
                         {{ .Name }}
                         {{ if .Pinned -}}
@@ -36,8 +36,6 @@
             {{- end }}
         </div>
     {{- end }}
-
-    <hr class="end-of-post">
 
     {{call .Component "nod"}}
 {{end}}

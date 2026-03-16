@@ -35,7 +35,5 @@
         licence. If you wish to make commercial use of them, please get in touch.
     </p>
 
-    <hr class="end-of-post">
-
     {{call .Component "nod"}}
 {{end}}

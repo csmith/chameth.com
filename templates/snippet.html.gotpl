@@ -5,7 +5,6 @@
             <h2><a href="/snippets/">Snippets</a> &raquo; {{ .SnippetGroup }} &raquo; {{ .SnippetTitle }}</h2>
         </header>
         {{ .SnippetContent }}
-        <hr class="end-of-post">
 
         {{call .Component "nod"}}
     </article>

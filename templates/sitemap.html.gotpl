@@ -93,7 +93,5 @@
         {{ end -}}
     </ul>
 
-    <hr class="end-of-post">
-
     {{call .Component "nod"}}
 {{end}}

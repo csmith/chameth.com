@@ -1,5 +1,5 @@
 {{/* gotype: chameth.com/chameth.com/content/shortcodes/update.Data*/}}
-<aside class="update">
-  <h5>Update {{ .Date }}:</h5>
+<aside class="update raised-box">
+  <h5 class="plain-header">Update {{ .Date }}:</h5>
   {{ .Content }}
 </aside>

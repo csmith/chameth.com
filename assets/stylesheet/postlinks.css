@@ -23,23 +23,12 @@
     min-width: 300px;
     max-width: 600px;
     flex-grow: 1;
-    text-decoration: none;
-
-    background: var(--background-colour);
-    border: 1px solid var(--background-alt-colour);
-    box-shadow: 3px 3px 5px black;
-    border-radius: var(--border-radius);
     overflow: hidden;
-    transition: box-shadow 400ms ease-in-out;
-
     padding-bottom: var(--small-space);
 
     &:hover,
     &:focus,
     &:active {
-        transition: box-shadow 400ms ease-in-out;
-        box-shadow: 0 0 10px var(--accent-colour);
-
         .img-holder {
             img,
             .placeholder {
@@ -113,12 +102,6 @@
                 var(--background-alt-colour) 80%,
                 transparent
             );
-            filter: none;
-            transform: none;
-
-            &::before {
-                content: none;
-            }
         }
 
         p {

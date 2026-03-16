@@ -59,110 +59,114 @@ body {
     line-height: 1.6;
 }
 
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-family: "Chris Hand", sans-serif;
-    font-size: var(--font-size-xxlarge);
-    color: var(--text-highlight-colour);
-    margin: var(--medium-space) 0;
-    line-height: 1;
+@layer headers {
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: "Chris Hand", sans-serif;
+        font-size: var(--font-size-xxlarge);
+        color: var(--text-highlight-colour);
+        margin: var(--medium-space) 0;
+        line-height: 1;
 
-    transform: rotate(-0.15deg);
-    padding: var(--smedium-space);
-    /* Poor man's text-box-trim */
-    padding-top: calc(var(--smedium-space) + 0.5ex);
-    font-weight: 800;
-    position: relative;
+        &:not(.plain-header) {
+            transform: rotate(-0.15deg);
+            padding: var(--smedium-space);
+            /* Poor man's text-box-trim */
+            padding-top: calc(var(--smedium-space) + 0.5ex);
+            font-weight: 800;
+            position: relative;
 
-    filter: drop-shadow(3px 3px 5px rgb(0, 0, 0));
+            filter: drop-shadow(3px 3px 5px rgb(0, 0, 0));
 
-    &::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        background-color: var(--accent-colour);
-        background-image:
-            repeating-linear-gradient(
-                -45deg,
-                transparent 0px,
-                transparent 3px,
-                rgba(0, 0, 0, 0.02) 3px,
-                rgba(0, 0, 0, 0.02) 4px
-            ),
-            linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.14) 0%,
-                rgba(0, 0, 0, 0.06) 100%
-            );
-        clip-path: polygon(
-            0% 0%,
-            100% 0%,
-            calc(100% - 1px) 10%,
-            calc(100% + 2px) 20%,
-            calc(100% - 2px) 30%,
-            calc(100% + 1px) 40%,
-            calc(100% - 2px) 50%,
-            calc(100% + 2px) 60%,
-            calc(100% - 1px) 70%,
-            calc(100% + 2px) 80%,
-            calc(100% - 2px) 90%,
-            100% 100%,
-            0% 100%,
-            2px 90%,
-            -1px 80%,
-            2px 70%,
-            -2px 60%,
-            1px 50%,
-            -2px 40%,
-            2px 30%,
-            -1px 20%,
-            1px 10%
-        );
-    }
+            &::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                z-index: -1;
+                background-color: var(--accent-colour);
+                background-image:
+                    repeating-linear-gradient(
+                        -45deg,
+                        transparent 0px,
+                        transparent 3px,
+                        rgba(0, 0, 0, 0.02) 3px,
+                        rgba(0, 0, 0, 0.02) 4px
+                    ),
+                    linear-gradient(
+                        180deg,
+                        rgba(255, 255, 255, 0.14) 0%,
+                        rgba(0, 0, 0, 0.06) 100%
+                    );
+                clip-path: polygon(
+                    0% 0%,
+                    100% 0%,
+                    calc(100% - 1px) 10%,
+                    calc(100% + 2px) 20%,
+                    calc(100% - 2px) 30%,
+                    calc(100% + 1px) 40%,
+                    calc(100% - 2px) 50%,
+                    calc(100% + 2px) 60%,
+                    calc(100% - 1px) 70%,
+                    calc(100% + 2px) 80%,
+                    calc(100% - 2px) 90%,
+                    100% 100%,
+                    0% 100%,
+                    2px 90%,
+                    -1px 80%,
+                    2px 70%,
+                    -2px 60%,
+                    1px 50%,
+                    -2px 40%,
+                    2px 30%,
+                    -1px 20%,
+                    1px 10%
+                );
+            }
+        }
 
-    a {
-        background: none;
-        text-decoration-skip-ink: auto;
-        transition: text-decoration-color 200ms ease-in-out;
-        text-decoration-color: var(--text-alt-colour);
+        a {
+            background: none;
+            text-decoration-skip-ink: auto;
+            transition: text-decoration-color 200ms ease-in-out;
+            text-decoration-color: var(--text-alt-colour);
 
-        &:hover,
-        &:focus,
-        &:active {
-            text-decoration-color: var(--accent-colour);
+            &:hover,
+            &:focus,
+            &:active {
+                text-decoration-color: var(--accent-colour);
+            }
         }
     }
-}
 
-h3 {
-    font-size: calc(0.8 * var(--font-size-xxlarge));
-    &::before {
-        filter: brightness(0.8);
+    h3 {
+        font-size: calc(0.8 * var(--font-size-xxlarge));
+        &:not(.plain-header)::before {
+            filter: brightness(0.8);
+        }
     }
-}
 
-h4 {
-    font-size: calc(0.6 * var(--font-size-xxlarge));
-    &::before {
-        filter: brightness(0.6);
+    h4 {
+        font-size: calc(0.6 * var(--font-size-xxlarge));
+        &:not(.plain-header)::before {
+            filter: brightness(0.6);
+        }
     }
-}
 
-h5 {
-    font-size: calc(0.4 * var(--font-size-xxlarge));
-    &::before {
-        filter: brightness(0.4);
+    h5 {
+        font-size: calc(0.4 * var(--font-size-xxlarge));
+        &:not(.plain-header)::before {
+            filter: brightness(0.4);
+        }
     }
-}
 
-h6 {
-    font-size: calc(0.2 * var(--font-size-xxlarge));
-    &::before {
-        filter: brightness(0.2);
+    h6 {
+        font-size: calc(0.2 * var(--font-size-xxlarge));
+        &:not(.plain-header)::before {
+            filter: brightness(0.2);
+        }
     }
 }
 
@@ -176,57 +180,6 @@ li code {
     border-radius: var(--border-radius);
     padding: 0.1em 0.5em;
     font-family: "Berkeley Mono", monospace;
-}
-
-a {
-    color: var(--text-highlight-colour);
-    text-decoration: underline;
-    text-decoration-color: var(--accent-colour);
-    text-decoration-thickness: 4px;
-    text-decoration-skip-ink: none;
-
-    background: linear-gradient(
-            to bottom,
-            transparent 50%,
-            var(--accent-colour) 50%
-        )
-        top;
-    background-size: 100% 200%;
-    line-height: 1;
-
-    transition: background 1s ease-out;
-
-    &:hover,
-    &:active,
-    &:focus {
-        background-position: bottom;
-        transition-duration: 150ms;
-    }
-
-    &[href*="://"]:not([href*="://chameth.com"])::after {
-        content: "↗";
-        font-family: "Berkeley Mono", monospace;
-        color: var(--accent-colour);
-    }
-}
-
-.poem {
-    font-family: "Berkeley Mono", monospace;
-    background-color: var(--background-alt-colour);
-    padding: 1em;
-    margin: var(--medium-space) 0;
-    border-radius: var(--border-radius);
-    white-space: preserve-spaces;
-}
-
-.ascii-art {
-    font-family: "Berkeley Mono", monospace;
-    font-size: var(--font-size-tiny);
-    color: var(--text-alt-colour);
-
-    @media (width <= 600px) {
-        font-size: 6pt;
-    }
 }
 
 em,
@@ -256,4 +209,23 @@ sub {
 
 sub {
     top: calc(0.25 * 0.83 * 2 * (1em - 4px));
+}
+
+.poem {
+    font-family: "Berkeley Mono", monospace;
+    background-color: var(--background-alt-colour);
+    padding: 1em;
+    margin: var(--medium-space) 0;
+    border-radius: var(--border-radius);
+    white-space: preserve-spaces;
+}
+
+.ascii-art {
+    font-family: "Berkeley Mono", monospace;
+    font-size: var(--font-size-tiny);
+    color: var(--text-alt-colour);
+
+    @media (width <= 600px) {
+        font-size: 6pt;
+    }
 }
