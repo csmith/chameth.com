@@ -142,6 +142,7 @@
         display: grid;
         grid-template-columns: auto 1fr;
         gap: var(--smedium-space);
+        margin-top: var(--large-space);
 
         &:hover,
         &:active,
@@ -295,6 +296,13 @@
             align-self: center;
             text-align: center;
         }
+    }
+}
+
+.raised-box + .nod-container,
+.footnotes + .nod-container {
+    form.nod {
+        margin-top: 0;
     }
 }
 
