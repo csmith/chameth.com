@@ -106,9 +106,27 @@
         gap: var(--small-space);
 
         padding: var(--smedium-space);
+        margin: var(--smedium-space) 0;
+        position: relative;
+
+        &:has(p) {
+            padding-top: calc(2 * var(--smedium-space) + var(--font-size-small));
+        }
 
         p {
             margin: var(--small-space) 0;
+
+            &:first-of-type {
+                position: absolute;
+                top: 5px;
+                left: calc(5px + var(--border-radius) / 2);
+                margin: 0;
+                padding: 0;
+                color: var(--text-alt-colour);
+                font-size: var(--font-size-small);
+                font-family: "Berkeley Mono", monospace;
+                text-transform: uppercase;
+            }
         }
 
         input,
@@ -146,6 +164,20 @@
         grid-template-columns: auto 1fr;
         gap: var(--smedium-space);
         padding: var(--smedium-space);
+        padding-top: calc(2 * var(--smedium-space) + var(--font-size-small));
+        margin: var(--smedium-space) 0;
+        position: relative;
+
+        &::before {
+            content: "Send a nod";
+            font-family: "Berkeley Mono", monospace;
+            text-transform: uppercase;
+            font-size: var(--font-size-small);
+            color: var(--text-alt-colour);
+            position: absolute;
+            top: 5px;
+            left: calc(5px + var(--border-radius) / 2);
+        }
 
         &:hover,
         &:active,
