@@ -633,3 +633,41 @@ ol.watched-films {
         opacity: 0;
     }
 }
+
+.rating-distribution {
+    position: relative;
+    display: inline-block;
+    padding-top: calc(2 * var(--smedium-space) + var(--font-size-small));
+
+    figcaption {
+        position: absolute;
+        top: 5px;
+        left: calc(5px + var(--border-radius) / 2);
+        margin: 0;
+        padding: 0;
+        color: var(--text-alt-colour);
+        font-size: var(--font-size-small);
+        font-family: "Berkeley Mono", monospace;
+        text-transform: uppercase;
+    }
+
+    .chart-container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: var(--small-space);
+        padding: 0 var(--small-space) var(--small-space);
+    }
+
+    svg {
+        margin-bottom: var(--small-space);
+    }
+
+    .left-label,
+    .right-label {
+        .star-rating img {
+            width: 20px;
+            height: 20px;
+        }
+    }
+}

@@ -323,3 +323,8 @@ type FilmSearchResult struct {
 	TimesWatched  int      `db:"times_watched"`
 	AverageRating *float64 `db:"average_rating"`
 }
+
+type FilmRatingDistribution struct {
+	Rating int `db:"rating"`
+	Count  int `db:"count"`
+}

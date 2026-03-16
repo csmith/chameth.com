@@ -179,3 +179,19 @@ func GetPublishedFilmReviewsWithFilmAndPostersByDateRange(ctx context.Context, s
 
 	return results, nil
 }
+
+func GetFilmRatingDistribution(ctx context.Context) ([]FilmRatingDistribution, error) {
+	metrics.LogQuery(ctx)
+	var results []FilmRatingDistribution
+	err := db.SelectContext(ctx, &results, `
+		SELECT rating, COUNT(*) as count
+		FROM film_reviews
+		WHERE published = true
+		GROUP BY rating
+		ORDER BY rating ASC
+	`)
+	if err != nil {
+		return nil, err
+	}
+	return results, nil
+}

@@ -1,0 +1,15 @@
+{{/* gotype: chameth.com/chameth.com/content/shortcodes/filmratingdistribution.Data*/}}
+<figure class="rating-distribution raised-box">
+ <figcaption>Film rating distribution</figcaption>
+ <div class="chart-container">
+  <span class="left-label">{{.LeftLabel}}</span>
+  <svg width="200" height="50" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Film rating distribution chart">
+   {{ range .Bars -}}
+   <rect x="{{.X}}" y="{{.Y}}" width="{{.Width}}" height="{{.Height}}" fill="var(--accent-colour)" class="rating-bar">
+    <title>{{.Title}}</title>
+   </rect>
+   {{- end }}
+  </svg>
+  <span class="right-label">{{.RightLabel}}</span>
+ </div>
+</figure>

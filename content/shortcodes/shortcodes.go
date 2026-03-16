@@ -7,12 +7,13 @@ import (
 	"regexp"
 	"strings"
 
-	"chameth.com/chameth.com/content/shortcodes/bglist"
 	"chameth.com/chameth.com/content/shortcodes/audio"
+	"chameth.com/chameth.com/content/shortcodes/bglist"
 	"chameth.com/chameth.com/content/shortcodes/common"
 	"chameth.com/chameth.com/content/shortcodes/contact"
 	"chameth.com/chameth.com/content/shortcodes/figure"
 	"chameth.com/chameth.com/content/shortcodes/filmlist"
+	"chameth.com/chameth.com/content/shortcodes/filmratingdistribution"
 	"chameth.com/chameth.com/content/shortcodes/filmreview"
 	"chameth.com/chameth.com/content/shortcodes/filmreviews"
 	"chameth.com/chameth.com/content/shortcodes/filmsearch"
@@ -38,29 +39,30 @@ const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering
 type renderer func([]string, *common.Context) (string, error)
 
 var renderers = map[string]renderer{
-	"audio":           audio.RenderFromText,
-	"bglist":          bglist.RenderFromText,
-	"contact":         contact.RenderFromText,
-	"figure":          figure.RenderFromText,
-	"filmlist":        filmlist.RenderFromText,
-	"filmreview":      filmreview.RenderFromText,
-	"filmreviews":     filmreviews.RenderFromText,
-	"filmsearch":      filmsearch.RenderFromText,
-	"link":            link.RenderFromText,
-	"nod":             nod.RenderFromText,
-	"playedbgs":       playedbgs.RenderFromText,
-	"postlink":        postlink.RenderFromText,
-	"rating":          rating.RenderFromText,
-	"recentfilms":     recentfilms.RenderFromText,
-	"recentposts":     recentposts.RenderFromText,
-	"sidenote":        sidenote.RenderFromText,
-	"syndication":     syndication.RenderFromText,
-	"update":          update.RenderFromText,
-	"video":           video.RenderFromText,
-	"walks":           walks.RenderFromText,
-	"walkingdistance": walkingdistance.RenderFromText,
-	"warning":         warning.RenderFromText,
-	"watchedfilms":    watchedfilms.RenderFromText,
+	"audio":                  audio.RenderFromText,
+	"bglist":                 bglist.RenderFromText,
+	"contact":                contact.RenderFromText,
+	"figure":                 figure.RenderFromText,
+	"filmlist":               filmlist.RenderFromText,
+	"filmratingdistribution": filmratingdistribution.RenderFromText,
+	"filmreview":             filmreview.RenderFromText,
+	"filmreviews":            filmreviews.RenderFromText,
+	"filmsearch":             filmsearch.RenderFromText,
+	"link":                   link.RenderFromText,
+	"nod":                    nod.RenderFromText,
+	"playedbgs":              playedbgs.RenderFromText,
+	"postlink":               postlink.RenderFromText,
+	"rating":                 rating.RenderFromText,
+	"recentfilms":            recentfilms.RenderFromText,
+	"recentposts":            recentposts.RenderFromText,
+	"sidenote":               sidenote.RenderFromText,
+	"syndication":            syndication.RenderFromText,
+	"update":                 update.RenderFromText,
+	"video":                  video.RenderFromText,
+	"walks":                  walks.RenderFromText,
+	"walkingdistance":        walkingdistance.RenderFromText,
+	"warning":                warning.RenderFromText,
+	"watchedfilms":           watchedfilms.RenderFromText,
 }
 
 var tagRegexp = regexp.MustCompile(`\{%\s*(\w+)(.*?)\s*%\}`)

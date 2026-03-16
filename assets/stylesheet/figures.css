@@ -1,4 +1,5 @@
-figure {
+figure.image,
+figure.video {
     margin: var(--medium-space) var(--medium-space) var(--small-space)
         var(--medium-space);
     padding: var(--medium-space);
