@@ -1,5 +1,5 @@
 {{/* gotype: chameth.com/chameth.com/content/shortcodes/syndication.Data*/}}
-<section class="syndications raised-box">
+<section class="syndications raised-box" data-title="Syndications">
   <p>This content is also published/discussed on these external sites:</p>
   <ul>
   {{range .Syndications}}

@@ -50,17 +50,26 @@ article section + section {
     border-radius: var(--border-radius);
     margin: var(--smedium-space) 0;
     padding: var(--small-space);
-    padding-top: calc(2 * var(--small-space) + var(--font-size-small));
+    padding-top: var(--raised-box-title-padding);
     position: relative;
 
     &::before {
         content: "Footnotes";
         font-family: "Berkeley Mono", monospace;
         text-transform: uppercase;
-        font-size: var(--font-size-small);
+        font-size: var(--font-size-tiny);
+        line-height: calc(1.5 * var(--font-size-tiny));
+        color: var(--text-alt-colour);
+        white-space: pre;
+        text-overflow: ellipsis;
+        overflow: hidden;
         position: absolute;
         top: 5px;
-        left: calc(5px + var(--border-radius) / 2);
+        left: 0;
+        right: 0;
+        border-bottom: 1px solid var(--background-alt-colour);
+        padding-bottom: 5px;
+        padding-left: calc(5px + var(--border-radius) / 2);
     }
 
     p {
@@ -69,5 +78,13 @@ article section + section {
 
     hr {
         display: none;
+    }
+
+    li:first-child p {
+        margin-top: 0;
+    }
+
+    li:last-child p {
+        margin-bottom: 0;
     }
 }

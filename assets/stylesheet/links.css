@@ -2,7 +2,10 @@
     display: inline-flex;
     align-items: center;
     gap: var(--medium-space);
-    padding: var(--medium-space);
+    padding-top: calc(var(--raised-box-title-padding) + var(--smedium-space));
+    padding-left: var(--medium-space);
+    padding-right: var(--medium-space);
+    padding-bottom: var(--medium-space);
     color: var(--text-colour);
     width: min(100%, 400px);
 

@@ -5,10 +5,6 @@
         white-space: nowrap;
     }
 
-    tr {
-        background-color: transparent;
-    }
-
     time {
         color: var(--text-alt-colour);
     }

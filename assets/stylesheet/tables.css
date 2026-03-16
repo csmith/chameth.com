@@ -20,6 +20,10 @@ td {
     font-size: var(--font-size-small);
 }
 
+tr:not(:last-child) td {
+    border-bottom: 1px solid var(--background-alt-colour);
+}
+
 th {
     background-color: var(--background-colour);
     border-bottom: 2px solid var(--accent-colour);
@@ -30,8 +34,4 @@ th {
     text-transform: uppercase;
     font-family: "Berkeley Mono", monospace;
     font-size: var(--font-size-tiny);
-}
-
-tr:nth-child(2n + 1) {
-    background-color: var(--background-alt-colour);
 }

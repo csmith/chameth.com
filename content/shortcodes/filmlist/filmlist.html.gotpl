@@ -1,4 +1,4 @@
-<a href="{{.Path}}" class="film-list raised-box plain-link">
+<a href="{{.Path}}" class="film-list raised-box plain-link" data-title="Film list">
   <h3 class="plain-header">{{.Title}}</h3>
   <div class="poster-stack">
     {{range .Films}}<img src="{{.PosterPath}}" alt="Poster of {{.Title}}" />{{end}}
