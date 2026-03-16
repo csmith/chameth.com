@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     el.innerHTML = `
             <div class="film-search">
                 <input type="text" name="q" id="q" placeholder="Search films..." autocomplete="off" />
-                <div class="results" style="display: none;"></div>
+                <div class="results hidden"></div>
             </div>
         `;
 
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
       clearTimeout(debounceTimer);
 
       if (query.length < 2) {
-        resultsDiv.style.display = "none";
+        resultsDiv.classList.add("hidden");
         resultsDiv.innerHTML = "";
         return;
       }
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
               .join("");
           })
           .finally(() => {
-            resultsDiv.style.display = "block";
+            resultsDiv.classList.remove("hidden");
           })
           .catch(() => {
             resultsDiv.innerHTML =
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Close results when clicking outside
     document.addEventListener("click", (e) => {
       if (!el.contains(e.target)) {
-        resultsDiv.style.display = "none";
+        resultsDiv.classList.add("hidden");
         resultsDiv.innerHTML = "";
       }
     });

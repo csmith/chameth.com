@@ -527,6 +527,15 @@ ol.watched-films {
 }
 
 .film-search {
+    .results.hidden,
+    .results:empty {
+        display: none;
+    }
+
+    .results.visible {
+        display: block;
+    }
+
     input {
         width: 100%;
         font-size: var(--font-size-large);

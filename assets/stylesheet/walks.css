@@ -20,7 +20,7 @@
     .distance-bar-cell {
         width: 100%;
 
-        .distance-bar-container {
+        .distance-bar {
             display: inline-block;
             overflow: hidden;
             border-radius: 5px;
@@ -30,10 +30,7 @@
             vertical-align: middle;
 
             .distance-bar-fill {
-                display: block;
-                background-color: var(--accent-colour);
-                min-height: 100%;
-                border-radius: 5px;
+                fill: var(--accent-colour);
             }
         }
     }
@@ -91,16 +88,15 @@
         }
     }
 
-    .progress-container {
+    .progress-bar {
         grid-area: progress;
         border-radius: 5px;
         height: 0.5em;
+        width: 100%;
         background-color: var(--background-alt-colour);
 
-        .progress-bar {
-            border-radius: 5px;
-            height: 0.5em;
-            background-color: var(--accent-colour);
+        .progress-fill {
+            fill: var(--accent-colour);
         }
     }
 }

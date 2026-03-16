@@ -3,7 +3,7 @@
 	{{ .SVG }}
 	<h4>{{ .Name }}</h4>
 	<p class="times">{{ printf "%.2f" .TimesCompleted }}× <span>{{ printf "%.0f" .DistanceKm }}km</span></p>
-	<div class="progress-container">
-		<div class="progress-bar" style="width: {{ .ProgressPercent }}%;"></div>
-	</div>
+	<svg class="progress-bar" viewBox="0 0 100 1" preserveAspectRatio="none">
+		<rect class="progress-fill" x="0" y="0" height="1" width="{{ .ProgressPercent }}"></rect>
+	</svg>
 </div>
