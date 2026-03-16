@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <a href="${film.path}">
                             <img src="${posterSrc}" alt="Poster for ${film.title}" />
                             <div>
-                                <h3>${film.title}</h3>
+                                <h3 class="plain-header">${film.title}</h3>
                                 <p>${watchText}</p>
                                 <p>${film.rating_html}</p>
                             </div>
