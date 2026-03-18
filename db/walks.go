@@ -51,3 +51,21 @@ func GetTotalDistanceKm(ctx context.Context) (float64, error) {
 	}
 	return totalDistance, nil
 }
+
+// GetMonthlyAverageWalkingSpeed returns the average walking speed (km/h) for each month
+func GetMonthlyAverageWalkingSpeed(ctx context.Context) ([]MonthlyWalkingSpeed, error) {
+	metrics.LogQuery(ctx)
+	var speeds []MonthlyWalkingSpeed
+	err := db.SelectContext(ctx, &speeds, `
+		SELECT
+			DATE_TRUNC('month', start_date) AS month,
+			AVG(distance_km / (duration_seconds / 3600.0)) AS avg_speed_kmh
+		FROM walks
+		GROUP BY DATE_TRUNC('month', start_date)
+		ORDER BY month ASC
+	`)
+	if err != nil {
+		return nil, err
+	}
+	return speeds, nil
+}

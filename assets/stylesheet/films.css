@@ -522,7 +522,7 @@ ol.watched-films {
         overflow-y: auto;
         position: absolute;
         position-anchor: --film-search-box;
-        position-area: bottom span-all;
+        position-area: bottom center;
         position-visibility: always;
         width: anchor-size();
         border: 2px solid var(--accent-colour);

@@ -285,6 +285,11 @@ type Walk struct {
 	ElevationGainMeters float64   `db:"elevation_gain_meters"`
 }
 
+type MonthlyWalkingSpeed struct {
+	Month        time.Time `db:"month"`
+	AvgSpeedKmh  float64   `db:"avg_speed_kmh"`
+}
+
 type BoardgameGame struct {
 	ID    string `db:"id"`
 	BggID int    `db:"bgg_id"`

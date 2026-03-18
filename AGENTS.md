@@ -35,6 +35,12 @@ This avoids pre-rendering shortcode HTML in handlers. Arguments are
 converted to strings via `fmt.Sprint` so template values like ints
 can be passed directly.
 
+### CSS
+
+All frontend styles are in `assets/stylesheet`. CSS must NEVER be
+inlined in HTML in the frontend. Selectors should be nested where
+possible/appropriate.
+
 ### Configuration and secrets
 
 External URLs, usernames, passwords, etc should be defined as flags.

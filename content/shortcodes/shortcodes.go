@@ -29,6 +29,7 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/update"
 	"chameth.com/chameth.com/content/shortcodes/video"
 	"chameth.com/chameth.com/content/shortcodes/walkingdistance"
+	"chameth.com/chameth.com/content/shortcodes/walkingspeed"
 	"chameth.com/chameth.com/content/shortcodes/walks"
 	"chameth.com/chameth.com/content/shortcodes/warning"
 	"chameth.com/chameth.com/content/shortcodes/watchedfilms"
@@ -61,6 +62,7 @@ var renderers = map[string]renderer{
 	"video":                  video.RenderFromText,
 	"walks":                  walks.RenderFromText,
 	"walkingdistance":        walkingdistance.RenderFromText,
+	"walkingspeed":           walkingspeed.RenderFromText,
 	"warning":                warning.RenderFromText,
 	"watchedfilms":           watchedfilms.RenderFromText,
 }

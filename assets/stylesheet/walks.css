@@ -88,3 +88,16 @@
         }
     }
 }
+
+.walkingspeed {
+    margin: var(--smedium-space) 0;
+
+    svg {
+        width: 100%;
+        height: auto;
+
+        text {
+            font-family: "Berkeley Mono", monospace;
+        }
+    }
+}
