@@ -28,7 +28,7 @@ const (
 )
 
 func RenderFromText(_ []string, ctx *common.Context) (string, error) {
-	speeds, err := db.GetMonthlyAverageWalkingSpeed(ctx.Context)
+	speeds, err := db.GetMonthlyMaxWalkingSpeed(ctx.Context)
 	if err != nil {
 		return "", fmt.Errorf("failed to get monthly walking speeds: %w", err)
 	}
@@ -45,7 +45,7 @@ func RenderFromText(_ []string, ctx *common.Context) (string, error) {
 	points := createPoints(speeds, monthWidth, speedMin, speedRange)
 
 	var svgBuilder strings.Builder
-	fmt.Fprintf(&svgBuilder, `<svg width="%d" height="%d" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Average walking speed line graph">`, width, height, width, height)
+	fmt.Fprintf(&svgBuilder, `<svg width="%d" height="%d" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Quickest walk speed line graph">`, width, height, width, height)
 	renderYAxis(&svgBuilder, speedMin, speedMax, speedRange)
 	renderXAxis(&svgBuilder, speeds, monthWidth)
 	renderPoints(&svgBuilder, points)
@@ -102,7 +102,7 @@ func renderXAxis(svgBuilder *strings.Builder, speeds []db.MonthlyWalkingSpeed, m
 func renderYAxis(svgBuilder *strings.Builder, speedMin, speedMax, speedRange float64) {
 	fmt.Fprintf(svgBuilder, `<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="var(--background-alt-colour)" stroke-width="1"/>`, leftPadding, topPadding-5, leftPadding, topPadding+contentHeight)
 	yAxisCenterY := topPadding + contentHeight/2
-	fmt.Fprintf(svgBuilder, `<text x="12" y="%d" text-anchor="middle" transform="rotate(-90, 12, %d)" fill="var(--text-alt-colour)" font-size="8">Average speed (km/h)</text>`, yAxisCenterY, yAxisCenterY)
+	fmt.Fprintf(svgBuilder, `<text x="12" y="%d" text-anchor="middle" transform="rotate(-90, 12, %d)" fill="var(--text-alt-colour)" font-size="8">Quickest walk (km/h)</text>`, yAxisCenterY, yAxisCenterY)
 	for speed := speedMin; speed <= speedMax; speed++ {
 		normalizedSpeed := (speed - speedMin) / speedRange
 		y := topPadding + contentHeight - int(normalizedSpeed*float64(contentHeight))
