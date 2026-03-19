@@ -130,13 +130,18 @@ body {
         a {
             background: none;
             text-decoration-skip-ink: auto;
-            transition: text-decoration-color 200ms ease-in-out;
+            transition: text-decoration-color 500ms
+                var(--timing-ease-in-out-quad);
             text-decoration-color: var(--text-alt-colour);
 
             &:hover,
             &:focus,
             &:active {
                 text-decoration-color: var(--accent-colour);
+            }
+
+            &::after {
+                color: var(--text-alt-colour);
             }
         }
     }

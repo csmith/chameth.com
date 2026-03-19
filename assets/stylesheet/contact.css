@@ -72,7 +72,6 @@
     }
 
     form {
-        transition: opacity 200ms ease-in-out;
         margin: var(--smedium-space) 0;
         padding-left: var(--smedium-space);
         padding-right: var(--smedium-space);

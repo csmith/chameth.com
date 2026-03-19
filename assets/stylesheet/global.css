@@ -1,3 +1,7 @@
+:root {
+    --timing-ease-in-out-quad: cubic-bezier(0.45, 0, 0.55, 1);
+}
+
 body {
     background: url(/background.png) var(--background-colour);
     color: var(--text-colour);
