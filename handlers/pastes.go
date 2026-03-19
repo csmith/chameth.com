@@ -24,7 +24,6 @@ func Paste(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check for raw query parameter
 	if r.URL.Query().Has("raw") {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
@@ -32,9 +31,13 @@ func Paste(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Construct markdown fenced code block
+	delimiter := "```"
+	for strings.Contains(paste.Content, delimiter) {
+		delimiter += "`"
+	}
+
 	var md strings.Builder
-	md.WriteString("```")
+	md.WriteString(delimiter)
 	if paste.Language != "" {
 		md.WriteString(paste.Language)
 	}
@@ -43,7 +46,7 @@ func Paste(w http.ResponseWriter, r *http.Request) {
 	if !strings.HasSuffix(paste.Content, "\n") {
 		md.WriteString("\n")
 	}
-	md.WriteString("```")
+	md.WriteString(delimiter)
 
 	renderedContent, err := markdown.Render(md.String())
 	if err != nil {
