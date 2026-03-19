@@ -295,6 +295,10 @@
         div {
             align-self: center;
             text-align: center;
+
+            p {
+                padding: var(--small-space);
+            }
         }
     }
 }

@@ -12,10 +12,12 @@
         <ol class="films-list">
             {{range .Entries}}
             <li>
-                <img src="{{.PosterPath}}" alt="{{.Title}} poster" loading="lazy">
-                <h3 class="plain-header">{{.Position}}. <a href="{{.FilmPath}}">{{.Title}}</a> <span class="year">{{.Year}}</span></h3>
-                <p>Watched {{.TimesWatched}} time{{if ne .TimesWatched 1}}s{{end}}{{if .LastWatched}}, most recently on {{.LastWatched}}{{end}}.</p>
-                <div class="rating" title="{{.RatingText}}">{{if .Rating}}{{call $.Component "rating" .Rating}}{{else}}-{{end}}</div>
+                <a href="{{.FilmPath}}" class="raised-box plain-link">
+                    <img src="{{.PosterPath}}" alt="{{.Title}} poster" loading="lazy">
+                    <h3 class="plain-header"><span class="position">{{.Position}}.</span> {{.Title}} <span class="year">{{.Year}}</span></h3>
+                    <p>Watched {{.TimesWatched}} time{{if ne .TimesWatched 1}}s{{end}}{{if .LastWatched}}, most recently on {{.LastWatched}}{{end}}.</p>
+                    <div class="rating" title="{{.RatingText}}">{{if .Rating}}{{call $.Component "rating" .Rating}}{{else}}-{{end}}</div>
+                </a>
             </li>
             {{end}}
         </ol>
