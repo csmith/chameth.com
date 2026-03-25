@@ -16,7 +16,7 @@ require (
 	github.com/yuin/goldmark v1.7.16
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	golang.org/x/image v0.36.0
-	golang.org/x/net v0.50.0
+	golang.org/x/net v0.51.0
 	tailscale.com v1.94.2
 )
 
