@@ -362,3 +362,10 @@ type MusicTrack struct {
 	DiscNumber    *int   `db:"disc_number"`
 	TrackNumber   *int   `db:"track_number"`
 }
+
+type MusicPlay struct {
+	ID       int       `db:"id"`
+	PlayID   string    `db:"play_id"`
+	TrackID  int       `db:"track_id"`
+	PlayedAt time.Time `db:"played_at"`
+}

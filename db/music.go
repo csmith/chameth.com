@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"chameth.com/chameth.com/metrics"
 )
@@ -101,5 +102,44 @@ func UpsertMusicTrack(ctx context.Context, track MusicTrack) (int, error) {
 		return 0, fmt.Errorf("failed to upsert music track: %w", err)
 	}
 
+	return id, nil
+}
+
+func GetMostRecentPlayTime(ctx context.Context) (time.Time, error) {
+	metrics.LogQuery(ctx)
+
+	var t *time.Time
+	err := db.GetContext(ctx, &t, `SELECT MAX(played_at) FROM music_plays`)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("failed to get most recent play time: %w", err)
+	}
+	if t == nil {
+		return time.Time{}, nil
+	}
+	return *t, nil
+}
+
+func InsertMusicPlay(ctx context.Context, play MusicPlay) error {
+	metrics.LogQuery(ctx)
+
+	_, err := db.ExecContext(ctx, `
+		INSERT INTO music_plays (play_id, track_id, played_at)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (play_id) DO NOTHING
+	`, play.PlayID, play.TrackID, play.PlayedAt)
+	if err != nil {
+		return fmt.Errorf("failed to insert music play: %w", err)
+	}
+	return nil
+}
+
+func GetTrackByMusicBrainzID(ctx context.Context, musicBrainzID string) (int, error) {
+	metrics.LogQuery(ctx)
+
+	var id int
+	err := db.GetContext(ctx, &id, `SELECT id FROM music_tracks WHERE music_brainz_id = $1`, musicBrainzID)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get track by music brainz id: %w", err)
+	}
 	return id, nil
 }

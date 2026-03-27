@@ -67,6 +67,10 @@ func ImportMusicDetails(ctx context.Context, client *http.Client) error {
 		return err
 	}
 
+	if err := importMusicPlays(ctx, sc); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -181,6 +185,69 @@ func importMusicTracks(ctx context.Context, sc *subsonic.Client) error {
 		slog.Info("Imported tracks for album", "name", album.Name, "count", len(detail.Songs))
 	}
 
+	return nil
+}
+
+func importMusicPlays(ctx context.Context, sc *subsonic.Client) error {
+	mostRecent, err := db.GetMostRecentPlayTime(ctx)
+	if err != nil {
+		return err
+	}
+
+	slog.Info("Importing plays since", "since", mostRecent)
+
+	token, err := sc.LoginNavidrome(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to login to navidrome: %w", err)
+	}
+
+	const pageSize = 100
+	offset := 0
+	imported := 0
+
+	for {
+		plays, err := sc.GetRecentPlays(ctx, token, offset, offset+pageSize)
+		if err != nil {
+			return err
+		}
+		if len(plays) == 0 {
+			break
+		}
+
+		for _, play := range plays {
+			if play.Recording == "" {
+				continue
+			}
+
+			if !play.PlayDate.After(mostRecent) {
+				slog.Info("Reached previously imported plays", "imported", imported)
+				return nil
+			}
+
+			trackID, err := db.GetTrackByMusicBrainzID(ctx, play.Recording)
+			if err != nil {
+				slog.Debug("Skipping play with unknown track", "title", play.Title, "recording", play.Recording)
+				continue
+			}
+
+			if err := db.InsertMusicPlay(ctx, db.MusicPlay{
+				PlayID:   play.ID,
+				TrackID:  trackID,
+				PlayedAt: play.PlayDate,
+			}); err != nil {
+				slog.Error("Failed to insert play", "error", err, "title", play.Title)
+				continue
+			}
+			imported++
+		}
+
+		if len(plays) < pageSize {
+			break
+		}
+		offset += pageSize
+	}
+
+	slog.Info("Play import complete", "imported", imported)
 	return nil
 }
 
