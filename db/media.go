@@ -43,6 +43,21 @@ func GetMediaRelationsForEntity(ctx context.Context, entityType string, entityID
 	return relations, nil
 }
 
+// HasMediaRelationForEntity returns true if a media relation exists for the given entity and optional role.
+func HasMediaRelationForEntity(ctx context.Context, entityType string, entityID int, role string) (bool, error) {
+	metrics.LogQuery(ctx)
+	var exists bool
+	query := `SELECT EXISTS(SELECT 1 FROM media_relations WHERE entity_type = $1 AND entity_id = $2`
+	args := []any{entityType, entityID}
+	if role != "" {
+		query += ` AND role = $3`
+		args = append(args, role)
+	}
+	query += `)`
+	err := db.GetContext(ctx, &exists, query, args...)
+	return exists, err
+}
+
 func GetOpenGraphDetailsForEntity(ctx context.Context, entityType string, entityID int) (*MediaRelationWithDetails, error) {
 	metrics.LogQuery(ctx)
 	var relation MediaRelationWithDetails

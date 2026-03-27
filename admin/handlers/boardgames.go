@@ -119,15 +119,12 @@ func ImportBoardgamesHandler() func(http.ResponseWriter, *http.Request) {
 }
 
 func downloadBoardgameImage(ctx context.Context, bggID int, name, imageURL string) error {
-	existing, err := db.GetMediaRelationsForEntity(ctx, "boardgame", bggID)
+	existing, err := db.HasMediaRelationForEntity(ctx, "boardgame", bggID, "image")
 	if err != nil {
 		return fmt.Errorf("failed to check existing media relations: %w", err)
 	}
-
-	for _, rel := range existing {
-		if rel.Role != nil && *rel.Role == "image" {
-			return nil
-		}
+	if existing {
+		return nil
 	}
 
 	resp, err := http.Get(imageURL)

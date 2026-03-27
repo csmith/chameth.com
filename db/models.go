@@ -341,3 +341,13 @@ type MusicArtist struct {
 	Name          string `db:"name"`
 	SortName      string `db:"sort_name"`
 }
+
+type MusicAlbum struct {
+	ID            int    `db:"id"`
+	MusicBrainzID string `db:"music_brainz_id"`
+	SubsonicID    string `db:"subsonic_id"`
+	Name          string `db:"name"`
+	SortName      string `db:"sort_name"`
+	Year          *int   `db:"year"`
+	ArtistID      *int   `db:"artist_id"`
+}

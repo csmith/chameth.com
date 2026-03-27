@@ -52,51 +52,104 @@ func ImportMusicDetails(ctx context.Context, client *http.Client) error {
 			}
 
 			if artist.ArtistImageURL != "" {
-				if err := downloadArtistImage(ctx, client, id, artist.Name, artist.ArtistImageURL); err != nil {
+				if err := saveArtistImage(ctx, client, id, artist.Name, artist.ArtistImageURL); err != nil {
 					slog.Error("Failed to download artist image", "error", err, "name", artist.Name)
 				}
 			}
 		}
 	}
 
+	if err := importMusicAlbums(ctx, client, sc); err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func downloadArtistImage(ctx context.Context, client *http.Client, artistID int, name, imageURL string) error {
-	existing, err := db.GetMediaRelationsForEntity(ctx, "artist", artistID)
-	if err != nil {
-		return fmt.Errorf("failed to check existing media relations: %w", err)
-	}
+func importMusicAlbums(ctx context.Context, client *http.Client, sc *subsonic.Client) error {
+	const pageSize = 100
+	offset := 0
 
-	for _, rel := range existing {
-		if rel.Role != nil && *rel.Role == "image" {
-			return nil
+	for {
+		resp, err := sc.GetAlbumList("alphabeticalByName", pageSize, offset)
+		if err != nil {
+			return err
 		}
+		if len(resp.Albums) == 0 {
+			break
+		}
+
+		for _, album := range resp.Albums {
+			if album.MusicBrainzID == "" {
+				continue
+			}
+
+			var artistID *int
+			if len(album.AlbumArtists) > 0 {
+				id, err := db.GetMusicArtistBySubsonicID(ctx, album.AlbumArtists[0].ID)
+				if err != nil {
+					slog.Error("Failed to find artist for album", "error", err, "album", album.Title)
+				} else {
+					artistID = &id
+				}
+			}
+
+			var year *int
+			if album.Year != 0 {
+				year = &album.Year
+			}
+
+			id, err := db.UpsertMusicAlbum(ctx, db.MusicAlbum{
+				MusicBrainzID: album.MusicBrainzID,
+				SubsonicID:    album.ID,
+				Name:          album.Title,
+				SortName:      album.SortName,
+				Year:          year,
+				ArtistID:      artistID,
+			})
+			if err != nil {
+				slog.Error("Failed to upsert album", "error", err, "name", album.Title)
+				continue
+			}
+
+			if album.CoverArt != "" {
+				if err := saveAlbumCover(ctx, client, id, album.Title, sc.CoverArtURL(album.CoverArt)); err != nil {
+					slog.Error("Failed to download album cover", "error", err, "name", album.Title)
+				}
+			}
+		}
+
+		if len(resp.Albums) < pageSize {
+			break
+		}
+		offset += pageSize
 	}
 
+	return nil
+}
+
+func fetchImage(client *http.Client, imageURL string) ([]byte, int, int, error) {
 	resp, err := client.Get(strings.Replace(imageURL, "http://", "https://", 1))
 	if err != nil {
-		return fmt.Errorf("failed to download image: %w", err)
+		return nil, 0, 0, fmt.Errorf("failed to download image: %w", err)
 	}
 	defer resp.Body.Close()
 
 	imgData, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("failed to read image: %w", err)
+		return nil, 0, 0, fmt.Errorf("failed to read image: %w", err)
 	}
 
 	img, _, err := image.Decode(bytes.NewReader(imgData))
 	if err != nil {
-		return fmt.Errorf("failed to decode image: %w", err)
+		return nil, 0, 0, fmt.Errorf("failed to decode image: %w", err)
 	}
 
 	width := img.Bounds().Dx()
 	height := img.Bounds().Dy()
 
-	var buf bytes.Buffer
 	const maxShortSide = 500
-	shortSide := min(width, height)
-	if shortSide > maxShortSide {
+	if shortSide := min(width, height); shortSide > maxShortSide {
 		scale := float64(maxShortSide) / float64(shortSide)
 		width = int(float64(width) * scale)
 		height = int(float64(height) * scale)
@@ -104,10 +157,26 @@ func downloadArtistImage(ctx context.Context, client *http.Client, artistID int,
 		draw.CatmullRom.Scale(dst, dst.Bounds(), img, img.Bounds(), draw.Over, nil)
 		img = dst
 	}
+
+	var buf bytes.Buffer
 	if err := jpeg.Encode(&buf, img, &jpeg.Options{Quality: 85}); err != nil {
-		return fmt.Errorf("failed to encode image: %w", err)
+		return nil, 0, 0, fmt.Errorf("failed to encode image: %w", err)
 	}
-	imgData = buf.Bytes()
+
+	return buf.Bytes(), width, height, nil
+}
+
+func saveArtistImage(ctx context.Context, client *http.Client, artistID int, name, imageURL string) error {
+	if ok, err := db.HasMediaRelationForEntity(ctx, "artist", artistID, "image"); err != nil {
+		return err
+	} else if ok {
+		return nil
+	}
+
+	imgData, width, height, err := fetchImage(client, imageURL)
+	if err != nil {
+		return err
+	}
 
 	filename := fmt.Sprintf("music-artist-%d.jpg", artistID)
 	mediaPath := fmt.Sprintf("/music/artists/%d/cover.jpg", artistID)
@@ -125,5 +194,36 @@ func downloadArtistImage(ctx context.Context, client *http.Client, artistID int,
 	}
 
 	slog.Info("Downloaded artist image", "name", name)
+	return nil
+}
+
+func saveAlbumCover(ctx context.Context, client *http.Client, albumID int, name, imageURL string) error {
+	if ok, err := db.HasMediaRelationForEntity(ctx, "album", albumID, "image"); err != nil {
+		return err
+	} else if ok {
+		return nil
+	}
+
+	imgData, width, height, err := fetchImage(client, imageURL)
+	if err != nil {
+		return err
+	}
+
+	filename := fmt.Sprintf("music-album-%d.jpg", albumID)
+	mediaPath := fmt.Sprintf("/music/albums/%d/cover.jpg", albumID)
+
+	mediaID, err := db.CreateMedia(ctx, "image/jpeg", filename, imgData, &width, &height, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create media: %w", err)
+	}
+
+	description := fmt.Sprintf("Cover art for %s", name)
+	caption := name
+	role := "image"
+	if err := db.CreateMediaRelation(ctx, "album", albumID, mediaID, mediaPath, &caption, &description, &role); err != nil {
+		return fmt.Errorf("failed to create media relation: %w", err)
+	}
+
+	slog.Info("Downloaded album cover", "name", name)
 	return nil
 }

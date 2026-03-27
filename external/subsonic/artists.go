@@ -24,7 +24,7 @@ type ArtistsResponse struct {
 
 func (c *Client) GetArtists() (*ArtistsResponse, error) {
 	var resp ArtistsResponse
-	if err := c.get("getArtists", "artists", &resp); err != nil {
+	if err := c.get("getArtists", "artists", &resp, nil); err != nil {
 		return nil, err
 	}
 	return &resp, nil
