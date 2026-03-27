@@ -63,6 +63,10 @@ func ImportMusicDetails(ctx context.Context, client *http.Client) error {
 		return err
 	}
 
+	if err := importMusicTracks(ctx, sc); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -123,6 +127,58 @@ func importMusicAlbums(ctx context.Context, client *http.Client, sc *subsonic.Cl
 			break
 		}
 		offset += pageSize
+	}
+
+	return nil
+}
+
+func importMusicTracks(ctx context.Context, sc *subsonic.Client) error {
+	albums, err := db.GetAlbumsWithoutTracks(ctx)
+	if err != nil {
+		return err
+	}
+
+	for _, album := range albums {
+		detail, err := sc.GetAlbum(album.SubsonicID)
+		if err != nil {
+			slog.Error("Failed to get album details", "error", err, "name", album.Name)
+			continue
+		}
+
+		for _, song := range detail.Songs {
+			if song.MusicBrainzID == "" {
+				continue
+			}
+
+			var duration *int
+			if song.Duration != 0 {
+				duration = &song.Duration
+			}
+
+			var discNumber *int
+			if song.DiscNumber != 0 {
+				discNumber = &song.DiscNumber
+			}
+
+			var trackNumber *int
+			if song.TrackNumber != 0 {
+				trackNumber = &song.TrackNumber
+			}
+
+			if _, err := db.UpsertMusicTrack(ctx, db.MusicTrack{
+				SubsonicID:    song.ID,
+				MusicBrainzID: song.MusicBrainzID,
+				AlbumID:       album.ID,
+				Name:          song.Title,
+				Duration:      duration,
+				DiscNumber:    discNumber,
+				TrackNumber:   trackNumber,
+			}); err != nil {
+				slog.Error("Failed to upsert track", "error", err, "name", song.Title)
+			}
+		}
+
+		slog.Info("Imported tracks for album", "name", album.Name, "count", len(detail.Songs))
 	}
 
 	return nil

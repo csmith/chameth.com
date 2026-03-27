@@ -37,6 +37,29 @@ func (c *Client) GetAlbumList(listType string, size, offset int) (*AlbumListResp
 	return &resp, nil
 }
 
+type Song struct {
+	ID            string `json:"id"`
+	Title         string `json:"title"`
+	MusicBrainzID string `json:"musicBrainzId"`
+	Duration      int    `json:"duration"`
+	DiscNumber    int    `json:"discNumber"`
+	TrackNumber   int    `json:"track"`
+}
+
+type AlbumDetail struct {
+	ID    string `json:"id"`
+	Songs []Song `json:"song"`
+}
+
+func (c *Client) GetAlbum(id string) (*AlbumDetail, error) {
+	params := url.Values{"id": {id}}
+	var resp AlbumDetail
+	if err := c.get("getAlbum", "album", &resp, params); err != nil {
+		return nil, err
+	}
+	return &resp, nil
+}
+
 func (c *Client) CoverArtURL(coverArtID string) string {
 	return c.url("getCoverArt", url.Values{"id": {coverArtID}})
 }

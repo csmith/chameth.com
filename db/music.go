@@ -63,3 +63,43 @@ func UpsertMusicAlbum(ctx context.Context, album MusicAlbum) (int, error) {
 
 	return id, nil
 }
+
+func GetAlbumsWithoutTracks(ctx context.Context) ([]MusicAlbum, error) {
+	metrics.LogQuery(ctx)
+
+	var albums []MusicAlbum
+	err := db.SelectContext(ctx, &albums, `
+		SELECT a.* FROM music_albums a
+		WHERE NOT EXISTS (SELECT 1 FROM music_tracks t WHERE t.album_id = a.id)
+		ORDER BY a.sort_name
+	`)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get albums without tracks: %w", err)
+	}
+	return albums, nil
+}
+
+func UpsertMusicTrack(ctx context.Context, track MusicTrack) (int, error) {
+	metrics.LogQuery(ctx)
+
+	var id int
+	err := db.GetContext(ctx, &id, `
+		INSERT INTO music_tracks (subsonic_id, music_brainz_id, album_id, name, duration, disc_number, track_number)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		ON CONFLICT (subsonic_id)
+		DO UPDATE SET
+			music_brainz_id = EXCLUDED.music_brainz_id,
+			album_id = EXCLUDED.album_id,
+			name = EXCLUDED.name,
+			duration = EXCLUDED.duration,
+			disc_number = EXCLUDED.disc_number,
+			track_number = EXCLUDED.track_number
+		RETURNING id
+	`, track.SubsonicID, track.MusicBrainzID, track.AlbumID, track.Name, track.Duration, track.DiscNumber, track.TrackNumber)
+
+	if err != nil {
+		return 0, fmt.Errorf("failed to upsert music track: %w", err)
+	}
+
+	return id, nil
+}

@@ -351,3 +351,14 @@ type MusicAlbum struct {
 	Year          *int   `db:"year"`
 	ArtistID      *int   `db:"artist_id"`
 }
+
+type MusicTrack struct {
+	ID            int    `db:"id"`
+	SubsonicID    string `db:"subsonic_id"`
+	MusicBrainzID string `db:"music_brainz_id"`
+	AlbumID       int    `db:"album_id"`
+	Name          string `db:"name"`
+	Duration      *int   `db:"duration"`
+	DiscNumber    *int   `db:"disc_number"`
+	TrackNumber   *int   `db:"track_number"`
+}
