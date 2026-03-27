@@ -21,10 +21,13 @@ import (
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
 	"github.com/csmith/slogflags"
+	"tailscale.com/tsnet"
 )
 
 var (
-	port = flag.Int("port", 8080, "Port to listen on")
+	port          = flag.Int("port", 8080, "Port to listen on")
+	tailscaleHost = flag.String("tailscale-host", "website-admin", "Tailscale host")
+	tailscaleDir  = flag.String("tailscale-dir", "tsdata", "Tailscale directory")
 )
 
 func main() {
@@ -56,10 +59,28 @@ func main() {
 	go content.UpdateAllPostEmbeddings(context.Background())
 	go content.SyndicateAllPostsToATProto(context.Background())
 
+	ts := &tsnet.Server{
+		Hostname: *tailscaleHost,
+		Dir:      *tailscaleDir,
+		UserLogf: func(s string, v ...any) {
+			slog.Info(fmt.Sprintf(s, v...), "source", "tailscale")
+		},
+		Logf: func(s string, v ...any) {
+			slog.Debug(fmt.Sprintf(s, v...), "source", "tailscale")
+		},
+	}
+
 	go func() {
-		if err := admin.Start(); err != nil {
+		if err := admin.Start(ts); err != nil {
 			slog.Error("Failed to start admin interface", "error", err)
 			os.Exit(1)
+		}
+	}()
+
+	go func() {
+		ts.Up(context.Background())
+		if err := content.ImportMusicDetails(context.Background(), ts.HTTPClient()); err != nil {
+			slog.Error("Unable to import music", "error", err)
 		}
 	}()
 

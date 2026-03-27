@@ -2,8 +2,6 @@ package admin
 
 import (
 	"context"
-	"flag"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"time"
@@ -13,22 +11,7 @@ import (
 	"tailscale.com/tsnet"
 )
 
-var (
-	tailscaleHost = flag.String("tailscale-host", "website-admin", "Tailscale host")
-	tailscaleDir  = flag.String("tailscale-dir", "tsdata", "Tailscale directory")
-)
-
-func Start() error {
-	s := new(tsnet.Server)
-	s.Hostname = *tailscaleHost
-	s.Dir = *tailscaleDir
-	s.UserLogf = func(s string, v ...any) {
-		slog.Info(fmt.Sprintf(s, v...), "source", "tailscale")
-	}
-	s.Logf = func(s string, v ...any) {
-		slog.Debug(fmt.Sprintf(s, v...), "source", "tailscale")
-	}
-
+func Start(s *tsnet.Server) error {
 	if err := s.Start(); err != nil {
 		return err
 	}

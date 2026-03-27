@@ -333,3 +333,11 @@ type FilmRatingDistribution struct {
 	Rating int `db:"rating"`
 	Count  int `db:"count"`
 }
+
+type MusicArtist struct {
+	ID            int    `db:"id"`
+	MusicBrainzID string `db:"music_brainz_id"`
+	SubsonicID    string `db:"subsonic_id"`
+	Name          string `db:"name"`
+	SortName      string `db:"sort_name"`
+}
