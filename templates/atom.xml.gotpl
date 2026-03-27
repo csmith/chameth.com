@@ -3,7 +3,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://chameth.com/">
     <title>{{ .FeedTitle }}</title>
     <subtitle>Personal homepage of Chris Smith</subtitle>
-    <link href="https://chameth.com/index.xml" rel="self"/>
+    <link href="{{ .FeedSelfLink | escape }}" rel="self"/>
     <link href="https://chameth.com/"/>
     <icon>https://chameth.com/favicon.png</icon>
     <updated>{{ .FeedLastUpdated }}</updated>
@@ -14,7 +14,7 @@
     {{- range .FeedItems }}
     <entry>
         <title>{{ .Title | escape }}</title>
-        <link href="{{ .Link | escape }}"/>
+        <link href="{{ .Link | escape }}" rel="self"/>
         <updated>{{ .Updated }}</updated>
         <id>{{ .Link | escape }}</id>
         <content xml:lang="en" type="html">{{ .Content | escape }}</content>

@@ -13,30 +13,30 @@ import (
 )
 
 func FullFeed(w http.ResponseWriter, r *http.Request) {
-	renderFeed(w, r, "Chameth.com", "", 5)
+	renderFeed(w, r, "Chameth.com", "", 5, "https://chameth.com/index.xml")
 }
 
 func LongPostsFeed(w http.ResponseWriter, r *http.Request) {
-	renderFeed(w, r, "Chameth.com - long posts", "long", 5)
+	renderFeed(w, r, "Chameth.com - long posts", "long", 5, "https://chameth.com/long.xml")
 }
 
 func ShortPostsFeed(w http.ResponseWriter, r *http.Request) {
-	renderFeed(w, r, "Chameth.com - short posts", "short", 5)
+	renderFeed(w, r, "Chameth.com - short posts", "short", 5, "https://chameth.com/short.xml")
 }
 
 func PoemsFeed(w http.ResponseWriter, r *http.Request) {
-	renderPoemsFeed(w, r, "Chameth.com - poems", 5)
+	renderPoemsFeed(w, r, "Chameth.com - poems", 5, "https://chameth.com/poems/feed.xml")
 }
 
 func SnippetsFeed(w http.ResponseWriter, r *http.Request) {
-	renderSnippetsFeed(w, r, "Chameth.com - snippets", 5)
+	renderSnippetsFeed(w, r, "Chameth.com - snippets", 5, "https://chameth.com/snippets/feed.xml")
 }
 
 func FilmReviewsFeed(w http.ResponseWriter, r *http.Request) {
-	renderFilmReviewsFeed(w, r, "Chameth.com - film reviews", 5)
+	renderFilmReviewsFeed(w, r, "Chameth.com - film reviews", 5, "https://chameth.com/films/reviews/feed.xml")
 }
 
-func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, limit int) {
+func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, limit int, selfLink string) {
 	var posts []db.Post
 	var err error
 
@@ -90,6 +90,7 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderAtom(w, templates.AtomData{
 		FeedTitle:       title,
+		FeedSelfLink:    selfLink,
 		FeedLastUpdated: lastUpdated,
 		FeedItems:       feedItems,
 	})
@@ -98,7 +99,7 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 	}
 }
 
-func renderPoemsFeed(w http.ResponseWriter, r *http.Request, title string, limit int) {
+func renderPoemsFeed(w http.ResponseWriter, r *http.Request, title string, limit int, selfLink string) {
 	slog.Info("Serving feed", "type", "poems", "useragent", r.UserAgent())
 
 	poems, err := db.GetRecentPoemsWithContent(r.Context(), limit)
@@ -144,6 +145,7 @@ func renderPoemsFeed(w http.ResponseWriter, r *http.Request, title string, limit
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderAtom(w, templates.AtomData{
 		FeedTitle:       title,
+		FeedSelfLink:    selfLink,
 		FeedLastUpdated: lastUpdated,
 		FeedItems:       feedItems,
 	})
@@ -152,7 +154,7 @@ func renderPoemsFeed(w http.ResponseWriter, r *http.Request, title string, limit
 	}
 }
 
-func renderSnippetsFeed(w http.ResponseWriter, r *http.Request, title string, limit int) {
+func renderSnippetsFeed(w http.ResponseWriter, r *http.Request, title string, limit int, selfLink string) {
 	slog.Info("Serving feed", "type", "snippets", "useragent", r.UserAgent())
 
 	snippets, err := db.GetRecentSnippetsWithContent(r.Context(), limit)
@@ -192,6 +194,7 @@ func renderSnippetsFeed(w http.ResponseWriter, r *http.Request, title string, li
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderAtom(w, templates.AtomData{
 		FeedTitle:       title,
+		FeedSelfLink:    selfLink,
 		FeedLastUpdated: "1970-01-01T00:00:00Z",
 		FeedItems:       feedItems,
 	})
@@ -200,7 +203,7 @@ func renderSnippetsFeed(w http.ResponseWriter, r *http.Request, title string, li
 	}
 }
 
-func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string, limit int) {
+func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string, limit int, selfLink string) {
 	slog.Info("Serving feed", "type", "filmreviews", "useragent", r.UserAgent())
 
 	reviews, err := db.GetRecentPublishedFilmReviewsWithFilmAndPosters(r.Context(), limit)
@@ -243,6 +246,7 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderAtom(w, templates.AtomData{
 		FeedTitle:       title,
+		FeedSelfLink:    selfLink,
 		FeedLastUpdated: lastUpdated,
 		FeedItems:       feedItems,
 	})

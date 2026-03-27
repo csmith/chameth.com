@@ -20,6 +20,7 @@ var atomTemplate = template.Must(
 
 type AtomData struct {
 	FeedTitle       string
+	FeedSelfLink    string
 	FeedLastUpdated string
 	FeedItems       []FeedItem
 }
