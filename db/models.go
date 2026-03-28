@@ -369,3 +369,11 @@ type MusicPlay struct {
 	TrackID  int       `db:"track_id"`
 	PlayedAt time.Time `db:"played_at"`
 }
+
+type UnmatchedMusicPlay struct {
+	ID            int       `db:"id"`
+	PlayID        string    `db:"play_id"`
+	MusicBrainzID string    `db:"music_brainz_id"`
+	Title         string    `db:"title"`
+	PlayedAt      time.Time `db:"played_at"`
+}

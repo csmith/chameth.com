@@ -109,7 +109,11 @@ func GetMostRecentPlayTime(ctx context.Context) (time.Time, error) {
 	metrics.LogQuery(ctx)
 
 	var t *time.Time
-	err := db.GetContext(ctx, &t, `SELECT MAX(played_at) FROM music_plays`)
+	err := db.GetContext(ctx, &t, `
+		SELECT GREATEST(
+			(SELECT MAX(played_at) FROM music_plays),
+			(SELECT MAX(played_at) FROM unmatched_music_plays)
+		)`)
 	if err != nil {
 		return time.Time{}, fmt.Errorf("failed to get most recent play time: %w", err)
 	}
@@ -142,4 +146,39 @@ func GetTrackByMusicBrainzID(ctx context.Context, musicBrainzID string) (int, er
 		return 0, fmt.Errorf("failed to get track by music brainz id: %w", err)
 	}
 	return id, nil
+}
+
+func InsertUnmatchedMusicPlay(ctx context.Context, play UnmatchedMusicPlay) error {
+	metrics.LogQuery(ctx)
+
+	_, err := db.ExecContext(ctx, `
+		INSERT INTO unmatched_music_plays (play_id, music_brainz_id, title, played_at)
+		VALUES ($1, $2, $3, $4)
+		ON CONFLICT (play_id) DO NOTHING
+	`, play.PlayID, play.MusicBrainzID, play.Title, play.PlayedAt)
+	if err != nil {
+		return fmt.Errorf("failed to insert unmatched music play: %w", err)
+	}
+	return nil
+}
+
+func GetUnmatchedMusicPlays(ctx context.Context) ([]UnmatchedMusicPlay, error) {
+	metrics.LogQuery(ctx)
+
+	var plays []UnmatchedMusicPlay
+	err := db.SelectContext(ctx, &plays, `SELECT * FROM unmatched_music_plays ORDER BY played_at`)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get unmatched music plays: %w", err)
+	}
+	return plays, nil
+}
+
+func DeleteUnmatchedMusicPlay(ctx context.Context, id int) error {
+	metrics.LogQuery(ctx)
+
+	_, err := db.ExecContext(ctx, `DELETE FROM unmatched_music_plays WHERE id = $1`, id)
+	if err != nil {
+		return fmt.Errorf("failed to delete unmatched music play: %w", err)
+	}
+	return nil
 }

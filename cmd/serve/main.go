@@ -79,9 +79,7 @@ func main() {
 
 	go func() {
 		ts.Up(context.Background())
-		if err := content.ImportMusicDetails(context.Background(), ts.HTTPClient()); err != nil {
-			slog.Error("Unable to import music", "error", err)
-		}
+		content.RunMusicImport(context.Background(), ts.HTTPClient())
 	}()
 
 	mux := http.NewServeMux()

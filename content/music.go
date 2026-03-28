@@ -11,6 +11,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strings"
+	"time"
 
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/external/subsonic"
@@ -23,15 +24,42 @@ var (
 	subsonicPassword = flag.String("subsonic-password", "", "Password for the Subsonic API")
 )
 
-func ImportMusicDetails(ctx context.Context, client *http.Client) error {
+func RunMusicImport(ctx context.Context, client *http.Client) {
 	if *subsonicBaseUrl == "" {
-		return fmt.Errorf("subsonic not configured")
+		return
 	}
 
-	sc := subsonic.NewClient(client, *subsonicBaseUrl, *subsonicUsername, *subsonicPassword)
+	catalogTicker := time.NewTicker(6 * time.Hour)
+	defer catalogTicker.Stop()
+	playsTicker := time.NewTicker(1 * time.Minute)
+	defer playsTicker.Stop()
+
+	importMusicCatalog(ctx, client)
+	importMusicPlays(ctx, client)
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-catalogTicker.C:
+			importMusicCatalog(ctx, client)
+		case <-playsTicker.C:
+			importMusicPlays(ctx, client)
+		}
+	}
+}
+
+func newSubsonicClient(client *http.Client) *subsonic.Client {
+	return subsonic.NewClient(client, *subsonicBaseUrl, *subsonicUsername, *subsonicPassword)
+}
+
+func importMusicCatalog(ctx context.Context, client *http.Client) {
+	sc := newSubsonicClient(client)
+
 	resp, err := sc.GetArtists()
 	if err != nil {
-		return err
+		slog.Error("Failed to get artists", "error", err)
+		return
 	}
 
 	for _, idx := range resp.Indexes {
@@ -60,18 +88,21 @@ func ImportMusicDetails(ctx context.Context, client *http.Client) error {
 	}
 
 	if err := importMusicAlbums(ctx, client, sc); err != nil {
-		return err
+		slog.Error("Failed to import albums", "error", err)
 	}
 
 	if err := importMusicTracks(ctx, sc); err != nil {
-		return err
+		slog.Error("Failed to import tracks", "error", err)
 	}
 
-	if err := importMusicPlays(ctx, sc); err != nil {
-		return err
-	}
+	resolveUnmatchedPlays(ctx)
+}
 
-	return nil
+func importMusicPlays(ctx context.Context, client *http.Client) {
+	sc := newSubsonicClient(client)
+	if err := importPlays(ctx, sc); err != nil {
+		slog.Error("Failed to import plays", "error", err)
+	}
 }
 
 func importMusicAlbums(ctx context.Context, client *http.Client, sc *subsonic.Client) error {
@@ -188,7 +219,7 @@ func importMusicTracks(ctx context.Context, sc *subsonic.Client) error {
 	return nil
 }
 
-func importMusicPlays(ctx context.Context, sc *subsonic.Client) error {
+func importPlays(ctx context.Context, sc *subsonic.Client) error {
 	mostRecent, err := db.GetMostRecentPlayTime(ctx)
 	if err != nil {
 		return err
@@ -219,21 +250,30 @@ func importMusicPlays(ctx context.Context, sc *subsonic.Client) error {
 				continue
 			}
 
-			if !play.PlayDate.After(mostRecent) {
+			playedAt := play.PlayDate.Truncate(time.Microsecond)
+
+			if playedAt.Before(mostRecent) || playedAt.Equal(mostRecent) {
 				slog.Info("Reached previously imported plays", "imported", imported)
 				return nil
 			}
 
 			trackID, err := db.GetTrackByMusicBrainzID(ctx, play.Recording)
 			if err != nil {
-				slog.Debug("Skipping play with unknown track", "title", play.Title, "recording", play.Recording)
+				if err := db.InsertUnmatchedMusicPlay(ctx, db.UnmatchedMusicPlay{
+					PlayID:        play.ID,
+					MusicBrainzID: play.Recording,
+					Title:         play.Title,
+					PlayedAt:      playedAt,
+				}); err != nil {
+					slog.Error("Failed to insert unmatched play", "error", err, "title", play.Title)
+				}
 				continue
 			}
 
 			if err := db.InsertMusicPlay(ctx, db.MusicPlay{
 				PlayID:   play.ID,
 				TrackID:  trackID,
-				PlayedAt: play.PlayDate,
+				PlayedAt: playedAt,
 			}); err != nil {
 				slog.Error("Failed to insert play", "error", err, "title", play.Title)
 				continue
@@ -249,6 +289,42 @@ func importMusicPlays(ctx context.Context, sc *subsonic.Client) error {
 
 	slog.Info("Play import complete", "imported", imported)
 	return nil
+}
+
+func resolveUnmatchedPlays(ctx context.Context) {
+	unmatched, err := db.GetUnmatchedMusicPlays(ctx)
+	if err != nil {
+		slog.Error("Failed to get unmatched plays", "error", err)
+		return
+	}
+	if len(unmatched) == 0 {
+		return
+	}
+
+	resolved := 0
+	for _, play := range unmatched {
+		trackID, err := db.GetTrackByMusicBrainzID(ctx, play.MusicBrainzID)
+		if err != nil {
+			continue
+		}
+
+		if err := db.InsertMusicPlay(ctx, db.MusicPlay{
+			PlayID:   play.PlayID,
+			TrackID:  trackID,
+			PlayedAt: play.PlayedAt,
+		}); err != nil {
+			slog.Error("Failed to insert resolved play", "error", err, "title", play.Title)
+			continue
+		}
+
+		if err := db.DeleteUnmatchedMusicPlay(ctx, play.ID); err != nil {
+			slog.Error("Failed to delete resolved unmatched play", "error", err, "title", play.Title)
+			continue
+		}
+		resolved++
+	}
+
+	slog.Info("Resolved unmatched plays", "resolved", resolved, "remaining", len(unmatched)-resolved)
 }
 
 func fetchImage(client *http.Client, imageURL string) ([]byte, int, int, error) {
