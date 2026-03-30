@@ -36,6 +36,7 @@ ol.top-artists {
             h3 {
                 padding: 0 var(--small-space);
                 margin: 0;
+                text-align: center;
                 font-size: var(--font-size-large);
 
                 .position {
@@ -45,6 +46,65 @@ ol.top-artists {
             }
 
             .artist-details {
+                padding: 0 var(--small-space);
+                font-size: var(--font-size-small);
+                color: var(--text-alt-colour);
+            }
+        }
+    }
+}
+
+ol.top-albums {
+    list-style-type: none;
+    gap: var(--smedium-space);
+    margin: var(--small-space) 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+    li {
+        margin: 0;
+        padding: 0;
+
+        .raised-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            box-sizing: border-box;
+            gap: var(--small-space);
+            padding: var(--small-space);
+            overflow: hidden;
+
+            & > img,
+            .album-placeholder {
+                width: 100%;
+                object-fit: cover;
+                margin-bottom: var(--small-space);
+                box-shadow: 2px 2px 4px black;
+            }
+
+            .album-placeholder {
+                background-color: var(--background-alt-colour);
+            }
+
+            h3 {
+                padding: 0 var(--small-space);
+                margin: 0;
+                text-align: center;
+                font-size: var(--font-size-large);
+
+                .position {
+                    font-size: var(--font-size-regular);
+                    color: var(--text-alt-colour);
+                }
+            }
+
+            .artist-name {
+                padding: 0 var(--small-space);
+            }
+
+            .album-details {
                 padding: 0 var(--small-space);
                 font-size: var(--font-size-small);
                 color: var(--text-alt-colour);
@@ -63,6 +123,7 @@ ol.top-artists {
 
     img {
         height: 120px;
+        box-shadow: 2px 2px 4px black;
     }
 
     .now-playing-info {

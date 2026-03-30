@@ -370,6 +370,14 @@ type MusicPlay struct {
 	PlayCount int       `db:"play_count"`
 }
 
+type TopAlbum struct {
+	Name       string  `db:"name"`
+	ArtistName string  `db:"artist_name"`
+	TrackCount int     `db:"track_count"`
+	PlayCount  int     `db:"play_count"`
+	ImagePath  *string `db:"image_path"`
+}
+
 type TopArtist struct {
 	Name        string    `db:"name"`
 	TrackCount  int       `db:"track_count"`
