@@ -16,6 +16,7 @@ import (
 type navidromePlay struct {
 	ID             string  `json:"id"`
 	PlayDate       string  `json:"playDate"`
+	PlayCount      int     `json:"playCount"`
 	Title          string  `json:"title"`
 	MbzRecordingID string  `json:"mbzRecordingID"`
 	Duration       float64 `json:"duration"`
@@ -25,6 +26,7 @@ type navidromePlay struct {
 type Play struct {
 	ID         string
 	PlayDate   time.Time
+	PlayCount  int
 	Recording  string // MusicBrainz recording ID
 	Title      string
 }
@@ -112,6 +114,7 @@ func (c *Client) GetRecentPlays(ctx context.Context, token string, start, end in
 		plays = append(plays, Play{
 			ID:        s.ID,
 			PlayDate:  playDate,
+			PlayCount: s.PlayCount,
 			Recording: s.MbzRecordingID,
 			Title:     s.Title,
 		})

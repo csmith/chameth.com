@@ -26,6 +26,7 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/recentposts"
 	"chameth.com/chameth.com/content/shortcodes/sidenote"
 	"chameth.com/chameth.com/content/shortcodes/syndication"
+	"chameth.com/chameth.com/content/shortcodes/topartists"
 	"chameth.com/chameth.com/content/shortcodes/update"
 	"chameth.com/chameth.com/content/shortcodes/video"
 	"chameth.com/chameth.com/content/shortcodes/walkingdistance"
@@ -58,6 +59,7 @@ var renderers = map[string]renderer{
 	"recentposts":            recentposts.RenderFromText,
 	"sidenote":               sidenote.RenderFromText,
 	"syndication":            syndication.RenderFromText,
+	"topartists":             topartists.RenderFromText,
 	"update":                 update.RenderFromText,
 	"video":                  video.RenderFromText,
 	"walks":                  walks.RenderFromText,

@@ -364,16 +364,25 @@ type MusicTrack struct {
 }
 
 type MusicPlay struct {
-	ID       int       `db:"id"`
-	PlayID   string    `db:"play_id"`
-	TrackID  int       `db:"track_id"`
-	PlayedAt time.Time `db:"played_at"`
+	ID        int       `db:"id"`
+	TrackID   int       `db:"track_id"`
+	PlayedAt  time.Time `db:"played_at"`
+	PlayCount int       `db:"play_count"`
+}
+
+type TopArtist struct {
+	Name        string    `db:"name"`
+	TrackCount  int       `db:"track_count"`
+	AlbumCount  int       `db:"album_count"`
+	PlayCount   int       `db:"play_count"`
+	FirstPlayed time.Time `db:"first_played"`
+	ImagePath   *string   `db:"image_path"`
 }
 
 type UnmatchedMusicPlay struct {
 	ID            int       `db:"id"`
-	PlayID        string    `db:"play_id"`
 	MusicBrainzID string    `db:"music_brainz_id"`
 	Title         string    `db:"title"`
 	PlayedAt      time.Time `db:"played_at"`
+	PlayCount     int       `db:"play_count"`
 }

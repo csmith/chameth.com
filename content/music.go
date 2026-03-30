@@ -260,10 +260,10 @@ func importPlays(ctx context.Context, sc *subsonic.Client) error {
 			trackID, err := db.GetTrackByMusicBrainzID(ctx, play.Recording)
 			if err != nil {
 				if err := db.InsertUnmatchedMusicPlay(ctx, db.UnmatchedMusicPlay{
-					PlayID:        play.ID,
 					MusicBrainzID: play.Recording,
 					Title:         play.Title,
 					PlayedAt:      playedAt,
+					PlayCount:     play.PlayCount,
 				}); err != nil {
 					slog.Error("Failed to insert unmatched play", "error", err, "title", play.Title)
 				}
@@ -271,9 +271,9 @@ func importPlays(ctx context.Context, sc *subsonic.Client) error {
 			}
 
 			if err := db.InsertMusicPlay(ctx, db.MusicPlay{
-				PlayID:   play.ID,
-				TrackID:  trackID,
-				PlayedAt: playedAt,
+				TrackID:   trackID,
+				PlayedAt:  playedAt,
+				PlayCount: play.PlayCount,
 			}); err != nil {
 				slog.Error("Failed to insert play", "error", err, "title", play.Title)
 				continue
@@ -309,9 +309,9 @@ func resolveUnmatchedPlays(ctx context.Context) {
 		}
 
 		if err := db.InsertMusicPlay(ctx, db.MusicPlay{
-			PlayID:   play.PlayID,
-			TrackID:  trackID,
-			PlayedAt: play.PlayedAt,
+			TrackID:   trackID,
+			PlayedAt:  play.PlayedAt,
+			PlayCount: play.PlayCount,
 		}); err != nil {
 			slog.Error("Failed to insert resolved play", "error", err, "title", play.Title)
 			continue

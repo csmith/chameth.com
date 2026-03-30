@@ -1,0 +1,17 @@
+{{/* gotype: chameth.com/chameth.com/content/shortcodes/topartists.Data*/}}
+<ol class="top-artists">
+{{- range .Artists }}
+  <li>
+    <div class="raised-box">
+    {{- if .ImagePath }}
+      <img src="{{ .ImagePath }}" alt="{{ .Name }}" loading="lazy">
+    {{- else }}
+      <div class="artist-placeholder"></div>
+    {{- end }}
+      <span class="artist-name">{{ .Name }}</span>
+      <span class="artist-details">{{ .TrackCount }} track{{ if ne .TrackCount 1 }}s{{ end }} in {{ .AlbumCount }} album{{ if ne .AlbumCount 1 }}s{{ end }}</span>
+      <span class="artist-details">{{ .PlayCount }} plays since {{ .FirstPlayed }}</span>
+    </div>
+  </li>
+{{- end }}
+</ol>

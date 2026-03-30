@@ -1,0 +1,46 @@
+ol.top-artists {
+    list-style-type: none;
+    gap: var(--smedium-space);
+    margin: var(--small-space) 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+    li {
+        margin: 0;
+        padding: 0;
+
+        .raised-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--small-space);
+            padding-bottom: var(--small-space);
+            overflow: hidden;
+
+            & > img,
+            .artist-placeholder {
+                width: 100%;
+                aspect-ratio: 1;
+                object-fit: cover;
+                border-bottom: 1px solid var(--background-alt-colour);
+            }
+
+            .artist-placeholder {
+                background-color: var(--background-alt-colour);
+            }
+
+            .artist-name {
+                padding: 0 var(--small-space);
+                font-size: var(--font-size-small);
+            }
+
+            .artist-details {
+                padding: 0 var(--small-space);
+                font-family: "Berkeley Mono", monospace;
+                font-size: var(--font-size-small);
+                color: var(--text-alt-colour);
+            }
+        }
+    }
+}
