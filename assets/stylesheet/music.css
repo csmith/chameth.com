@@ -52,3 +52,39 @@ ol.top-artists {
         }
     }
 }
+
+.now-playing {
+    display: inline-flex;
+    align-items: stretch;
+    gap: var(--smedium-space);
+    padding-left: var(--smedium-space);
+    padding-right: var(--smedium-space);
+    padding-bottom: var(--small-space);
+
+    img {
+        height: 120px;
+    }
+
+    .now-playing-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: var(--small-space);
+
+        .artist-track {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .album-name {
+            color: var(--text-alt-colour);
+        }
+
+        .play-status {
+            font-family: "Berkeley Mono", monospace;
+            font-size: var(--font-size-small);
+            color: var(--text-alt-colour);
+        }
+    }
+}

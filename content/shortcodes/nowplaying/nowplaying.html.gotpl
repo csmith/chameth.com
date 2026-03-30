@@ -1,0 +1,11 @@
+{{/* gotype: chameth.com/chameth.com/content/shortcodes/nowplaying.Data*/}}
+<div class="now-playing raised-box" data-title="Now playing">
+{{- if .ImagePath }}
+    <img src="{{ .ImagePath }}" alt="{{ .AlbumName }}" loading="lazy">
+{{- end }}
+    <div class="now-playing-info">
+        <span class="artist-track">{{ .ArtistName }} — {{ .TrackName }}</span>
+        <span class="album-name">{{ .AlbumName }}</span>
+        <span class="play-status">{{ .Status }}</span>
+    </div>
+</div>

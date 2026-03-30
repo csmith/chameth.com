@@ -378,6 +378,14 @@ type TopArtist struct {
 	ImagePath *string `db:"image_path"`
 }
 
+type NowPlaying struct {
+	ArtistName string    `db:"artist_name"`
+	TrackName  string    `db:"track_name"`
+	AlbumName  string    `db:"album_name"`
+	ImagePath  *string   `db:"image_path"`
+	PlayedAt   time.Time `db:"played_at"`
+}
+
 type UnmatchedMusicPlay struct {
 	ID            int       `db:"id"`
 	MusicBrainzID string    `db:"music_brainz_id"`
