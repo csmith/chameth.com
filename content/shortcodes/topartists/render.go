@@ -39,12 +39,12 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 		}
 
 		items[i] = Artist{
-			Name:        a.Name,
-			TrackCount:  a.TrackCount,
-			AlbumCount:  a.AlbumCount,
-			PlayCount:   a.PlayCount,
-			FirstPlayed: a.FirstPlayed.Format("2006-01-02"),
-			ImagePath:   imagePath,
+			Position:   i + 1,
+			Name:       a.Name,
+			TrackCount: a.TrackCount,
+			AlbumCount: a.AlbumCount,
+			PlayCount:  a.PlayCount,
+			ImagePath:  imagePath,
 		}
 	}
 

@@ -8,9 +8,9 @@
     {{- else }}
       <div class="artist-placeholder"></div>
     {{- end }}
-      <span class="artist-name">{{ .Name }}</span>
+      <h3 class="plain-header"><span class="position">{{ .Position }}.</span> {{ .Name }}</h3>
       <span class="artist-details">{{ .TrackCount }} track{{ if ne .TrackCount 1 }}s{{ end }} in {{ .AlbumCount }} album{{ if ne .AlbumCount 1 }}s{{ end }}</span>
-      <span class="artist-details">{{ .PlayCount }} plays since {{ .FirstPlayed }}</span>
+      <span class="artist-details">{{ .PlayCount }} plays</span>
     </div>
   </li>
 {{- end }}

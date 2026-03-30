@@ -186,7 +186,6 @@ func GetTopArtists(ctx context.Context, limit int) ([]TopArtist, error) {
 		           WHERE al2.artist_id = a.id
 		           GROUP BY t2.id
 		       ) sub) AS play_count,
-		       MIN(p.played_at)::date AS first_played,
 		       mr.path AS image_path
 		FROM music_artists a
 		JOIN music_albums al ON al.artist_id = a.id

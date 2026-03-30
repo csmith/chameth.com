@@ -374,9 +374,8 @@ type TopArtist struct {
 	Name        string    `db:"name"`
 	TrackCount  int       `db:"track_count"`
 	AlbumCount  int       `db:"album_count"`
-	PlayCount   int       `db:"play_count"`
-	FirstPlayed time.Time `db:"first_played"`
-	ImagePath   *string   `db:"image_path"`
+	PlayCount int     `db:"play_count"`
+	ImagePath *string `db:"image_path"`
 }
 
 type UnmatchedMusicPlay struct {

@@ -14,6 +14,8 @@ ol.top-artists {
             display: flex;
             flex-direction: column;
             align-items: center;
+            height: 100%;
+            box-sizing: border-box;
             gap: var(--small-space);
             padding-bottom: var(--small-space);
             overflow: hidden;
@@ -24,20 +26,26 @@ ol.top-artists {
                 aspect-ratio: 1;
                 object-fit: cover;
                 border-bottom: 1px solid var(--background-alt-colour);
+                margin-bottom: var(--small-space);
             }
 
             .artist-placeholder {
                 background-color: var(--background-alt-colour);
             }
 
-            .artist-name {
+            h3 {
                 padding: 0 var(--small-space);
-                font-size: var(--font-size-small);
+                margin: 0;
+                font-size: var(--font-size-large);
+
+                .position {
+                    font-size: var(--font-size-regular);
+                    color: var(--text-alt-colour);
+                }
             }
 
             .artist-details {
                 padding: 0 var(--small-space);
-                font-family: "Berkeley Mono", monospace;
                 font-size: var(--font-size-small);
                 color: var(--text-alt-colour);
             }
