@@ -14,16 +14,19 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"chameth.com/chameth.com/external/oopspam"
 )
 
 var (
-	fromAddress  = flag.String("contact-from", "", "address to send e-mail from")
-	toAddress    = flag.String("contact-to", "", "address to send e-mail to")
-	subject      = flag.String("contact-subject", "Contact form submission", "e-mail subject")
-	smtpServer   = flag.String("contact-smtp-host", "", "SMTP server to connect to")
-	smtpPort     = flag.Int("contact-smtp-port", 25, "port to use when connecting to the SMTP server")
-	smtpUsername = flag.String("contact-smtp-user", "", "username to supply to the SMTP server")
-	smtpPassword = flag.String("contact-smtp-pass", "", "password to supply to the SMTP server")
+	fromAddress    = flag.String("contact-from", "", "address to send e-mail from")
+	toAddress      = flag.String("contact-to", "", "address to send e-mail to")
+	subject        = flag.String("contact-subject", "Contact form submission", "e-mail subject")
+	smtpServer     = flag.String("contact-smtp-host", "", "SMTP server to connect to")
+	smtpPort       = flag.Int("contact-smtp-port", 25, "port to use when connecting to the SMTP server")
+	smtpUsername   = flag.String("contact-smtp-user", "", "username to supply to the SMTP server")
+	smtpPassword   = flag.String("contact-smtp-pass", "", "password to supply to the SMTP server")
+	oopspamApiKey  = flag.String("oopspam-apikey", "", "OOPSpam API key (empty to disable spam checks on form submissions)")
 )
 
 type contactRequest struct {
@@ -120,6 +123,26 @@ func ContactFormPost(w http.ResponseWriter, r *http.Request) {
 		SenderName:  r.FormValue("name"),
 		SenderEmail: r.FormValue("email"),
 		Message:     r.FormValue("message"),
+	}
+
+	if *oopspamApiKey != "" {
+		host, _, err := net.SplitHostPort(r.RemoteAddr)
+		if err != nil {
+			host = r.RemoteAddr
+		}
+
+		result, err := oopspam.IsSpam(*oopspamApiKey, cr.Message, host, cr.SenderEmail)
+		if err != nil {
+			slog.Error("OOPSpam check failed", "error", err, "remoteAddr", host)
+			http.Error(w, "Something went wrong. Your message was not sent.", http.StatusBadRequest)
+			return
+		}
+
+		if result.IsSpam {
+			slog.Info("OOPSpam detected spam, blocking submission", "remoteAddr", host, "score", result.Score, "details", result.Details)
+			http.Error(w, "Something went wrong. Your message was not sent.", http.StatusBadRequest)
+			return
+		}
 	}
 
 	if err := processContact(cr, r); err != nil {
