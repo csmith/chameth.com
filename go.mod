@@ -78,7 +78,7 @@ require (
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/exp v0.0.0-20250620022241-b7579e27df2b // indirect
 	golang.org/x/oauth2 v0.33.0 // indirect
-	golang.org/x/sync v0.19.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/sys v0.41.0 // indirect
 	golang.org/x/term v0.40.0 // indirect
 	golang.org/x/time v0.12.0 // indirect
@@ -91,5 +91,5 @@ require (
 require (
 	github.com/kljensen/snowball v0.10.0
 	github.com/prometheus/client_golang v1.23.2
-	golang.org/x/text v0.34.0
+	golang.org/x/text v0.35.0
 )
