@@ -387,5 +387,5 @@ mellium.im/sasl v0.3.1 h1:wE0LW6g7U83vhvxjC1IY8DnXM+EU095yeo8XClvCdfo=
 mellium.im/sasl v0.3.1/go.mod h1:xm59PUYpZHhgQ9ZqoJ5QaCqzWMi8IeS49dhp6plPCzw=
 software.sslmate.com/src/go-pkcs12 v0.4.0 h1:H2g08FrTvSFKUj+D309j1DPfk5APnIdAQAB8aEykJ5k=
 software.sslmate.com/src/go-pkcs12 v0.4.0/go.mod h1:Qiz0EyvDRJjjxGyUQa2cCNZn/wMyzrRJ/qcDXOQazLI=
-tailscale.com v1.96.0 h1:8jCGXEjdsZhMCyvgiy6gQHA+sDoSUZduSApyoskUfwU=
-tailscale.com v1.96.0/go.mod h1:ODw30r4etIPiyxbCtP7bm42GytEoJLzbqhL5ZX0al+I=
+tailscale.com v1.96.1 h1:9+0JuyK9SSnbKSumGRQhrOdNtgZ5SgJINXgJoVpyf0Y=
+tailscale.com v1.96.1/go.mod h1:/3lnZBYb2UEwnN0MNu2SDXUtT06AGd5k0s+OWx3WmcY=
