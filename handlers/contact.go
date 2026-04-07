@@ -63,10 +63,16 @@ func processContact(cr contactRequest, r *http.Request) error {
 		return fmt.Errorf("rate limit exceeded")
 	}
 
-	if isRandomCharacterSpam(cr.SenderName, cr.Message) {
-		slog.Info("Blocking random character spam", "remoteAddr", host, "request", cr)
+	if !isSensibleMessage(cr.Message) {
+		slog.Info("Blocking nonsensical contact form message", "remoteAddr", host, "request", cr)
 		time.Sleep(5 * time.Second)
-		return fmt.Errorf("spam detected")
+		return fmt.Errorf("nonsensical message")
+	}
+
+	if containsCyrillic(cr.Message) {
+		slog.Info("Blocking Cyrillic contact form message", "remoteAddr", host, "request", cr)
+		time.Sleep(5 * time.Second)
+		return fmt.Errorf("cyrillic message")
 	}
 
 	spam, err := checkSpamhaus(host)
@@ -125,12 +131,24 @@ func ContactFormPost(w http.ResponseWriter, r *http.Request) {
 		Message:     r.FormValue("message"),
 	}
 
-	if *oopspamApiKey != "" {
-		host, _, err := net.SplitHostPort(r.RemoteAddr)
-		if err != nil {
-			host = r.RemoteAddr
-		}
+	host, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		host = r.RemoteAddr
+	}
 
+	if !isSensibleMessage(cr.Message) {
+		slog.Info("Blocking nonsensical contact form message", "remoteAddr", host, "request", cr)
+		http.Error(w, "Something went wrong. Your message was not sent.", http.StatusBadRequest)
+		return
+	}
+
+	if containsCyrillic(cr.Message) {
+		slog.Info("Blocking Cyrillic contact form message", "remoteAddr", host, "request", cr)
+		http.Error(w, "Something went wrong. Your message was not sent.", http.StatusBadRequest)
+		return
+	}
+
+	if *oopspamApiKey != "" {
 		result, err := oopspam.IsSpam(*oopspamApiKey, cr.Message, host, cr.SenderEmail)
 		if err != nil {
 			slog.Error("OOPSpam check failed", "error", err, "remoteAddr", host)
@@ -356,6 +374,20 @@ func checkRateLimit(ip string) bool {
 	return true
 }
 
-func isRandomCharacterSpam(name, message string) bool {
-	return !strings.Contains(name, " ") && !strings.Contains(message, " ")
+func isSensibleMessage(message string) bool {
+	trimmed := strings.TrimSpace(message)
+	if trimmed == "" {
+		return false
+	}
+	return len(strings.Fields(trimmed)) >= 2
 }
+
+func containsCyrillic(s string) bool {
+	for _, r := range s {
+		if r >= '\u0400' && r <= '\u04FF' {
+			return true
+		}
+	}
+	return false
+}
+
