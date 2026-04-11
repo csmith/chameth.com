@@ -1,0 +1,23 @@
+.rating-distribution {
+    display: inline-block;
+
+    .chart-container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: var(--small-space);
+        padding: 0 var(--small-space) var(--small-space);
+    }
+
+    svg {
+        margin-bottom: var(--small-space);
+    }
+
+    .left-label,
+    .right-label {
+        .star-rating img {
+            width: 20px;
+            height: 20px;
+        }
+    }
+}

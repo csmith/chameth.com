@@ -1,0 +1,16 @@
+.film-reviews-parent {
+    container-type: inline-size;
+}
+
+.film-reviews {
+    display: grid;
+    column-gap: var(--smedium-space);
+
+    @container (width >= 1500px) {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    @container (width < 1500px) {
+        grid-template-columns: 1fr;
+    }
+}

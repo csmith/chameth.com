@@ -15,7 +15,7 @@ import (
 //go:embed *.gotpl
 var templates embed.FS
 
-var tmpl = template.Must(template.New("filmratingdistribution.html.gotpl").ParseFS(templates, "filmratingdistribution.html.gotpl"))
+var tmpl = template.Must(template.New("distribution.html.gotpl").ParseFS(templates, "distribution.html.gotpl"))
 
 func RenderFromText(_ []string, ctx *common.Context) (string, error) {
 	distribution, err := db.GetFilmRatingDistribution(ctx.Context)

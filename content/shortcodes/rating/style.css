@@ -1,0 +1,43 @@
+.star-rating {
+    vertical-align: middle;
+
+    img:not(:first-child) {
+        margin-left: -3px;
+    }
+
+    img:first-child {
+        rotate: -3deg;
+    }
+
+    img:nth-child(2) {
+        rotate: 5deg;
+    }
+
+    img:nth-child(3) {
+        rotate: 10deg;
+    }
+
+    img:nth-child(4) {
+        rotate: -10deg;
+    }
+
+    img:nth-child(5) {
+        rotate: 15deg;
+    }
+
+    .rot-1 {
+        transform: rotate(70deg);
+    }
+
+    .rot-2 {
+        transform: rotate(140deg);
+    }
+
+    .rot-3 {
+        transform: rotate(210deg);
+    }
+
+    .rot-4 {
+        transform: rotate(280deg);
+    }
+}

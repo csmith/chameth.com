@@ -1,0 +1,26 @@
+aside.update {
+    clear: both;
+    padding: var(--medium-space);
+    margin: var(--large-space) 0;
+
+    ins {
+        text-decoration: none;
+    }
+
+    h5 {
+        text-transform: uppercase;
+        color: var(--text-highlight-colour);
+        font-size: var(--font-size-large);
+        margin-top: 0;
+        padding: 0;
+        margin-bottom: var(--small-space);
+
+        & + p {
+            margin-top: var(--small-space);
+        }
+    }
+
+    *:last-child {
+        margin-bottom: 0;
+    }
+}

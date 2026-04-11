@@ -1,43 +1,3 @@
-.walks-table {
-    border-bottom: none;
-
-    td {
-        white-space: nowrap;
-    }
-
-    time {
-        color: var(--text-alt-colour);
-    }
-
-    svg {
-        vertical-align: middle;
-    }
-
-    .distance-bar-cell {
-        width: 100%;
-
-        .distance-bar {
-            display: inline-block;
-            overflow: hidden;
-            border-radius: 5px;
-            background-color: var(--background-alt-colour);
-            height: 0.5em;
-            width: 100%;
-            vertical-align: middle;
-
-            .distance-bar-fill {
-                fill: var(--accent-colour);
-            }
-        }
-    }
-}
-
-.walking-stats-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: var(--smedium-space);
-}
-
 .walkingdistance-badge {
     display: inline-grid;
     grid-template-areas:
@@ -85,19 +45,6 @@
 
         .progress-fill {
             fill: var(--accent-colour);
-        }
-    }
-}
-
-.walkingspeed {
-    margin: var(--smedium-space) 0;
-
-    svg {
-        width: 100%;
-        height: auto;
-
-        text {
-            font-family: "Berkeley Mono", monospace;
         }
     }
 }

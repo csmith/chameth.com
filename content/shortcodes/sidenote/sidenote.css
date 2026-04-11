@@ -1,0 +1,20 @@
+aside.sidenote {
+    padding: var(--small-space);
+    color: var(--text-alt-colour);
+
+    :first-child {
+        margin-top: 0;
+    }
+
+    :last-child {
+        margin-bottom: 0;
+    }
+
+    h5 {
+        margin: 0;
+    }
+
+    p {
+        margin: var(--smedium-space) 0;
+    }
+}

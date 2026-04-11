@@ -1,0 +1,29 @@
+.page-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--medium-space);
+    padding-top: calc(var(--raised-box-title-padding) + var(--smedium-space));
+    padding-left: var(--medium-space);
+    padding-right: var(--medium-space);
+    padding-bottom: var(--medium-space);
+    color: var(--text-colour);
+    width: min(100%, 400px);
+
+    svg:first-child {
+        color: var(--text-colour);
+        width: 32px;
+        height: 32px;
+    }
+
+    span {
+        font-family: "Berkeley Mono", monospace;
+        flex-grow: 1;
+        text-align: center;
+    }
+
+    svg.chevron {
+        color: var(--text-alt-colour);
+        width: 32px;
+        height: 32px;
+    }
+}

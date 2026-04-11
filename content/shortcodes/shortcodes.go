@@ -2,11 +2,15 @@ package shortcodes
 
 import (
 	"bytes"
+	"embed"
 	"fmt"
+	"io/fs"
 	"log/slog"
+	"path/filepath"
 	"regexp"
 	"strings"
 
+	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/content/shortcodes/audio"
 	"chameth.com/chameth.com/content/shortcodes/bglist"
 	"chameth.com/chameth.com/content/shortcodes/common"
@@ -37,6 +41,23 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/warning"
 	"chameth.com/chameth.com/content/shortcodes/watchedfilms"
 )
+
+//go:embed **/*.css
+var shortcodeCSS embed.FS
+
+func init() {
+	fs.WalkDir(shortcodeCSS, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil || d.IsDir() || filepath.Ext(path) != ".css" {
+			return nil
+		}
+		b, err := fs.ReadFile(shortcodeCSS, path)
+		if err != nil {
+			return nil
+		}
+		assets.RegisterStylesheet(filepath.Join("shortcodes", path), b)
+		return nil
+	})
+}
 
 const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering failed]</div>\n\n"
 
