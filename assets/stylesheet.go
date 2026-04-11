@@ -10,40 +10,6 @@ import (
 	"time"
 )
 
-var includeOrder = []string{
-	"layers.css",
-
-	"reset.css",
-
-	"colours.css",
-	"dimens.css",
-
-	"about.css",
-	"articles.css",
-	"asides.css",
-	"boardgames.css",
-	"components.css",
-	"contact.css",
-	"figures.css",
-	"films.css",
-	"footer.css",
-	"global.css",
-	"header.css",
-	"links.css",
-	"littlefoot.css",
-	"music.css",
-	"pagination.css",
-	"postlinks.css",
-	"prints.css",
-	"projects.css",
-	"snippets.css",
-	"syndication.css",
-	"syntax.css",
-	"tables.css",
-	"typography.css",
-	"walks.css",
-}
-
 type mood struct {
 	include string
 	test    func(time.Time) bool
@@ -90,8 +56,17 @@ func UpdateStylesheet() error {
 		date, _ = time.ParseInLocation("2006-01-02T15:04:05", *styleDate, date.Location())
 	}
 
+	entries, err := fs.ReadDir(filesystem, ".")
+	if err != nil {
+		return err
+	}
+
 	var includes []string
-	includes = append(includes, includeOrder...)
+	for _, entry := range entries {
+		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".css") {
+			includes = append(includes, entry.Name())
+		}
+	}
 	for _, mood := range moods {
 		if mood.test(date) {
 			includes = append(includes, mood.include)
