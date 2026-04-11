@@ -21,7 +21,7 @@ func CreatePageData(ctx context.Context, title, path string, ogHeaders templates
 		CanonicalUrl: canonicalUrl,
 		OpenGraph:    ogHeaders,
 		Scripts:      assets.GetScriptPath(),
-		Stylesheet:   assets.GetStylesheetPath(),
+		Stylesheet:   assets.StylesheetPath(),
 		RecentPosts:  RecentPosts(),
 		Component:    shortcodes.NewComponentFunc(&common.Context{Context: ctx, URL: path}),
 	}

@@ -1,6 +1,7 @@
 package assets
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"hash/crc32"
@@ -9,6 +10,78 @@ import (
 	"strings"
 	"time"
 )
+
+var (
+	styleDate = flag.String("style-datetime", "", "Date/time to fake for stylesheet generation purposes")
+)
+
+type stylesheet struct {
+	path    string
+	content []byte
+}
+
+var stylesheets []stylesheet
+var compiledSheet = &stylesheet{}
+
+func RegisterStylesheet(path string, content []byte) {
+	stylesheets = append(stylesheets, stylesheet{
+		path:    path,
+		content: content,
+	})
+}
+
+func init() {
+	entries, err := fs.ReadDir(Stylesheets, "stylesheet")
+	if err != nil {
+		panic(err)
+	}
+
+	for _, entry := range entries {
+		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".css") {
+			b, err := fs.ReadFile(Stylesheets, filepath.Join("stylesheet", entry.Name()))
+			if err != nil {
+				panic(err)
+			}
+
+			RegisterStylesheet(entry.Name(), b)
+		}
+	}
+}
+
+func UpdateStylesheet() error {
+	activeMoods, err := activeMoods()
+	if err != nil {
+		return err
+	}
+
+	includes := append(stylesheets, activeMoods...)
+
+	builder := new(bytes.Buffer)
+	for i := range includes {
+		fmt.Fprintf(builder, "\n\n/* =========================== %s ========================== */\n\n", includes[i].path)
+		builder.Write(includes[i].content)
+	}
+
+	hasher := crc32.NewIEEE()
+	if _, err := hasher.Write(builder.Bytes()); err != nil {
+		return err
+	}
+
+	compiledSheet = &stylesheet{
+		content: builder.Bytes(),
+		path:    fmt.Sprintf("global-%x.css", hasher.Sum(nil)),
+	}
+
+	return nil
+}
+
+func Stylesheet() []byte {
+	return compiledSheet.content
+}
+
+func StylesheetPath() string {
+	return compiledSheet.path
+}
 
 type mood struct {
 	include string
@@ -36,70 +109,26 @@ var moods = []mood{
 	},
 }
 
-var compiledSheet string
-var compiledSheetPath string
-
-var (
-	styleDate = flag.String("style-datetime", "", "Date/time to fake for stylesheet generation purposes")
-)
-
-// UpdateStylesheet compiles all CSS files into a single stylesheet
-// based on the current date or the date specified via -style-datetime flag.
-func UpdateStylesheet() error {
-	filesystem, err := fs.Sub(Stylesheets, filepath.Join("stylesheet"))
-	if err != nil {
-		return err
-	}
-
+func activeMoods() ([]stylesheet, error) {
 	date := time.Now()
 	if *styleDate != "" {
 		date, _ = time.ParseInLocation("2006-01-02T15:04:05", *styleDate, date.Location())
 	}
 
-	entries, err := fs.ReadDir(filesystem, ".")
-	if err != nil {
-		return err
-	}
-
-	var includes []string
-	for _, entry := range entries {
-		if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".css") {
-			includes = append(includes, entry.Name())
-		}
-	}
+	var active []stylesheet
 	for _, mood := range moods {
 		if mood.test(date) {
-			includes = append(includes, mood.include)
+			b, err := fs.ReadFile(Moods, mood.include)
+			if err != nil {
+				return nil, err
+			}
+
+			active = append(active, stylesheet{
+				path:    mood.include,
+				content: b,
+			})
 		}
 	}
 
-	builder := &strings.Builder{}
-	for i := range includes {
-		b, err := fs.ReadFile(filesystem, includes[i])
-		if err != nil {
-			return err
-		}
-
-		fmt.Fprintf(builder, "\n\n/* =========================== %s ========================== */\n\n", includes[i])
-		builder.Write(b)
-	}
-
-	compiledSheet = builder.String()
-
-	hasher := crc32.NewIEEE()
-	if _, err := hasher.Write([]byte(compiledSheet)); err != nil {
-		return err
-	}
-	compiledSheetPath = fmt.Sprintf("global-%x.css", hasher.Sum(nil))
-	return nil
-}
-
-// GetStylesheet returns the compiled stylesheet content.
-func GetStylesheet() string {
-	return compiledSheet
-}
-
-// GetStylesheetPath returns the path of the compiled stylesheet.
-func GetStylesheetPath() string {
-	return compiledSheetPath
+	return active, nil
 }
