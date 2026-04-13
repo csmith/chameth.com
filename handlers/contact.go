@@ -25,7 +25,7 @@ func ContactForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req contact.ContactRequest
+	var req contact.Request
 	if err = json.Unmarshal(body, &req); err != nil {
 		slog.Error("Error parsing contact form payload", "error", err, "payload", string(body))
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -45,7 +45,7 @@ func ContactForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func ContactFormPost(w http.ResponseWriter, r *http.Request) {
-	req := contact.ContactRequest{
+	req := contact.Request{
 		Page:        r.FormValue("page"),
 		SenderName:  r.FormValue("name"),
 		SenderEmail: r.FormValue("email"),

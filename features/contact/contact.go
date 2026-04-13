@@ -1,7 +1,6 @@
 package contact
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -10,9 +9,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"chameth.com/chameth.com/external/oopspam"
-	"chameth.com/chameth.com/external/spamhaus"
 )
 
 var (
@@ -39,15 +35,6 @@ type Rejection struct {
 func (e *Rejection) Error() string { return e.Err.Error() }
 func (e *Rejection) Unwrap() error { return e.Err }
 
-// Sentinel errors for specific rejection reasons.
-var (
-	ErrRateLimitExceeded  = errors.New("rate limit exceeded")
-	ErrNonsensicalMessage = errors.New("nonsensical message")
-	ErrCyrillicMessage    = errors.New("cyrillic message")
-	ErrBlockedBySpamhaus  = errors.New("blocked by spamhaus")
-	ErrSpamDetected       = errors.New("spam detected")
-)
-
 // Method indicates how the contact form submission was received.
 type Method int
 
@@ -67,8 +54,8 @@ func (m Method) String() string {
 	}
 }
 
-// ContactRequest holds the data from a contact form submission.
-type ContactRequest struct {
+// Request holds the data from a contact form submission.
+type Request struct {
 	Page        string
 	SenderName  string
 	SenderEmail string
@@ -78,51 +65,16 @@ type ContactRequest struct {
 // Process validates the submission, runs spam checks, and sends the email.
 // It returns a *Rejection for spam/abuse rejections, or a regular error for
 // internal failures (e.g. email send failure).
-func Process(req ContactRequest, method Method, remoteAddr string) error {
+func Process(req Request, method Method, remoteAddr string) error {
 	host, _, err := net.SplitHostPort(remoteAddr)
 	if err != nil {
 		host = remoteAddr
 	}
 
-	if !checkRateLimit(host) {
-		slog.Info("Rate limit exceeded for contact form", "remoteAddr", host, "request", req)
-		time.Sleep(5 * time.Second)
-		return &Rejection{Err: ErrRateLimitExceeded}
-	}
-
-	if !isSensibleMessage(req.Message) {
-		slog.Info("Blocking nonsensical contact form message", "remoteAddr", host, "request", req)
-		time.Sleep(5 * time.Second)
-		return &Rejection{Err: ErrNonsensicalMessage}
-	}
-
-	if containsCyrillic(req.Message) {
-		slog.Info("Blocking Cyrillic contact form message", "remoteAddr", host, "request", req)
-		time.Sleep(5 * time.Second)
-		return &Rejection{Err: ErrCyrillicMessage}
-	}
-
-	spam, err := spamhaus.Check(host)
-	if err != nil {
-		slog.Error("Error checking Spamhaus", "error", err, "remoteAddr", host)
-	}
-
-	if spam.ExploitsBlockList {
-		slog.Info("Blocking contact form from XBL listed address", "remoteAddr", host, "request", req)
-		time.Sleep(5 * time.Second)
-		return &Rejection{Err: ErrBlockedBySpamhaus}
-	}
-
-	if method == MethodForm && *oopspamApiKey != "" {
-		result, err := oopspam.IsSpam(*oopspamApiKey, req.Message, host, req.SenderEmail)
-		if err != nil {
-			slog.Error("OOPSpam check failed", "error", err, "remoteAddr", host)
-			return fmt.Errorf("oopspam check: %w", err)
-		}
-
-		if result.IsSpam {
-			slog.Info("OOPSpam detected spam, blocking submission", "remoteAddr", host, "score", result.Score, "details", result.Details)
-			return &Rejection{Err: ErrSpamDetected}
+	for _, check := range checks[method] {
+		if err := check(req, host); err != nil {
+			time.Sleep(5 * time.Second)
+			return err
 		}
 	}
 
@@ -135,7 +87,7 @@ func Process(req ContactRequest, method Method, remoteAddr string) error {
 	return nil
 }
 
-func sendContact(req ContactRequest, content string) error {
+func sendContact(req Request, content string) error {
 	auth := smtp.PlainAuth("", *smtpUsername, *smtpPassword, *smtpServer)
 	replyTo := req.SenderEmail
 	if replyTo == "" {
@@ -151,7 +103,7 @@ func sendContact(req ContactRequest, content string) error {
 	return nil
 }
 
-func messageBody(c ContactRequest, method Method, remoteAddr string) string {
+func messageBody(c Request, method Method, remoteAddr string) string {
 	body := strings.Builder{}
 	body.WriteString("SENDER: ")
 	body.WriteString(c.SenderName)
@@ -171,23 +123,6 @@ func messageBody(c ContactRequest, method Method, remoteAddr string) string {
 	body.WriteString("\nMESSAGE:\n\n")
 	body.WriteString(c.Message)
 	return body.String()
-}
-
-func isSensibleMessage(message string) bool {
-	trimmed := strings.TrimSpace(message)
-	if trimmed == "" {
-		return false
-	}
-	return len(strings.Fields(trimmed)) >= 2
-}
-
-func containsCyrillic(s string) bool {
-	for _, r := range s {
-		if r >= '\u0400' && r <= '\u04FF' {
-			return true
-		}
-	}
-	return false
 }
 
 func init() {
@@ -211,7 +146,7 @@ func cleanupRateLimitMap() {
 	}
 }
 
-func checkRateLimit(ip string) bool {
+func isRateAllowed(ip string) bool {
 	rateLimitMu.Lock()
 	defer rateLimitMu.Unlock()
 
