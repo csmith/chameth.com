@@ -1,11 +1,15 @@
 package contact
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"log/slog"
 	"net"
 	"net/smtp"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -19,11 +23,13 @@ var (
 	smtpPort      = flag.Int("contact-smtp-port", 25, "port to use when connecting to the SMTP server")
 	smtpUsername  = flag.String("contact-smtp-user", "", "username to supply to the SMTP server")
 	smtpPassword  = flag.String("contact-smtp-pass", "", "password to supply to the SMTP server")
+	signingSecret = flag.String("contact-signing-secret", "", "secret key used to sign form timestamps")
 	oopspamApiKey = flag.String("oopspam-apikey", "", "OOPSpam API key (empty to disable spam checks on form submissions)")
 
 	rateLimitMu  sync.Mutex
 	rateLimitMap = make(map[string]time.Time)
 	rateLimitTTL = 1 * time.Minute
+	minFormAge   = 10 * time.Second
 )
 
 // Rejection is returned when a submission is rejected by a spam or abuse check.
@@ -56,10 +62,11 @@ func (m Method) String() string {
 
 // Request holds the data from a contact form submission.
 type Request struct {
-	Page        string
-	SenderName  string
-	SenderEmail string
-	Message     string
+	Page        string `json:"page"`
+	SenderName  string `json:"name"`
+	SenderEmail string `json:"email"`
+	Message     string `json:"message"`
+	Timestamp   string `json:"ts"`
 }
 
 // Process validates the submission, runs spam checks, and sends the email.
@@ -123,6 +130,14 @@ func messageBody(c Request, method Method, remoteAddr string) string {
 	body.WriteString("\nMESSAGE:\n\n")
 	body.WriteString(c.Message)
 	return body.String()
+}
+
+// SignedTimestamp returns an HMAC-signed timestamp token for embedding in forms.
+func SignedTimestamp() string {
+	ts := time.Now().Unix()
+	mac := hmac.New(sha256.New, []byte(*signingSecret))
+	mac.Write([]byte(strconv.FormatInt(ts, 10)))
+	return fmt.Sprintf("%d.%s", ts, hex.EncodeToString(mac.Sum(nil)))
 }
 
 func init() {

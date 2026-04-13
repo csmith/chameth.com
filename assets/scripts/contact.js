@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = Object.fromEntries(new FormData(form))
             const payload = {
                 page: formData.page,
+                ts: formData.ts,
                 name: formData.name,
                 email: formData.email,
                 message: formData.message,

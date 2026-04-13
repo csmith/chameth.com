@@ -1,6 +1,7 @@
 package contact
 
 type Data struct {
-	Preamble string
-	Page     string
+	Preamble  string
+	Page      string
+	Timestamp string
 }

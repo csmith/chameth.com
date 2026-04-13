@@ -1,10 +1,15 @@
 package contact
 
 import (
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"log/slog"
+	"strconv"
 	"strings"
+	"time"
 
 	"chameth.com/chameth.com/external/oopspam"
 	"chameth.com/chameth.com/external/spamhaus"
@@ -13,8 +18,8 @@ import (
 type check = func(req Request, remoteAddr string) error
 
 var checks = map[Method][]check{
-	MethodJSON: {checkRateLimit, checkSensibleMessage, checkCyrillic, checkSpamhaus},
-	MethodForm: {checkRateLimit, checkSensibleMessage, checkCyrillic, checkSpamhaus, checkOOPSpam},
+	MethodJSON: {checkTimestamp, checkRateLimit, checkSensibleMessage, checkCyrillic, checkSpamhaus},
+	MethodForm: {checkTimestamp, checkRateLimit, checkSensibleMessage, checkCyrillic, checkSpamhaus, checkOOPSpam},
 }
 
 var (
@@ -23,7 +28,41 @@ var (
 	errCyrillicMessage    = errors.New("cyrillic message")
 	errBlockedBySpamhaus  = errors.New("blocked by spamhaus")
 	errSpamDetected       = errors.New("spam detected")
+	errInvalidTimestamp   = errors.New("invalid timestamp")
+	errTimestampTooRecent = errors.New("timestamp too recent")
 )
+
+func checkTimestamp(req Request, _ string) error {
+	if req.Timestamp == "" {
+		slog.Info("Missing timestamp in contact form submission")
+		return &Rejection{Err: errInvalidTimestamp}
+	}
+
+	tsStr, sig, ok := strings.Cut(req.Timestamp, ".")
+	if !ok {
+		slog.Info("Malformed timestamp in contact form submission", "timestamp", req.Timestamp)
+		return &Rejection{Err: errInvalidTimestamp}
+	}
+
+	ts, err := strconv.ParseInt(tsStr, 10, 64)
+	if err != nil {
+		slog.Info("Unparseable timestamp in contact form submission", "timestamp", req.Timestamp)
+		return &Rejection{Err: errInvalidTimestamp}
+	}
+
+	mac := hmac.New(sha256.New, []byte(*signingSecret))
+	mac.Write([]byte(tsStr))
+	if !hmac.Equal([]byte(sig), []byte(hex.EncodeToString(mac.Sum(nil)))) {
+		slog.Info("Invalid timestamp signature in contact form submission", "timestamp", req.Timestamp)
+		return &Rejection{Err: errInvalidTimestamp}
+	}
+
+	if elapsed := time.Since(time.Unix(ts, 0)); elapsed < minFormAge {
+		slog.Info("Contact form submitted too quickly", "elapsed", elapsed)
+		return &Rejection{Err: errTimestampTooRecent}
+	}
+	return nil
+}
 
 func checkRateLimit(req Request, remoteAddr string) error {
 	if !isRateAllowed(remoteAddr) {
