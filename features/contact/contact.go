@@ -50,23 +50,12 @@ func (e *Rejection) Error() string {
 }
 
 // Method indicates how the contact form submission was received.
-type Method int
+type Method string
 
 const (
-	MethodJSON Method = iota
-	MethodForm
+	MethodJSON Method = "JSON"
+	MethodForm Method = "Form"
 )
-
-func (m Method) String() string {
-	switch m {
-	case MethodJSON:
-		return "json"
-	case MethodForm:
-		return "form"
-	default:
-		return "unknown"
-	}
-}
 
 // Request holds the data from a contact form submission.
 type Request struct {
@@ -91,11 +80,10 @@ func Process(req Request, method Method, remoteAddr string) error {
 	for _, check := range checks {
 		err := check(req, host)
 		if err != nil {
-			var rej *Rejection
-			if errors.As(err, &rej) {
+			if rej, ok := errors.AsType[*Rejection](err); ok {
 				causes = append(causes, rej.Causes...)
 			} else {
-				return err
+				slog.Error("Error checking contact form for spam", "request", req, "error", err)
 			}
 		}
 	}
@@ -103,22 +91,21 @@ func Process(req Request, method Method, remoteAddr string) error {
 	if method == MethodForm && len(causes) == 0 {
 		err := checkOOPSpam(req, host)
 		if err != nil {
-			var rej *Rejection
-			if errors.As(err, &rej) {
+			if rej, ok := errors.AsType[*Rejection](err); ok {
 				causes = append(causes, rej.Causes...)
 			} else {
-				return err
+				slog.Error("Error checking contact form for spam", "request", req, "error", err)
 			}
 		}
 	}
 
 	if len(causes) > 0 {
-		metrics.RecordContactSubmission(method.String(), causes)
+		metrics.RecordContactSubmission(string(method), causes)
 		time.Sleep(5 * time.Second)
 		return &Rejection{Causes: causes}
 	}
 
-	metrics.RecordContactSubmission(method.String(), nil)
+	metrics.RecordContactSubmission(string(method), nil)
 
 	content := messageBody(req, method, remoteAddr)
 	if err := sendContact(req, content); err != nil {
@@ -159,7 +146,7 @@ func messageBody(c Request, method Method, remoteAddr string) string {
 	body.WriteString(remoteAddr)
 	body.WriteString("\n")
 	body.WriteString("METHOD: ")
-	body.WriteString(method.String())
+	body.WriteString(string(method))
 	body.WriteString("\n")
 
 	body.WriteString("\nMESSAGE:\n\n")
