@@ -3,6 +3,7 @@
     <form class="contact raised-box"{{if .Preamble}} data-title="{{.Preamble}}"{{end}} method="POST" action="/api/form/contact">
         <input type="hidden" name="page" value="https://chameth.com{{.Page}}" />
         <input type="hidden" name="ts" value="{{.Timestamp}}" />
+        <input type="text" name="subject" class="subject" placeholder="Subject" tabindex="-1" autocomplete="off" />
         <input type="text" name="name" placeholder="Your name/alias (optional)" />
         <input type="email" name="email" placeholder="Your e-mail address (optional)" />
         <textarea name="message" placeholder="Your message" required></textarea>

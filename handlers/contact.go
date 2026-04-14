@@ -51,6 +51,7 @@ func ContactFormPost(w http.ResponseWriter, r *http.Request) {
 		SenderEmail: r.FormValue("email"),
 		Message:     r.FormValue("message"),
 		Timestamp:   r.FormValue("ts"),
+		Honeypot:    r.FormValue("subject"),
 	}
 
 	if err := contact.Process(req, contact.MethodForm, r.RemoteAddr); err != nil {

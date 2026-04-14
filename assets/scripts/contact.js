@@ -5,14 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', (e) => {
             e.preventDefault()
 
-            const formData = Object.fromEntries(new FormData(form))
-            const payload = {
-                page: formData.page,
-                ts: formData.ts,
-                name: formData.name,
-                email: formData.email,
-                message: formData.message,
-            }
+            const payload = Object.fromEntries(new FormData(form))
 
             const loadingContainer = document.createElement('div')
             loadingContainer.classList.add('loading')

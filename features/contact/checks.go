@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -17,9 +18,11 @@ import (
 
 type check = func(req Request, remoteAddr string) error
 
+var commonChecks = []check{checkHoneypot, checkTimestamp, checkRateLimit, checkSensibleMessage, checkCyrillic, checkSpamhaus}
+
 var checks = map[Method][]check{
-	MethodJSON: {checkTimestamp, checkRateLimit, checkSensibleMessage, checkCyrillic, checkSpamhaus},
-	MethodForm: {checkTimestamp, checkRateLimit, checkSensibleMessage, checkCyrillic, checkSpamhaus, checkOOPSpam},
+	MethodJSON: commonChecks,
+	MethodForm: append(slices.Clone(commonChecks), checkOOPSpam),
 }
 
 var (
@@ -30,7 +33,16 @@ var (
 	errSpamDetected       = errors.New("spam detected")
 	errInvalidTimestamp   = errors.New("invalid timestamp")
 	errTimestampTooRecent = errors.New("timestamp too recent")
+	errHoneypotFilled     = errors.New("honeypot field filled")
 )
+
+func checkHoneypot(req Request, _ string) error {
+	if req.Honeypot != "" {
+		slog.Info("Honeypot field filled in contact form submission", "subject", req.Honeypot)
+		return &Rejection{Err: errHoneypotFilled}
+	}
+	return nil
+}
 
 func checkTimestamp(req Request, _ string) error {
 	if req.Timestamp == "" {

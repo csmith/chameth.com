@@ -67,6 +67,7 @@ type Request struct {
 	SenderEmail string `json:"email"`
 	Message     string `json:"message"`
 	Timestamp   string `json:"ts"`
+	Honeypot    string `json:"subject"`
 }
 
 // Process validates the submission, runs spam checks, and sends the email.
