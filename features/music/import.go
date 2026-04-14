@@ -225,7 +225,7 @@ func importPlays(ctx context.Context, sc *subsonic.Client) error {
 		return err
 	}
 
-	slog.Info("Importing plays since", "since", mostRecent)
+	slog.Debug("Importing plays since", "since", mostRecent)
 
 	token, err := sc.LoginNavidrome(ctx)
 	if err != nil {
@@ -287,7 +287,7 @@ func importPlays(ctx context.Context, sc *subsonic.Client) error {
 		offset += pageSize
 	}
 
-	slog.Info("Play import complete", "imported", imported)
+	slog.Debug("Play import complete", "imported", imported)
 	return nil
 }
 
