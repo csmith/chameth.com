@@ -19,7 +19,7 @@ const (
 type Result struct {
 	IsSpam  bool
 	Score   int
-	Details map[string]interface{}
+	Details map[string]any
 }
 
 func IsSpam(apiKey, content, senderIP, email string) (Result, error) {
@@ -38,8 +38,8 @@ func IsSpam(apiKey, content, senderIP, email string) (Result, error) {
 	}
 
 	type response struct {
-		Score   int                    `json:"score"`
-		Details map[string]interface{} `json:"details"`
+		Score   int            `json:"score"`
+		Details map[string]any `json:"details"`
 	}
 
 	payload, err := json.Marshal(&request{
