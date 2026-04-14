@@ -8,12 +8,13 @@ import (
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/templates"
 	"golang.org/x/net/html"
 )
 
 func FullFeed(w http.ResponseWriter, r *http.Request) {
-	renderFeed(w, r, "Chameth.com", "", 5, "https://chameth.com/index.xml")
+	renderFeed(w, r, "Chameth.com", "all", 5, "https://chameth.com/index.xml")
 }
 
 func LongPostsFeed(w http.ResponseWriter, r *http.Request) {
@@ -37,12 +38,13 @@ func FilmReviewsFeed(w http.ResponseWriter, r *http.Request) {
 }
 
 func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, limit int, selfLink string) {
+	slog.Debug("Serving feed", "type", "posts", "format", format, "useragent", r.UserAgent())
+	metrics.RecordFeedRequest(format, r.UserAgent())
+
 	var posts []db.Post
 	var err error
 
-	slog.Info("Serving feed", "type", "posts", "format", format, "useragent", r.UserAgent())
-
-	if format == "" {
+	if format == "all" {
 		posts, err = db.GetRecentPostsWithContent(r.Context(), limit)
 	} else {
 		posts, err = db.GetRecentPostsWithContentByFormat(r.Context(), limit, format)
@@ -100,7 +102,8 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 }
 
 func renderPoemsFeed(w http.ResponseWriter, r *http.Request, title string, limit int, selfLink string) {
-	slog.Info("Serving feed", "type", "poems", "useragent", r.UserAgent())
+	slog.Debug("Serving feed", "type", "poems", "useragent", r.UserAgent())
+	metrics.RecordFeedRequest("poems", r.UserAgent())
 
 	poems, err := db.GetRecentPoemsWithContent(r.Context(), limit)
 	if err != nil {
@@ -155,7 +158,8 @@ func renderPoemsFeed(w http.ResponseWriter, r *http.Request, title string, limit
 }
 
 func renderSnippetsFeed(w http.ResponseWriter, r *http.Request, title string, limit int, selfLink string) {
-	slog.Info("Serving feed", "type", "snippets", "useragent", r.UserAgent())
+	slog.Debug("Serving feed", "type", "snippets", "useragent", r.UserAgent())
+	metrics.RecordFeedRequest("snippets", r.UserAgent())
 
 	snippets, err := db.GetRecentSnippetsWithContent(r.Context(), limit)
 	if err != nil {
@@ -204,7 +208,8 @@ func renderSnippetsFeed(w http.ResponseWriter, r *http.Request, title string, li
 }
 
 func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string, limit int, selfLink string) {
-	slog.Info("Serving feed", "type", "filmreviews", "useragent", r.UserAgent())
+	slog.Debug("Serving feed", "type", "filmreviews", "useragent", r.UserAgent())
+	metrics.RecordFeedRequest("filmreviews", r.UserAgent())
 
 	reviews, err := db.GetRecentPublishedFilmReviewsWithFilmAndPosters(r.Context(), limit)
 	if err != nil {
@@ -217,14 +222,14 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 	for _, review := range reviews {
 		var content strings.Builder
 		content.WriteString("<p>")
-		content.WriteString(fmt.Sprintf("<strong>Rating:</strong> %d/10", review.FilmReview.Rating))
+		fmt.Fprintf(&content, "<strong>Rating:</strong> %d/10", review.FilmReview.Rating)
 		if review.FilmReview.IsRewatch {
 			content.WriteString(" (Rewatch)")
 		}
 		content.WriteString("</p>")
 
 		if review.FilmReview.ReviewText != "" {
-			content.WriteString(fmt.Sprintf("<p>%s</p>", review.FilmReview.ReviewText))
+			fmt.Fprintf(&content, "<p>%s</p>", review.FilmReview.ReviewText)
 		}
 
 		reviewURL := fmt.Sprintf("https://chameth.com%s", review.Film.Path)

@@ -27,10 +27,19 @@ var (
 		},
 		append([]string{"method"}, contactCauseLabelNames()...),
 	)
+
+	feedRequestsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "feed_requests_total",
+			Help: "Total feed requests. Subscriber counts from user agents are inflated to represent subscribers.",
+		},
+		[]string{"feed"},
+	)
 )
 
 func init() {
 	prometheus.MustRegister(httpRequestsTotal)
 	prometheus.MustRegister(dbQueriesPerRequest)
 	prometheus.MustRegister(contactSubmissionsTotal)
+	prometheus.MustRegister(feedRequestsTotal)
 }
