@@ -8,6 +8,7 @@ import (
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/embeddings"
 	"chameth.com/chameth.com/templates"
 )
 
@@ -45,7 +46,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		ogImage = fmt.Sprintf("https://chameth.com%s", ogPath)
 	}
 
-	relatedPosts, err := content.GetRelatedPosts(r.Context(), post.ID)
+	relatedPosts, err := embeddings.RelatedPosts(r.Context(), post.ID)
 	if err != nil {
 		slog.Error("Failed to get related posts", "post_id", post.ID, "error", err)
 		// Continue without related posts rather than erroring

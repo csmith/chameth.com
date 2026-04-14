@@ -10,8 +10,9 @@ import (
 
 	"chameth.com/chameth.com/admin/templates"
 	"chameth.com/chameth.com/admin/wordclouds"
-	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/atproto"
+	"chameth.com/chameth.com/features/embeddings"
 	"github.com/csmith/aca"
 )
 
@@ -210,12 +211,12 @@ func UpdatePostHandler() func(http.ResponseWriter, *http.Request) {
 
 		if published {
 			go func() {
-				if err := content.GenerateAndStoreEmbedding(context.Background(), path); err != nil {
+				if err := embeddings.GenerateAndStore(context.Background(), path); err != nil {
 					slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
 				}
 			}()
 
-			go content.SyndicateAllPostsToATProto(context.Background())
+			go atproto.SyndicateAllPosts(context.Background())
 		}
 
 		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)

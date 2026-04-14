@@ -14,8 +14,10 @@ import (
 
 	"chameth.com/chameth.com/admin"
 	"chameth.com/chameth.com/assets"
-	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/atproto"
+	"chameth.com/chameth.com/features/embeddings"
+	"chameth.com/chameth.com/features/music"
 	"chameth.com/chameth.com/handlers"
 	"chameth.com/chameth.com/metrics"
 	"github.com/csmith/envflag/v2"
@@ -56,8 +58,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	go content.UpdateAllPostEmbeddings(context.Background())
-	go content.SyndicateAllPostsToATProto(context.Background())
+	go embeddings.UpdateAllPosts(context.Background())
+	go atproto.SyndicateAllPosts(context.Background())
 
 	ts := &tsnet.Server{
 		Hostname: *tailscaleHost,
@@ -79,7 +81,7 @@ func main() {
 
 	go func() {
 		ts.Up(context.Background())
-		content.RunMusicImport(context.Background(), ts.HTTPClient())
+		music.RunImport(context.Background(), ts.HTTPClient())
 	}()
 
 	mux := http.NewServeMux()

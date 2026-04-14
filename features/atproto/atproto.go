@@ -1,4 +1,4 @@
-package content
+package atproto
 
 import (
 	"context"
@@ -11,12 +11,12 @@ import (
 )
 
 var (
-	atprotoPdsUrl   = flag.String("atproto-pds-url", "", "Base URL for the ATProto PDS to store records on")
-	atprotoHandle   = flag.String("atproto-handle", "", "Handle for the account on the ATProto PDS")
-	atprotoPassword = flag.String("atproto-password", "", "App-specific password ofr the account on the ATProto PDS")
+	pdsUrl   = flag.String("atproto-pds-url", "", "Base URL for the ATProto PDS to store records on")
+	handle   = flag.String("atproto-handle", "", "Handle for the account on the ATProto PDS")
+	password = flag.String("atproto-password", "", "App-specific password for the account on the ATProto PDS")
 )
 
-func SyndicateAllPostsToATProto(ctx context.Context) {
+func SyndicateAllPosts(ctx context.Context) {
 	client, err := newClient()
 	if err != nil {
 		slog.Error("Failed to create ATProto client", "error", err)
@@ -42,21 +42,12 @@ func SyndicateAllPostsToATProto(ctx context.Context) {
 	}
 }
 
-func SyndicatePostToATProto(ctx context.Context, post db.PostMetadata) error {
-	client, err := newClient()
-	if err != nil {
-		return err
-	}
-
-	return syndicatePost(ctx, client, post)
-}
-
 func newClient() (*atproto.Client, error) {
-	if *atprotoPdsUrl == "" {
+	if *pdsUrl == "" {
 		return nil, fmt.Errorf("atproto PDS server not configured")
 	}
 
-	return atproto.NewClient(*atprotoPdsUrl, *atprotoHandle, *atprotoPassword)
+	return atproto.NewClient(*pdsUrl, *handle, *password)
 }
 
 func syndicatePost(ctx context.Context, client *atproto.Client, post db.PostMetadata) error {

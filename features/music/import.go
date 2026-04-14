@@ -1,4 +1,4 @@
-package content
+package music
 
 import (
 	"bytes"
@@ -24,7 +24,7 @@ var (
 	subsonicPassword = flag.String("subsonic-password", "", "Password for the Subsonic API")
 )
 
-func RunMusicImport(ctx context.Context, client *http.Client) {
+func RunImport(ctx context.Context, client *http.Client) {
 	if *subsonicBaseUrl == "" {
 		return
 	}

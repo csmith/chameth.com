@@ -1,4 +1,4 @@
-package content
+package embeddings
 
 import (
 	"bytes"
@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"sync"
 
+	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/db"
 	"github.com/pgvector/pgvector-go"
@@ -25,8 +26,8 @@ var (
 	codeRemovalRegex = regexp.MustCompile(`(?s)<code>.*?</code>`)
 )
 
-// GenerateAndStoreEmbedding generates an embedding for a post and stores it in the database
-func GenerateAndStoreEmbedding(ctx context.Context, postPath string) error {
+// GenerateAndStore generates an embedding for a post and stores it in the database
+func GenerateAndStore(ctx context.Context, postPath string) error {
 	embeddingMutex.Lock()
 	defer embeddingMutex.Unlock()
 
@@ -35,7 +36,7 @@ func GenerateAndStoreEmbedding(ctx context.Context, postPath string) error {
 		return fmt.Errorf("failed to get post by path %s: %w", postPath, err)
 	}
 
-	renderedHTML, err := RenderContent(ctx, "post", post.ID, post.Content, post.Path)
+	renderedHTML, err := content.RenderContent(ctx, "post", post.ID, post.Content, post.Path)
 	if err != nil {
 		return fmt.Errorf("failed to render post content: %w", err)
 	}
@@ -87,8 +88,8 @@ func GenerateAndStoreEmbedding(ctx context.Context, postPath string) error {
 	return nil
 }
 
-// UpdateAllPostEmbeddings generates embeddings for all posts that don't have one
-func UpdateAllPostEmbeddings(ctx context.Context) {
+// UpdateAllPosts generates embeddings for all posts that don't have one
+func UpdateAllPosts(ctx context.Context) {
 	slog.Info("Starting to update post embeddings")
 
 	paths, err := db.GetPostPathsWithoutEmbeddings(ctx)
@@ -110,7 +111,7 @@ func UpdateAllPostEmbeddings(ctx context.Context) {
 	for i, path := range paths {
 		slog.Info("Generating embedding", "progress", fmt.Sprintf("%d/%d", i+1, len(paths)), "path", path)
 
-		if err := GenerateAndStoreEmbedding(ctx, path); err != nil {
+		if err := GenerateAndStore(ctx, path); err != nil {
 			slog.Error("Failed to generate embedding for post", "path", path, "error", err)
 			failureCount++
 		} else {
@@ -121,9 +122,9 @@ func UpdateAllPostEmbeddings(ctx context.Context) {
 	slog.Info("Finished updating post embeddings", "success", successCount, "failures", failureCount, "total", len(paths))
 }
 
-// GetRelatedPosts finds posts that are semantically similar to the given post.
+// RelatedPosts finds posts that are semantically similar to the given post.
 // Returns up to 3 related posts, ordered by similarity (closest first).
-func GetRelatedPosts(ctx context.Context, postID int) ([]string, error) {
+func RelatedPosts(ctx context.Context, postID int) ([]string, error) {
 	posts, err := db.GetRelatedPostsByID(ctx, postID, 3)
 	if err != nil {
 		return nil, err
