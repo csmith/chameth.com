@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -13,6 +14,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"chameth.com/chameth.com/metrics"
 )
 
 var (
@@ -32,14 +35,19 @@ var (
 	minFormAge   = 10 * time.Second
 )
 
-// Rejection is returned when a submission is rejected by a spam or abuse check.
+// Rejection is returned when a submission is rejected by one or more spam/abuse checks.
 // Use errors.As to check for this type to distinguish rejections from internal errors.
 type Rejection struct {
-	Err error
+	Causes []metrics.ContactRejectionCause
 }
 
-func (e *Rejection) Error() string { return e.Err.Error() }
-func (e *Rejection) Unwrap() error { return e.Err }
+func (e *Rejection) Error() string {
+	parts := make([]string, len(e.Causes))
+	for i, c := range e.Causes {
+		parts[i] = string(c)
+	}
+	return "submission rejected: " + strings.Join(parts, ", ")
+}
 
 // Method indicates how the contact form submission was received.
 type Method int
@@ -79,12 +87,38 @@ func Process(req Request, method Method, remoteAddr string) error {
 		host = remoteAddr
 	}
 
-	for _, check := range checks[method] {
-		if err := check(req, host); err != nil {
-			time.Sleep(5 * time.Second)
-			return err
+	var causes []metrics.ContactRejectionCause
+	for _, check := range checks {
+		err := check(req, host)
+		if err != nil {
+			var rej *Rejection
+			if errors.As(err, &rej) {
+				causes = append(causes, rej.Causes...)
+			} else {
+				return err
+			}
 		}
 	}
+
+	if method == MethodForm && len(causes) == 0 {
+		err := checkOOPSpam(req, host)
+		if err != nil {
+			var rej *Rejection
+			if errors.As(err, &rej) {
+				causes = append(causes, rej.Causes...)
+			} else {
+				return err
+			}
+		}
+	}
+
+	if len(causes) > 0 {
+		metrics.RecordContactSubmission(method.String(), causes)
+		time.Sleep(5 * time.Second)
+		return &Rejection{Causes: causes}
+	}
+
+	metrics.RecordContactSubmission(method.String(), nil)
 
 	content := messageBody(req, method, remoteAddr)
 	if err := sendContact(req, content); err != nil {
