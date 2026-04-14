@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"chameth.com/chameth.com/metrics"
+	"chameth.com/chameth.com/features/metrics"
 )
 
 var (

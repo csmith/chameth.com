@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"chameth.com/chameth.com/metrics"
+	"chameth.com/chameth.com/features/metrics"
 )
 
 // GetAllPosts returns all published posts without their content.

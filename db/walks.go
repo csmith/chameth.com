@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"chameth.com/chameth.com/metrics"
+	"chameth.com/chameth.com/features/metrics"
 )
 
 // UpsertWalk inserts or updates a walk based on external_id

@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"chameth.com/chameth.com/metrics"
+	"chameth.com/chameth.com/features/metrics"
 )
 
 // GetMediaByPath returns media for the given path.

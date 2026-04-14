@@ -286,15 +286,15 @@ type Walk struct {
 }
 
 type MonthlyWalkingSpeed struct {
-	Month        time.Time `db:"month"`
-	AvgSpeedKmh  float64   `db:"avg_speed_kmh"`
+	Month       time.Time `db:"month"`
+	AvgSpeedKmh float64   `db:"avg_speed_kmh"`
 }
 
 type BoardgameGame struct {
-	ID    string `db:"id"`
-	BggID int    `db:"bgg_id"`
-	Name  string `db:"name"`
-	Year  int    `db:"year"`
+	ID          string `db:"id"`
+	BggID       int    `db:"bgg_id"`
+	Name        string `db:"name"`
+	Year        int    `db:"year"`
 	Status      string `db:"status"`
 	IsExpansion bool   `db:"is_expansion"`
 }
@@ -379,11 +379,11 @@ type TopAlbum struct {
 }
 
 type TopArtist struct {
-	Name        string    `db:"name"`
-	TrackCount  int       `db:"track_count"`
-	AlbumCount  int       `db:"album_count"`
-	PlayCount int     `db:"play_count"`
-	ImagePath *string `db:"image_path"`
+	Name       string  `db:"name"`
+	TrackCount int     `db:"track_count"`
+	AlbumCount int     `db:"album_count"`
+	PlayCount  int     `db:"play_count"`
+	ImagePath  *string `db:"image_path"`
 }
 
 type NowPlaying struct {

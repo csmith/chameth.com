@@ -24,11 +24,11 @@ type navidromePlay struct {
 }
 
 type Play struct {
-	ID         string
-	PlayDate   time.Time
-	PlayCount  int
-	Recording  string // MusicBrainz recording ID
-	Title      string
+	ID        string
+	PlayDate  time.Time
+	PlayCount int
+	Recording string // MusicBrainz recording ID
+	Title     string
 }
 
 func (c *Client) LoginNavidrome(ctx context.Context) (string, error) {

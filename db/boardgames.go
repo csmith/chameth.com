@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"chameth.com/chameth.com/metrics"
+	"chameth.com/chameth.com/features/metrics"
 )
 
 func UpsertBoardgameGame(ctx context.Context, game BoardgameGame) error {

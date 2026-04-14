@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"chameth.com/chameth.com/metrics"
+	"chameth.com/chameth.com/features/metrics"
 )
 
 func GetFilmReviewByID(ctx context.Context, id int) (*FilmReview, error) {

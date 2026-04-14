@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"chameth.com/chameth.com/metrics"
+	"chameth.com/chameth.com/features/metrics"
 )
 
 func GetFilmByID(ctx context.Context, id int) (*Film, error) {

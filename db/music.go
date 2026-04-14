@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"chameth.com/chameth.com/metrics"
+	"chameth.com/chameth.com/features/metrics"
 )
 
 func UpsertMusicArtist(ctx context.Context, artist MusicArtist) (int, error) {

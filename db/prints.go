@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 
-	"chameth.com/chameth.com/metrics"
+	"chameth.com/chameth.com/features/metrics"
 )
 
 // GetAllPrints returns all prints ordered by name.

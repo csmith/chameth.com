@@ -12,7 +12,7 @@ import (
 
 	"chameth.com/chameth.com/external/oopspam"
 	"chameth.com/chameth.com/external/spamhaus"
-	"chameth.com/chameth.com/metrics"
+	"chameth.com/chameth.com/features/metrics"
 )
 
 type check = func(req Request, remoteAddr string) error

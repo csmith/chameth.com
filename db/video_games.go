@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"chameth.com/chameth.com/metrics"
+	"chameth.com/chameth.com/features/metrics"
 )
 
 func generateVideoGamePath(title string) string {

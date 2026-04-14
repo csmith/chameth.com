@@ -22,14 +22,14 @@ func ImportBoardgamesHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var data struct {
 			Games []struct {
-				ID       int    `json:"id"`
-				UUID     string `json:"uuid"`
-				BggID    int    `json:"bggId"`
-				BggName  string `json:"bggName"`
-				BggYear  int    `json:"bggYear"`
-				URLImage    string `json:"urlImage"`
-				IsBaseGame  int    `json:"isBaseGame"`
-				Copies   []struct {
+				ID         int    `json:"id"`
+				UUID       string `json:"uuid"`
+				BggID      int    `json:"bggId"`
+				BggName    string `json:"bggName"`
+				BggYear    int    `json:"bggYear"`
+				URLImage   string `json:"urlImage"`
+				IsBaseGame int    `json:"isBaseGame"`
+				Copies     []struct {
 					StatusOwned     int `json:"statusOwned"`
 					StatusPrevOwned int `json:"statusPrevOwned"`
 				} `json:"copies"`
@@ -71,10 +71,10 @@ func ImportBoardgamesHandler() func(http.ResponseWriter, *http.Request) {
 			}
 
 			err := db.UpsertBoardgameGame(r.Context(), db.BoardgameGame{
-				ID:     g.UUID,
-				BggID:  g.BggID,
-				Name:   g.BggName,
-				Year:   g.BggYear,
+				ID:          g.UUID,
+				BggID:       g.BggID,
+				Name:        g.BggName,
+				Year:        g.BggYear,
 				Status:      status,
 				IsExpansion: g.IsBaseGame != 1,
 			})
