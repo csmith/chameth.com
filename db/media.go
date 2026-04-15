@@ -4,16 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-
-	"chameth.com/chameth.com/features/metrics"
 )
 
-// GetMediaByPath returns media for the given path.
-// Returns nil if no media is found with that path.
 func GetMediaByPath(ctx context.Context, path string) (*Media, error) {
-	metrics.LogQuery(ctx)
-	var media Media
-	err := db.GetContext(ctx, &media, `
+	media, err := Get[Media](ctx, `
 		SELECT m.id, m.content_type, m.original_filename, m.data
 		FROM media m
 		JOIN media_relations mr ON m.id = mr.media_id
@@ -25,11 +19,8 @@ func GetMediaByPath(ctx context.Context, path string) (*Media, error) {
 	return &media, nil
 }
 
-// GetMediaRelationsForEntity returns all media relations for a given entity type and ID.
 func GetMediaRelationsForEntity(ctx context.Context, entityType string, entityID int) ([]MediaRelationWithDetails, error) {
-	metrics.LogQuery(ctx)
-	var relations []MediaRelationWithDetails
-	err := db.SelectContext(ctx, &relations, `
+	return Select[MediaRelationWithDetails](ctx, `
 		SELECT
 			mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id,
 			m.id, m.content_type, m.original_filename, m.width, m.height, m.parent_media_id
@@ -37,16 +28,9 @@ func GetMediaRelationsForEntity(ctx context.Context, entityType string, entityID
 		JOIN media m ON mr.media_id = m.id
 		WHERE mr.entity_type = $1 AND mr.entity_id = $2
 	`, entityType, entityID)
-	if err != nil {
-		return nil, err
-	}
-	return relations, nil
 }
 
-// HasMediaRelationForEntity returns true if a media relation exists for the given entity and optional role.
 func HasMediaRelationForEntity(ctx context.Context, entityType string, entityID int, role string) (bool, error) {
-	metrics.LogQuery(ctx)
-	var exists bool
 	query := `SELECT EXISTS(SELECT 1 FROM media_relations WHERE entity_type = $1 AND entity_id = $2`
 	args := []any{entityType, entityID}
 	if role != "" {
@@ -54,14 +38,11 @@ func HasMediaRelationForEntity(ctx context.Context, entityType string, entityID 
 		args = append(args, role)
 	}
 	query += `)`
-	err := db.GetContext(ctx, &exists, query, args...)
-	return exists, err
+	return Get[bool](ctx, query, args...)
 }
 
 func GetOpenGraphDetailsForEntity(ctx context.Context, entityType string, entityID int) (*MediaRelationWithDetails, error) {
-	metrics.LogQuery(ctx)
-	var relation MediaRelationWithDetails
-	err := db.GetContext(ctx, &relation, `
+	relation, err := Get[MediaRelationWithDetails](ctx, `
 		SELECT
 			mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id,
 			m.id, m.content_type, m.original_filename, m.width, m.height, m.parent_media_id, m.data
@@ -79,11 +60,8 @@ func GetOpenGraphDetailsForEntity(ctx context.Context, entityType string, entity
 	return &relation, nil
 }
 
-// GetOpenGraphImageForEntity returns the OpenGraph image path for a given entity, or empty string if none exists.
 func GetOpenGraphImageForEntity(ctx context.Context, entityType string, entityID int) (string, error) {
-	metrics.LogQuery(ctx)
-	var path string
-	err := db.GetContext(ctx, &path, `
+	path, err := Get[string](ctx, `
 		SELECT mr.path
 		FROM media_relations mr
 		WHERE mr.entity_type = $1 AND mr.entity_id = $2 AND mr.role = 'opengraph'
@@ -98,13 +76,8 @@ func GetOpenGraphImageForEntity(ctx context.Context, entityType string, entityID
 	return path, nil
 }
 
-// GetOpenGraphImageVariantsForEntity returns the OpenGraph image and all its variants for a given entity.
-// Returns the primary OG image first, followed by all variants (webp, avif, etc.)
-// Returns empty slice if no OG image exists.
 func GetOpenGraphImageVariantsForEntity(ctx context.Context, entityType string, entityID int) ([]MediaImageVariant, error) {
-	metrics.LogQuery(ctx)
-	var variants []MediaImageVariant
-	err := db.SelectContext(ctx, &variants, `
+	return Select[MediaImageVariant](ctx, `
 		SELECT mr.path, m.content_type, COALESCE(mr.description, '') AS description
 		FROM media_relations mr
 		JOIN media m ON mr.media_id = m.id
@@ -118,52 +91,33 @@ func GetOpenGraphImageVariantsForEntity(ctx context.Context, entityType string, 
 		WHERE mr.entity_type = $1 AND mr.entity_id = $2 AND mr.role = 'opengraph'
 		  AND mr2.entity_type = $1 AND mr2.entity_id = $2
 	`, entityType, entityID)
-	if err != nil {
-		return nil, err
-	}
-	return variants, nil
 }
 
-// CreateMedia creates a new media entry and returns its ID.
 func CreateMedia(ctx context.Context, contentType, originalFilename string, data []byte, width, height *int, parentMediaID *int) (int, error) {
-	metrics.LogQuery(ctx)
-	var id int
-	err := db.GetContext(ctx, &id, `
+	return Get[int](ctx, `
 		INSERT INTO media (content_type, original_filename, data, width, height, parent_media_id)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id
 	`, contentType, originalFilename, data, width, height, parentMediaID)
-	return id, err
 }
 
 func UpdateMediaData(ctx context.Context, id int, data []byte, width, height *int) error {
-	metrics.LogQuery(ctx)
-	_, err := db.ExecContext(ctx, `
+	_, err := Exec(ctx, `
 		UPDATE media SET data = $1, width = $2, height = $3 WHERE id = $4
 	`, data, width, height, id)
 	return err
 }
 
-// GetAllMedia returns all media items ordered by ID descending (without binary data).
 func GetAllMedia(ctx context.Context) ([]MediaMetadata, error) {
-	metrics.LogQuery(ctx)
-	var media []MediaMetadata
-	err := db.SelectContext(ctx, &media, `
+	return Select[MediaMetadata](ctx, `
 		SELECT id, content_type, original_filename, width, height, parent_media_id
 		FROM media
 		ORDER BY id DESC
 	`)
-	if err != nil {
-		return nil, err
-	}
-	return media, nil
 }
 
-// GetMediaByID returns media by its ID including the binary data.
 func GetMediaByID(ctx context.Context, id int) (*Media, error) {
-	metrics.LogQuery(ctx)
-	var media Media
-	err := db.GetContext(ctx, &media, `
+	media, err := Get[Media](ctx, `
 		SELECT id, content_type, original_filename, data, width, height, parent_media_id
 		FROM media
 		WHERE id = $1
@@ -174,10 +128,8 @@ func GetMediaByID(ctx context.Context, id int) (*Media, error) {
 	return &media, nil
 }
 
-// UpdateMediaRelation updates the caption, description, and role for a media relation.
 func UpdateMediaRelation(ctx context.Context, entityType string, entityID int, path string, caption, description, role *string) error {
-	metrics.LogQuery(ctx)
-	_, err := db.ExecContext(ctx, `
+	_, err := Exec(ctx, `
 		UPDATE media_relations
 		SET caption = $1, description = $2, role = $3
 		WHERE entity_type = $4 AND entity_id = $5 AND path = $6
@@ -185,20 +137,16 @@ func UpdateMediaRelation(ctx context.Context, entityType string, entityID int, p
 	return err
 }
 
-// DeleteMediaRelation removes a media relation.
 func DeleteMediaRelation(ctx context.Context, entityType string, entityID int, path string) error {
-	metrics.LogQuery(ctx)
-	_, err := db.ExecContext(ctx, `
+	_, err := Exec(ctx, `
 		DELETE FROM media_relations
 		WHERE entity_type = $1 AND entity_id = $2 AND path = $3
 	`, entityType, entityID, path)
 	return err
 }
 
-// UpdateMediaRelationVariants updates the caption and description for all variants of a parent media.
 func UpdateMediaRelationVariants(ctx context.Context, entityType string, entityID, parentMediaID int, caption, description *string) error {
-	metrics.LogQuery(ctx)
-	_, err := db.ExecContext(ctx, `
+	_, err := Exec(ctx, `
 		UPDATE media_relations
 		SET caption = $1, description = $2
 		WHERE entity_type = $3 AND entity_id = $4
@@ -209,11 +157,8 @@ func UpdateMediaRelationVariants(ctx context.Context, entityType string, entityI
 	return err
 }
 
-// GetAvailableMediaForEntity returns all media not already attached to the given entity, ordered by newest first.
 func GetAvailableMediaForEntity(ctx context.Context, entityType string, entityID int) ([]MediaMetadata, error) {
-	metrics.LogQuery(ctx)
-	var media []MediaMetadata
-	err := db.SelectContext(ctx, &media, `
+	return Select[MediaMetadata](ctx, `
 		SELECT id, content_type, original_filename, width, height, parent_media_id
 		FROM media
 		WHERE id NOT IN (
@@ -222,16 +167,10 @@ func GetAvailableMediaForEntity(ctx context.Context, entityType string, entityID
 		)
 		ORDER BY id DESC
 	`, entityType, entityID)
-	if err != nil {
-		return nil, err
-	}
-	return media, nil
 }
 
-// CreateMediaRelation creates a new media relation.
 func CreateMediaRelation(ctx context.Context, entityType string, entityID, mediaID int, path string, caption, description, role *string) error {
-	metrics.LogQuery(ctx)
-	_, err := db.ExecContext(ctx, `
+	_, err := Exec(ctx, `
 		INSERT INTO media_relations (path, media_id, caption, description, role, entity_type, entity_id)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 	`, path, mediaID, caption, description, role, entityType, entityID)
@@ -239,7 +178,6 @@ func CreateMediaRelation(ctx context.Context, entityType string, entityID, media
 }
 
 func DeleteMedia(ctx context.Context, id int) error {
-	metrics.LogQuery(ctx)
-	_, err := db.ExecContext(ctx, "DELETE FROM media WHERE id = $1", id)
+	_, err := Exec(ctx, "DELETE FROM media WHERE id = $1", id)
 	return err
 }

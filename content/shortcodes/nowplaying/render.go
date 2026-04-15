@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/db"
 )
 
 //go:embed *.gotpl
@@ -17,7 +16,7 @@ var templates string
 var tmpl = template.Must(template.New("nowplaying.html.gotpl").Parse(templates))
 
 func RenderFromText(args []string, ctx *common.Context) (string, error) {
-	np, err := db.GetNowPlaying(ctx)
+	np, err := query(ctx)
 	if err != nil {
 		return "", fmt.Errorf("failed to get now playing: %w", err)
 	}

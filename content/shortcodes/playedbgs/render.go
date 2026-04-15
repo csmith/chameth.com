@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/db"
 )
 
 //go:embed *.gotpl
@@ -31,7 +30,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 		return "", fmt.Errorf("invalid end date: %s (expected YYYY-MM-DD)", args[1])
 	}
 
-	games, err := db.GetBoardgameGamesWithPlayCountByDateRange(ctx.Context, startDate, endDate)
+	games, err := query(ctx.Context, startDate, endDate)
 	if err != nil {
 		return "", fmt.Errorf("failed to get boardgame plays by date range: %w", err)
 	}

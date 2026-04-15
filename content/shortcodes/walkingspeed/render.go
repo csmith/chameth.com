@@ -28,7 +28,7 @@ const (
 )
 
 func RenderFromText(_ []string, ctx *common.Context) (string, error) {
-	speeds, err := db.GetMonthlyMaxWalkingSpeed(ctx.Context)
+	speeds, err := query(ctx.Context)
 	if err != nil {
 		return "", fmt.Errorf("failed to get monthly walking speeds: %w", err)
 	}

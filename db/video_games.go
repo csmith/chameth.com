@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
-
-	"chameth.com/chameth.com/features/metrics"
 )
 
 func generateVideoGamePath(title string) string {
@@ -27,9 +25,7 @@ func generateVideoGamePath(title string) string {
 }
 
 func GetVideoGameByID(ctx context.Context, id int) (*VideoGame, error) {
-	metrics.LogQuery(ctx)
-	var game VideoGame
-	err := db.GetContext(ctx, &game, "SELECT id, title, platform, overview, published, path FROM video_games WHERE id = $1", id)
+	game, err := Get[VideoGame](ctx, "SELECT id, title, platform, overview, published, path FROM video_games WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -37,17 +33,10 @@ func GetVideoGameByID(ctx context.Context, id int) (*VideoGame, error) {
 }
 
 func GetAllVideoGames(ctx context.Context) ([]VideoGame, error) {
-	metrics.LogQuery(ctx)
-	var games []VideoGame
-	err := db.SelectContext(ctx, &games, "SELECT id, title, platform, overview, published, path FROM video_games ORDER BY title")
-	if err != nil {
-		return nil, err
-	}
-	return games, nil
+	return Select[VideoGame](ctx, "SELECT id, title, platform, overview, published, path FROM video_games ORDER BY title")
 }
 
 func GetAllVideoGamesWithReviews(ctx context.Context) ([]VideoGameWithReview, error) {
-	metrics.LogQuery(ctx)
 	query := `
 		SELECT
 			vg.id, vg.title, vg.platform, vg.overview, vg.published, vg.path,
@@ -62,7 +51,7 @@ func GetAllVideoGamesWithReviews(ctx context.Context) ([]VideoGameWithReview, er
 		ORDER BY vg.title
 	`
 
-	rows, err := db.QueryContext(ctx, query)
+	rows, err := Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -112,9 +101,8 @@ func GetAllVideoGamesWithReviews(ctx context.Context) ([]VideoGameWithReview, er
 }
 
 func CreateVideoGame(ctx context.Context, title, platform, overview, path string) (int, error) {
-	metrics.LogQuery(ctx)
 	var id int
-	err := db.QueryRowContext(ctx, `
+	err := QueryRow(ctx, `
 		INSERT INTO video_games (title, platform, overview, published, path)
 		VALUES ($1, $2, $3, false, $4)
 		RETURNING id
@@ -126,8 +114,7 @@ func CreateVideoGame(ctx context.Context, title, platform, overview, path string
 }
 
 func UpdateVideoGame(ctx context.Context, id int, title, platform, overview, path string, published bool) error {
-	metrics.LogQuery(ctx)
-	_, err := db.ExecContext(ctx, `
+	_, err := Exec(ctx, `
 		UPDATE video_games
 		SET title = $1, platform = $2, overview = $3, published = $4, path = $5
 		WHERE id = $6
@@ -139,9 +126,7 @@ func UpdateVideoGame(ctx context.Context, id int, title, platform, overview, pat
 }
 
 func GetVideoGameByPath(ctx context.Context, path string) (*VideoGame, error) {
-	metrics.LogQuery(ctx)
-	var game VideoGame
-	err := db.GetContext(ctx, &game, "SELECT id, title, platform, overview, published, path FROM video_games WHERE path = $1 OR path = $2", path, path+"/")
+	game, err := Get[VideoGame](ctx, "SELECT id, title, platform, overview, published, path FROM video_games WHERE path = $1 OR path = $2", path, path+"/")
 	if err != nil {
 		return nil, err
 	}
@@ -149,8 +134,7 @@ func GetVideoGameByPath(ctx context.Context, path string) (*VideoGame, error) {
 }
 
 func DeleteVideoGame(ctx context.Context, id int) error {
-	metrics.LogQuery(ctx)
-	_, err := db.ExecContext(ctx, "DELETE FROM video_games WHERE id = $1", id)
+	_, err := Exec(ctx, "DELETE FROM video_games WHERE id = $1", id)
 	if err != nil {
 		return fmt.Errorf("failed to delete video game: %w", err)
 	}

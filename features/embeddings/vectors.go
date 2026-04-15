@@ -80,7 +80,7 @@ func GenerateAndStore(ctx context.Context, postPath string) error {
 		return fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	if err := db.UpdatePostEmbedding(ctx, postPath, pgvector.NewVector(ollamaResp.Embedding)); err != nil {
+	if err := updatePostEmbedding(ctx, postPath, pgvector.NewVector(ollamaResp.Embedding)); err != nil {
 		return err
 	}
 
@@ -92,7 +92,7 @@ func GenerateAndStore(ctx context.Context, postPath string) error {
 func UpdateAllPosts(ctx context.Context) {
 	slog.Info("Starting to update post embeddings")
 
-	paths, err := db.GetPostPathsWithoutEmbeddings(ctx)
+	paths, err := postPathsWithoutEmbeddings(ctx)
 	if err != nil {
 		slog.Error("Failed to query posts without embeddings", "error", err)
 		return
@@ -125,7 +125,7 @@ func UpdateAllPosts(ctx context.Context) {
 // RelatedPosts finds posts that are semantically similar to the given post.
 // Returns up to 3 related posts, ordered by similarity (closest first).
 func RelatedPosts(ctx context.Context, postID int) ([]string, error) {
-	posts, err := db.GetRelatedPostsByID(ctx, postID, 3)
+	posts, err := relatedPostsByID(ctx, postID, 3)
 	if err != nil {
 		return nil, err
 	}

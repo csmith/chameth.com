@@ -68,7 +68,7 @@ func importMusicCatalog(ctx context.Context, client *http.Client) {
 				continue
 			}
 
-			id, err := db.UpsertMusicArtist(ctx, db.MusicArtist{
+			id, err := upsertArtist(ctx, db.MusicArtist{
 				MusicBrainzID: artist.MusicBrainzID,
 				SubsonicID:    artist.ID,
 				Name:          artist.Name,
@@ -125,7 +125,7 @@ func importMusicAlbums(ctx context.Context, client *http.Client, sc *subsonic.Cl
 
 			var artistID *int
 			if len(album.AlbumArtists) > 0 {
-				id, err := db.GetMusicArtistBySubsonicID(ctx, album.AlbumArtists[0].ID)
+				id, err := artistBySubsonicID(ctx, album.AlbumArtists[0].ID)
 				if err != nil {
 					slog.Error("Failed to find artist for album", "error", err, "album", album.Title)
 				} else {
@@ -138,7 +138,7 @@ func importMusicAlbums(ctx context.Context, client *http.Client, sc *subsonic.Cl
 				year = &album.Year
 			}
 
-			id, err := db.UpsertMusicAlbum(ctx, db.MusicAlbum{
+			id, err := upsertAlbum(ctx, db.MusicAlbum{
 				MusicBrainzID: album.MusicBrainzID,
 				SubsonicID:    album.ID,
 				Name:          album.Title,
@@ -168,7 +168,7 @@ func importMusicAlbums(ctx context.Context, client *http.Client, sc *subsonic.Cl
 }
 
 func importMusicTracks(ctx context.Context, sc *subsonic.Client) error {
-	albums, err := db.GetAlbumsWithoutTracks(ctx)
+	albums, err := albumsWithoutTracks(ctx)
 	if err != nil {
 		return err
 	}
@@ -200,7 +200,7 @@ func importMusicTracks(ctx context.Context, sc *subsonic.Client) error {
 				trackNumber = &song.TrackNumber
 			}
 
-			if _, err := db.UpsertMusicTrack(ctx, db.MusicTrack{
+			if _, err := upsertTrack(ctx, db.MusicTrack{
 				SubsonicID:    song.ID,
 				MusicBrainzID: song.MusicBrainzID,
 				AlbumID:       album.ID,
@@ -220,7 +220,7 @@ func importMusicTracks(ctx context.Context, sc *subsonic.Client) error {
 }
 
 func importPlays(ctx context.Context, sc *subsonic.Client) error {
-	mostRecent, err := db.GetMostRecentPlayTime(ctx)
+	mostRecent, err := mostRecentPlayTime(ctx)
 	if err != nil {
 		return err
 	}
@@ -253,13 +253,13 @@ func importPlays(ctx context.Context, sc *subsonic.Client) error {
 			playedAt := play.PlayDate.Truncate(time.Microsecond)
 
 			if playedAt.Before(mostRecent) || playedAt.Equal(mostRecent) {
-				slog.Info("Reached previously imported plays", "imported", imported)
+				slog.Debug("Reached previously imported plays", "imported", imported)
 				return nil
 			}
 
-			trackID, err := db.GetTrackByMusicBrainzID(ctx, play.Recording)
+			trackID, err := trackByMusicBrainzID(ctx, play.Recording)
 			if err != nil {
-				if err := db.InsertUnmatchedMusicPlay(ctx, db.UnmatchedMusicPlay{
+				if err := insertUnmatchedPlay(ctx, db.UnmatchedMusicPlay{
 					MusicBrainzID: play.Recording,
 					Title:         play.Title,
 					PlayedAt:      playedAt,
@@ -270,7 +270,7 @@ func importPlays(ctx context.Context, sc *subsonic.Client) error {
 				continue
 			}
 
-			if err := db.InsertMusicPlay(ctx, db.MusicPlay{
+			if err := insertPlay(ctx, db.MusicPlay{
 				TrackID:   trackID,
 				PlayedAt:  playedAt,
 				PlayCount: play.PlayCount,
@@ -292,7 +292,7 @@ func importPlays(ctx context.Context, sc *subsonic.Client) error {
 }
 
 func resolveUnmatchedPlays(ctx context.Context) {
-	unmatched, err := db.GetUnmatchedMusicPlays(ctx)
+	unmatched, err := unmatchedPlays(ctx)
 	if err != nil {
 		slog.Error("Failed to get unmatched plays", "error", err)
 		return
@@ -303,12 +303,12 @@ func resolveUnmatchedPlays(ctx context.Context) {
 
 	resolved := 0
 	for _, play := range unmatched {
-		trackID, err := db.GetTrackByMusicBrainzID(ctx, play.MusicBrainzID)
+		trackID, err := trackByMusicBrainzID(ctx, play.MusicBrainzID)
 		if err != nil {
 			continue
 		}
 
-		if err := db.InsertMusicPlay(ctx, db.MusicPlay{
+		if err := insertPlay(ctx, db.MusicPlay{
 			TrackID:   trackID,
 			PlayedAt:  play.PlayedAt,
 			PlayCount: play.PlayCount,
@@ -317,7 +317,7 @@ func resolveUnmatchedPlays(ctx context.Context) {
 			continue
 		}
 
-		if err := db.DeleteUnmatchedMusicPlay(ctx, play.ID); err != nil {
+		if err := deleteUnmatchedPlay(ctx, play.ID); err != nil {
 			slog.Error("Failed to delete resolved unmatched play", "error", err, "title", play.Title)
 			continue
 		}

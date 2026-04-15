@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/db"
 )
 
 //go:embed *.gotpl
@@ -28,7 +27,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 	}
 	svg := args[2]
 
-	totalDistance, err := db.GetTotalDistanceKm(ctx.Context)
+	totalDistance, err := query(ctx.Context)
 	if err != nil {
 		return "", fmt.Errorf("failed to get total distance: %w", err)
 	}

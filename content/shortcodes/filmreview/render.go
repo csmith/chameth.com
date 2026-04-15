@@ -10,7 +10,6 @@ import (
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/content/shortcodes/common"
 	"chameth.com/chameth.com/content/shortcodes/rating"
-	"chameth.com/chameth.com/db"
 )
 
 //go:embed *.gotpl
@@ -28,7 +27,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 		return "", fmt.Errorf("invalid film review ID: %s", args[0])
 	}
 
-	data, err := db.GetFilmReviewWithFilmAndPoster(ctx.Context, id)
+	data, err := query(ctx.Context, id)
 	if err != nil {
 		return "", fmt.Errorf("failed to get film review: %w", err)
 	}

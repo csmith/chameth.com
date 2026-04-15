@@ -5,14 +5,10 @@ import (
 	"database/sql"
 	"fmt"
 	"strconv"
-
-	"chameth.com/chameth.com/features/metrics"
 )
 
 func GetFilmByID(ctx context.Context, id int) (*Film, error) {
-	metrics.LogQuery(ctx)
-	var film Film
-	err := db.GetContext(ctx, &film, "SELECT id, tmdb_id, title, year, overview, runtime, published, path FROM films WHERE id = $1", id)
+	film, err := Get[Film](ctx, "SELECT id, tmdb_id, title, year, overview, runtime, published, path FROM films WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -20,17 +16,10 @@ func GetFilmByID(ctx context.Context, id int) (*Film, error) {
 }
 
 func GetAllFilms(ctx context.Context) ([]Film, error) {
-	metrics.LogQuery(ctx)
-	var films []Film
-	err := db.SelectContext(ctx, &films, "SELECT id, tmdb_id, title, year, overview, runtime, published, path FROM films ORDER BY title")
-	if err != nil {
-		return nil, err
-	}
-	return films, nil
+	return Select[Film](ctx, "SELECT id, tmdb_id, title, year, overview, runtime, published, path FROM films ORDER BY title")
 }
 
 func GetAllFilmsWithReviews(ctx context.Context) ([]FilmWithReview, error) {
-	metrics.LogQuery(ctx)
 	query := `
 		SELECT
 			f.id, f.tmdb_id, f.title, f.year, f.overview, f.runtime, f.published, f.path,
@@ -45,7 +34,7 @@ func GetAllFilmsWithReviews(ctx context.Context) ([]FilmWithReview, error) {
 		ORDER BY f.title
 	`
 
-	rows, err := db.QueryContext(ctx, query)
+	rows, err := Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +75,6 @@ func GetAllFilmsWithReviews(ctx context.Context) ([]FilmWithReview, error) {
 }
 
 func GetAllFilmsWithReviewsAndPosters(ctx context.Context) ([]FilmWithReviewAndPoster, error) {
-	metrics.LogQuery(ctx)
 	query := `
 		SELECT
 			f.id, f.tmdb_id, f.title, f.year, f.overview, f.runtime, f.published, f.path,
@@ -105,7 +93,7 @@ func GetAllFilmsWithReviewsAndPosters(ctx context.Context) ([]FilmWithReviewAndP
 		ORDER BY f.title
 	`
 
-	rows, err := db.QueryContext(ctx, query)
+	rows, err := Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +154,6 @@ func GetAllFilmsWithReviewsAndPosters(ctx context.Context) ([]FilmWithReviewAndP
 }
 
 func CreateFilm(ctx context.Context, tmdbID int, title, year, path string, overview string, runtime int) (int, error) {
-	metrics.LogQuery(ctx)
 	var yearPtr *int
 	if year != "" {
 		y, err := strconv.Atoi(year)
@@ -181,7 +168,7 @@ func CreateFilm(ctx context.Context, tmdbID int, title, year, path string, overv
 	}
 
 	var id int
-	err := db.QueryRowContext(ctx, `
+	err := QueryRow(ctx, `
 		INSERT INTO films (tmdb_id, title, year, overview, runtime, published, path)
 		VALUES ($1, $2, $3, $4, $5, false, $6)
 		RETURNING id
@@ -193,7 +180,6 @@ func CreateFilm(ctx context.Context, tmdbID int, title, year, path string, overv
 }
 
 func UpdateFilm(ctx context.Context, id int, tmdbID *int, title, year, path string, overview string, runtime int, published bool) error {
-	metrics.LogQuery(ctx)
 	var yearPtr *int
 	if year != "" {
 		y, err := strconv.Atoi(year)
@@ -207,7 +193,7 @@ func UpdateFilm(ctx context.Context, id int, tmdbID *int, title, year, path stri
 		runtimePtr = &runtime
 	}
 
-	_, err := db.ExecContext(ctx, `
+	_, err := Exec(ctx, `
 		UPDATE films
 		SET tmdb_id = $1, title = $2, year = $3, overview = $4, runtime = $5, published = $6, path = $7
 		WHERE id = $8
@@ -219,9 +205,7 @@ func UpdateFilm(ctx context.Context, id int, tmdbID *int, title, year, path stri
 }
 
 func GetFilmByTMDBID(ctx context.Context, tmdbID int) (*Film, error) {
-	metrics.LogQuery(ctx)
-	var film Film
-	err := db.GetContext(ctx, &film, "SELECT id, tmdb_id, title, year, overview, runtime, published, path FROM films WHERE tmdb_id = $1", tmdbID)
+	film, err := Get[Film](ctx, "SELECT id, tmdb_id, title, year, overview, runtime, published, path FROM films WHERE tmdb_id = $1", tmdbID)
 	if err != nil {
 		return nil, err
 	}
@@ -229,9 +213,7 @@ func GetFilmByTMDBID(ctx context.Context, tmdbID int) (*Film, error) {
 }
 
 func GetFilmWithPosterByPath(ctx context.Context, path string) (*FilmWithPoster, error) {
-	metrics.LogQuery(ctx)
-	var film FilmWithPoster
-	err := db.GetContext(ctx, &film, `
+	film, err := Get[FilmWithPoster](ctx, `
 		SELECT
 			f.id, f.tmdb_id, f.title, f.year, f.overview, f.runtime, f.published, f.path,
 			mr.path as poster_path
@@ -246,8 +228,7 @@ func GetFilmWithPosterByPath(ctx context.Context, path string) (*FilmWithPoster,
 }
 
 func DeleteFilm(ctx context.Context, id int) error {
-	metrics.LogQuery(ctx)
-	_, err := db.ExecContext(ctx, "DELETE FROM films WHERE id = $1", id)
+	_, err := Exec(ctx, "DELETE FROM films WHERE id = $1", id)
 	if err != nil {
 		return fmt.Errorf("failed to delete film: %w", err)
 	}
@@ -255,9 +236,7 @@ func DeleteFilm(ctx context.Context, id int) error {
 }
 
 func SearchFilms(ctx context.Context, query string) ([]FilmSearchResult, error) {
-	metrics.LogQuery(ctx)
-	var results []FilmSearchResult
-	err := db.SelectContext(ctx, &results, `
+	return Select[FilmSearchResult](ctx, `
 		SELECT
 			f.id,
 			f.title,
@@ -271,8 +250,4 @@ func SearchFilms(ctx context.Context, query string) ([]FilmSearchResult, error) 
 			AND f.title ILIKE $1
 		ORDER BY f.title
 	`, "%"+query+"%")
-	if err != nil {
-		return nil, err
-	}
-	return results, nil
 }

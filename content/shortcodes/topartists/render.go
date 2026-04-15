@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/db"
 )
 
 //go:embed *.gotpl
@@ -26,7 +25,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 		limit = n
 	}
 
-	artists, err := db.GetTopArtists(ctx, limit)
+	artists, err := query(ctx, limit)
 	if err != nil {
 		return "", fmt.Errorf("failed to get top artists: %w", err)
 	}

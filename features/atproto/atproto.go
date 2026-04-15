@@ -23,7 +23,7 @@ func SyndicateAllPosts(ctx context.Context) {
 		return
 	}
 
-	posts, err := db.GetPostsNotSyndicatedToATProto(ctx)
+	posts, err := unsyndicatedPosts(ctx)
 	if err != nil {
 		slog.Error("Failed to get posts needing AT Proto syndication", "error", err)
 		return

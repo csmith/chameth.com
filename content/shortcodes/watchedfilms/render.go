@@ -9,7 +9,6 @@ import (
 
 	"chameth.com/chameth.com/content/shortcodes/common"
 	"chameth.com/chameth.com/content/shortcodes/rating"
-	"chameth.com/chameth.com/db"
 )
 
 //go:embed *.gotpl
@@ -32,7 +31,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 		return "", fmt.Errorf("invalid end date: %s (expected YYYY-MM-DD)", args[1])
 	}
 
-	reviews, err := db.GetPublishedFilmReviewsWithFilmAndPostersByDateRange(ctx.Context, startDate, endDate)
+	reviews, err := query(ctx.Context, startDate, endDate)
 	if err != nil {
 		return "", fmt.Errorf("failed to get film reviews by date range: %w", err)
 	}

@@ -56,15 +56,37 @@ func Init() error {
 	return nil
 }
 
-// FindContentByPath returns the content type for the given path.
-// It handles cases where the path may or may not have a trailing slash.
-// If path is "/foo", it will also check for "/foo/" in the database.
-// For prefix matches (goimports), it will match subpaths like "/foo/bar".
-// Returns "", nil if no matching path is found.
-func FindContentByPath(ctx context.Context, path string) (string, error) {
+func Get[T any](ctx context.Context, query string, args ...any) (T, error) {
 	metrics.LogQuery(ctx)
-	var contentType string
-	err := db.GetContext(ctx, &contentType, `
+	var result T
+	err := db.GetContext(ctx, &result, query, args...)
+	return result, err
+}
+
+func Select[T any](ctx context.Context, query string, args ...any) ([]T, error) {
+	metrics.LogQuery(ctx)
+	var results []T
+	err := db.SelectContext(ctx, &results, query, args...)
+	return results, err
+}
+
+func Exec(ctx context.Context, query string, args ...any) (sql.Result, error) {
+	metrics.LogQuery(ctx)
+	return db.ExecContext(ctx, query, args...)
+}
+
+func QueryRow(ctx context.Context, query string, args ...any) *sql.Row {
+	metrics.LogQuery(ctx)
+	return db.QueryRowContext(ctx, query, args...)
+}
+
+func Query(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
+	metrics.LogQuery(ctx)
+	return db.QueryContext(ctx, query, args...)
+}
+
+func FindContentByPath(ctx context.Context, path string) (string, error) {
+	contentType, err := Get[string](ctx, `
 		SELECT content_type FROM paths
 		WHERE path = $1 OR path = $2 OR (prefix_match AND $1 LIKE path || '%')
 		ORDER BY

@@ -10,7 +10,6 @@ import (
 
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/db"
 )
 
 //go:embed *.gotpl
@@ -32,7 +31,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 }
 
 func Render(ctx context.Context, id int) (string, error) {
-	list, count, entries, err := db.GetFilmListWithFilms(ctx, id)
+	list, count, entries, err := query(ctx, id)
 	if err != nil {
 		return "", fmt.Errorf("failed to get film list: %w", err)
 	}

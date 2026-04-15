@@ -9,7 +9,6 @@ import (
 
 	"chameth.com/chameth.com/content/shortcodes/common"
 	"chameth.com/chameth.com/content/shortcodes/rating"
-	"chameth.com/chameth.com/db"
 )
 
 //go:embed *.gotpl
@@ -18,7 +17,7 @@ var templates embed.FS
 var tmpl = template.Must(template.New("distribution.html.gotpl").ParseFS(templates, "distribution.html.gotpl"))
 
 func RenderFromText(_ []string, ctx *common.Context) (string, error) {
-	distribution, err := db.GetFilmRatingDistribution(ctx.Context)
+	distribution, err := query(ctx.Context)
 	if err != nil {
 		return "", fmt.Errorf("failed to get film rating distribution: %w", err)
 	}

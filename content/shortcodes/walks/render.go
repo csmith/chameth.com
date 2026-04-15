@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/db"
 )
 
 //go:embed *.gotpl
@@ -18,7 +17,7 @@ var templates embed.FS
 var tmpl = template.Must(template.New("walks.html.gotpl").ParseFS(templates, "walks.html.gotpl"))
 
 func RenderFromText(args []string, ctx *common.Context) (string, error) {
-	walks, err := db.GetAllWalks(ctx.Context)
+	walks, err := query(ctx.Context)
 	if err != nil {
 		return "", fmt.Errorf("failed to get walks: %w", err)
 	}
