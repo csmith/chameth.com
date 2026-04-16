@@ -22,118 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@keyframes rotation {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-.contact-container,
 .nod-container {
-    position: relative;
-
-    .loading,
-    .result {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        span {
-            width: 48px;
-            height: 48px;
-            border: 5px solid var(--accent-colour);
-            border-bottom-color: transparent;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
-        }
-
-        p {
-            background-color: var(--accent-colour);
-            padding: var(--medium-space);
-            color: var(--text-colour);
-            text-align: center;
-            border-radius: var(--border-radius);
-        }
-    }
-
-    &:has(.loading) form,
-    &:has(.result) form {
-        opacity: 0.5;
-    }
-
-    form {
-        margin: var(--smedium-space) 0;
-        padding-left: var(--smedium-space);
-        padding-right: var(--smedium-space);
-        padding-bottom: var(--smedium-space);
-
-        p {
-            font-family: "Chris Hand", sans-serif;
-            font-size: var(--font-size-xlarge);
-            line-height: var(--font-size-xlarge);
-            margin: 0;
-            padding: 0;
-
-            @media (width <= 900px) {
-                font-size: var(--font-size-large);
-                line-height: var(--font-size-large);
-            }
-
-            @media (width <= 800px) {
-                font-size: var(--font-size-regular);
-                line-height: var(--font-size-regular);
-            }
-
-            @media (width <= 600px) {
-                font-family: inherit;
-                font-size: var(--font-size-tiny);
-                line-height: var(--font-size-tiny);
-            }
-        }
-    }
-
-    form.contact {
-        display: flex;
-        flex-direction: column;
-        gap: var(--small-space);
-
-        input,
-        textarea {
-            font-size: var(--font-size-small);
-            background-color: var(--background-alt-colour);
-            color: var(--text-colour);
-            border: 1px solid var(--accent-colour);
-            border-radius: var(--border-radius);
-            padding: var(--small-space);
-        }
-
-        textarea {
-            min-height: 200px;
-            resize: vertical;
-        }
-
-        button {
-            font-size: var(--font-size-small);
-            background-color: var(--accent-colour);
-            color: var(--text-colour);
-            border: 0;
-            text-transform: uppercase;
-            padding: var(--small-space);
-            border-radius: var(--border-radius);
-            cursor: pointer;
-        }
-    }
-
     form.nod {
         --button-size: 125px;
 
@@ -161,8 +50,7 @@
                     inset 0 0 calc(var(--button-size) / 60)
                         calc(var(--button-size) / 12) var(--accent-colour),
                     inset 0 calc(-1 * var(--button-size) / 30)
-                        calc(var(--button-size) / 40)
-                        calc(var(--button-size) / 10)
+                        calc(var(--button-size) / 40) calc(var(--button-size) / 10)
                         hsla(from var(--accent-alt-colour) h s l / 0.7),
                     inset 0 0 calc(var(--button-size) / 60)
                         calc(var(--button-size) / 10)
@@ -291,13 +179,33 @@
             }
         }
 
+        p {
+            font-family: "Chris Hand", sans-serif;
+            font-size: var(--font-size-xlarge);
+            line-height: var(--font-size-xlarge);
+            margin: 0;
+            padding: var(--small-space);
+
+            @media (width <= 900px) {
+                font-size: var(--font-size-large);
+                line-height: var(--font-size-large);
+            }
+
+            @media (width <= 800px) {
+                font-size: var(--font-size-regular);
+                line-height: var(--font-size-regular);
+            }
+
+            @media (width <= 600px) {
+                font-family: inherit;
+                font-size: var(--font-size-tiny);
+                line-height: var(--font-size-tiny);
+            }
+        }
+
         div {
             align-self: center;
             text-align: center;
-
-            p {
-                padding: var(--small-space);
-            }
         }
     }
 }
@@ -308,5 +216,3 @@
         margin-top: 0;
     }
 }
-
-/** End of file **/

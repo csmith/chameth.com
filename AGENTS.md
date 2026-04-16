@@ -35,9 +35,12 @@ This avoids pre-rendering shortcode HTML in handlers. Arguments are
 converted to strings via `fmt.Sprint` so template values like ints
 can be passed directly.
 
+Any CSS file in a shortcode package will be included in the compiled
+stylesheet served by the site.
+
 ### CSS
 
-All frontend styles are in `assets/stylesheet`. CSS must NEVER be
+Global frontend styles are in `assets/stylesheet`. CSS must NEVER be
 inlined in HTML in the frontend. Selectors should be nested where
 possible/appropriate.
 
@@ -48,6 +51,13 @@ Flags should be defined close to where they're used, but hoisted to
 keep packages reusable where it makes sense. e.g. the
 `external/atproto` package takes configuration, and the flags are
 defined at the call site in `content`.
+
+### Vertical feature slices
+
+New code should prefer keeping code and resources together in their
+feature domains: DB operations, CSS, business logic, etc, should
+be in a single package. New HTTP handlers should be a thin wiring
+layer that hands over to the feature package.
 
 ### Admin interface
 

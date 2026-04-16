@@ -1,9 +1,45 @@
-input.subject {
-    position: absolute;
-    opacity: 0;
-    height: 0;
-    width: 0;
-    padding: 0;
-    border: none;
-    pointer-events: none;
+.contact-container form.contact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--small-space);
+
+    &:not([data-title]) {
+        padding-top: var(--smedium-space);
+    }
+
+    input.subject {
+        position: absolute;
+        opacity: 0;
+        height: 0;
+        width: 0;
+        padding: 0;
+        border: none;
+        pointer-events: none;
+    }
+
+    input,
+    textarea {
+        font-size: var(--font-size-small);
+        background-color: var(--background-alt-colour);
+        color: var(--text-colour);
+        border: 1px solid var(--accent-alt-colour);
+        border-radius: 5px;
+        padding: var(--small-space);
+    }
+
+    textarea {
+        min-height: 200px;
+        resize: vertical;
+    }
+
+    button {
+        font-size: var(--font-size-small);
+        background-color: var(--accent-colour);
+        color: var(--text-colour);
+        border: 0;
+        text-transform: uppercase;
+        padding: var(--small-space);
+        border-radius: 5px;
+        cursor: pointer;
+    }
 }
