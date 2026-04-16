@@ -11,13 +11,13 @@ require (
 	github.com/csmith/slogflags v1.1.0
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/jmoiron/sqlx v1.4.0
-	github.com/lib/pq v1.11.2
+	github.com/lib/pq v1.12.0
 	github.com/pgvector/pgvector-go v0.3.0
-	github.com/yuin/goldmark v1.7.16
+	github.com/yuin/goldmark v1.7.17
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	golang.org/x/image v0.37.0
 	golang.org/x/net v0.52.0
-	tailscale.com v1.96.1
+	tailscale.com v1.96.2
 )
 
 require (
