@@ -1,3 +1,9 @@
+.walking-stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--smedium-space);
+}
+
 .walkingdistance-badge {
     display: inline-grid;
     grid-template-areas:
