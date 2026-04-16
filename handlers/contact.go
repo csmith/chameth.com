@@ -32,8 +32,8 @@ func ContactForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := contact.Process(req, contact.MethodJSON, r.RemoteAddr); err != nil {
-		if _, ok := errors.AsType[*contact.Rejection](err); ok {
+	if err := contact.Process(r.Context(), req, contact.MethodJSON, r.RemoteAddr, r.UserAgent()); err != nil {
+		if errors.Is(err, contact.ErrRejected) {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
@@ -54,8 +54,8 @@ func ContactFormPost(w http.ResponseWriter, r *http.Request) {
 		Honeypot:    r.FormValue("subject"),
 	}
 
-	if err := contact.Process(req, contact.MethodForm, r.RemoteAddr); err != nil {
-		if _, ok := errors.AsType[*contact.Rejection](err); ok {
+	if err := contact.Process(r.Context(), req, contact.MethodForm, r.RemoteAddr, r.UserAgent()); err != nil {
+		if errors.Is(err, contact.ErrRejected) {
 			http.Error(w, "Something went wrong. Your message was not sent.", http.StatusBadRequest)
 			return
 		}

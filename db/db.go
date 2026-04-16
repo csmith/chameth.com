@@ -75,6 +75,11 @@ func Exec(ctx context.Context, query string, args ...any) (sql.Result, error) {
 	return db.ExecContext(ctx, query, args...)
 }
 
+func NamedExec(ctx context.Context, query string, arg any) (sql.Result, error) {
+	metrics.LogQuery(ctx)
+	return db.NamedExecContext(ctx, query, arg)
+}
+
 func QueryRow(ctx context.Context, query string, args ...any) *sql.Row {
 	metrics.LogQuery(ctx)
 	return db.QueryRowContext(ctx, query, args...)

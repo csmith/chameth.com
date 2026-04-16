@@ -1,6 +1,7 @@
 package contact
 
 import (
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
@@ -14,8 +15,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"chameth.com/chameth.com/features/metrics"
 )
 
 var (
@@ -35,77 +34,44 @@ var (
 	minFormAge   = 10 * time.Second
 )
 
-// Rejection is returned when a submission is rejected by one or more spam/abuse checks.
-// Use errors.As to check for this type to distinguish rejections from internal errors.
-type Rejection struct {
-	Causes []metrics.ContactRejectionCause
-}
-
-func (e *Rejection) Error() string {
-	parts := make([]string, len(e.Causes))
-	for i, c := range e.Causes {
-		parts[i] = string(c)
-	}
-	return "submission rejected: " + strings.Join(parts, ", ")
-}
-
-// Method indicates how the contact form submission was received.
-type Method string
-
-const (
-	MethodJSON Method = "JSON"
-	MethodForm Method = "Form"
-)
-
-// Request holds the data from a contact form submission.
-type Request struct {
-	Page        string `json:"page"`
-	SenderName  string `json:"name"`
-	SenderEmail string `json:"email"`
-	Message     string `json:"message"`
-	Timestamp   string `json:"ts"`
-	Honeypot    string `json:"subject"`
-}
-
-// Process validates the submission, runs spam checks, and sends the email.
-// It returns a *Rejection for spam/abuse rejections, or a regular error for
-// internal failures (e.g. email send failure).
-func Process(req Request, method Method, remoteAddr string) error {
+func Process(ctx context.Context, req Request, method Method, remoteAddr, userAgent string) error {
 	host, _, err := net.SplitHostPort(remoteAddr)
 	if err != nil {
 		host = remoteAddr
 	}
 
-	var causes []metrics.ContactRejectionCause
+	var failedChecks []cause
+
 	for _, check := range checks {
 		err := check(req, host)
 		if err != nil {
-			if rej, ok := errors.AsType[*Rejection](err); ok {
-				causes = append(causes, rej.Causes...)
+			var rej *rejection
+			if errors.As(err, &rej) {
+				failedChecks = append(failedChecks, rej.cause)
 			} else {
 				slog.Error("Error checking contact form for spam", "request", req, "error", err)
 			}
 		}
 	}
 
-	if method == MethodForm && len(causes) == 0 {
+	if method == MethodForm && len(failedChecks) == 0 {
 		err := checkOOPSpam(req, host)
 		if err != nil {
-			if rej, ok := errors.AsType[*Rejection](err); ok {
-				causes = append(causes, rej.Causes...)
+			var rej *rejection
+			if errors.As(err, &rej) {
+				failedChecks = append(failedChecks, rej.cause)
 			} else {
 				slog.Error("Error checking contact form for spam", "request", req, "error", err)
 			}
 		}
 	}
 
-	if len(causes) > 0 {
-		metrics.RecordContactSubmission(string(method), causes)
-		time.Sleep(5 * time.Second)
-		return &Rejection{Causes: causes}
-	}
+	recordMetric(ctx, string(method), userAgent, failedChecks, req)
 
-	metrics.RecordContactSubmission(string(method), nil)
+	if len(failedChecks) > 0 {
+		time.Sleep(5 * time.Second)
+		return ErrRejected
+	}
 
 	content := messageBody(req, method, remoteAddr)
 	if err := sendContact(req, content); err != nil {
@@ -154,7 +120,6 @@ func messageBody(c Request, method Method, remoteAddr string) string {
 	return body.String()
 }
 
-// SignedTimestamp returns an HMAC-signed timestamp token for embedding in forms.
 func SignedTimestamp() string {
 	ts := time.Now().Unix()
 	mac := hmac.New(sha256.New, []byte(*signingSecret))

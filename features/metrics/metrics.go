@@ -20,14 +20,6 @@ var (
 		[]string{"path"},
 	)
 
-	contactSubmissionsTotal = prometheus.NewCounterVec(
-		prometheus.CounterOpts{
-			Name: "contact_submissions_total",
-			Help: "Total contact form submissions. Each cause label is true/false.",
-		},
-		append([]string{"method"}, contactCauseLabelNames()...),
-	)
-
 	feedRequestsTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Name: "feed_requests_total",
@@ -40,6 +32,5 @@ var (
 func init() {
 	prometheus.MustRegister(httpRequestsTotal)
 	prometheus.MustRegister(dbQueriesPerRequest)
-	prometheus.MustRegister(contactSubmissionsTotal)
 	prometheus.MustRegister(feedRequestsTotal)
 }

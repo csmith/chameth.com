@@ -59,6 +59,9 @@ feature domains: DB operations, CSS, business logic, etc, should
 be in a single package. New HTTP handlers should be a thin wiring
 layer that hands over to the feature package.
 
+When doing this, DB operations should be placed in a `db.go` file
+in the package.
+
 ### Admin interface
 
 The admin interface is only accessible by a single user. We do
