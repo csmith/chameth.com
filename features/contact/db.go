@@ -8,7 +8,7 @@ import (
 	"chameth.com/chameth.com/db"
 )
 
-func recordMetric(ctx context.Context, method, userAgent string, failedChecks []cause, req Request) {
+func recordMetric(ctx context.Context, method, userAgent, remoteAddr string, failedChecks []cause, req Request) {
 	checksJSON, err := json.Marshal(failedChecks)
 	if err != nil {
 		slog.Error("Error marshalling contact checks", "error", err)
@@ -16,11 +16,12 @@ func recordMetric(ctx context.Context, method, userAgent string, failedChecks []
 	}
 
 	_, err = db.NamedExec(ctx, `
-		INSERT INTO contact_metrics (method, user_agent, checks, page, sender_name, sender_email, message)
-		VALUES (:method, :user_agent, :checks, :page, :sender_name, :sender_email, :message)
+		INSERT INTO contact_metrics (method, user_agent, remote_addr, checks, page, sender_name, sender_email, message)
+		VALUES (:method, :user_agent, :remote_addr, :checks, :page, :sender_name, :sender_email, :message)
 	`, map[string]any{
 		"method":       method,
 		"user_agent":   userAgent,
+		"remote_addr":  remoteAddr,
 		"checks":       checksJSON,
 		"page":         req.Page,
 		"sender_name":  req.SenderName,

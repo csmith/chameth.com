@@ -31,7 +31,8 @@ var (
 	rateLimitMu  sync.Mutex
 	rateLimitMap = make(map[string]time.Time)
 	rateLimitTTL = 1 * time.Minute
-	minFormAge   = 10 * time.Second
+
+	minFormAge = 10 * time.Second
 )
 
 func Process(ctx context.Context, req Request, method Method, remoteAddr, userAgent string) error {
@@ -66,7 +67,7 @@ func Process(ctx context.Context, req Request, method Method, remoteAddr, userAg
 		}
 	}
 
-	recordMetric(ctx, string(method), userAgent, failedChecks, req)
+	recordMetric(ctx, string(method), userAgent, remoteAddr, failedChecks, req)
 
 	if len(failedChecks) > 0 {
 		time.Sleep(5 * time.Second)
@@ -152,8 +153,7 @@ func isRateAllowed(ip string) bool {
 	rateLimitMu.Lock()
 	defer rateLimitMu.Unlock()
 
-	lastSubmission, exists := rateLimitMap[ip]
-	if exists && time.Since(lastSubmission) < rateLimitTTL {
+	if lastSubmission, exists := rateLimitMap[ip]; exists && time.Since(lastSubmission) < rateLimitTTL {
 		return false
 	}
 
