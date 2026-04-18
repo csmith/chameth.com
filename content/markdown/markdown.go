@@ -27,6 +27,7 @@ var md = goldmark.New(
 		),
 	),
 	goldmark.WithParserOptions(
+		parser.WithAutoHeadingID(),
 		&disableCodeBlocks{},
 	),
 	goldmark.WithRendererOptions(
