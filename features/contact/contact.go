@@ -26,11 +26,9 @@ var (
 	smtpUsername  = flag.String("contact-smtp-user", "", "username to supply to the SMTP server")
 	smtpPassword  = flag.String("contact-smtp-pass", "", "password to supply to the SMTP server")
 	signingSecret = flag.String("contact-signing-secret", "", "secret key used to sign form timestamps")
-	oopspamApiKey = flag.String("oopspam-apikey", "", "OOPSpam API key (empty to disable spam checks on form submissions)")
-
-	rateLimitMu  sync.Mutex
-	rateLimitMap = make(map[string]time.Time)
-	rateLimitTTL = 1 * time.Minute
+	rateLimitMu   sync.Mutex
+	rateLimitMap  = make(map[string]time.Time)
+	rateLimitTTL  = 1 * time.Minute
 
 	minFormAge = 10 * time.Second
 )
@@ -45,18 +43,6 @@ func Process(ctx context.Context, req Request, method Method, remoteAddr, userAg
 
 	for _, check := range checks {
 		err := check(req, host)
-		if err != nil {
-			var rej *rejection
-			if errors.As(err, &rej) {
-				failedChecks = append(failedChecks, rej.cause)
-			} else {
-				slog.Error("Error checking contact form for spam", "request", req, "error", err)
-			}
-		}
-	}
-
-	if method == MethodForm && len(failedChecks) == 0 {
-		err := checkOOPSpam(req, host)
 		if err != nil {
 			var rej *rejection
 			if errors.As(err, &rej) {

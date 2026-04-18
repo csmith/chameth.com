@@ -4,13 +4,11 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"log/slog"
 	"strconv"
 	"strings"
 	"time"
 
-	"chameth.com/chameth.com/external/oopspam"
 	"chameth.com/chameth.com/external/spamhaus"
 )
 
@@ -95,23 +93,6 @@ func checkSpamhaus(req Request, remoteAddr string) error {
 	if result.ExploitsBlockList {
 		slog.Info("Blocking contact form from XBL listed address", "remoteAddr", remoteAddr, "request", req)
 		return &rejection{cause: causeSpamhaus}
-	}
-	return nil
-}
-
-func checkOOPSpam(req Request, remoteAddr string) error {
-	if *oopspamApiKey == "" {
-		return nil
-	}
-
-	result, err := oopspam.IsSpam(*oopspamApiKey, req.Message, remoteAddr, req.SenderEmail)
-	if err != nil {
-		return fmt.Errorf("oopspam check: %w", err)
-	}
-
-	if result.IsSpam {
-		slog.Info("OOPSpam detected spam, blocking submission", "remoteAddr", remoteAddr, "score", result.Score, "details", result.Details)
-		return &rejection{cause: causeOOPSpam}
 	}
 	return nil
 }
