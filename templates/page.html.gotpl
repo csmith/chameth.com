@@ -44,6 +44,7 @@
         <a href="/snippets/">Snippets</a>
         <a href="/uses/">Uses</a>
         <a href="/sitemap/">Sitemap</a>
+        {{if .Admin}}<a href="https://website-admin.yak-wall.ts.net/">Admin</a>{{end}}
     </nav>
 </header>
 <main>

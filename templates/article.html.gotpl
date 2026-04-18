@@ -5,6 +5,7 @@
             <h2 class="p-name">{{ .ArticleTitle }}</h2>
             <p class="date">Published on
                 <time class="dt-published" datetime="{{ .ArticleDate.Iso }}">{{ .ArticleDate.Friendly }}</time>
+                {{if and .Admin .EditLink}}&middot; <a href="{{.EditLink}}">Edit</a>{{end}}
             </p>
         </header>
 

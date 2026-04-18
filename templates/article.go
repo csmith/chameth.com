@@ -6,6 +6,7 @@ type ArticleData struct {
 	ArticleSummary string
 	ArticleDate    ArticleDate
 	RelatedPosts   []string
+	EditLink       string
 }
 
 type ArticleDate struct {

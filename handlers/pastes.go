@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -69,6 +70,7 @@ func Paste(w http.ResponseWriter, r *http.Request) {
 				Friendly:    paste.Date.Format("Jan 2, 2006"),
 				ShowWarning: false,
 			},
+			EditLink: fmt.Sprintf("https://website-admin.yak-wall.ts.net/pastes/edit/%d", paste.ID),
 			PageData: content.CreatePageData(r.Context(), paste.Title, paste.Path, templates.OpenGraphHeaders{}),
 		},
 	})

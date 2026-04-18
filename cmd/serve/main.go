@@ -19,6 +19,7 @@ import (
 	"chameth.com/chameth.com/features/embeddings"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/music"
+	"chameth.com/chameth.com/features/sudo"
 	"chameth.com/chameth.com/handlers"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
@@ -104,6 +105,7 @@ func main() {
 	mux.Handle("GET /projects/{$}", http.HandlerFunc(handlers.ProjectsList))
 	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(handlers.HtmlSiteMap))
 	mux.Handle("GET /snippets/{$}", http.HandlerFunc(handlers.SnippetsList))
+	mux.Handle("GET /sudo", http.HandlerFunc(handlers.Sudo))
 	mux.Handle("/", http.HandlerFunc(handlers.Content))
 
 	server := &http.Server{
@@ -140,6 +142,7 @@ func main() {
 					middleware.WithHeader("Referrer-Policy", "no-referrer-when-downgrade"),
 				),
 				applyRedirects(),
+				sudo.Middleware,
 				middleware.Recover(),
 			),
 		)(mux),

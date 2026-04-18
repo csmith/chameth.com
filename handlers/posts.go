@@ -68,6 +68,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 				YearsOld:    yearsOld,
 			},
 			RelatedPosts: relatedPosts,
+			EditLink:     fmt.Sprintf("https://website-admin.yak-wall.ts.net/posts/edit/%d", post.ID),
 			PageData: content.CreatePageData(r.Context(), post.Title, post.Path, templates.OpenGraphHeaders{
 				Image: ogImage,
 				Type:  "article",

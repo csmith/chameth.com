@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 	"strings"
@@ -44,6 +45,7 @@ func Poem(w http.ResponseWriter, r *http.Request) {
 				Friendly:    poem.Date.Format("Jan 2, 2006"),
 				ShowWarning: false,
 			},
+			EditLink: fmt.Sprintf("https://website-admin.yak-wall.ts.net/poems/edit/%d", poem.ID),
 			PageData: content.CreatePageData(r.Context(), poem.Title, poem.Path, templates.OpenGraphHeaders{}),
 		},
 	})

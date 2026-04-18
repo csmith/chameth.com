@@ -10,6 +10,7 @@ type PageData struct {
 	OpenGraph    OpenGraphHeaders
 	RecentPosts  []RecentPost
 	Component    func(string, ...any) template.HTML
+	Admin        bool
 }
 
 type OpenGraphHeaders struct {
