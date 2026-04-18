@@ -8,5 +8,6 @@
         <input type="email" name="email" placeholder="Your e-mail address (optional)" />
         <textarea name="message" placeholder="Your message" required></textarea>
         <button type="submit" class="submit">Send!</button>
+        <p class="privacy">See the <a class="plain-link" href="/colophon/">colophon</a> for <a class="plain-link" href="/colophon/#contact-form">information on how personal data is used and retained</a> when submitting this form.</p>
     </form>
 </div>

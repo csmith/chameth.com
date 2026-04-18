@@ -42,4 +42,11 @@
         border-radius: 5px;
         cursor: pointer;
     }
+
+    p.privacy {
+        font-size: var(--font-size-tiny);
+        text-align: center;
+        margin: var(--small-space) 0 0;
+        color: var(--text-alt-colour);
+    }
 }
