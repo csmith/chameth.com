@@ -1,0 +1,8 @@
+CREATE TABLE request_metrics (
+    id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    recorded_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    path VARCHAR(256) NOT NULL,
+    request_id VARCHAR(64) NOT NULL,
+    duration_us INTEGER NOT NULL,
+    query_count INTEGER NOT NULL
+);

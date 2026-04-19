@@ -15,8 +15,10 @@ import (
 	"golang.org/x/text/message"
 )
 
+type contextKey int
+
 var (
-	requestIdKey = struct{}{}
+	requestIdKey contextKey
 
 	inFlightRequestsMu sync.RWMutex
 	inFlightRequests   = make(map[string]*request)
@@ -66,6 +68,8 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 			status := writer.statusCode()
 			httpRequestsTotal.WithLabelValues(r.Method, path, status).Inc()
 			dbQueriesPerRequest.WithLabelValues(path).Observe(float64(queries))
+
+			go recordRequestMetric(r.URL.Path, requestId, duration, queries)
 
 			writer.Flush(duration, queries)
 			pruneRequest(requestId)
