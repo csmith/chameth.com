@@ -15,6 +15,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"chameth.com/chameth.com/features/metrics"
 )
 
 var (
@@ -53,7 +55,20 @@ func Process(ctx context.Context, req Request, method Method, remoteAddr, userAg
 		}
 	}
 
-	recordMetric(ctx, string(method), userAgent, remoteAddr, failedChecks, req)
+	failedCheckStrings := make([]string, len(failedChecks))
+	for i, c := range failedChecks {
+		failedCheckStrings[i] = string(c)
+	}
+	metrics.RecordContactSubmission(ctx, metrics.ContactSubmission{
+		Method:       string(method),
+		UserAgent:    userAgent,
+		RemoteAddr:   remoteAddr,
+		FailedChecks: failedCheckStrings,
+		Page:         req.Page,
+		SenderName:   req.SenderName,
+		SenderEmail:  req.SenderEmail,
+		Message:      req.Message,
+	})
 
 	if len(failedChecks) > 0 {
 		time.Sleep(5 * time.Second)
