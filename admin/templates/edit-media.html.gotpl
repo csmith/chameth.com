@@ -1,0 +1,33 @@
+{{/* gotype: chameth.com/chameth.com/admin/templates.EditMediaData */}}
+{{define "content"}}
+    <h2>Edit Media</h2>
+
+    <div class="edit-media-preview">
+        {{if or (eq .ContentType "image/jpeg") (eq .ContentType "image/png") (eq .ContentType "image/webp") (eq .ContentType "image/avif") (eq .ContentType "image/gif")}}
+            <img src="/media/view/{{.ID}}" alt="{{.OriginalFilename}}" loading="lazy" />
+        {{else if or (eq .ContentType "video/mp4") (eq .ContentType "video/webm")}}
+            <video controls><source src="/media/view/{{.ID}}" type="{{.ContentType}}"></video>
+        {{else if or (eq .ContentType "audio/mpeg") (eq .ContentType "audio/wav") (eq .ContentType "audio/ogg")}}
+            <audio controls><source src="/media/view/{{.ID}}" type="{{.ContentType}}"></audio>
+        {{else}}
+            <span class="no-preview">No preview</span>
+        {{end}}
+    </div>
+
+    <table class="edit-media-details">
+        <tr><th>Filename</th><td>{{.OriginalFilename}}</td></tr>
+        <tr><th>Content Type</th><td>{{.ContentType}}</td></tr>
+        <tr><th>Dimensions</th><td>{{if and .Width .Height}}{{.Width}} &times; {{.Height}}{{else}}&mdash;{{end}}</td></tr>
+        {{if .ParentMediaID}}<tr><th>Parent</th><td><a href="/media/edit/{{.ParentMediaID}}">{{.ParentMediaID}}</a></td></tr>{{end}}
+    </table>
+
+    <h3>Replace File</h3>
+    <form action="/media/edit/{{.ID}}" method="post" enctype="multipart/form-data">
+        <div>
+            <input type="file" name="replacement" required />
+        </div>
+        <button type="submit">Replace</button>
+    </form>
+
+    <p><a href="/media">&larr; Back to Media</a></p>
+{{end}}

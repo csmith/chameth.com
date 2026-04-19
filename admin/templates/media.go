@@ -15,6 +15,16 @@ var mediaTemplate = template.Must(
 		),
 )
 
+var editMediaTemplate = template.Must(
+	template.
+		New("page.html.gotpl").
+		ParseFS(
+			templates,
+			"page.html.gotpl",
+			"edit-media.html.gotpl",
+		),
+)
+
 type MediaData struct {
 	PageData
 	MediaItems []MediaItem
@@ -29,6 +39,20 @@ type MediaItem struct {
 	ContentType      string
 }
 
+type EditMediaData struct {
+	PageData
+	ID               int
+	OriginalFilename string
+	ParentMediaID    *int
+	Width            *int
+	Height           *int
+	ContentType      string
+}
+
 func RenderMedia(w http.ResponseWriter, data MediaData) error {
 	return mediaTemplate.Execute(w, data)
+}
+
+func RenderEditMedia(w http.ResponseWriter, data EditMediaData) error {
+	return editMediaTemplate.Execute(w, data)
 }

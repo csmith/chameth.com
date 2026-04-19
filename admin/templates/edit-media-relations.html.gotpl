@@ -28,7 +28,7 @@
                     <td class="preview-cell">
                         <a href="/media/view/{{.MediaID}}" target="_blank">
                             {{if or (eq .ContentType "image/jpeg") (eq .ContentType "image/png") (eq .ContentType "image/webp") (eq .ContentType "image/avif") (eq .ContentType "image/gif")}}
-                                <img src="/media/view/{{.MediaID}}" alt="{{.AltText}}" />
+                                <img src="/media/view/{{.MediaID}}" alt="{{.AltText}}" loading="lazy" />
                             {{else if or (eq .ContentType "video/mp4") (eq .ContentType "video/webm")}}
                                 <video controls>
                                     <source src="/media/view/{{.MediaID}}" type="{{.ContentType}}">
@@ -98,7 +98,7 @@
                     <input type="checkbox" name="media_ids" value="{{$media.MediaID}}" onchange="updateSelectionCount()" />
                     <div class="media-preview">
                         {{if or (eq $media.ContentType "image/jpeg") (eq $media.ContentType "image/png") (eq $media.ContentType "image/webp") (eq $media.ContentType "image/avif") (eq $media.ContentType "image/gif")}}
-                            <img src="/media/view/{{$media.MediaID}}" alt="{{$media.OriginalFilename}}" />
+                            <img src="/media/view/{{$media.MediaID}}" alt="{{$media.OriginalFilename}}" loading="lazy" />
                         {{else if or (eq $media.ContentType "video/mp4") (eq $media.ContentType "video/webm")}}
                             <video><source src="/media/view/{{$media.MediaID}}" type="{{$media.ContentType}}"></video>
                         {{else if or (eq $media.ContentType "audio/mpeg") (eq $media.ContentType "audio/wav") (eq $media.ContentType "audio/ogg")}}

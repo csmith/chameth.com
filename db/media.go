@@ -108,6 +108,13 @@ func UpdateMediaData(ctx context.Context, id int, data []byte, width, height *in
 	return err
 }
 
+func UpdateMedia(ctx context.Context, id int, contentType, originalFilename string, data []byte, width, height *int) error {
+	_, err := Exec(ctx, `
+		UPDATE media SET content_type = $1, original_filename = $2, data = $3, width = $4, height = $5 WHERE id = $6
+	`, contentType, originalFilename, data, width, height, id)
+	return err
+}
+
 func GetAllMedia(ctx context.Context) ([]MediaMetadata, error) {
 	return Select[MediaMetadata](ctx, `
 		SELECT id, content_type, original_filename, width, height, parent_media_id

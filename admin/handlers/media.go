@@ -206,6 +206,81 @@ func createMediaFromFile(ctx context.Context, fileHeader *multipart.FileHeader, 
 	return db.CreateMedia(ctx, contentType, fileHeader.Filename, data, width, height, parentMediaID)
 }
 
+func EditMediaHandler() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.Atoi(r.PathValue("id"))
+		if err != nil {
+			http.Error(w, "Invalid media ID", http.StatusBadRequest)
+			return
+		}
+
+		media, err := db.GetMediaByID(r.Context(), id)
+		if err != nil {
+			http.Error(w, "Media not found", http.StatusNotFound)
+			return
+		}
+
+		data := templates.EditMediaData{
+			ID:               media.ID,
+			OriginalFilename: media.OriginalFilename,
+			ParentMediaID:    media.ParentMediaID,
+			Width:            media.Width,
+			Height:           media.Height,
+			ContentType:      media.ContentType,
+		}
+		if err := templates.RenderEditMedia(w, data); err != nil {
+			http.Error(w, "Failed to render template", http.StatusInternalServerError)
+		}
+	}
+}
+
+func ReplaceMediaHandler() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.Atoi(r.PathValue("id"))
+		if err != nil {
+			http.Error(w, "Invalid media ID", http.StatusBadRequest)
+			return
+		}
+
+		file, header, err := r.FormFile("replacement")
+		if err != nil {
+			http.Error(w, "No replacement file provided", http.StatusBadRequest)
+			return
+		}
+		defer file.Close()
+
+		data, err := io.ReadAll(file)
+		if err != nil {
+			http.Error(w, "Failed to read file", http.StatusInternalServerError)
+			return
+		}
+
+		contentType := header.Header.Get("Content-Type")
+		if contentType == "" {
+			contentType = "application/octet-stream"
+		}
+
+		var width, height *int
+		if isImage(strings.ToLower(filepath.Ext(header.Filename))) {
+			config, _, err := image.DecodeConfig(bytes.NewReader(data))
+			if err != nil {
+				slog.Error("Failed to get image dimensions", "filename", header.Filename, "error", err)
+			} else {
+				cw, ch := config.Width, config.Height
+				width, height = &cw, &ch
+			}
+		}
+
+		if err := db.UpdateMedia(r.Context(), id, contentType, header.Filename, data, width, height); err != nil {
+			slog.Error("Failed to update media", "id", id, "error", err)
+			http.Error(w, "Failed to update media", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/media", http.StatusSeeOther)
+	}
+}
+
 func ViewMediaHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idStr := r.PathValue("id")

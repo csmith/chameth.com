@@ -16,17 +16,14 @@
         const fileList = document.getElementById('file-list');
         const uploadForm = document.getElementById('upload-form');
 
-        // Click to browse
         dropZone.addEventListener('click', () => {
             fileInput.click();
         });
 
-        // File selection handler
         fileInput.addEventListener('change', (e) => {
             updateFileList(e.target.files);
         });
 
-        // Prevent default drag behaviors
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, preventDefaults, false);
             document.body.addEventListener(eventName, preventDefaults, false);
@@ -37,7 +34,6 @@
             e.stopPropagation();
         }
 
-        // Highlight drop zone when item is dragged over it
         ['dragenter', 'dragover'].forEach(eventName => {
             dropZone.addEventListener(eventName, () => {
                 dropZone.style.borderColor = '#000';
@@ -52,7 +48,6 @@
             }, false);
         });
 
-        // Handle dropped files
         dropZone.addEventListener('drop', (e) => {
             const dt = e.dataTransfer;
             const files = dt.files;
@@ -97,31 +92,67 @@
 
     {{if .MediaItems}}
     <h2>All Media</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Filename</th>
-                <th>Parent</th>
-                <th>Width</th>
-                <th>Height</th>
-                <th>Content Type</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{range .MediaItems}}
-            <tr>
-                <td>{{.ID}}</td>
-                <td>{{.OriginalFilename}}</td>
-                <td>{{if .ParentMediaID}}{{.ParentMediaID}}{{else}}-{{end}}</td>
-                <td>{{if .Width}}{{.Width}}{{else}}-{{end}}</td>
-                <td>{{if .Height}}{{.Height}}{{else}}-{{end}}</td>
-                <td>{{.ContentType}}</td>
-                <td><a href="/media/view/{{.ID}}" target="_blank">View</a></td>
-            </tr>
+
+    <div class="media-browser">
+        <div class="media-grid" id="mediaGrid">
+            {{range $index, $media := .MediaItems}}
+            <a href="/media/edit/{{$media.ID}}" class="media-item" data-index="{{$index}}">
+                <div class="media-preview">
+                    {{if or (eq $media.ContentType "image/jpeg") (eq $media.ContentType "image/png") (eq $media.ContentType "image/webp") (eq $media.ContentType "image/avif") (eq $media.ContentType "image/gif")}}
+                        <img src="/media/view/{{$media.ID}}" alt="{{$media.OriginalFilename}}" loading="lazy" />
+                    {{else if or (eq $media.ContentType "video/mp4") (eq $media.ContentType "video/webm")}}
+                        <video><source src="/media/view/{{$media.ID}}" type="{{$media.ContentType}}"></video>
+                    {{else if or (eq $media.ContentType "audio/mpeg") (eq $media.ContentType "audio/wav") (eq $media.ContentType "audio/ogg")}}
+                        <div class="audio-icon">&#127925;</div>
+                    {{else}}
+                        <div class="file-icon">&#128196;</div>
+                    {{end}}
+                    {{if $media.ParentMediaID}}<span class="variant-badge">Variant</span>{{end}}
+                </div>
+                <div class="media-filename">{{$media.OriginalFilename}}</div>
+                <div class="media-meta">
+                    {{if and $media.Width $media.Height}}<span>{{$media.Width}}&times;{{$media.Height}}</span>{{end}}
+                    <span class="media-content-type">{{$media.ContentType}}</span>
+                </div>
+            </a>
             {{end}}
-        </tbody>
-    </table>
+        </div>
+
+        <div class="pagination-controls">
+            <button type="button" id="prevPage" onclick="changePage(-1)">Previous</button>
+            <span id="pageInfo">Page 1</span>
+            <button type="button" id="nextPage" onclick="changePage(1)">Next</button>
+        </div>
+    </div>
+
+    <script>
+    const itemsPerPage = 50;
+    let currentPage = 1;
+    const mediaItems = document.querySelectorAll('.media-browser .media-item');
+    const totalPages = Math.ceil(mediaItems.length / itemsPerPage);
+
+    function showPage(page) {
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+
+        mediaItems.forEach((item, index) => {
+            item.style.display = (index >= start && index < end) ? 'block' : 'none';
+        });
+
+        document.getElementById('pageInfo').textContent = `Page ${page} of ${totalPages}`;
+        document.getElementById('prevPage').disabled = page === 1;
+        document.getElementById('nextPage').disabled = page === totalPages;
+    }
+
+    function changePage(delta) {
+        const newPage = currentPage + delta;
+        if (newPage >= 1 && newPage <= totalPages) {
+            currentPage = newPage;
+            showPage(currentPage);
+        }
+    }
+
+    showPage(1);
+    </script>
     {{end}}
 {{end}}
