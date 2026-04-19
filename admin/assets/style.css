@@ -438,6 +438,32 @@ label:has(input[type="checkbox"]) {
     margin-top: 1rem;
 }
 
+.media-browser-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.media-browser-header h2 {
+    margin: 0;
+}
+
+.media-filter {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    width: 250px;
+}
+
+.media-filter:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+}
+
 .media-picker-header {
     display: flex;
     justify-content: space-between;

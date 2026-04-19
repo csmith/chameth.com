@@ -91,12 +91,15 @@
     </style>
 
     {{if .MediaItems}}
-    <h2>All Media</h2>
+    <div class="media-browser-header">
+        <h2>All Media</h2>
+        <input type="text" id="media-filter" placeholder="Filter by filename..." class="media-filter" />
+    </div>
 
     <div class="media-browser">
         <div class="media-grid" id="mediaGrid">
             {{range $index, $media := .MediaItems}}
-            <a href="/media/edit/{{$media.ID}}" class="media-item" data-index="{{$index}}">
+            <a href="/media/edit/{{$media.ID}}" class="media-item" data-index="{{$index}}" data-filename="{{$media.OriginalFilename}}">
                 <div class="media-preview">
                     {{if or (eq $media.ContentType "image/jpeg") (eq $media.ContentType "image/png") (eq $media.ContentType "image/webp") (eq $media.ContentType "image/avif") (eq $media.ContentType "image/gif")}}
                         <img src="/media/view/{{$media.ID}}" alt="{{$media.OriginalFilename}}" loading="lazy" />
@@ -128,16 +131,27 @@
     <script>
     const itemsPerPage = 50;
     let currentPage = 1;
-    const mediaItems = document.querySelectorAll('.media-browser .media-item');
-    const totalPages = Math.ceil(mediaItems.length / itemsPerPage);
+    const allItems = Array.from(document.querySelectorAll('.media-browser .media-item'));
+    const filterInput = document.getElementById('media-filter');
+    let filteredItems = allItems;
+
+    function getFilteredItems() {
+        const query = filterInput.value.toLowerCase().trim();
+        if (!query) return allItems;
+        return allItems.filter(item => item.dataset.filename.toLowerCase().includes(query));
+    }
 
     function showPage(page) {
         const start = (page - 1) * itemsPerPage;
         const end = start + itemsPerPage;
+        const totalFiltered = filteredItems.length;
+        const totalPages = Math.max(1, Math.ceil(totalFiltered / itemsPerPage));
 
-        mediaItems.forEach((item, index) => {
-            item.style.display = (index >= start && index < end) ? 'block' : 'none';
-        });
+        allItems.forEach(item => item.style.display = 'none');
+
+        for (let i = start; i < end && i < totalFiltered; i++) {
+            filteredItems[i].style.display = 'block';
+        }
 
         document.getElementById('pageInfo').textContent = `Page ${page} of ${totalPages}`;
         document.getElementById('prevPage').disabled = page === 1;
@@ -146,11 +160,17 @@
 
     function changePage(delta) {
         const newPage = currentPage + delta;
-        if (newPage >= 1 && newPage <= totalPages) {
+        if (newPage >= 1 && newPage <= Math.max(1, Math.ceil(filteredItems.length / itemsPerPage))) {
             currentPage = newPage;
             showPage(currentPage);
         }
     }
+
+    filterInput.addEventListener('input', () => {
+        filteredItems = getFilteredItems();
+        currentPage = 1;
+        showPage(currentPage);
+    });
 
     showPage(1);
     </script>
