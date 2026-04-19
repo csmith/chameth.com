@@ -141,7 +141,7 @@ func importMusicAlbums(ctx context.Context, client *http.Client, sc *subsonic.Cl
 			id, err := upsertAlbum(ctx, db.MusicAlbum{
 				MusicBrainzID: album.MusicBrainzID,
 				SubsonicID:    album.ID,
-				Name:          album.Title,
+				Name:          normaliseAlbumName(album.Title, album.SortName),
 				SortName:      album.SortName,
 				Year:          year,
 				ArtistID:      artistID,
@@ -425,4 +425,47 @@ func saveAlbumCover(ctx context.Context, client *http.Client, albumID int, name,
 
 	slog.Info("Downloaded album cover", "name", name)
 	return nil
+}
+
+func normaliseAlbumName(name, sortName string) string {
+	normalised := foldApostrophes(strings.ToLower(sortName))
+	for {
+		if len(name) == 0 || name[len(name)-1] != ')' {
+			break
+		}
+		depth := 0
+		end := len(name) - 1
+		start := -1
+		for i := end; i >= 0; i-- {
+			if name[i] == ')' {
+				depth++
+			} else if name[i] == '(' {
+				depth--
+				if depth == 0 {
+					start = i
+					break
+				}
+			}
+		}
+		if start <= 0 || name[start-1] != ' ' {
+			break
+		}
+		parenthetical := name[start : end+1]
+
+		parenLower := strings.ToLower(parenthetical)
+		shouldStrip := strings.Contains(parenLower, "deluxe") ||
+			strings.Contains(parenLower, "expanded edition") ||
+			strings.Contains(parenLower, "anniversary") ||
+			!strings.Contains(normalised, foldApostrophes(parenLower))
+		if !shouldStrip {
+			break
+		}
+
+		name = strings.TrimSpace(name[:start])
+	}
+	return name
+}
+
+func foldApostrophes(s string) string {
+	return strings.ReplaceAll(s, "\u2019", "'")
 }
