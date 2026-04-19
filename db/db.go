@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"time"
 
-	"chameth.com/chameth.com/features/metrics"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
@@ -24,11 +23,14 @@ var (
 	connString = flag.String("db-connection-string", "postgres://postgres:postgres@localhost/postgres", "Connection string for database")
 
 	db *sqlx.DB
+
+	queryLogger func(context.Context)
 )
 
-func Init() error {
-	var err error
+func Init(queryLogFn func(context.Context)) error {
+	queryLogger = queryLogFn
 
+	var err error
 	db, err = sqlx.Connect("postgres", *connString)
 	if err != nil {
 		return fmt.Errorf("failed to connect to database: %w", err)
@@ -57,36 +59,36 @@ func Init() error {
 }
 
 func Get[T any](ctx context.Context, query string, args ...any) (T, error) {
-	metrics.LogQuery(ctx)
+	queryLogger(ctx)
 	var result T
 	err := db.GetContext(ctx, &result, query, args...)
 	return result, err
 }
 
 func Select[T any](ctx context.Context, query string, args ...any) ([]T, error) {
-	metrics.LogQuery(ctx)
+	queryLogger(ctx)
 	var results []T
 	err := db.SelectContext(ctx, &results, query, args...)
 	return results, err
 }
 
 func Exec(ctx context.Context, query string, args ...any) (sql.Result, error) {
-	metrics.LogQuery(ctx)
+	queryLogger(ctx)
 	return db.ExecContext(ctx, query, args...)
 }
 
 func NamedExec(ctx context.Context, query string, arg any) (sql.Result, error) {
-	metrics.LogQuery(ctx)
+	queryLogger(ctx)
 	return db.NamedExecContext(ctx, query, arg)
 }
 
 func QueryRow(ctx context.Context, query string, args ...any) *sql.Row {
-	metrics.LogQuery(ctx)
+	queryLogger(ctx)
 	return db.QueryRowContext(ctx, query, args...)
 }
 
 func Query(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
-	metrics.LogQuery(ctx)
+	queryLogger(ctx)
 	return db.QueryContext(ctx, query, args...)
 }
 

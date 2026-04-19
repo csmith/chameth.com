@@ -94,8 +94,8 @@ func LogQuery(ctx context.Context) {
 	}
 
 	inFlightRequestsMu.RLock()
-	defer inFlightRequestsMu.RUnlock()
 	details, ok := inFlightRequests[requestId]
+	inFlightRequestsMu.RUnlock()
 	if !ok {
 		return
 	}

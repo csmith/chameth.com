@@ -38,8 +38,7 @@ func main() {
 	_ = slogflags.Logger(slogflags.WithSetDefault(true))
 
 	metrics.StartMetricsServer()
-
-	if err := db.Init(); err != nil {
+	if err := db.Init(metrics.LogQuery); err != nil {
 		slog.Error("Failed to initialize database", "error", err)
 		os.Exit(1)
 	}
