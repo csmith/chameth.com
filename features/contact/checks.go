@@ -14,7 +14,7 @@ import (
 
 type check = func(req Request, remoteAddr string) error
 
-var checks = []check{checkHoneypot, checkTimestamp, checkRateLimit, checkSensible, checkCyrillic, checkSpamhaus}
+var checks = []check{checkHoneypot, checkTimestamp, checkRateLimit, checkSensible, checkCyrillic, checkUnsubscribeLink, checkSpamhaus}
 
 func checkHoneypot(req Request, _ string) error {
 	if req.Honeypot != "" {
@@ -79,6 +79,14 @@ func checkCyrillic(req Request, _ string) error {
 			slog.Info("Blocking Cyrillic contact form message", "request", req)
 			return &rejection{cause: causeCyrillic}
 		}
+	}
+	return nil
+}
+
+func checkUnsubscribeLink(req Request, _ string) error {
+	if strings.Contains(req.Message, "unsubscribe.php?d=chameth.com") {
+		slog.Info("Blocking unsubscribe link in contact form message", "request", req)
+		return &rejection{cause: causeUnsubscribeLink}
 	}
 	return nil
 }

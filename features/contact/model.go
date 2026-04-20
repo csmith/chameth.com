@@ -30,6 +30,7 @@ const (
 	causeSensible         cause = "nonsense_message"
 	causeCyrillic         cause = "contained_cyrillic"
 	causeSpamhaus         cause = "listed_in_xbl"
+	causeUnsubscribeLink  cause = "unsubscribe_link"
 )
 
 type rejection struct {
