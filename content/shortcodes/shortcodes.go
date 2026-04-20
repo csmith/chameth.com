@@ -40,6 +40,7 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/walks"
 	"chameth.com/chameth.com/content/shortcodes/warning"
 	"chameth.com/chameth.com/content/shortcodes/watchedfilms"
+	"chameth.com/chameth.com/content/shortcodes/wowchar"
 )
 
 //go:embed **/*.css
@@ -92,6 +93,7 @@ var renderers = map[string]renderer{
 	"walkingspeed":           walkingspeed.RenderFromText,
 	"warning":                warning.RenderFromText,
 	"watchedfilms":           watchedfilms.RenderFromText,
+	"wowchar":                wowchar.RenderFromText,
 }
 
 var tagRegexp = regexp.MustCompile(`\{%\s*(\w+)(.*?)\s*%\}`)

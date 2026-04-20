@@ -1,0 +1,51 @@
+{{/* gotype: chameth.com/chameth.com/admin/templates.ListWowCharactersData */}}
+{{define "content"}}
+    <h2>WoW Characters</h2>
+
+    <form method="POST" action="/wow/import">
+        <label>
+            Realm
+            <input type="text" name="realm" required/>
+        </label>
+        <label>
+            Character
+            <input type="text" name="character" required/>
+        </label>
+        <button type="submit">Import Character</button>
+    </form>
+
+    {{if .Characters}}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Realm</th>
+                <th>Race</th>
+                <th>Class</th>
+                <th>Spec</th>
+                <th>Gender</th>
+                <th>Faction</th>
+                <th>Updated</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Characters}}
+            <tr>
+                <td>{{.CharacterName}}</td>
+                <td>{{.RealmName}}</td>
+                <td>{{.Race}}</td>
+                <td>{{.Class}}</td>
+                <td>{{.Spec}}</td>
+                <td>{{.Gender}}</td>
+                <td>{{.Faction}}</td>
+                <td>{{.UpdatedAt}}</td>
+                <td>
+                    <a href="/wow/refresh/{{.ID}}">Refresh</a>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+    {{end}}
+{{end}}

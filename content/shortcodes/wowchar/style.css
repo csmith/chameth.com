@@ -1,0 +1,59 @@
+.wow-char {
+    display: inline-flex;
+    align-items: stretch;
+    width: 600px;
+    padding-right: var(--smedium-space);
+    margin-bottom: var(--medium-space);
+    gap: var(--smedium-space);
+
+    img {
+        height: 400px;
+    }
+
+    .info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--small-space);
+        padding-top: var(--medium-space);
+
+        h3 {
+            margin: 0;
+            padding: 0;
+        }
+
+        .realm {
+            color: var(--text-alt-colour);
+            font-size: var(--font-size-small);
+            padding-left: 4px;
+        }
+
+        .detail {
+            font-size: var(--font-size-small);
+        }
+    }
+
+    @media (width <= 750px) {
+        width: unset;
+        flex-direction: column;
+
+        img {
+            height: unset;
+            width: 100%;
+        }
+
+        .info {
+            padding: var(--medium-space);
+        }
+    }
+}
+
+.wow-char-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+    gap: var(--smedium-space);
+    margin: var(--small-space) 0;
+
+    @media (width <= 750px) {
+        grid-template-columns: 1fr;
+    }
+}

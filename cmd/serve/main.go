@@ -20,6 +20,7 @@ import (
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/music"
 	"chameth.com/chameth.com/features/sudo"
+	"chameth.com/chameth.com/features/wow"
 	"chameth.com/chameth.com/handlers"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
@@ -83,6 +84,8 @@ func main() {
 		ts.Up(context.Background())
 		music.RunImport(context.Background(), ts.HTTPClient())
 	}()
+
+	go wow.RunSync(context.Background())
 
 	mux := http.NewServeMux()
 	mux.Handle("POST /api/contact", http.HandlerFunc(handlers.ContactForm))

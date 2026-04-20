@@ -1,0 +1,9 @@
+{{/* gotype: chameth.com/chameth.com/content/shortcodes/wowchar.Data*/}}
+<div class="wow-char raised-box" data-title="World of Warcraft Character Data">
+    <img src="/wow/characters/{{.Name}}.png" alt="{{.Name}}" loading="lazy">
+    <div class="info">
+        <h3 class="plain-header">{{.Name}}<span class="realm">-{{.Realm}}</span></h3>
+        <span class="detail">Level {{.Level}} {{.Spec}} {{.Class}}</span>
+        <span class="detail">{{.EquippedItemLevel}} item level</span>
+    </div>
+</div>
