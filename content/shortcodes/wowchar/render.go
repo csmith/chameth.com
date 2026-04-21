@@ -41,6 +41,8 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 		Gender:            c.Gender,
 		EquippedItemLevel: itemLevel,
 		CSSClass:          "wow-class-" + strings.ToLower(strings.ReplaceAll(c.Class, " ", "-")),
+		RealmLower:        strings.ToLower(c.RealmName),
+		NameLower:         strings.ToLower(c.CharacterName),
 	})
 }
 

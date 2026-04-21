@@ -11,4 +11,6 @@ type Data struct {
 	EquippedItemLevel string
 	ImagePath         string
 	CSSClass          string
+	RealmLower        string
+	NameLower         string
 }

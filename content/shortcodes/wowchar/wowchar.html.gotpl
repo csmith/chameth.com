@@ -6,5 +6,9 @@
         <span class="detail">{{.Race}} {{.Gender}}</span>
         <span class="detail">Level {{.Level}} <span class="{{.CSSClass}}">{{.Spec}} {{.Class}}</span></span>
         <span class="detail">{{.EquippedItemLevel}} item level</span>
+        <div class="links">
+            <a href="https://worldofwarcraft.blizzard.com/en-gb/character/eu/{{.RealmLower}}/{{.NameLower}}">View on blizzard.com</a>
+            <a href="https://raider.io/characters/eu/{{.RealmLower}}/{{.Name}}">View on raider.io</a>
+        </div>
     </div>
 </div>

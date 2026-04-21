@@ -4,7 +4,7 @@
     width: 600px;
     padding-right: var(--smedium-space);
     margin-bottom: var(--medium-space);
-    gap: var(--medium-space);
+    gap: var(--smedium-space);
 
     img {
         height: 400px;
@@ -13,8 +13,9 @@
     .info {
         display: flex;
         flex-direction: column;
+        flex: 1;
         gap: var(--small-space);
-        padding-top: var(--small-space);
+        padding: var(--small-space);
 
         h3 {
             margin: 0;
@@ -30,6 +31,18 @@
         .detail {
             font-size: var(--font-size-small);
             color: var(--text-alt-colour);
+        }
+
+        .links {
+            margin-top: auto;
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--smedium-space);
+            font-size: var(--font-size-tiny);
+
+            a {
+                text-decoration-thickness: 2px;
+            }
         }
     }
 
