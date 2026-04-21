@@ -10,4 +10,5 @@ type Data struct {
 	Gender            string
 	EquippedItemLevel string
 	ImagePath         string
+	CSSClass          string
 }

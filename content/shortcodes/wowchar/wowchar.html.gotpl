@@ -4,7 +4,7 @@
     <div class="info">
         <h3 class="plain-header">{{.Name}}<span class="realm">-{{.Realm}}</span></h3>
         <span class="detail">{{.Race}} {{.Gender}}</span>
-        <span class="detail">Level {{.Level}} {{.Spec}} {{.Class}}</span>
+        <span class="detail">Level {{.Level}} <span class="{{.CSSClass}}">{{.Spec}} {{.Class}}</span></span>
         <span class="detail">{{.EquippedItemLevel}} item level</span>
     </div>
 </div>

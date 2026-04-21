@@ -29,6 +29,7 @@
 
         .detail {
             font-size: var(--font-size-small);
+            color: var(--text-alt-colour);
         }
     }
 
@@ -46,6 +47,20 @@
         }
     }
 }
+
+.wow-class-death-knight { color: #C41E3A; }
+.wow-class-demon-hunter { color: #A330C9; }
+.wow-class-druid { color: #FF7C0A; }
+.wow-class-evoker { color: #33937F; }
+.wow-class-hunter { color: #AAD372; }
+.wow-class-mage { color: #3FC7EB; }
+.wow-class-monk { color: #00FF98; }
+.wow-class-paladin { color: #F48CBA; }
+.wow-class-priest { color: #FFFFFF; }
+.wow-class-rogue { color: #FFF468; }
+.wow-class-shaman { color: #0070DD; }
+.wow-class-warlock { color: #8788EE; }
+.wow-class-warrior { color: #C69B6D; }
 
 .wow-char-grid {
     display: grid;

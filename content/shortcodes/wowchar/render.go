@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"fmt"
 	"html/template"
+	"strings"
 
 	"chameth.com/chameth.com/content/shortcodes/common"
 	"chameth.com/chameth.com/features/wow"
@@ -39,6 +40,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 		Race:              c.Race,
 		Gender:            c.Gender,
 		EquippedItemLevel: itemLevel,
+		CSSClass:          "wow-class-" + strings.ToLower(strings.ReplaceAll(c.Class, " ", "-")),
 	})
 }
 
