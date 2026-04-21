@@ -4,7 +4,7 @@
     width: 600px;
     padding-right: var(--smedium-space);
     margin-bottom: var(--medium-space);
-    gap: var(--smedium-space);
+    gap: var(--medium-space);
 
     img {
         height: 400px;
@@ -14,7 +14,7 @@
         display: flex;
         flex-direction: column;
         gap: var(--small-space);
-        padding-top: var(--medium-space);
+        padding-top: var(--small-space);
 
         h3 {
             margin: 0;
@@ -48,19 +48,45 @@
     }
 }
 
-.wow-class-death-knight { color: #C41E3A; }
-.wow-class-demon-hunter { color: #A330C9; }
-.wow-class-druid { color: #FF7C0A; }
-.wow-class-evoker { color: #33937F; }
-.wow-class-hunter { color: #AAD372; }
-.wow-class-mage { color: #3FC7EB; }
-.wow-class-monk { color: #00FF98; }
-.wow-class-paladin { color: #F48CBA; }
-.wow-class-priest { color: #FFFFFF; }
-.wow-class-rogue { color: #FFF468; }
-.wow-class-shaman { color: #0070DD; }
-.wow-class-warlock { color: #8788EE; }
-.wow-class-warrior { color: #C69B6D; }
+.wow-class-death-knight {
+    color: #c41e3a;
+}
+.wow-class-demon-hunter {
+    color: #a330c9;
+}
+.wow-class-druid {
+    color: #ff7c0a;
+}
+.wow-class-evoker {
+    color: #33937f;
+}
+.wow-class-hunter {
+    color: #aad372;
+}
+.wow-class-mage {
+    color: #3fc7eb;
+}
+.wow-class-monk {
+    color: #00ff98;
+}
+.wow-class-paladin {
+    color: #f48cba;
+}
+.wow-class-priest {
+    color: #ffffff;
+}
+.wow-class-rogue {
+    color: #fff468;
+}
+.wow-class-shaman {
+    color: #0070dd;
+}
+.wow-class-warlock {
+    color: #8788ee;
+}
+.wow-class-warrior {
+    color: #c69b6d;
+}
 
 .wow-char-grid {
     display: grid;
