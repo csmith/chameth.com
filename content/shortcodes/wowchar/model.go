@@ -6,6 +6,8 @@ type Data struct {
 	Level             int
 	Spec              string
 	Class             string
+	Race              string
+	Gender            string
 	EquippedItemLevel string
 	ImagePath         string
 }

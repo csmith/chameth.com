@@ -36,6 +36,8 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 		Level:             c.Level,
 		Spec:              c.Spec,
 		Class:             c.Class,
+		Race:              c.Race,
+		Gender:            c.Gender,
 		EquippedItemLevel: itemLevel,
 	})
 }

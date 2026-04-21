@@ -3,6 +3,7 @@
     <img src="/wow/characters/{{.Name}}.png" alt="{{.Name}}" loading="lazy">
     <div class="info">
         <h3 class="plain-header">{{.Name}}<span class="realm">-{{.Realm}}</span></h3>
+        <span class="detail">{{.Race}} {{.Gender}}</span>
         <span class="detail">Level {{.Level}} {{.Spec}} {{.Class}}</span>
         <span class="detail">{{.EquippedItemLevel}} item level</span>
     </div>
