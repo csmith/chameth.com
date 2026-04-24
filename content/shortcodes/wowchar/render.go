@@ -31,6 +31,31 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 		itemLevel = fmt.Sprintf("%d", *c.EquippedItemLevel)
 	}
 
+	professions, err := wow.GetCharacterProfessions(ctx, c.ID)
+	if err != nil {
+		return "", fmt.Errorf("failed to get character professions: %w", err)
+	}
+
+	var dataProfessions []Profession
+	profMap := make(map[int]*Profession)
+	for _, p := range professions {
+		prof, ok := profMap[p.ProfessionID]
+		if !ok {
+			dataProfessions = append(dataProfessions, Profession{Name: p.ProfessionName})
+			prof = &dataProfessions[len(dataProfessions)-1]
+			profMap[p.ProfessionID] = prof
+		}
+		tier := ProfessionTier{
+			TierID:         p.TierID,
+			Name:           p.TierName,
+			SkillPoints:    p.SkillPoints,
+			MaxSkillPoints: p.MaxSkillPoints,
+		}
+		if tier.TierID > prof.LatestTier.TierID {
+			prof.LatestTier = tier
+		}
+	}
+
 	return renderTemplate(Data{
 		Name:              c.CharacterName,
 		Realm:             c.RealmName,
@@ -43,6 +68,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 		CSSClass:          "wow-class-" + strings.ToLower(strings.ReplaceAll(c.Class, " ", "-")),
 		RealmLower:        strings.ToLower(c.RealmName),
 		NameLower:         strings.ToLower(c.CharacterName),
+		Professions:       dataProfessions,
 	})
 }
 

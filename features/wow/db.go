@@ -7,6 +7,8 @@ import (
 
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/external/blizzard"
+
+	"github.com/lib/pq"
 )
 
 func AllCharacters(ctx context.Context) ([]Character, error) {
@@ -118,6 +120,94 @@ func saveCharacterImage(ctx context.Context, characterID int, name string, imgDa
 	role := "render"
 	if err := db.CreateMediaRelation(ctx, "wow_character", characterID, mediaID, mediaPath, &caption, nil, &role); err != nil {
 		return fmt.Errorf("failed to create media relation: %w", err)
+	}
+
+	return nil
+}
+
+func GetCharacterProfessions(ctx context.Context, characterID int) ([]CharacterProfession, error) {
+	professions, err := db.Select[CharacterProfession](ctx, `
+		SELECT * FROM wow_character_professions WHERE character_id = $1 ORDER BY kind, profession_name, tier_name
+	`, characterID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get character professions: %w", err)
+	}
+	return professions, nil
+}
+
+func syncProfessions(ctx context.Context, characterID int, profs *blizzard.CharacterProfessions) error {
+	var allTierIDs []int
+
+	for _, p := range profs.Primaries {
+		for _, t := range p.Tiers {
+			allTierIDs = append(allTierIDs, t.Tier.ID)
+		}
+	}
+	for _, p := range profs.Secondaries {
+		if p.Profession.ID == 794 {
+			continue
+		}
+		for _, t := range p.Tiers {
+			allTierIDs = append(allTierIDs, t.Tier.ID)
+		}
+	}
+
+	if len(allTierIDs) > 0 {
+		_, err := db.Exec(ctx, `
+			DELETE FROM wow_character_professions
+			WHERE character_id = $1 AND NOT (tier_id = ANY($2))
+		`, characterID, pq.Array(allTierIDs))
+		if err != nil {
+			return fmt.Errorf("failed to delete old professions: %w", err)
+		}
+	} else {
+		_, err := db.Exec(ctx, `DELETE FROM wow_character_professions WHERE character_id = $1`, characterID)
+		if err != nil {
+			return fmt.Errorf("failed to delete all professions: %w", err)
+		}
+	}
+
+	for _, p := range profs.Primaries {
+		for _, t := range p.Tiers {
+			_, err := db.Exec(ctx, `
+				INSERT INTO wow_character_professions (character_id, tier_id, tier_name, profession_id, profession_name, skill_points, max_skill_points, kind)
+				VALUES ($1, $2, $3, $4, $5, $6, $7, 'primary')
+				ON CONFLICT (character_id, tier_id)
+				DO UPDATE SET
+					tier_name = EXCLUDED.tier_name,
+					profession_id = EXCLUDED.profession_id,
+					profession_name = EXCLUDED.profession_name,
+					skill_points = EXCLUDED.skill_points,
+					max_skill_points = EXCLUDED.max_skill_points,
+					kind = EXCLUDED.kind
+			`, characterID, t.Tier.ID, t.Tier.Name, p.Profession.ID, p.Profession.Name, t.SkillPoints, t.MaxSkillPoints)
+			if err != nil {
+				return fmt.Errorf("failed to upsert profession: %w", err)
+			}
+		}
+	}
+
+	for _, p := range profs.Secondaries {
+		if p.Profession.ID == 794 {
+			continue
+		}
+		for _, t := range p.Tiers {
+			_, err := db.Exec(ctx, `
+				INSERT INTO wow_character_professions (character_id, tier_id, tier_name, profession_id, profession_name, skill_points, max_skill_points, kind)
+				VALUES ($1, $2, $3, $4, $5, $6, $7, 'secondary')
+				ON CONFLICT (character_id, tier_id)
+				DO UPDATE SET
+					tier_name = EXCLUDED.tier_name,
+					profession_id = EXCLUDED.profession_id,
+					profession_name = EXCLUDED.profession_name,
+					skill_points = EXCLUDED.skill_points,
+					max_skill_points = EXCLUDED.max_skill_points,
+					kind = EXCLUDED.kind
+			`, characterID, t.Tier.ID, t.Tier.Name, p.Profession.ID, p.Profession.Name, t.SkillPoints, t.MaxSkillPoints)
+			if err != nil {
+				return fmt.Errorf("failed to upsert profession: %w", err)
+			}
+		}
 	}
 
 	return nil

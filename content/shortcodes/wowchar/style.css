@@ -33,6 +33,29 @@
             color: var(--text-alt-colour);
         }
 
+        .professions {
+            font-size: var(--font-size-small);
+
+            td {
+                vertical-align: middle;
+                padding: 1px 0;
+            }
+
+            td:first-child {
+                color: var(--text-alt-colour);
+                padding-right: var(--small-space);
+            }
+
+            .tier-count {
+                color: var(--text-alt-colour);
+                padding-left: var(--small-space);
+            }
+
+            .tier-progress {
+                accent-color: var(--accent-colour);
+            }
+        }
+
         .links {
             margin-top: auto;
             display: flex;

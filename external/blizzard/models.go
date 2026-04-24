@@ -51,3 +51,19 @@ type MediaAsset struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }
+
+type CharacterProfessions struct {
+	Primaries  []ProfessionEntry `json:"primaries"`
+	Secondaries []ProfessionEntry `json:"secondaries"`
+}
+
+type ProfessionEntry struct {
+	Profession NamedRef      `json:"profession"`
+	Tiers      []ProfessionTier `json:"tiers"`
+}
+
+type ProfessionTier struct {
+	SkillPoints    int      `json:"skill_points"`
+	MaxSkillPoints int      `json:"max_skill_points"`
+	Tier           NamedRef `json:"tier"`
+}

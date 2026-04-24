@@ -13,4 +13,17 @@ type Data struct {
 	CSSClass          string
 	RealmLower        string
 	NameLower         string
+	Professions       []Profession
+}
+
+type Profession struct {
+	Name        string
+	LatestTier  ProfessionTier
+}
+
+type ProfessionTier struct {
+	TierID          int
+	Name            string
+	SkillPoints     int
+	MaxSkillPoints  int
 }

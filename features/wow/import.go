@@ -52,5 +52,14 @@ func syncCharacter(ctx context.Context, realm, name string) (int, error) {
 		return 0, fmt.Errorf("failed to update character image: %w", err)
 	}
 
+	professions, err := bc.GetCharacterProfessions(realm, name)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get character professions: %w", err)
+	}
+
+	if err := syncProfessions(ctx, characterID, professions); err != nil {
+		return 0, fmt.Errorf("failed to sync professions: %w", err)
+	}
+
 	return characterID, nil
 }

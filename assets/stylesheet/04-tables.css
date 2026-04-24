@@ -4,7 +4,7 @@
     overflow-x: auto;
 }
 
-table {
+table:not(.plain-table) {
     width: 100%;
     margin: var(--medium-space) 0;
     background: var(--background-colour);
@@ -13,15 +13,15 @@ table {
     border-radius: var(--border-radius);
     border-collapse: separate;
     overflow: hidden;
+
+    tr:not(:last-child) td {
+        border-bottom: 1px solid var(--background-alt-colour);
+    }
 }
 
 td {
     padding: var(--small-space);
     font-size: var(--font-size-small);
-}
-
-tr:not(:last-child) td {
-    border-bottom: 1px solid var(--background-alt-colour);
 }
 
 th {

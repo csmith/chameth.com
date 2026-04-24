@@ -114,6 +114,19 @@ func (c *Client) GetCharacterProfile(realm, character string) (*CharacterProfile
 	return &profile, nil
 }
 
+func (c *Client) GetCharacterProfessions(realm, character string) (*CharacterProfessions, error) {
+	var professions CharacterProfessions
+	err := c.get(
+		fmt.Sprintf("/profile/wow/character/%s/%s/professions?namespace=profile-eu&locale=en_GB",
+			strings.ToLower(realm), strings.ToLower(character)),
+		&professions,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get professions for %s-%s: %w", realm, character, err)
+	}
+	return &professions, nil
+}
+
 func (c *Client) GetCharacterMedia(realm, character string) (*CharacterMedia, error) {
 	var media CharacterMedia
 	err := c.get(

@@ -18,3 +18,14 @@ type Character struct {
 	Level             int        `db:"level"`
 	UpdatedAt         time.Time  `db:"updated_at"`
 }
+
+type CharacterProfession struct {
+	CharacterID    int    `db:"character_id"`
+	TierID         int    `db:"tier_id"`
+	TierName       string `db:"tier_name"`
+	ProfessionID   int    `db:"profession_id"`
+	ProfessionName string `db:"profession_name"`
+	SkillPoints    int    `db:"skill_points"`
+	MaxSkillPoints int    `db:"max_skill_points"`
+	Kind           string `db:"kind"`
+}

@@ -77,6 +77,13 @@ func syncCharacters(ctx context.Context) {
 			slog.Error("Failed to update character image", "error", err, "character", profile.Name)
 		}
 
+		professions, err := client().GetCharacterProfessions(c.RealmName, c.CharacterName)
+		if err != nil {
+			slog.Error("Failed to get character professions", "error", err, "realm", c.RealmName, "character", c.CharacterName)
+		} else if err := syncProfessions(ctx, characterID, professions); err != nil {
+			slog.Error("Failed to sync professions", "error", err, "character", profile.Name)
+		}
+
 		slog.Info("Updated WoW character", "character", profile.Name, "realm", profile.Realm.Name)
 	}
 }
