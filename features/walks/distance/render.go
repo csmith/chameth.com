@@ -1,19 +1,21 @@
-package walkingdistance
+package distance
 
 import (
 	"bytes"
-	"embed"
+	_ "embed"
 	"fmt"
 	"html/template"
 	"strconv"
 
 	"chameth.com/chameth.com/content/shortcodes/common"
+
+	"chameth.com/chameth.com/features/walks"
 )
 
 //go:embed *.gotpl
-var templates embed.FS
+var templates string
 
-var tmpl = template.Must(template.New("walkingdistance.html.gotpl").ParseFS(templates, "walkingdistance.html.gotpl"))
+var tmpl = template.Must(template.New("walkingdistance.html.gotpl").Parse(templates))
 
 func RenderFromText(args []string, ctx *common.Context) (string, error) {
 	if len(args) < 3 {
@@ -27,7 +29,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 	}
 	svg := args[2]
 
-	totalDistance, err := query(ctx.Context)
+	totalDistance, err := walks.TotalDistance(ctx.Context)
 	if err != nil {
 		return "", fmt.Errorf("failed to get total distance: %w", err)
 	}

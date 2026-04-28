@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/content/shortcodes/walks.Data*/}}
+{{/* gotype: chameth.com/chameth.com/features/walks/walks.Data*/}}
 <table class="walks-table">
   <tbody>
 {{- range .Walks }}

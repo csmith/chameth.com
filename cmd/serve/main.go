@@ -33,6 +33,9 @@ import (
 	_ "chameth.com/chameth.com/features/music/nowplaying"
 	_ "chameth.com/chameth.com/features/music/topalbums"
 	_ "chameth.com/chameth.com/features/music/topartists"
+	_ "chameth.com/chameth.com/features/walks/distance"
+	_ "chameth.com/chameth.com/features/walks/list"
+	_ "chameth.com/chameth.com/features/walks/speed"
 	_ "chameth.com/chameth.com/features/wow/wowchar"
 )
 

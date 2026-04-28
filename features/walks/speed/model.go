@@ -1,4 +1,4 @@
-package walkingspeed
+package speed
 
 import "html/template"
 

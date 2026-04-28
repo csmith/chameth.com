@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/content/shortcodes/walkingdistance.Data*/}}
+{{/* gotype: chameth.com/chameth.com/features/walks/walkingdistance.Data*/}}
 <div class="walkingdistance-badge raised-box">
 	{{ .SVG }}
 	<h4 class="plain-header">{{ .Name }}</h4>

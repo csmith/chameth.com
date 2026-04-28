@@ -1,4 +1,4 @@
-package walkingdistance
+package distance
 
 import "html/template"
 

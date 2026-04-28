@@ -1,4 +1,4 @@
-package handlers
+package admin
 
 import (
 	"encoding/json"
@@ -6,33 +6,31 @@ import (
 	"net/http"
 	"time"
 
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/walks"
 )
-
-type WorkoutData struct {
-	Data struct {
-		Workouts []Workout `json:"workouts"`
-	} `json:"data"`
-}
-
-type Workout struct {
-	ID          string   `json:"id"`
-	Name        string   `json:"name"`
-	Start       string   `json:"start"`
-	End         string   `json:"end"`
-	Duration    float64  `json:"duration"`
-	Distance    Quantity `json:"distance"`
-	ElevationUp Quantity `json:"elevationUp"`
-}
-
-type Quantity struct {
-	Qty   float64 `json:"qty"`
-	Units string  `json:"units"`
-}
 
 func ImportWalksHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var data WorkoutData
+		var data struct {
+			Data struct {
+				Workouts []struct {
+					ID          string  `json:"id"`
+					Name        string  `json:"name"`
+					Start       string  `json:"start"`
+					End         string  `json:"end"`
+					Duration    float64 `json:"duration"`
+					Distance    struct {
+						Qty   float64 `json:"qty"`
+						Units string  `json:"units"`
+					} `json:"distance"`
+					ElevationUp struct {
+						Qty   float64 `json:"qty"`
+						Units string  `json:"units"`
+					} `json:"elevationUp"`
+				} `json:"workouts"`
+			} `json:"data"`
+		}
+
 		if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
 			slog.Error("Failed to decode workout data", "error", err)
 			http.Error(w, "Invalid JSON", http.StatusBadRequest)
@@ -56,7 +54,7 @@ func ImportWalksHandler() func(http.ResponseWriter, *http.Request) {
 				continue
 			}
 
-			err = db.UpsertWalk(r.Context(), db.Walk{
+			err = walks.UpsertWalk(r.Context(), walks.Walk{
 				ExternalID:          workout.ID,
 				StartDate:           startDate,
 				EndDate:             endDate,

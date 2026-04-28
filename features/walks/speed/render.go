@@ -1,21 +1,22 @@
-package walkingspeed
+package speed
 
 import (
 	"bytes"
-	"embed"
+	_ "embed"
 	"fmt"
 	"html/template"
 	"math"
 	"strings"
 
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/db"
+
+	"chameth.com/chameth.com/features/walks"
 )
 
 //go:embed *.gotpl
-var templates embed.FS
+var templates string
 
-var tmpl = template.Must(template.New("walkingspeed.html.gotpl").ParseFS(templates, "walkingspeed.html.gotpl"))
+var tmpl = template.Must(template.New("walkingspeed.html.gotpl").Parse(templates))
 
 const (
 	width         = 600
@@ -28,7 +29,7 @@ const (
 )
 
 func RenderFromText(_ []string, ctx *common.Context) (string, error) {
-	speeds, err := query(ctx.Context)
+	speeds, err := walks.MonthlySpeeds(ctx.Context)
 	if err != nil {
 		return "", fmt.Errorf("failed to get monthly walking speeds: %w", err)
 	}
@@ -56,7 +57,7 @@ func RenderFromText(_ []string, ctx *common.Context) (string, error) {
 	})
 }
 
-func createPoints(speeds []db.MonthlyWalkingSpeed, monthWidth, speedMin, speedRange float64) []point {
+func createPoints(speeds []walks.MonthlyWalkingSpeed, monthWidth, speedMin, speedRange float64) []point {
 	points := make([]point, 0, len(speeds))
 	for i, s := range speeds {
 		x := leftPadding + int(float64(i)*monthWidth)
@@ -75,7 +76,7 @@ func createPoints(speeds []db.MonthlyWalkingSpeed, monthWidth, speedMin, speedRa
 	return points
 }
 
-func renderXAxis(svgBuilder *strings.Builder, speeds []db.MonthlyWalkingSpeed, monthWidth float64) {
+func renderXAxis(svgBuilder *strings.Builder, speeds []walks.MonthlyWalkingSpeed, monthWidth float64) {
 	fmt.Fprintf(svgBuilder, `<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="var(--background-alt-colour)" stroke-width="1"/>`, leftPadding, topPadding+contentHeight, leftPadding+contentWidth+5, topPadding+contentHeight)
 	currentYear := speeds[0].Month.Year()
 	yearStartIndex := 0

@@ -1,36 +1,38 @@
-package walks
+package list
 
 import (
 	"bytes"
-	"embed"
+	_ "embed"
 	"fmt"
 	"html/template"
 	"strconv"
 	"strings"
 
 	"chameth.com/chameth.com/content/shortcodes/common"
+
+	"chameth.com/chameth.com/features/walks"
 )
 
 //go:embed *.gotpl
-var templates embed.FS
+var templates string
 
-var tmpl = template.Must(template.New("walks.html.gotpl").ParseFS(templates, "walks.html.gotpl"))
+var tmpl = template.Must(template.New("walks.html.gotpl").Parse(templates))
 
-func RenderFromText(args []string, ctx *common.Context) (string, error) {
-	walks, err := query(ctx.Context)
+func RenderFromText(_ []string, ctx *common.Context) (string, error) {
+	allWalks, err := walks.AllWalks(ctx.Context)
 	if err != nil {
 		return "", fmt.Errorf("failed to get walks: %w", err)
 	}
 
 	var maxDistance float64
-	for _, walk := range walks {
-		if walk.DistanceKm > maxDistance {
-			maxDistance = walk.DistanceKm
+	for _, w := range allWalks {
+		if w.DistanceKm > maxDistance {
+			maxDistance = w.DistanceKm
 		}
 	}
 
-	entries := make([]WalkEntry, len(walks))
-	for i, walk := range walks {
+	entries := make([]WalkEntry, len(allWalks))
+	for i, walk := range allWalks {
 		durationMinutes := int(walk.DurationSeconds / 60)
 		barWidth := 0.0
 		if maxDistance > 0 {
