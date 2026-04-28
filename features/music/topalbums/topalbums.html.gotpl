@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/content/shortcodes/topalbums.Data*/}}
+{{/* gotype: chameth.com/chameth.com/features/music/topalbums.Data*/}}
 <ol class="top-albums">
 {{- range .Albums }}
   <li>

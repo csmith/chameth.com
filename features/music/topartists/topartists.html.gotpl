@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/content/shortcodes/topartists.Data*/}}
+{{/* gotype: chameth.com/chameth.com/features/music/topartists.Data*/}}
 <ol class="top-artists">
 {{- range .Artists }}
   <li>

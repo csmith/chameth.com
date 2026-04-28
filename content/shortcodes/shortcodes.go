@@ -12,7 +12,6 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/audio"
 	"chameth.com/chameth.com/content/shortcodes/bglist"
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/content/shortcodes/contact"
 	"chameth.com/chameth.com/content/shortcodes/figure"
 	"chameth.com/chameth.com/content/shortcodes/filmlist"
 	"chameth.com/chameth.com/content/shortcodes/filmratingdistribution"
@@ -21,7 +20,6 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/filmsearch"
 	"chameth.com/chameth.com/content/shortcodes/link"
 	"chameth.com/chameth.com/content/shortcodes/nod"
-	"chameth.com/chameth.com/content/shortcodes/nowplaying"
 	"chameth.com/chameth.com/content/shortcodes/playedbgs"
 	"chameth.com/chameth.com/content/shortcodes/postlink"
 	"chameth.com/chameth.com/content/shortcodes/rating"
@@ -29,8 +27,6 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/recentposts"
 	"chameth.com/chameth.com/content/shortcodes/sidenote"
 	"chameth.com/chameth.com/content/shortcodes/syndication"
-	"chameth.com/chameth.com/content/shortcodes/topalbums"
-	"chameth.com/chameth.com/content/shortcodes/topartists"
 	"chameth.com/chameth.com/content/shortcodes/update"
 	"chameth.com/chameth.com/content/shortcodes/video"
 	"chameth.com/chameth.com/content/shortcodes/walkingdistance"
@@ -38,7 +34,6 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/walks"
 	"chameth.com/chameth.com/content/shortcodes/warning"
 	"chameth.com/chameth.com/content/shortcodes/watchedfilms"
-	"chameth.com/chameth.com/content/shortcodes/wowchar"
 )
 
 //go:embed **/*.css
@@ -50,12 +45,11 @@ func init() {
 
 const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering failed]</div>\n\n"
 
-type renderer func([]string, *common.Context) (string, error)
+type Renderer func([]string, *common.Context) (string, error)
 
-var renderers = map[string]renderer{
+var renderers = map[string]Renderer{
 	"audio":                  audio.RenderFromText,
 	"bglist":                 bglist.RenderFromText,
-	"contact":                contact.RenderFromText,
 	"figure":                 figure.RenderFromText,
 	"filmlist":               filmlist.RenderFromText,
 	"filmratingdistribution": filmratingdistribution.RenderFromText,
@@ -64,7 +58,6 @@ var renderers = map[string]renderer{
 	"filmsearch":             filmsearch.RenderFromText,
 	"link":                   link.RenderFromText,
 	"nod":                    nod.RenderFromText,
-	"nowplaying":             nowplaying.RenderFromText,
 	"playedbgs":              playedbgs.RenderFromText,
 	"postlink":               postlink.RenderFromText,
 	"rating":                 rating.RenderFromText,
@@ -72,8 +65,6 @@ var renderers = map[string]renderer{
 	"recentposts":            recentposts.RenderFromText,
 	"sidenote":               sidenote.RenderFromText,
 	"syndication":            syndication.RenderFromText,
-	"topalbums":              topalbums.RenderFromText,
-	"topartists":             topartists.RenderFromText,
 	"update":                 update.RenderFromText,
 	"video":                  video.RenderFromText,
 	"walks":                  walks.RenderFromText,
@@ -81,7 +72,10 @@ var renderers = map[string]renderer{
 	"walkingspeed":           walkingspeed.RenderFromText,
 	"warning":                warning.RenderFromText,
 	"watchedfilms":           watchedfilms.RenderFromText,
-	"wowchar":                wowchar.RenderFromText,
+}
+
+func Register(name string, renderer Renderer) {
+	renderers[name] = renderer
 }
 
 var tagRegexp = regexp.MustCompile(`\{%\s*(\w+)(.*?)\s*%\}`)

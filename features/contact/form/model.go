@@ -1,4 +1,4 @@
-package contact
+package form
 
 type Data struct {
 	Preamble  string

@@ -26,6 +26,13 @@ import (
 	"github.com/csmith/middleware"
 	"github.com/csmith/slogflags"
 	"tailscale.com/tsnet"
+
+	_ "chameth.com/chameth.com/features"
+	_ "chameth.com/chameth.com/features/contact/form"
+	_ "chameth.com/chameth.com/features/music/nowplaying"
+	_ "chameth.com/chameth.com/features/music/topalbums"
+	_ "chameth.com/chameth.com/features/music/topartists"
+	_ "chameth.com/chameth.com/features/wow/wowchar"
 )
 
 var (
