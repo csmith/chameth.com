@@ -2,14 +2,14 @@ package contact
 
 import "errors"
 
-type Method string
+type method string
 
 const (
-	MethodJSON Method = "JSON"
-	MethodForm Method = "Form"
+	methodJSON method = "JSON"
+	methodForm method = "Form"
 )
 
-type Request struct {
+type request struct {
 	Page        string `json:"page"`
 	SenderName  string `json:"name"`
 	SenderEmail string `json:"email"`
@@ -18,7 +18,7 @@ type Request struct {
 	Honeypot    string `json:"subject"`
 }
 
-var ErrRejected = errors.New("submission rejected")
+var errRejected = errors.New("submission rejected")
 
 type cause string
 

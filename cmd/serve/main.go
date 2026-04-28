@@ -16,6 +16,7 @@ import (
 	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/atproto"
+	"chameth.com/chameth.com/features/contact"
 	"chameth.com/chameth.com/features/embeddings"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/music"
@@ -95,8 +96,8 @@ func main() {
 	go wow.RunSync(context.Background())
 
 	mux := http.NewServeMux()
-	mux.Handle("POST /api/contact", http.HandlerFunc(handlers.ContactForm))
-	mux.Handle("POST /api/form/contact", http.HandlerFunc(handlers.ContactFormPost))
+	mux.Handle("POST /api/contact", http.HandlerFunc(contact.ContactForm))
+	mux.Handle("POST /api/form/contact", http.HandlerFunc(contact.ContactFormPost))
 	mux.Handle("POST /api/nod", http.HandlerFunc(handlers.Nod))
 	mux.Handle("POST /api/form/nod", http.HandlerFunc(handlers.NodForm))
 	mux.Handle("GET /api/films/search", http.HandlerFunc(handlers.SearchFilms))

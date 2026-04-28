@@ -35,7 +35,7 @@ var (
 	minFormAge = 10 * time.Second
 )
 
-func Process(ctx context.Context, req Request, method Method, remoteAddr, userAgent string) error {
+func process(ctx context.Context, req request, mthd method, remoteAddr, userAgent string) error {
 	host, _, err := net.SplitHostPort(remoteAddr)
 	if err != nil {
 		host = remoteAddr
@@ -46,8 +46,7 @@ func Process(ctx context.Context, req Request, method Method, remoteAddr, userAg
 	for _, check := range checks {
 		err := check(req, host)
 		if err != nil {
-			var rej *rejection
-			if errors.As(err, &rej) {
+			if rej, ok := errors.AsType[*rejection](err); ok {
 				failedChecks = append(failedChecks, rej.cause)
 			} else {
 				slog.Error("Error checking contact form for spam", "request", req, "error", err)
@@ -60,7 +59,7 @@ func Process(ctx context.Context, req Request, method Method, remoteAddr, userAg
 		failedCheckStrings[i] = string(c)
 	}
 	metrics.RecordContactSubmission(ctx, metrics.ContactSubmission{
-		Method:       string(method),
+		Method:       string(mthd),
 		UserAgent:    userAgent,
 		RemoteAddr:   remoteAddr,
 		FailedChecks: failedCheckStrings,
@@ -72,10 +71,10 @@ func Process(ctx context.Context, req Request, method Method, remoteAddr, userAg
 
 	if len(failedChecks) > 0 {
 		time.Sleep(5 * time.Second)
-		return ErrRejected
+		return errRejected
 	}
 
-	content := messageBody(req, method, remoteAddr)
+	content := messageBody(req, mthd, remoteAddr)
 	if err := sendContact(req, content); err != nil {
 		slog.Error("Error sending contact form", "error", err, "request", req)
 		return fmt.Errorf("failed to send: %w", err)
@@ -84,7 +83,7 @@ func Process(ctx context.Context, req Request, method Method, remoteAddr, userAg
 	return nil
 }
 
-func sendContact(req Request, content string) error {
+func sendContact(req request, content string) error {
 	auth := smtp.PlainAuth("", *smtpUsername, *smtpPassword, *smtpServer)
 	replyTo := req.SenderEmail
 	if replyTo == "" {
@@ -100,7 +99,7 @@ func sendContact(req Request, content string) error {
 	return nil
 }
 
-func messageBody(c Request, method Method, remoteAddr string) string {
+func messageBody(c request, mthd method, remoteAddr string) string {
 	body := strings.Builder{}
 	body.WriteString("SENDER: ")
 	body.WriteString(c.SenderName)
@@ -114,7 +113,7 @@ func messageBody(c Request, method Method, remoteAddr string) string {
 	body.WriteString(remoteAddr)
 	body.WriteString("\n")
 	body.WriteString("METHOD: ")
-	body.WriteString(string(method))
+	body.WriteString(string(mthd))
 	body.WriteString("\n")
 
 	body.WriteString("\nMESSAGE:\n\n")

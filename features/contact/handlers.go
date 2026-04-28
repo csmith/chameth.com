@@ -1,4 +1,4 @@
-package handlers
+package contact
 
 import (
 	"encoding/json"
@@ -7,8 +7,6 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
-
-	"chameth.com/chameth.com/features/contact"
 )
 
 func ContactForm(w http.ResponseWriter, r *http.Request) {
@@ -25,15 +23,15 @@ func ContactForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req contact.Request
+	var req request
 	if err = json.Unmarshal(body, &req); err != nil {
 		slog.Error("Error parsing contact form payload", "error", err, "payload", string(body))
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 
-	if err := contact.Process(r.Context(), req, contact.MethodJSON, r.RemoteAddr, r.UserAgent()); err != nil {
-		if errors.Is(err, contact.ErrRejected) {
+	if err := process(r.Context(), req, methodJSON, r.RemoteAddr, r.UserAgent()); err != nil {
+		if errors.Is(err, errRejected) {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
@@ -45,7 +43,7 @@ func ContactForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func ContactFormPost(w http.ResponseWriter, r *http.Request) {
-	req := contact.Request{
+	req := request{
 		Page:        r.FormValue("page"),
 		SenderName:  r.FormValue("name"),
 		SenderEmail: r.FormValue("email"),
@@ -54,8 +52,8 @@ func ContactFormPost(w http.ResponseWriter, r *http.Request) {
 		Honeypot:    r.FormValue("subject"),
 	}
 
-	if err := contact.Process(r.Context(), req, contact.MethodForm, r.RemoteAddr, r.UserAgent()); err != nil {
-		if errors.Is(err, contact.ErrRejected) {
+	if err := process(r.Context(), req, methodForm, r.RemoteAddr, r.UserAgent()); err != nil {
+		if errors.Is(err, errRejected) {
 			http.Error(w, "Something went wrong. Your message was not sent.", http.StatusBadRequest)
 			return
 		}

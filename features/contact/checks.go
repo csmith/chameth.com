@@ -12,11 +12,11 @@ import (
 	"chameth.com/chameth.com/external/spamhaus"
 )
 
-type check = func(req Request, remoteAddr string) error
+type check = func(req request, remoteAddr string) error
 
 var checks = []check{checkHoneypot, checkTimestamp, checkRateLimit, checkSensible, checkCyrillic, checkUnsubscribeLink, checkSpamhaus}
 
-func checkHoneypot(req Request, _ string) error {
+func checkHoneypot(req request, _ string) error {
 	if req.Honeypot != "" {
 		slog.Info("Honeypot field filled in contact form submission", "subject", req.Honeypot)
 		return &rejection{cause: causeHoneypot}
@@ -24,7 +24,7 @@ func checkHoneypot(req Request, _ string) error {
 	return nil
 }
 
-func checkTimestamp(req Request, _ string) error {
+func checkTimestamp(req request, _ string) error {
 	if req.Timestamp == "" {
 		slog.Info("Missing timestamp in contact form submission")
 		return &rejection{cause: causeTimestampInvalid}
@@ -56,7 +56,7 @@ func checkTimestamp(req Request, _ string) error {
 	return nil
 }
 
-func checkRateLimit(req Request, remoteAddr string) error {
+func checkRateLimit(req request, remoteAddr string) error {
 	if !isRateAllowed(remoteAddr) {
 		slog.Info("Rate limit exceeded for contact form", "remoteAddr", remoteAddr, "request", req)
 		return &rejection{cause: causeRateLimit}
@@ -64,7 +64,7 @@ func checkRateLimit(req Request, remoteAddr string) error {
 	return nil
 }
 
-func checkSensible(req Request, _ string) error {
+func checkSensible(req request, _ string) error {
 	trimmed := strings.TrimSpace(req.Message)
 	if trimmed != "" && len(strings.Fields(trimmed)) >= 2 {
 		return nil
@@ -73,7 +73,7 @@ func checkSensible(req Request, _ string) error {
 	return &rejection{cause: causeSensible}
 }
 
-func checkCyrillic(req Request, _ string) error {
+func checkCyrillic(req request, _ string) error {
 	for _, r := range req.Message {
 		if r >= '\u0400' && r <= '\u04FF' {
 			slog.Info("Blocking Cyrillic contact form message", "request", req)
@@ -83,7 +83,7 @@ func checkCyrillic(req Request, _ string) error {
 	return nil
 }
 
-func checkUnsubscribeLink(req Request, _ string) error {
+func checkUnsubscribeLink(req request, _ string) error {
 	if strings.Contains(req.Message, "unsubscribe.php?d=chameth.com") {
 		slog.Info("Blocking unsubscribe link in contact form message", "request", req)
 		return &rejection{cause: causeUnsubscribeLink}
@@ -91,7 +91,7 @@ func checkUnsubscribeLink(req Request, _ string) error {
 	return nil
 }
 
-func checkSpamhaus(req Request, remoteAddr string) error {
+func checkSpamhaus(req request, remoteAddr string) error {
 	result, err := spamhaus.Check(remoteAddr)
 	if err != nil {
 		slog.Error("Error checking Spamhaus", "error", err, "remoteAddr", remoteAddr)
