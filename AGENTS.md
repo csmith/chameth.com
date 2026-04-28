@@ -8,7 +8,7 @@ go templates for rendering content.
 
 - `cmd/serve` - main program code
 - `admin` - admin interface, exposed on tailscale
-- `db` - database handling code
+- `db` - shared database handling code
 - `external` - packages for interacting with external systems/APIs
 - `templates` - frontend templates and Go template helper code
 
@@ -60,7 +60,9 @@ be in a single package. New HTTP handlers should be a thin wiring
 layer that hands over to the feature package.
 
 When doing this, DB operations should be placed in a `db.go` file
-in the package.
+in the package. These operations should be as minimal as possible:
+simple inserts or retrievals. There should be as little business
+logic as possibl in the database files.
 
 ### Admin interface
 
