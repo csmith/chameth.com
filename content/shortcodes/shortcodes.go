@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"embed"
 	"fmt"
-	"io/fs"
 	"log/slog"
-	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -47,17 +45,7 @@ import (
 var shortcodeCSS embed.FS
 
 func init() {
-	fs.WalkDir(shortcodeCSS, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil || d.IsDir() || filepath.Ext(path) != ".css" {
-			return nil
-		}
-		b, err := fs.ReadFile(shortcodeCSS, path)
-		if err != nil {
-			return nil
-		}
-		assets.RegisterStylesheet(filepath.Join("shortcodes", path), b)
-		return nil
-	})
+	assets.Register(shortcodeCSS, "shortcodes")
 }
 
 const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering failed]</div>\n\n"
