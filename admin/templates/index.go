@@ -9,7 +9,7 @@ var indexTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
 		ParseFS(
-			templates,
+			Templates,
 			"page.html.gotpl",
 			"index.html.gotpl",
 		),

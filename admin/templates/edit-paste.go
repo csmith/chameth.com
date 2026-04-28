@@ -9,7 +9,7 @@ var editPasteTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
 		ParseFS(
-			templates,
+			Templates,
 			"page.html.gotpl",
 			"edit-paste.html.gotpl",
 		),

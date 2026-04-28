@@ -1,15 +1,14 @@
-package handlers
+package admin
 
 import (
 	"log/slog"
 	"net/http"
 	"strconv"
 
-	"chameth.com/chameth.com/admin/templates"
 	"chameth.com/chameth.com/features/wow"
 )
 
-func ListWowCharactersHandler() func(http.ResponseWriter, *http.Request) {
+func ListCharactersHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		characters, err := wow.AllCharacters(r.Context())
 		if err != nil {
@@ -18,9 +17,9 @@ func ListWowCharactersHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		summaries := make([]templates.WowCharacterSummary, len(characters))
+		summaries := make([]CharacterSummary, len(characters))
 		for i, c := range characters {
-			summaries[i] = templates.WowCharacterSummary{
+			summaries[i] = CharacterSummary{
 				ID:            c.ID,
 				CharacterName: c.CharacterName,
 				RealmName:     c.RealmName,
@@ -33,17 +32,17 @@ func ListWowCharactersHandler() func(http.ResponseWriter, *http.Request) {
 			}
 		}
 
-		data := templates.ListWowCharactersData{
+		data := ListCharactersData{
 			Characters: summaries,
 		}
 
-		if err := templates.RenderListWowCharacters(w, data); err != nil {
+		if err := renderListCharacters(w, data); err != nil {
 			http.Error(w, "Failed to render template", http.StatusInternalServerError)
 		}
 	}
 }
 
-func ImportWowCharacterHandler() func(http.ResponseWriter, *http.Request) {
+func ImportCharacterHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := r.ParseForm(); err != nil {
 			http.Error(w, "Failed to parse form", http.StatusBadRequest)
@@ -65,7 +64,7 @@ func ImportWowCharacterHandler() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func RefreshWowCharacterHandler() func(http.ResponseWriter, *http.Request) {
+func RefreshCharacterHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idStr := r.PathValue("id")
 		id, err := strconv.Atoi(idStr)

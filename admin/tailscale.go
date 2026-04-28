@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/admin/handlers"
+	wowadmin "chameth.com/chameth.com/features/wow/admin"
 	"github.com/csmith/middleware"
 	"tailscale.com/tsnet"
 )
@@ -94,9 +95,9 @@ func Start(s *tsnet.Server) error {
 	httpsMux.HandleFunc("GET /api/films/reviews/", handlers.GetFilmsWithReviewsHandler())
 	httpsMux.HandleFunc("POST /api/walks/import", handlers.ImportWalksHandler())
 	httpsMux.HandleFunc("POST /api/boardgames/import", handlers.ImportBoardgamesHandler())
-	httpsMux.HandleFunc("GET /wow", handlers.ListWowCharactersHandler())
-	httpsMux.HandleFunc("POST /wow/import", handlers.ImportWowCharacterHandler())
-	httpsMux.HandleFunc("GET /wow/refresh/{id}", handlers.RefreshWowCharacterHandler())
+	httpsMux.HandleFunc("GET /wow", wowadmin.ListCharactersHandler())
+	httpsMux.HandleFunc("POST /wow/import", wowadmin.ImportCharacterHandler())
+	httpsMux.HandleFunc("GET /wow/refresh/{id}", wowadmin.RefreshCharacterHandler())
 	httpsMux.HandleFunc("GET /films/workflow/step/1", handlers.FilmReviewWorkflowStep1Handler())
 	httpsMux.HandleFunc("POST /films/workflow/step/1", handlers.FilmReviewWorkflowStep1Handler())
 	httpsMux.HandleFunc("GET /films/workflow/step/2", handlers.FilmReviewWorkflowStep2Handler())

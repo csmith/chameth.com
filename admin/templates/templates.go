@@ -5,4 +5,4 @@ import (
 )
 
 //go:embed *.gotpl
-var templates embed.FS
+var Templates embed.FS

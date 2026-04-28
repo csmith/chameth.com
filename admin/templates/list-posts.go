@@ -9,7 +9,7 @@ var listPostsTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
 		ParseFS(
-			templates,
+			Templates,
 			"page.html.gotpl",
 			"list-posts.html.gotpl",
 		),

@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.ListWowCharactersData */}}
+{{/* gotype: chameth.com/chameth.com/features/wow/admin.ListCharactersData */}}
 {{define "content"}}
     <h2>WoW Characters</h2>
 

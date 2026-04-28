@@ -9,7 +9,7 @@ var editFilmReviewTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
 		ParseFS(
-			templates,
+			Templates,
 			"page.html.gotpl",
 			"edit-film-review.html.gotpl",
 		),

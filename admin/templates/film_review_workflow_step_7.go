@@ -22,7 +22,7 @@ var filmReviewWorkflowStep7Template = template.Must(
 	template.
 		New("page.html.gotpl").
 		ParseFS(
-			templates,
+			Templates,
 			"page.html.gotpl",
 			"film-review-workflow-step-7.html.gotpl",
 		),

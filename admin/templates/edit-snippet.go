@@ -9,7 +9,7 @@ var editSnippetTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
 		ParseFS(
-			templates,
+			Templates,
 			"page.html.gotpl",
 			"edit-snippet.html.gotpl",
 		),

@@ -9,7 +9,7 @@ var listVideoGamesTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
 		ParseFS(
-			templates,
+			Templates,
 			"page.html.gotpl",
 			"list-video-games.html.gotpl",
 		),

@@ -9,7 +9,7 @@ var listSyndicationsTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
 		ParseFS(
-			templates,
+			Templates,
 			"page.html.gotpl",
 			"list-syndications.html.gotpl",
 		),

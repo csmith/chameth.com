@@ -9,7 +9,7 @@ var mediaTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
 		ParseFS(
-			templates,
+			Templates,
 			"page.html.gotpl",
 			"media.html.gotpl",
 		),
@@ -19,7 +19,7 @@ var editMediaTemplate = template.Must(
 	template.
 		New("page.html.gotpl").
 		ParseFS(
-			templates,
+			Templates,
 			"page.html.gotpl",
 			"edit-media.html.gotpl",
 		),

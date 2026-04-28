@@ -29,7 +29,7 @@ var filmReviewWorkflowStep2Template = template.Must(
 			"add": func(a, b int) int { return a + b },
 		}).
 		ParseFS(
-			templates,
+			Templates,
 			"page.html.gotpl",
 			"film-review-workflow-step-2.html.gotpl",
 		),
