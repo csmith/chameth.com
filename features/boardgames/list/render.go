@@ -1,4 +1,4 @@
-package bglist
+package list
 
 import (
 	"bytes"

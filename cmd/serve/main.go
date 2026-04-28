@@ -29,6 +29,8 @@ import (
 	"tailscale.com/tsnet"
 
 	_ "chameth.com/chameth.com/features"
+	_ "chameth.com/chameth.com/features/boardgames/list"
+	_ "chameth.com/chameth.com/features/boardgames/played"
 	_ "chameth.com/chameth.com/features/contact/form"
 	_ "chameth.com/chameth.com/features/music/nowplaying"
 	_ "chameth.com/chameth.com/features/music/topalbums"

@@ -1,4 +1,4 @@
-package handlers
+package admin
 
 import (
 	"bytes"
@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/boardgames"
 	"golang.org/x/image/draw"
 )
 
@@ -47,7 +48,6 @@ func ImportBoardgamesHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		// Build map of bgstats integer game ID → game UUID for play lookups
 		gameIDToUUID := make(map[int]string, len(data.Games))
 
 		for _, g := range data.Games {
@@ -70,7 +70,7 @@ func ImportBoardgamesHandler() func(http.ResponseWriter, *http.Request) {
 				status = "sold"
 			}
 
-			err := db.UpsertBoardgameGame(r.Context(), db.BoardgameGame{
+			err := boardgames.UpsertBoardgameGame(r.Context(), boardgames.BoardgameGame{
 				ID:          g.UUID,
 				BggID:       g.BggID,
 				Name:        g.BggName,
@@ -103,7 +103,7 @@ func ImportBoardgamesHandler() func(http.ResponseWriter, *http.Request) {
 				continue
 			}
 
-			err = db.UpsertBoardgamePlay(r.Context(), db.BoardgamePlay{
+			err = boardgames.UpsertBoardgamePlay(r.Context(), boardgames.BoardgamePlay{
 				ID:     p.UUID,
 				GameID: gameUUID,
 				Date:   playDate,

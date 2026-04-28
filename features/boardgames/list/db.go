@@ -1,13 +1,14 @@
-package bglist
+package list
 
 import (
 	"context"
 
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/boardgames"
 )
 
-func query(ctx context.Context) ([]db.BoardgameGameWithStats, error) {
-	return db.Select[db.BoardgameGameWithStats](ctx, `
+func query(ctx context.Context) ([]boardgames.BoardgameGameWithStats, error) {
+	return db.Select[boardgames.BoardgameGameWithStats](ctx, `
 		SELECT
 			g.name,
 			g.year,

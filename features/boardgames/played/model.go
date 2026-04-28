@@ -1,4 +1,4 @@
-package playedbgs
+package played
 
 type Game struct {
 	Name      string

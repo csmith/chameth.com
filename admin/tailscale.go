@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/admin/handlers"
+	bgadmin "chameth.com/chameth.com/features/boardgames/admin"
 	walksadmin "chameth.com/chameth.com/features/walks/admin"
 	wowadmin "chameth.com/chameth.com/features/wow/admin"
 	"github.com/csmith/middleware"
@@ -95,7 +96,7 @@ func Start(s *tsnet.Server) error {
 	httpsMux.HandleFunc("POST /film-lists/{id}/entries/reorder", handlers.ReorderFilmListEntriesHandler())
 	httpsMux.HandleFunc("GET /api/films/reviews/", handlers.GetFilmsWithReviewsHandler())
 	httpsMux.HandleFunc("POST /api/walks/import", walksadmin.ImportWalksHandler())
-	httpsMux.HandleFunc("POST /api/boardgames/import", handlers.ImportBoardgamesHandler())
+	httpsMux.HandleFunc("POST /api/boardgames/import", bgadmin.ImportBoardgamesHandler())
 	httpsMux.HandleFunc("GET /wow", wowadmin.ListCharactersHandler())
 	httpsMux.HandleFunc("POST /wow/import", wowadmin.ImportCharacterHandler())
 	httpsMux.HandleFunc("GET /wow/refresh/{id}", wowadmin.RefreshCharacterHandler())

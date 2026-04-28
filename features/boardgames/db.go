@@ -1,12 +1,14 @@
-package db
+package boardgames
 
 import (
 	"context"
 	"fmt"
+
+	"chameth.com/chameth.com/db"
 )
 
 func UpsertBoardgameGame(ctx context.Context, game BoardgameGame) error {
-	_, err := Exec(ctx, `
+	_, err := db.Exec(ctx, `
 		INSERT INTO boardgame_games (id, bgg_id, name, year, status, is_expansion)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		ON CONFLICT (id)
@@ -26,7 +28,7 @@ func UpsertBoardgameGame(ctx context.Context, game BoardgameGame) error {
 }
 
 func UpsertBoardgamePlay(ctx context.Context, play BoardgamePlay) error {
-	_, err := Exec(ctx, `
+	_, err := db.Exec(ctx, `
 		INSERT INTO boardgame_plays (id, game_id, date)
 		VALUES ($1, $2, $3)
 		ON CONFLICT (id)

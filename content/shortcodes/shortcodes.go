@@ -10,7 +10,6 @@ import (
 
 	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/content/shortcodes/audio"
-	"chameth.com/chameth.com/content/shortcodes/bglist"
 	"chameth.com/chameth.com/content/shortcodes/common"
 	"chameth.com/chameth.com/content/shortcodes/figure"
 	"chameth.com/chameth.com/content/shortcodes/filmlist"
@@ -20,7 +19,6 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/filmsearch"
 	"chameth.com/chameth.com/content/shortcodes/link"
 	"chameth.com/chameth.com/content/shortcodes/nod"
-	"chameth.com/chameth.com/content/shortcodes/playedbgs"
 	"chameth.com/chameth.com/content/shortcodes/postlink"
 	"chameth.com/chameth.com/content/shortcodes/rating"
 	"chameth.com/chameth.com/content/shortcodes/recentfilms"
@@ -46,7 +44,6 @@ type Renderer func([]string, *common.Context) (string, error)
 
 var renderers = map[string]Renderer{
 	"audio":                  audio.RenderFromText,
-	"bglist":                 bglist.RenderFromText,
 	"figure":                 figure.RenderFromText,
 	"filmlist":               filmlist.RenderFromText,
 	"filmratingdistribution": filmratingdistribution.RenderFromText,
@@ -55,7 +52,6 @@ var renderers = map[string]Renderer{
 	"filmsearch":             filmsearch.RenderFromText,
 	"link":                   link.RenderFromText,
 	"nod":                    nod.RenderFromText,
-	"playedbgs":              playedbgs.RenderFromText,
 	"postlink":               postlink.RenderFromText,
 	"rating":                 rating.RenderFromText,
 	"recentfilms":            recentfilms.RenderFromText,

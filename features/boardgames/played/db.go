@@ -1,14 +1,15 @@
-package playedbgs
+package played
 
 import (
 	"context"
 	"time"
 
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/boardgames"
 )
 
-func query(ctx context.Context, startDate, endDate time.Time) ([]db.BoardgameGameWithPlayCount, error) {
-	return db.Select[db.BoardgameGameWithPlayCount](ctx, `
+func query(ctx context.Context, startDate, endDate time.Time) ([]boardgames.BoardgameGameWithPlayCount, error) {
+	return db.Select[boardgames.BoardgameGameWithPlayCount](ctx, `
 		SELECT
 			g.name,
 			g.year,

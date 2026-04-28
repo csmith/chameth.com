@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/content/shortcodes/bglist.Data*/}}
+{{/* gotype: chameth.com/chameth.com/features/boardgames/list.Data*/}}
 <ol class="boardgame-list">
 {{- range .Games }}
   <li class="raised-box">
