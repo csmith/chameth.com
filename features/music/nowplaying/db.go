@@ -3,12 +3,21 @@ package nowplaying
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"chameth.com/chameth.com/db"
 )
 
-func query(ctx context.Context) (*db.NowPlaying, error) {
-	np, err := db.Get[db.NowPlaying](ctx, `
+type nowPlaying struct {
+	ArtistName string    `db:"artist_name"`
+	TrackName  string    `db:"track_name"`
+	AlbumName  string    `db:"album_name"`
+	ImagePath  *string   `db:"image_path"`
+	PlayedAt   time.Time `db:"played_at"`
+}
+
+func query(ctx context.Context) (*nowPlaying, error) {
+	np, err := db.Get[nowPlaying](ctx, `
 		SELECT ar.name AS artist_name,
 		       t.name AS track_name,
 		       al.name AS album_name,

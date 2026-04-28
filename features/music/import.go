@@ -68,7 +68,7 @@ func importMusicCatalog(ctx context.Context, client *http.Client) {
 				continue
 			}
 
-			id, err := upsertArtist(ctx, db.MusicArtist{
+			id, err := upsertArtist(ctx, musicArtist{
 				MusicBrainzID: artist.MusicBrainzID,
 				SubsonicID:    artist.ID,
 				Name:          artist.Name,
@@ -138,7 +138,7 @@ func importMusicAlbums(ctx context.Context, client *http.Client, sc *subsonic.Cl
 				year = &album.Year
 			}
 
-			id, err := upsertAlbum(ctx, db.MusicAlbum{
+			id, err := upsertAlbum(ctx, musicAlbum{
 				MusicBrainzID: album.MusicBrainzID,
 				SubsonicID:    album.ID,
 				Name:          normaliseAlbumName(album.Title, album.SortName),
@@ -200,7 +200,7 @@ func importMusicTracks(ctx context.Context, sc *subsonic.Client) error {
 				trackNumber = &song.TrackNumber
 			}
 
-			if _, err := upsertTrack(ctx, db.MusicTrack{
+			if _, err := upsertTrack(ctx, musicTrack{
 				SubsonicID:    song.ID,
 				MusicBrainzID: song.MusicBrainzID,
 				AlbumID:       album.ID,
@@ -259,7 +259,7 @@ func importPlays(ctx context.Context, sc *subsonic.Client) error {
 
 			trackID, err := trackByMusicBrainzID(ctx, play.Recording)
 			if err != nil {
-				if err := insertUnmatchedPlay(ctx, db.UnmatchedMusicPlay{
+				if err := insertUnmatchedPlay(ctx, unmatchedMusicPlay{
 					MusicBrainzID: play.Recording,
 					Title:         play.Title,
 					PlayedAt:      playedAt,
@@ -270,7 +270,7 @@ func importPlays(ctx context.Context, sc *subsonic.Client) error {
 				continue
 			}
 
-			if err := insertPlay(ctx, db.MusicPlay{
+			if err := insertPlay(ctx, musicPlay{
 				TrackID:   trackID,
 				PlayedAt:  playedAt,
 				PlayCount: play.PlayCount,
@@ -308,7 +308,7 @@ func resolveUnmatchedPlays(ctx context.Context) {
 			continue
 		}
 
-		if err := insertPlay(ctx, db.MusicPlay{
+		if err := insertPlay(ctx, musicPlay{
 			TrackID:   trackID,
 			PlayedAt:  play.PlayedAt,
 			PlayCount: play.PlayCount,

@@ -7,7 +7,15 @@ import (
 	"chameth.com/chameth.com/db"
 )
 
-func query(ctx context.Context, limit int) ([]db.TopAlbum, error) {
+type topAlbum struct {
+	Name       string  `db:"name"`
+	ArtistName string  `db:"artist_name"`
+	TrackCount int     `db:"track_count"`
+	PlayCount  int     `db:"play_count"`
+	ImagePath  *string `db:"image_path"`
+}
+
+func query(ctx context.Context, limit int) ([]topAlbum, error) {
 	query := `
 		SELECT al.name,
 		       ar.name AS artist_name,
@@ -32,7 +40,7 @@ func query(ctx context.Context, limit int) ([]db.TopAlbum, error) {
 		args = append(args, limit)
 	}
 
-	albums, err := db.Select[db.TopAlbum](ctx, query, args...)
+	albums, err := db.Select[topAlbum](ctx, query, args...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get top albums: %w", err)
 	}

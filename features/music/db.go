@@ -8,7 +8,7 @@ import (
 	"chameth.com/chameth.com/db"
 )
 
-func upsertArtist(ctx context.Context, artist db.MusicArtist) (int, error) {
+func upsertArtist(ctx context.Context, artist musicArtist) (int, error) {
 	id, err := db.Get[int](ctx, `
 		INSERT INTO music_artists (music_brainz_id, subsonic_id, name, sort_name)
 		VALUES ($1, $2, $3, $4)
@@ -33,7 +33,7 @@ func artistBySubsonicID(ctx context.Context, subsonicID string) (int, error) {
 	return id, nil
 }
 
-func upsertAlbum(ctx context.Context, album db.MusicAlbum) (int, error) {
+func upsertAlbum(ctx context.Context, album musicAlbum) (int, error) {
 	id, err := db.Get[int](ctx, `
 		INSERT INTO music_albums (music_brainz_id, subsonic_id, name, sort_name, year, artist_id)
 		VALUES ($1, $2, $3, $4, $5, $6)
@@ -52,8 +52,8 @@ func upsertAlbum(ctx context.Context, album db.MusicAlbum) (int, error) {
 	return id, nil
 }
 
-func albumsWithoutTracks(ctx context.Context) ([]db.MusicAlbum, error) {
-	albums, err := db.Select[db.MusicAlbum](ctx, `
+func albumsWithoutTracks(ctx context.Context) ([]musicAlbum, error) {
+	albums, err := db.Select[musicAlbum](ctx, `
 		SELECT a.* FROM music_albums a
 		WHERE NOT EXISTS (SELECT 1 FROM music_tracks t WHERE t.album_id = a.id)
 		ORDER BY a.sort_name
@@ -64,7 +64,7 @@ func albumsWithoutTracks(ctx context.Context) ([]db.MusicAlbum, error) {
 	return albums, nil
 }
 
-func upsertTrack(ctx context.Context, track db.MusicTrack) (int, error) {
+func upsertTrack(ctx context.Context, track musicTrack) (int, error) {
 	id, err := db.Get[int](ctx, `
 		INSERT INTO music_tracks (subsonic_id, music_brainz_id, album_id, name, duration, disc_number, track_number)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -99,7 +99,7 @@ func mostRecentPlayTime(ctx context.Context) (time.Time, error) {
 	return *t, nil
 }
 
-func insertPlay(ctx context.Context, play db.MusicPlay) error {
+func insertPlay(ctx context.Context, play musicPlay) error {
 	_, err := db.Exec(ctx, `
 		INSERT INTO music_plays (track_id, played_at, play_count)
 		VALUES ($1, $2, $3)
@@ -118,7 +118,7 @@ func trackByMusicBrainzID(ctx context.Context, musicBrainzID string) (int, error
 	return id, nil
 }
 
-func insertUnmatchedPlay(ctx context.Context, play db.UnmatchedMusicPlay) error {
+func insertUnmatchedPlay(ctx context.Context, play unmatchedMusicPlay) error {
 	_, err := db.Exec(ctx, `
 		INSERT INTO unmatched_music_plays (music_brainz_id, title, played_at, play_count)
 		VALUES ($1, $2, $3, $4)
@@ -129,8 +129,8 @@ func insertUnmatchedPlay(ctx context.Context, play db.UnmatchedMusicPlay) error 
 	return nil
 }
 
-func unmatchedPlays(ctx context.Context) ([]db.UnmatchedMusicPlay, error) {
-	plays, err := db.Select[db.UnmatchedMusicPlay](ctx, `SELECT * FROM unmatched_music_plays ORDER BY played_at`)
+func unmatchedPlays(ctx context.Context) ([]unmatchedMusicPlay, error) {
+	plays, err := db.Select[unmatchedMusicPlay](ctx, `SELECT * FROM unmatched_music_plays ORDER BY played_at`)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get unmatched music plays: %w", err)
 	}
