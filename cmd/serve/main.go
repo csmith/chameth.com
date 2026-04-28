@@ -120,7 +120,7 @@ func main() {
 	mux.Handle("GET /projects/{$}", http.HandlerFunc(handlers.ProjectsList))
 	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(handlers.HtmlSiteMap))
 	mux.Handle("GET /snippets/{$}", http.HandlerFunc(handlers.SnippetsList))
-	mux.Handle("GET /sudo", http.HandlerFunc(handlers.Sudo))
+	mux.Handle("GET /sudo", http.HandlerFunc(sudo.Handler))
 	mux.Handle("/", http.HandlerFunc(handlers.Content))
 
 	server := &http.Server{
