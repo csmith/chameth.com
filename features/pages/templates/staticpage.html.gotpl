@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/templates.StaticPageData*/}}
+{{/* gotype: chameth.com/chameth.com/features/pages/templates.StaticPageData*/}}
 {{define "content"}}
 <h2>{{ .StaticTitle }}</h2>
 {{ .StaticContent }}

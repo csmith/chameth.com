@@ -1,19 +1,19 @@
-package handlers
+package pages
 
 import (
 	"log/slog"
 	"net/http"
 
 	"chameth.com/chameth.com/content"
-	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/templates"
+	pagetemplates "chameth.com/chameth.com/features/pages/templates"
+	parenttemplates "chameth.com/chameth.com/templates"
 )
 
-func StaticPage(w http.ResponseWriter, r *http.Request) {
-	page, err := db.GetStaticPageByPath(r.Context(), r.URL.Path)
+func StaticPageHandler(w http.ResponseWriter, r *http.Request) {
+	page, err := GetStaticPageByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find static page by path", "error", err, "path", r.URL.Path)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -26,16 +26,16 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 		renderedContent, err := content.RenderContent(r.Context(), "rawpage", page.ID, page.Content, page.Path)
 		if err != nil {
 			slog.Error("Failed to render raw page content", "page", page.Title, "error", err)
-			ServerError(w, r)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 
-		err = templates.RenderRawPage(w, templates.RawPageData{
+		err = pagetemplates.RenderRawPage(w, pagetemplates.RawPageData{
 			RawContent: renderedContent,
-			PageData:   content.CreatePageData(r.Context(), page.Title, page.Path, templates.OpenGraphHeaders{}),
+			PageData:   content.CreatePageData(r.Context(), page.Title, page.Path, parenttemplates.OpenGraphHeaders{}),
 		})
 		if err != nil {
 			slog.Error("Failed to render raw page template", "error", err, "path", r.URL.Path)
@@ -46,17 +46,17 @@ func StaticPage(w http.ResponseWriter, r *http.Request) {
 	renderedContent, err := content.RenderContent(r.Context(), "staticpage", page.ID, page.Content, page.Path)
 	if err != nil {
 		slog.Error("Failed to render static page content", "page", page.Title, "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 
-	err = templates.RenderStaticPage(w, templates.StaticPageData{
+	err = pagetemplates.RenderStaticPage(w, pagetemplates.StaticPageData{
 		StaticTitle:   page.Title,
 		StaticContent: renderedContent,
-		PageData:      content.CreatePageData(r.Context(), page.Title, page.Path, templates.OpenGraphHeaders{}),
+		PageData:      content.CreatePageData(r.Context(), page.Title, page.Path, parenttemplates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render static page template", "error", err, "path", r.URL.Path)

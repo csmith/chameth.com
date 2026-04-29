@@ -10,6 +10,7 @@ import (
 	bgadmin "chameth.com/chameth.com/features/boardgames/admin"
 	filmadmin "chameth.com/chameth.com/features/films/admin"
 	goimportadmin "chameth.com/chameth.com/features/goimports/admin"
+	pageadmin "chameth.com/chameth.com/features/pages/admin"
 	postadmin "chameth.com/chameth.com/features/posts/admin"
 	pasteadmin "chameth.com/chameth.com/features/pastes/admin"
 	poemadmin "chameth.com/chameth.com/features/poems/admin"
@@ -50,10 +51,10 @@ func Start(s *tsnet.Server) error {
 	httpsMux.HandleFunc("GET /posts/edit/{id}", postadmin.EditPostHandler())
 	httpsMux.HandleFunc("POST /posts/edit/{id}", postadmin.UpdatePostHandler())
 	httpsMux.HandleFunc("POST /posts/generate-wordcloud/{id}", postadmin.GenerateWordcloudHandler())
-	httpsMux.HandleFunc("GET /pages", handlers.ListPagesHandler())
-	httpsMux.HandleFunc("POST /pages", handlers.CreatePageHandler())
-	httpsMux.HandleFunc("GET /pages/edit/{id}", handlers.EditPageHandler())
-	httpsMux.HandleFunc("POST /pages/edit/{id}", handlers.UpdatePageHandler())
+	httpsMux.HandleFunc("GET /pages", pageadmin.ListPagesHandler())
+	httpsMux.HandleFunc("POST /pages", pageadmin.CreatePageHandler())
+	httpsMux.HandleFunc("GET /pages/edit/{id}", pageadmin.EditPageHandler())
+	httpsMux.HandleFunc("POST /pages/edit/{id}", pageadmin.UpdatePageHandler())
 	httpsMux.HandleFunc("GET /snippets", snippetadmin.ListSnippetsHandler())
 	httpsMux.HandleFunc("POST /snippets", snippetadmin.CreateSnippetHandler())
 	httpsMux.HandleFunc("GET /snippets/edit/{id}", snippetadmin.EditSnippetHandler())

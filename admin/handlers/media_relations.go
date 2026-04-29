@@ -8,6 +8,7 @@ import (
 	"chameth.com/chameth.com/admin/templates"
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/films"
+	"chameth.com/chameth.com/features/pages"
 	"chameth.com/chameth.com/features/poems"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/snippets"
@@ -54,7 +55,7 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 			entityPath = snippet.Path
 		case "staticpage":
-			page, err := db.GetStaticPageByID(r.Context(), entityID)
+			page, err := pages.GetStaticPageByID(r.Context(), entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return

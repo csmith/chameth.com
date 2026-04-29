@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"chameth.com/chameth.com/content"
-	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/films"
+	"chameth.com/chameth.com/features/pages"
 	"chameth.com/chameth.com/features/poems"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/snippets"
@@ -73,7 +73,7 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templat
 		})
 	}
 
-	sitemapPages, err := db.GetSitemapStaticPages(ctx)
+	sitemapPages, err := pages.GetSitemapStaticPages(ctx)
 	if err != nil {
 		return templates.SiteMapData{}, fmt.Errorf("failed to get sitemap pages: %w", err)
 	}
