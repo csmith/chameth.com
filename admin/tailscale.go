@@ -10,6 +10,7 @@ import (
 	bgadmin "chameth.com/chameth.com/features/boardgames/admin"
 	filmadmin "chameth.com/chameth.com/features/films/admin"
 	goimportadmin "chameth.com/chameth.com/features/goimports/admin"
+	pasteadmin "chameth.com/chameth.com/features/pastes/admin"
 	poemadmin "chameth.com/chameth.com/features/poems/admin"
 	projectadmin "chameth.com/chameth.com/features/projects/admin"
 	snippetadmin "chameth.com/chameth.com/features/snippets/admin"
@@ -60,10 +61,10 @@ func Start(s *tsnet.Server) error {
 	httpsMux.HandleFunc("POST /poems", poemadmin.CreatePoemHandler())
 	httpsMux.HandleFunc("GET /poems/edit/{id}", poemadmin.EditPoemHandler())
 	httpsMux.HandleFunc("POST /poems/edit/{id}", poemadmin.UpdatePoemHandler())
-	httpsMux.HandleFunc("GET /pastes", handlers.ListPastesHandler())
-	httpsMux.HandleFunc("POST /pastes", handlers.CreatePasteHandler())
-	httpsMux.HandleFunc("GET /pastes/edit/{id}", handlers.EditPasteHandler())
-	httpsMux.HandleFunc("POST /pastes/edit/{id}", handlers.UpdatePasteHandler())
+	httpsMux.HandleFunc("GET /pastes", pasteadmin.ListPastesHandler())
+	httpsMux.HandleFunc("POST /pastes", pasteadmin.CreatePasteHandler())
+	httpsMux.HandleFunc("GET /pastes/edit/{id}", pasteadmin.EditPasteHandler())
+	httpsMux.HandleFunc("POST /pastes/edit/{id}", pasteadmin.UpdatePasteHandler())
 	httpsMux.HandleFunc("GET /projects", projectadmin.ListProjectsHandler())
 	httpsMux.HandleFunc("POST /projects", projectadmin.CreateProjectHandler())
 	httpsMux.HandleFunc("GET /projects/edit/{id}", projectadmin.EditProjectHandler())

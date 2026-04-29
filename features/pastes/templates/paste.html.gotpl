@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/templates.PasteData*/}}
+{{/* gotype: chameth.com/chameth.com/features/pastes/templates.PasteData*/}}
 {{define "article"}}
     <div class="paste-metadata">
         {{if .Language}}<span class="language">{{.Language}}</span> · {{end}}{{.Size}} bytes · <a href="?raw">view raw</a>

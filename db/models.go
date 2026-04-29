@@ -60,20 +60,6 @@ type Post struct {
 	Content string `db:"content"`
 }
 
-type PasteMetadata struct {
-	ID        int       `db:"id"`
-	Path      string    `db:"path"`
-	Title     string    `db:"title"`
-	Language  string    `db:"language"`
-	Date      time.Time `db:"date"`
-	Published bool      `db:"published"`
-}
-
-type Paste struct {
-	PasteMetadata
-	Content string `db:"content"`
-}
-
 type MediaImageVariant struct {
 	Path        string `db:"path"`
 	ContentType string `db:"content_type"`

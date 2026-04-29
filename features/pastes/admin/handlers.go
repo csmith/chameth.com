@@ -1,24 +1,24 @@
-package handlers
+package admin
 
 import (
 	"fmt"
 	"net/http"
 	"strconv"
 
-	"chameth.com/chameth.com/admin/templates"
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/pastes"
+	"chameth.com/chameth.com/features/pastes/admin/templates"
 	"github.com/csmith/aca"
 )
 
 func ListPastesHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := db.GetDraftPastes(r.Context())
+		drafts, err := pastes.GetDraftPastes(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve draft pastes", http.StatusInternalServerError)
 			return
 		}
 
-		pastes, err := db.GetAllPastes(r.Context())
+		allPastes, err := pastes.GetAllPastes(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve pastes", http.StatusInternalServerError)
 			return
@@ -34,8 +34,8 @@ func ListPastesHandler() func(http.ResponseWriter, *http.Request) {
 			}
 		}
 
-		pasteSummaries := make([]templates.PasteSummary, len(pastes))
-		for i, paste := range pastes {
+		pasteSummaries := make([]templates.PasteSummary, len(allPastes))
+		for i, paste := range allPastes {
 			pasteSummaries[i] = templates.PasteSummary{
 				ID:       paste.ID,
 				Path:     paste.Path,
@@ -64,7 +64,7 @@ func EditPasteHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		paste, err := db.GetPasteByID(r.Context(), id)
+		paste, err := pastes.GetPasteByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Paste not found", http.StatusNotFound)
 			return
@@ -88,7 +88,6 @@ func EditPasteHandler() func(http.ResponseWriter, *http.Request) {
 
 func CreatePasteHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Generate random adjective-color-animal name
 		gen, err := aca.NewDefaultGenerator()
 		if err != nil {
 			http.Error(w, "Failed to generate name", http.StatusInternalServerError)
@@ -97,14 +96,12 @@ func CreatePasteHandler() func(http.ResponseWriter, *http.Request) {
 		name := gen.Generate()
 		path := fmt.Sprintf("/paste/%s/", name)
 
-		// Create the new paste
-		id, err := db.CreatePaste(r.Context(), path, name)
+		id, err := pastes.CreatePaste(r.Context(), path, name)
 		if err != nil {
 			http.Error(w, "Failed to create paste", http.StatusInternalServerError)
 			return
 		}
 
-		// Redirect to edit page
 		http.Redirect(w, r, fmt.Sprintf("/pastes/edit/%d", id), http.StatusSeeOther)
 	}
 }
@@ -130,7 +127,7 @@ func UpdatePasteHandler() func(http.ResponseWriter, *http.Request) {
 		date := r.FormValue("date")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdatePaste(r.Context(), id, path, title, language, pasteContent, date, published); err != nil {
+		if err := pastes.UpdatePaste(r.Context(), id, path, title, language, pasteContent, date, published); err != nil {
 			http.Error(w, "Failed to update paste", http.StatusInternalServerError)
 			return
 		}

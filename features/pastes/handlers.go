@@ -1,4 +1,4 @@
-package handlers
+package pastes
 
 import (
 	"fmt"
@@ -8,15 +8,15 @@ import (
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/content/markdown"
-	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/templates"
+	"chameth.com/chameth.com/features/pastes/templates"
+	parenttemplates "chameth.com/chameth.com/templates"
 )
 
-func Paste(w http.ResponseWriter, r *http.Request) {
-	paste, err := db.GetPasteByPath(r.Context(), r.URL.Path)
+func PasteHandler(w http.ResponseWriter, r *http.Request) {
+	paste, err := GetPasteByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find paste by path", "error", err, "path", r.URL.Path)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -52,7 +52,7 @@ func Paste(w http.ResponseWriter, r *http.Request) {
 	renderedContent, err := markdown.Render(md.String())
 	if err != nil {
 		slog.Error("Failed to render markdown for paste", "paste", paste.Title, "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -62,16 +62,16 @@ func Paste(w http.ResponseWriter, r *http.Request) {
 		Content:  renderedContent,
 		Language: paste.Language,
 		Size:     len(paste.Content),
-		ArticleData: templates.ArticleData{
+		ArticleData: parenttemplates.ArticleData{
 			ArticleTitle:   paste.Title,
 			ArticleSummary: paste.Content,
-			ArticleDate: templates.ArticleDate{
+			ArticleDate: parenttemplates.ArticleDate{
 				Iso:         paste.Date.Format("2006-01-02"),
 				Friendly:    paste.Date.Format("Jan 2, 2006"),
 				ShowWarning: false,
 			},
 			EditLink: fmt.Sprintf("https://website-admin.yak-wall.ts.net/pastes/edit/%d", paste.ID),
-			PageData: content.CreatePageData(r.Context(), paste.Title, paste.Path, templates.OpenGraphHeaders{}),
+			PageData: content.CreatePageData(r.Context(), paste.Title, paste.Path, parenttemplates.OpenGraphHeaders{}),
 		},
 	})
 	if err != nil {
