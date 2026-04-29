@@ -12,10 +12,10 @@ import (
 	"strings"
 	"time"
 
-	filmtemplates "chameth.com/chameth.com/features/films/admin/templates"
 	"chameth.com/chameth.com/db"
-	films "chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/external/tmdb"
+	films "chameth.com/chameth.com/features/films"
+	filmtemplates "chameth.com/chameth.com/features/films/admin/templates"
 )
 
 var (

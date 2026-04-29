@@ -1,24 +1,24 @@
-package handlers
+package admin
 
 import (
 	"fmt"
 	"net/http"
 	"strconv"
 
-	"chameth.com/chameth.com/admin/templates"
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/poems"
+	"chameth.com/chameth.com/features/poems/admin/templates"
 	"github.com/csmith/aca"
 )
 
 func ListPoemsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := db.GetDraftPoems(r.Context())
+		drafts, err := poems.GetDraftPoems(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve draft poems", http.StatusInternalServerError)
 			return
 		}
 
-		poems, err := db.GetAllPoems(r.Context())
+		allPoems, err := poems.GetAllPoems(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve poems", http.StatusInternalServerError)
 			return
@@ -34,8 +34,8 @@ func ListPoemsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 		}
 
-		poemSummaries := make([]templates.PoemSummary, len(poems))
-		for i, poem := range poems {
+		poemSummaries := make([]templates.PoemSummary, len(allPoems))
+		for i, poem := range allPoems {
 			poemSummaries[i] = templates.PoemSummary{
 				ID:    poem.ID,
 				Path:  poem.Path,
@@ -64,7 +64,7 @@ func EditPoemHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		poem, err := db.GetPoemByID(r.Context(), id)
+		poem, err := poems.GetPoemByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Poem not found", http.StatusNotFound)
 			return
@@ -88,7 +88,6 @@ func EditPoemHandler() func(http.ResponseWriter, *http.Request) {
 
 func CreatePoemHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Generate random adjective-color-animal name
 		gen, err := aca.NewDefaultGenerator()
 		if err != nil {
 			http.Error(w, "Failed to generate name", http.StatusInternalServerError)
@@ -97,14 +96,12 @@ func CreatePoemHandler() func(http.ResponseWriter, *http.Request) {
 		name := gen.Generate()
 		path := fmt.Sprintf("/%s/", name)
 
-		// Create the new poem
-		id, err := db.CreatePoem(r.Context(), path, name)
+		id, err := poems.CreatePoem(r.Context(), path, name)
 		if err != nil {
 			http.Error(w, "Failed to create poem", http.StatusInternalServerError)
 			return
 		}
 
-		// Redirect to edit page
 		http.Redirect(w, r, fmt.Sprintf("/poems/edit/%d", id), http.StatusSeeOther)
 	}
 }
@@ -130,7 +127,7 @@ func UpdatePoemHandler() func(http.ResponseWriter, *http.Request) {
 		date := r.FormValue("date")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdatePoem(r.Context(), id, path, title, poemContent, notes, date, published); err != nil {
+		if err := poems.UpdatePoem(r.Context(), id, path, title, poemContent, notes, date, published); err != nil {
 			http.Error(w, "Failed to update poem", http.StatusInternalServerError)
 			return
 		}

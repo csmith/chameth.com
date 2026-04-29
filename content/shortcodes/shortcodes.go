@@ -36,18 +36,18 @@ const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering
 type Renderer func([]string, *common.Context) (string, error)
 
 var renderers = map[string]Renderer{
-	"audio":        audio.RenderFromText,
-	"figure":       figure.RenderFromText,
-	"link":         link.RenderFromText,
-	"nod":          nod.RenderFromText,
-	"postlink":     postlink.RenderFromText,
-	"rating":       rating.RenderFromText,
-	"recentposts":  recentposts.RenderFromText,
-	"sidenote":     sidenote.RenderFromText,
-	"syndication":  syndication.RenderFromText,
-	"update":       update.RenderFromText,
-	"video":        video.RenderFromText,
-	"warning":      warning.RenderFromText,
+	"audio":       audio.RenderFromText,
+	"figure":      figure.RenderFromText,
+	"link":        link.RenderFromText,
+	"nod":         nod.RenderFromText,
+	"postlink":    postlink.RenderFromText,
+	"rating":      rating.RenderFromText,
+	"recentposts": recentposts.RenderFromText,
+	"sidenote":    sidenote.RenderFromText,
+	"syndication": syndication.RenderFromText,
+	"update":      update.RenderFromText,
+	"video":       video.RenderFromText,
+	"warning":     warning.RenderFromText,
 }
 
 func Register(name string, renderer Renderer) {

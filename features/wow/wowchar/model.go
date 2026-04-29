@@ -17,13 +17,13 @@ type Data struct {
 }
 
 type Profession struct {
-	Name        string
-	LatestTier  ProfessionTier
+	Name       string
+	LatestTier ProfessionTier
 }
 
 type ProfessionTier struct {
-	TierID          int
-	Name            string
-	SkillPoints     int
-	MaxSkillPoints  int
+	TierID         int
+	Name           string
+	SkillPoints    int
+	MaxSkillPoints int
 }

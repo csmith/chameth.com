@@ -10,6 +10,7 @@ import (
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/metrics"
+	"chameth.com/chameth.com/features/poems"
 	"chameth.com/chameth.com/features/snippets"
 	"chameth.com/chameth.com/templates"
 	"golang.org/x/net/html"
@@ -28,7 +29,56 @@ func ShortPostsFeed(w http.ResponseWriter, r *http.Request) {
 }
 
 func PoemsFeed(w http.ResponseWriter, r *http.Request) {
-	renderPoemsFeed(w, r, "Chameth.com - poems", 5, "https://chameth.com/poems/feed.xml")
+	slog.Debug("Serving feed", "type", "poems", "useragent", r.UserAgent())
+	metrics.RecordFeedRequest("poems", r.UserAgent())
+
+	allPoems, err := poems.GetRecentPoemsWithContent(r.Context(), 5)
+	if err != nil {
+		slog.Error("Failed to get recent poems for feed", "error", err)
+		ServerError(w, r)
+		return
+	}
+
+	var feedItems []templates.FeedItem
+	for _, poem := range allPoems {
+		renderedContent, err := content.RenderContent(r.Context(), "poem", poem.ID, poem.Poem, poem.Path)
+		if err != nil {
+			slog.Error("Failed to render poem content for feed", "poem", poem.Title, "error", err)
+			ServerError(w, r)
+			return
+		}
+
+		absoluteContent, err := MakeURLsAbsolute(string(renderedContent), "https://chameth.com")
+		if err != nil {
+			slog.Error("Failed to make URLs absolute for feed", "poem", poem.Title, "error", err)
+			ServerError(w, r)
+			return
+		}
+
+		feedItems = append(feedItems, templates.FeedItem{
+			Title:   poem.Title,
+			Link:    fmt.Sprintf("https://chameth.com%s", poem.Path),
+			Updated: poem.Date.Format("2006-01-02T15:04:05Z"),
+			Content: absoluteContent,
+		})
+	}
+
+	var lastUpdated string
+	if len(allPoems) > 0 {
+		lastUpdated = allPoems[0].Date.Format("2006-01-02T15:04:05Z")
+	}
+
+	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = templates.RenderAtom(w, templates.AtomData{
+		FeedTitle:       "Chameth.com - poems",
+		FeedSelfLink:    "https://chameth.com/poems/feed.xml",
+		FeedLastUpdated: lastUpdated,
+		FeedItems:       feedItems,
+	})
+	if err != nil {
+		slog.Error("Failed to render atom feed", "error", err)
+	}
 }
 
 func SnippetsFeed(w http.ResponseWriter, r *http.Request) {
@@ -129,59 +179,6 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 	var lastUpdated string
 	if len(posts) > 0 {
 		lastUpdated = posts[0].Date.Format("2006-01-02T15:04:05Z")
-	}
-
-	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	err = templates.RenderAtom(w, templates.AtomData{
-		FeedTitle:       title,
-		FeedSelfLink:    selfLink,
-		FeedLastUpdated: lastUpdated,
-		FeedItems:       feedItems,
-	})
-	if err != nil {
-		slog.Error("Failed to render atom feed", "error", err)
-	}
-}
-
-func renderPoemsFeed(w http.ResponseWriter, r *http.Request, title string, limit int, selfLink string) {
-	slog.Debug("Serving feed", "type", "poems", "useragent", r.UserAgent())
-	metrics.RecordFeedRequest("poems", r.UserAgent())
-
-	poems, err := db.GetRecentPoemsWithContent(r.Context(), limit)
-	if err != nil {
-		slog.Error("Failed to get recent poems for feed", "error", err)
-		ServerError(w, r)
-		return
-	}
-
-	var feedItems []templates.FeedItem
-	for _, poem := range poems {
-		renderedContent, err := content.RenderContent(r.Context(), "poem", poem.ID, poem.Poem, poem.Path)
-		if err != nil {
-			slog.Error("Failed to render poem content for feed", "poem", poem.Title, "error", err)
-			ServerError(w, r)
-			return
-		}
-
-		absoluteContent, err := MakeURLsAbsolute(string(renderedContent), "https://chameth.com")
-		if err != nil {
-			slog.Error("Failed to make URLs absolute for feed", "poem", poem.Title, "error", err)
-			ServerError(w, r)
-			return
-		}
-
-		feedItems = append(feedItems, templates.FeedItem{
-			Title:   poem.Title,
-			Link:    fmt.Sprintf("https://chameth.com%s", poem.Path),
-			Updated: poem.Date.Format("2006-01-02T15:04:05Z"),
-			Content: absoluteContent,
-		})
-	}
-
-	var lastUpdated string
-	if len(poems) > 0 {
-		lastUpdated = poems[0].Date.Format("2006-01-02T15:04:05Z")
 	}
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")

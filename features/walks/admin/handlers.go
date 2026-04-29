@@ -14,12 +14,12 @@ func ImportWalksHandler() func(http.ResponseWriter, *http.Request) {
 		var data struct {
 			Data struct {
 				Workouts []struct {
-					ID          string  `json:"id"`
-					Name        string  `json:"name"`
-					Start       string  `json:"start"`
-					End         string  `json:"end"`
-					Duration    float64 `json:"duration"`
-					Distance    struct {
+					ID       string  `json:"id"`
+					Name     string  `json:"name"`
+					Start    string  `json:"start"`
+					End      string  `json:"end"`
+					Duration float64 `json:"duration"`
+					Distance struct {
 						Qty   float64 `json:"qty"`
 						Units string  `json:"units"`
 					} `json:"distance"`

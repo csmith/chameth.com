@@ -1,8 +1,6 @@
 package snippets
 
 import (
-	"context"
-	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -72,20 +70,4 @@ func SnippetsListHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("Failed to render snippets template", "error", err)
 	}
-}
-
-func SitemapEntries(ctx context.Context) ([]parenttemplates.ContentDetails, error) {
-	allSnippets, err := GetAllSnippets(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get all snippets: %w", err)
-	}
-
-	details := make([]parenttemplates.ContentDetails, len(allSnippets))
-	for i, s := range allSnippets {
-		details[i] = parenttemplates.ContentDetails{
-			Title: fmt.Sprintf("%s ➔ %s", s.Topic, s.Title),
-			Path:  s.Path,
-		}
-	}
-	return details, nil
 }

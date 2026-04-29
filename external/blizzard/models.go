@@ -1,18 +1,18 @@
 package blizzard
 
 type CharacterProfile struct {
-	Name              string        `json:"name"`
-	Gender            TypedName     `json:"gender"`
-	Faction           TypedName     `json:"faction"`
-	Race              NamedRef      `json:"race"`
-	CharacterClass    NamedRef      `json:"character_class"`
-	ActiveSpec        NamedRef      `json:"active_spec"`
-	Realm             RealmRef      `json:"realm"`
-	Guild             *GuildRef     `json:"guild"`
-	Level             int           `json:"level"`
+	Name               string       `json:"name"`
+	Gender             TypedName    `json:"gender"`
+	Faction            TypedName    `json:"faction"`
+	Race               NamedRef     `json:"race"`
+	CharacterClass     NamedRef     `json:"character_class"`
+	ActiveSpec         NamedRef     `json:"active_spec"`
+	Realm              RealmRef     `json:"realm"`
+	Guild              *GuildRef    `json:"guild"`
+	Level              int          `json:"level"`
 	LastLoginTimestamp int64        `json:"last_login_timestamp"`
-	EquippedItemLevel int           `json:"equipped_item_level"`
-	ActiveTitle       *ActiveTitle  `json:"active_title"`
+	EquippedItemLevel  int          `json:"equipped_item_level"`
+	ActiveTitle        *ActiveTitle `json:"active_title"`
 }
 
 type RealmRef struct {
@@ -22,8 +22,8 @@ type RealmRef struct {
 }
 
 type GuildRef struct {
-	Name string  `json:"name"`
-	ID   int     `json:"id"`
+	Name  string   `json:"name"`
+	ID    int      `json:"id"`
 	Realm RealmRef `json:"realm"`
 }
 
@@ -53,12 +53,12 @@ type MediaAsset struct {
 }
 
 type CharacterProfessions struct {
-	Primaries  []ProfessionEntry `json:"primaries"`
+	Primaries   []ProfessionEntry `json:"primaries"`
 	Secondaries []ProfessionEntry `json:"secondaries"`
 }
 
 type ProfessionEntry struct {
-	Profession NamedRef      `json:"profession"`
+	Profession NamedRef         `json:"profession"`
 	Tiers      []ProfessionTier `json:"tiers"`
 }
 

@@ -266,7 +266,7 @@ func GetFilmReviewsByFilmID(ctx context.Context, filmID int) ([]FilmReview, erro
 	return db.Select[FilmReview](ctx, "SELECT id, film_id, watched_date, rating, is_rewatch, has_spoilers, review_text, published FROM film_reviews WHERE film_id = $1 ORDER BY watched_date DESC", filmID)
 }
 
-func CreateFilmReview(ctx context.Context, filmID int, rating int, watchedDate interface{}, isRewatch, hasSpoilers, published bool, reviewText string) (int, error) {
+func CreateFilmReview(ctx context.Context, filmID int, rating int, watchedDate any, isRewatch, hasSpoilers, published bool, reviewText string) (int, error) {
 	var id int
 	err := db.QueryRow(ctx, `
 		INSERT INTO film_reviews (film_id, rating, watched_date, is_rewatch, has_spoilers, review_text, published)
@@ -727,7 +727,7 @@ func GetFilmListWithCount(ctx context.Context, listID int) (*FilmList, int, []Fi
 	return filmList, list.Count, entries, nil
 }
 
-func GetWatchedFilmsByDateRange(ctx context.Context, startDate, endDate interface{}) ([]FilmReviewWithFilmAndPoster, error) {
+func GetWatchedFilmsByDateRange(ctx context.Context, startDate, endDate any) ([]FilmReviewWithFilmAndPoster, error) {
 	return db.Select[FilmReviewWithFilmAndPoster](ctx, `
 		SELECT
 			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",

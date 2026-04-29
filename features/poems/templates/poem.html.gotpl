@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/templates.PoemData*/}}
+{{/* gotype: chameth.com/chameth.com/features/poems/templates.PoemData*/}}
 {{define "article"}}
     <section class="poem">{{range .Poem}}{{.}}<br>{{end}}</section>
 

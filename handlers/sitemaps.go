@@ -9,26 +9,15 @@ import (
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/films"
+	"chameth.com/chameth.com/features/poems"
 	"chameth.com/chameth.com/features/snippets"
 	"chameth.com/chameth.com/templates"
 )
 
 func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templates.SiteMapData, error) {
-	poems, err := db.GetAllPoems(ctx)
+	poemDetails, err := poems.SitemapEntries(ctx)
 	if err != nil {
-		return templates.SiteMapData{}, fmt.Errorf("failed to get all poems: %w", err)
-	}
-
-	var poemDetails []templates.ContentDetails
-	for _, p := range poems {
-		poemDetails = append(poemDetails, templates.ContentDetails{
-			Title: p.Title,
-			Path:  p.Path,
-			Date: templates.ContentDate{
-				Iso:      p.Date.Format("2006-01-02"),
-				Friendly: p.Date.Format("Jan 2, 2006"),
-			},
-		})
+		return templates.SiteMapData{}, err
 	}
 
 	snippetDetails, err := snippets.SitemapEntries(ctx)

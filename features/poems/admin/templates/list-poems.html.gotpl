@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.ListPoemsData */}}
+{{/* gotype: chameth.com/chameth.com/features/poems/admin/templates.ListPoemsData */}}
 {{define "content"}}
     <form method="POST" action="/poems">
         <button type="submit">Create New Poem</button>
