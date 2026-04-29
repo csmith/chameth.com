@@ -6,6 +6,7 @@ import (
 
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/films"
+	"chameth.com/chameth.com/features/snippets"
 )
 
 func Content(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +21,7 @@ func Content(w http.ResponseWriter, r *http.Request) {
 	case "poem":
 		Poem(w, r)
 	case "snippet":
-		Snippet(w, r)
+		snippets.SnippetHandler(w, r)
 	case "staticpage":
 		StaticPage(w, r)
 	case "post":

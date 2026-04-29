@@ -8,6 +8,7 @@ import (
 	"chameth.com/chameth.com/admin/templates"
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/films"
+	"chameth.com/chameth.com/features/snippets"
 )
 
 func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
@@ -44,7 +45,7 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 			entityPath = poem.Path
 		case "snippet":
-			snippet, err := db.GetSnippetByID(r.Context(), entityID)
+			snippet, err := snippets.GetSnippetByID(r.Context(), entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return

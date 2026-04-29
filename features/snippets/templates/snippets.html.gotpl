@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/templates.SnippetsData*/}}
+{{/* gotype: chameth.com/chameth.com/features/snippets/templates.SnippetsData*/}}
 {{define "content"}}
 <h2>Snippets / How-tos</h2>
 

@@ -1,12 +1,14 @@
-package db
+package snippets
 
 import (
 	"context"
 	"fmt"
+
+	"chameth.com/chameth.com/db"
 )
 
 func GetSnippetByPath(ctx context.Context, path string) (*Snippet, error) {
-	snippet, err := Get[Snippet](ctx, "SELECT id, path, title, topic, content, published FROM snippets WHERE path = $1 OR path = $2", path, path+"/")
+	snippet, err := db.Get[Snippet](ctx, "SELECT id, path, title, topic, content, published FROM snippets WHERE path = $1 OR path = $2", path, path+"/")
 	if err != nil {
 		return nil, err
 	}
@@ -14,7 +16,7 @@ func GetSnippetByPath(ctx context.Context, path string) (*Snippet, error) {
 }
 
 func GetSnippetByID(ctx context.Context, id int) (*Snippet, error) {
-	snippet, err := Get[Snippet](ctx, "SELECT id, path, title, topic, content, published FROM snippets WHERE id = $1", id)
+	snippet, err := db.Get[Snippet](ctx, "SELECT id, path, title, topic, content, published FROM snippets WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -22,16 +24,16 @@ func GetSnippetByID(ctx context.Context, id int) (*Snippet, error) {
 }
 
 func GetAllSnippets(ctx context.Context) ([]SnippetMetadata, error) {
-	return Select[SnippetMetadata](ctx, "SELECT id, path, title, topic, published FROM snippets WHERE published = true ORDER BY topic, title")
+	return db.Select[SnippetMetadata](ctx, "SELECT id, path, title, topic, published FROM snippets WHERE published = true ORDER BY topic, title")
 }
 
 func GetDraftSnippets(ctx context.Context) ([]SnippetMetadata, error) {
-	return Select[SnippetMetadata](ctx, "SELECT id, path, title, topic, published FROM snippets WHERE published = false ORDER BY topic, title")
+	return db.Select[SnippetMetadata](ctx, "SELECT id, path, title, topic, published FROM snippets WHERE published = false ORDER BY topic, title")
 }
 
 func CreateSnippet(ctx context.Context, path, title string) (int, error) {
 	var id int
-	err := QueryRow(ctx, `
+	err := db.QueryRow(ctx, `
 		INSERT INTO snippets (path, title, topic, content, published)
 		VALUES ($1, $2, '', '', false)
 		RETURNING id
@@ -43,7 +45,7 @@ func CreateSnippet(ctx context.Context, path, title string) (int, error) {
 }
 
 func UpdateSnippet(ctx context.Context, id int, path, title, topic, content string, published bool) error {
-	_, err := Exec(ctx, `
+	_, err := db.Exec(ctx, `
 		UPDATE snippets
 		SET path = $1, title = $2, topic = $3, content = $4, published = $5
 		WHERE id = $6
@@ -55,11 +57,11 @@ func UpdateSnippet(ctx context.Context, id int, path, title, topic, content stri
 }
 
 func GetAllTopics(ctx context.Context) ([]string, error) {
-	return Select[string](ctx, "SELECT DISTINCT topic FROM snippets WHERE topic != '' ORDER BY topic")
+	return db.Select[string](ctx, "SELECT DISTINCT topic FROM snippets WHERE topic != '' ORDER BY topic")
 }
 
 func GetRecentSnippetsWithContent(ctx context.Context, limit int) ([]Snippet, error) {
-	return Select[Snippet](ctx, `
+	return db.Select[Snippet](ctx, `
 		SELECT id, path, title, topic, content, published
 		FROM snippets
 		WHERE published = true

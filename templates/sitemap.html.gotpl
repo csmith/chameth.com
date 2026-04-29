@@ -55,7 +55,7 @@
 
     <ul class="sitemap">
         {{- range .Snippets }}
-            <li><a href="{{ .Path }}">{{ .Name }}</a></li>
+            <li><a href="{{ .Path }}">{{ .Title }}</a></li>
         {{ end -}}
     </ul>
 

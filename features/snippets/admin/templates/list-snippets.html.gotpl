@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.ListSnippetsData */}}
+{{/* gotype: chameth.com/chameth.com/features/snippets/admin/templates.ListSnippetsData */}}
 {{define "content"}}
     <form method="POST" action="/snippets">
         <button type="submit">Create New Snippet</button>

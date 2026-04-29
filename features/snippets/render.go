@@ -1,19 +1,21 @@
-package handlers
+package snippets
 
 import (
+	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 
 	"chameth.com/chameth.com/content"
-	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/templates"
+	"chameth.com/chameth.com/features/snippets/templates"
+	parenttemplates "chameth.com/chameth.com/templates"
 )
 
-func Snippet(w http.ResponseWriter, r *http.Request) {
-	snippet, err := db.GetSnippetByPath(r.Context(), r.URL.Path)
+func SnippetHandler(w http.ResponseWriter, r *http.Request) {
+	snippet, err := GetSnippetByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find snippet by path", "error", err, "path", r.URL.Path)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -25,7 +27,7 @@ func Snippet(w http.ResponseWriter, r *http.Request) {
 	renderedContent, err := content.RenderContent(r.Context(), "snippet", 0, snippet.Content, snippet.Path)
 	if err != nil {
 		slog.Error("Failed to render markdown for snippet content", "snippet", snippet.Title, "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -35,23 +37,23 @@ func Snippet(w http.ResponseWriter, r *http.Request) {
 		SnippetTitle:   snippet.Title,
 		SnippetGroup:   snippet.Topic,
 		SnippetContent: renderedContent,
-		PageData:       content.CreatePageData(r.Context(), snippet.Title, snippet.Path, templates.OpenGraphHeaders{}),
+		PageData:       content.CreatePageData(r.Context(), snippet.Title, snippet.Path, parenttemplates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render snippet template", "error", err, "path", r.URL.Path)
 	}
 }
 
-func SnippetsList(w http.ResponseWriter, r *http.Request) {
-	snippets, err := db.GetAllSnippets(r.Context())
+func SnippetsListHandler(w http.ResponseWriter, r *http.Request) {
+	allSnippets, err := GetAllSnippets(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all snippets", "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	var groups []templates.SnippetGroup
-	for _, snippet := range snippets {
+	for _, snippet := range allSnippets {
 		if len(groups) == 0 || groups[len(groups)-1].Name != snippet.Topic {
 			groups = append(groups, templates.SnippetGroup{Name: snippet.Topic})
 		}
@@ -65,6 +67,25 @@ func SnippetsList(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderSnippets(w, templates.SnippetsData{
 		SnippetGroups: groups,
-		PageData:      content.CreatePageData(r.Context(), "Snippets", "/snippets/", templates.OpenGraphHeaders{}),
+		PageData:      content.CreatePageData(r.Context(), "Snippets", "/snippets/", parenttemplates.OpenGraphHeaders{}),
 	})
+	if err != nil {
+		slog.Error("Failed to render snippets template", "error", err)
+	}
+}
+
+func SitemapEntries(ctx context.Context) ([]parenttemplates.ContentDetails, error) {
+	allSnippets, err := GetAllSnippets(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get all snippets: %w", err)
+	}
+
+	details := make([]parenttemplates.ContentDetails, len(allSnippets))
+	for i, s := range allSnippets {
+		details[i] = parenttemplates.ContentDetails{
+			Title: fmt.Sprintf("%s ➔ %s", s.Topic, s.Title),
+			Path:  s.Path,
+		}
+	}
+	return details, nil
 }

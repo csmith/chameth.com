@@ -9,6 +9,7 @@ import (
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/films"
+	"chameth.com/chameth.com/features/snippets"
 	"chameth.com/chameth.com/templates"
 )
 
@@ -30,17 +31,9 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templat
 		})
 	}
 
-	snippets, err := db.GetAllSnippets(ctx)
+	snippetDetails, err := snippets.SitemapEntries(ctx)
 	if err != nil {
-		return templates.SiteMapData{}, fmt.Errorf("failed to get all snippets: %w", err)
-	}
-
-	var snippetDetails []templates.SnippetDetails
-	for _, s := range snippets {
-		snippetDetails = append(snippetDetails, templates.SnippetDetails{
-			Path: s.Path,
-			Name: fmt.Sprintf("%s ➔ %s", s.Topic, s.Title),
-		})
+		return templates.SiteMapData{}, err
 	}
 
 	posts, err := db.GetAllPosts(ctx)

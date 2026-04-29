@@ -29,7 +29,7 @@ type SiteMapData struct {
 	PageData
 	Poems     []ContentDetails
 	Posts     []ContentDetails
-	Snippets  []SnippetDetails
+	Snippets  []ContentDetails
 	Films     []ContentDetails
 	FilmLists []ContentDetails
 	Pages     []SiteMapPageDetails

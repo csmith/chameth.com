@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/templates.SnippetData*/}}
+{{/* gotype: chameth.com/chameth.com/features/snippets/templates.SnippetData*/}}
 {{define "content"}}
     <article>
         <header>

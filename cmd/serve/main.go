@@ -21,6 +21,7 @@ import (
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/music"
+	"chameth.com/chameth.com/features/snippets"
 	"chameth.com/chameth.com/features/sudo"
 	"chameth.com/chameth.com/features/wow"
 	"chameth.com/chameth.com/handlers"
@@ -127,7 +128,7 @@ func main() {
 	mux.Handle("GET /prints/{$}", http.HandlerFunc(handlers.PrintsList))
 	mux.Handle("GET /projects/{$}", http.HandlerFunc(handlers.ProjectsList))
 	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(handlers.HtmlSiteMap))
-	mux.Handle("GET /snippets/{$}", http.HandlerFunc(handlers.SnippetsList))
+	mux.Handle("GET /snippets/{$}", http.HandlerFunc(snippets.SnippetsListHandler))
 	mux.Handle("GET /sudo", http.HandlerFunc(sudo.Handler))
 	mux.Handle("/", http.HandlerFunc(handlers.Content))
 
