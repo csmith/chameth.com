@@ -1,4 +1,4 @@
-package handlers
+package prints
 
 import (
 	"fmt"
@@ -7,34 +7,34 @@ import (
 	"path"
 
 	"chameth.com/chameth.com/content"
-	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/templates"
+	"chameth.com/chameth.com/features/prints/templates"
+	parenttemplates "chameth.com/chameth.com/templates"
 )
 
-func PrintsList(w http.ResponseWriter, r *http.Request) {
-	prints, err := db.GetAllPrints(r.Context())
+func PrintsListHandler(w http.ResponseWriter, r *http.Request) {
+	allPrints, err := GetAllPrints(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all prints", "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	allLinks, err := db.GetAllPrintLinks(r.Context())
+	allLinks, err := GetAllPrintLinks(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all print links", "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	allMedia, err := db.GetAllPrintMediaRelations(r.Context())
+	allMedia, err := GetAllPrintMediaRelations(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all print media relations", "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	var printDetails []templates.PrintDetails
-	for _, p := range prints {
+	for _, p := range allPrints {
 		var printLinks []templates.PrintLink
 		for _, link := range allLinks[p.ID] {
 			printLinks = append(printLinks, templates.PrintLink{
@@ -75,7 +75,7 @@ func PrintsList(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderPrints(w, templates.PrintsData{
 		Prints:   printDetails,
-		PageData: content.CreatePageData(r.Context(), "3D Prints", "/prints/", templates.OpenGraphHeaders{}),
+		PageData: content.CreatePageData(r.Context(), "3D Prints", "/prints/", parenttemplates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render prints template", "error", err)

@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/templates.PrintsData*/}}
+{{/* gotype: chameth.com/chameth.com/features/prints/templates.PrintsData*/}}
 {{define "content"}}
     <h2>3D Prints</h2>
 

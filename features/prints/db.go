@@ -1,15 +1,17 @@
-package db
+package prints
 
 import (
 	"context"
+
+	"chameth.com/chameth.com/db"
 )
 
 func GetAllPrints(ctx context.Context) ([]Print, error) {
-	return Select[Print](ctx, "SELECT id, name, description FROM prints WHERE published = true ORDER BY name")
+	return db.Select[Print](ctx, "SELECT id, name, description FROM prints WHERE published = true ORDER BY name")
 }
 
 func GetAllPrintLinks(ctx context.Context) (map[int][]PrintLink, error) {
-	links, err := Select[PrintLink](ctx, `
+	links, err := db.Select[PrintLink](ctx, `
 		SELECT pl.id, pl.print_id, pl.name, pl.address
 		FROM prints_links pl
 		JOIN prints p ON pl.print_id = p.id
@@ -26,8 +28,8 @@ func GetAllPrintLinks(ctx context.Context) (map[int][]PrintLink, error) {
 	return result, nil
 }
 
-func GetAllPrintMediaRelations(ctx context.Context) (map[int][]MediaRelation, error) {
-	relations, err := Select[MediaRelation](ctx, `
+func GetAllPrintMediaRelations(ctx context.Context) (map[int][]db.MediaRelation, error) {
+	relations, err := db.Select[db.MediaRelation](ctx, `
 		SELECT mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id
 		FROM media_relations mr
 		JOIN prints p ON mr.entity_id = p.id
@@ -36,7 +38,7 @@ func GetAllPrintMediaRelations(ctx context.Context) (map[int][]MediaRelation, er
 	if err != nil {
 		return nil, err
 	}
-	result := make(map[int][]MediaRelation)
+	result := make(map[int][]db.MediaRelation)
 	for _, r := range relations {
 		result[r.EntityID] = append(result[r.EntityID], r)
 	}
