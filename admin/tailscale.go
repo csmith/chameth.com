@@ -10,6 +10,7 @@ import (
 	bgadmin "chameth.com/chameth.com/features/boardgames/admin"
 	filmadmin "chameth.com/chameth.com/features/films/admin"
 	goimportadmin "chameth.com/chameth.com/features/goimports/admin"
+	postadmin "chameth.com/chameth.com/features/posts/admin"
 	pasteadmin "chameth.com/chameth.com/features/pastes/admin"
 	poemadmin "chameth.com/chameth.com/features/poems/admin"
 	projectadmin "chameth.com/chameth.com/features/projects/admin"
@@ -44,11 +45,11 @@ func Start(s *tsnet.Server) error {
 	httpsMux := http.NewServeMux()
 	httpsMux.Handle("GET /assets/", http.StripPrefix("/assets/", handlers.AssetsHandler()))
 	httpsMux.HandleFunc("GET /{$}", handlers.IndexHandler())
-	httpsMux.HandleFunc("GET /posts", handlers.ListPostsHandler())
-	httpsMux.HandleFunc("POST /posts", handlers.CreatePostHandler())
-	httpsMux.HandleFunc("GET /posts/edit/{id}", handlers.EditPostHandler())
-	httpsMux.HandleFunc("POST /posts/edit/{id}", handlers.UpdatePostHandler())
-	httpsMux.HandleFunc("POST /posts/generate-wordcloud/{id}", handlers.GenerateWordcloudHandler())
+	httpsMux.HandleFunc("GET /posts", postadmin.ListPostsHandler())
+	httpsMux.HandleFunc("POST /posts", postadmin.CreatePostHandler())
+	httpsMux.HandleFunc("GET /posts/edit/{id}", postadmin.EditPostHandler())
+	httpsMux.HandleFunc("POST /posts/edit/{id}", postadmin.UpdatePostHandler())
+	httpsMux.HandleFunc("POST /posts/generate-wordcloud/{id}", postadmin.GenerateWordcloudHandler())
 	httpsMux.HandleFunc("GET /pages", handlers.ListPagesHandler())
 	httpsMux.HandleFunc("POST /pages", handlers.CreatePageHandler())
 	httpsMux.HandleFunc("GET /pages/edit/{id}", handlers.EditPageHandler())

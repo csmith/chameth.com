@@ -1,4 +1,4 @@
-package handlers
+package posts
 
 import (
 	"fmt"
@@ -8,15 +8,15 @@ import (
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/features/embeddings"
-	"chameth.com/chameth.com/templates"
+	posttemplates "chameth.com/chameth.com/features/posts/templates"
+	parenttemplates "chameth.com/chameth.com/templates"
 )
 
-func Post(w http.ResponseWriter, r *http.Request) {
-	post, err := db.GetPostByPath(r.Context(), r.URL.Path)
+func PostHandler(w http.ResponseWriter, r *http.Request) {
+	post, err := GetPostByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find post by path", "error", err, "path", r.URL.Path)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -28,7 +28,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	renderedContent, err := content.RenderContent(r.Context(), "post", post.ID, post.Content, post.Path)
 	if err != nil {
 		slog.Error("Failed to render post content", "post", post.Title, "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -46,22 +46,21 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		ogImage = fmt.Sprintf("https://chameth.com%s", ogPath)
 	}
 
-	relatedPosts, err := embeddings.RelatedPosts(r.Context(), post.ID)
+	relatedPosts, err := RelatedPosts(r.Context(), post.ID)
 	if err != nil {
 		slog.Error("Failed to get related posts", "post_id", post.ID, "error", err)
-		// Continue without related posts rather than erroring
 		relatedPosts = nil
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderPost(w, templates.PostData{
+	err = posttemplates.RenderPost(w, posttemplates.PostData{
 		PostContent: renderedContent,
 		PostFormat:  post.Format,
-		ArticleData: templates.ArticleData{
+		ArticleData: parenttemplates.ArticleData{
 			ArticleTitle:   post.Title,
 			ArticleSummary: summary,
-			ArticleDate: templates.ArticleDate{
+			ArticleDate: parenttemplates.ArticleDate{
 				Iso:         post.Date.Format("2006-01-02"),
 				Friendly:    post.Date.Format("Jan 2, 2006"),
 				ShowWarning: showWarning,
@@ -69,7 +68,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 			},
 			RelatedPosts: relatedPosts,
 			EditLink:     fmt.Sprintf("https://website-admin.yak-wall.ts.net/posts/edit/%d", post.ID),
-			PageData: content.CreatePageData(r.Context(), post.Title, post.Path, templates.OpenGraphHeaders{
+			PageData: content.CreatePageData(r.Context(), post.Title, post.Path, parenttemplates.OpenGraphHeaders{
 				Image: ogImage,
 				Type:  "article",
 			}),
@@ -80,24 +79,24 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func PostsList(w http.ResponseWriter, r *http.Request) {
-	posts, err := db.GetAllPosts(r.Context())
+func PostsListHandler(w http.ResponseWriter, r *http.Request) {
+	allPosts, err := GetAllPosts(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all posts", "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	var postPaths []string
-	for _, p := range posts {
+	for _, p := range allPosts {
 		postPaths = append(postPaths, p.Path)
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderPosts(w, templates.PostsData{
+	err = posttemplates.RenderPosts(w, posttemplates.PostsData{
 		Posts:    postPaths,
-		PageData: content.CreatePageData(r.Context(), "Posts", "/posts/", templates.OpenGraphHeaders{}),
+		PageData: content.CreatePageData(r.Context(), "Posts", "/posts/", parenttemplates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render posts template", "error", err)

@@ -46,20 +46,6 @@ type MediaRelationWithDetails struct {
 	Media
 }
 
-type PostMetadata struct {
-	ID        int       `db:"id"`
-	Path      string    `db:"path"`
-	Title     string    `db:"title"`
-	Date      time.Time `db:"date"`
-	Format    string    `db:"format"`
-	Published bool      `db:"published"`
-}
-
-type Post struct {
-	PostMetadata
-	Content string `db:"content"`
-}
-
 type MediaImageVariant struct {
 	Path        string `db:"path"`
 	ContentType string `db:"content_type"`

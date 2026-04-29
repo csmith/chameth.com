@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/templates.PostsData*/}}
+{{/* gotype: chameth.com/chameth.com/features/posts/templates.PostsData*/}}
 {{define "content"}}
     <h2>Posts</h2>
     <p>

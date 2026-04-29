@@ -11,6 +11,8 @@ import (
 	"chameth.com/chameth.com/templates"
 )
 
+var RecentPostsProvider func() []templates.RecentPost
+
 func CreatePageData(ctx context.Context, title, path string, ogHeaders templates.OpenGraphHeaders) templates.PageData {
 	canonicalUrl := ""
 	if path != "" {
@@ -23,7 +25,7 @@ func CreatePageData(ctx context.Context, title, path string, ogHeaders templates
 		OpenGraph:    ogHeaders,
 		Scripts:      assets.GetScriptPath(),
 		Stylesheet:   assets.StylesheetPath(),
-		RecentPosts:  RecentPosts(),
+		RecentPosts:  RecentPostsProvider(),
 		Component:    shortcodes.NewComponentFunc(&common.Context{Context: ctx, URL: path}),
 		Admin:        sudo.IsAdmin(ctx),
 	}

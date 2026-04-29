@@ -8,6 +8,7 @@ import (
 
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/external/atproto"
+	"chameth.com/chameth.com/features/posts"
 )
 
 var (
@@ -50,7 +51,7 @@ func newClient() (*atproto.Client, error) {
 	return atproto.NewClient(*pdsUrl, *handle, *password)
 }
 
-func syndicatePost(ctx context.Context, client *atproto.Client, post db.PostMetadata) error {
+func syndicatePost(ctx context.Context, client *atproto.Client, post posts.PostMetadata) error {
 	openGraph, err := db.GetOpenGraphDetailsForEntity(ctx, "post", post.ID)
 	if err != nil {
 		return err

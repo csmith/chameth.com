@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"chameth.com/chameth.com/content"
-	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/poems"
+	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/snippets"
 	"chameth.com/chameth.com/templates"
 	"golang.org/x/net/html"
@@ -137,13 +137,13 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 	slog.Debug("Serving feed", "type", "posts", "format", format, "useragent", r.UserAgent())
 	metrics.RecordFeedRequest(format, r.UserAgent())
 
-	var posts []db.Post
+	var postList []posts.Post
 	var err error
 
 	if format == "all" {
-		posts, err = db.GetRecentPostsWithContent(r.Context(), limit)
+		postList, err = posts.GetRecentPostsWithContent(r.Context(), limit)
 	} else {
-		posts, err = db.GetRecentPostsWithContentByFormat(r.Context(), limit, format)
+		postList, err = posts.GetRecentPostsWithContentByFormat(r.Context(), limit, format)
 	}
 
 	if err != nil {
@@ -153,7 +153,7 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 	}
 
 	var feedItems []templates.FeedItem
-	for _, post := range posts {
+	for _, post := range postList {
 		renderedContent, err := content.RenderContent(r.Context(), "post", post.ID, post.Content, post.Path)
 		if err != nil {
 			slog.Error("Failed to render post content for feed", "post", post.Title, "error", err)
@@ -177,8 +177,8 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 	}
 
 	var lastUpdated string
-	if len(posts) > 0 {
-		lastUpdated = posts[0].Date.Format("2006-01-02T15:04:05Z")
+	if len(postList) > 0 {
+		lastUpdated = postList[0].Date.Format("2006-01-02T15:04:05Z")
 	}
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")

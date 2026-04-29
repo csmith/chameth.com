@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.ListPostsData */}}
+{{/* gotype: chameth.com/chameth.com/features/posts/admin/templates.ListPostsData */}}
 {{define "content"}}
     <form method="POST" action="/posts">
         <button type="submit">Create New Post</button>

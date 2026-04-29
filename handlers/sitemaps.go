@@ -10,6 +10,7 @@ import (
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/poems"
+	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/snippets"
 	"chameth.com/chameth.com/templates"
 )
@@ -25,13 +26,13 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templat
 		return templates.SiteMapData{}, err
 	}
 
-	posts, err := db.GetAllPosts(ctx)
+	allPosts, err := posts.GetAllPosts(ctx)
 	if err != nil {
 		return templates.SiteMapData{}, fmt.Errorf("failed to get all posts: %w", err)
 	}
 
 	var postDetails []templates.ContentDetails
-	for _, p := range posts {
+	for _, p := range allPosts {
 		postDetails = append(postDetails, templates.ContentDetails{
 			Title: p.Title,
 			Path:  p.Path,

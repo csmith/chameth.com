@@ -1,4 +1,4 @@
-package embeddings
+package posts
 
 import (
 	"context"
@@ -19,8 +19,8 @@ func postPathsWithoutEmbeddings(ctx context.Context) ([]string, error) {
 	return db.Select[string](ctx, "SELECT path FROM posts WHERE embedding IS NULL AND published = true ORDER BY date DESC")
 }
 
-func relatedPostsByID(ctx context.Context, postID int, limit int) ([]db.PostMetadata, error) {
-	return db.Select[db.PostMetadata](ctx, `
+func relatedPostsByID(ctx context.Context, postID int, limit int) ([]PostMetadata, error) {
+	return db.Select[PostMetadata](ctx, `
 		SELECT id, path, title, date, format, published
 		FROM posts
 		WHERE id != $1

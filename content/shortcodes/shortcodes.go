@@ -12,11 +12,9 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/audio"
 	"chameth.com/chameth.com/content/shortcodes/common"
 	"chameth.com/chameth.com/content/shortcodes/figure"
-	"chameth.com/chameth.com/content/shortcodes/link"
+	shortcodlink "chameth.com/chameth.com/content/shortcodes/link"
 	"chameth.com/chameth.com/content/shortcodes/nod"
-	"chameth.com/chameth.com/content/shortcodes/postlink"
 	"chameth.com/chameth.com/content/shortcodes/rating"
-	"chameth.com/chameth.com/content/shortcodes/recentposts"
 	"chameth.com/chameth.com/content/shortcodes/sidenote"
 	"chameth.com/chameth.com/content/shortcodes/syndication"
 	"chameth.com/chameth.com/content/shortcodes/update"
@@ -38,11 +36,9 @@ type Renderer func([]string, *common.Context) (string, error)
 var renderers = map[string]Renderer{
 	"audio":       audio.RenderFromText,
 	"figure":      figure.RenderFromText,
-	"link":        link.RenderFromText,
+	"link":        shortcodlink.RenderFromText,
 	"nod":         nod.RenderFromText,
-	"postlink":    postlink.RenderFromText,
 	"rating":      rating.RenderFromText,
-	"recentposts": recentposts.RenderFromText,
 	"sidenote":    sidenote.RenderFromText,
 	"syndication": syndication.RenderFromText,
 	"update":      update.RenderFromText,

@@ -9,6 +9,7 @@ import (
 	"chameth.com/chameth.com/features/goimports"
 	"chameth.com/chameth.com/features/pastes"
 	"chameth.com/chameth.com/features/poems"
+	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/snippets"
 )
 
@@ -28,7 +29,7 @@ func Content(w http.ResponseWriter, r *http.Request) {
 	case "staticpage":
 		StaticPage(w, r)
 	case "post":
-		Post(w, r)
+		posts.PostHandler(w, r)
 	case "paste":
 		pastes.PasteHandler(w, r)
 	case "media":

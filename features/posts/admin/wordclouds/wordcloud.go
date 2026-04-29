@@ -11,7 +11,7 @@ import (
 	"slices"
 	"strings"
 
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/posts"
 	"github.com/anthonynsimon/bild/transform"
 	"github.com/kljensen/snowball/english"
 	"golang.org/x/image/font"
@@ -41,7 +41,7 @@ type postAnalysis struct {
 // GenerateWordcloud generates a word cloud image for a post identified by postID.
 // It returns the PNG image as a byte slice.
 func GenerateWordcloud(ctx context.Context, postID int) ([]byte, []string, error) {
-	targetPost, err := db.GetPostByID(ctx, postID)
+	targetPost, err := posts.GetPostByID(ctx, postID)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get post: %w", err)
 	}
@@ -49,7 +49,7 @@ func GenerateWordcloud(ctx context.Context, postID int) ([]byte, []string, error
 	targetAnalysis := analyzePost(targetPost.Content)
 	targetAnalysis.ID = targetPost.ID
 
-	allPosts, err := db.GetRecentPostsWithContent(ctx, 1000)
+	allPosts, err := posts.GetRecentPostsWithContent(ctx, 1000)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to get all posts: %w", err)
 	}

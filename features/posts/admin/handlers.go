@@ -1,4 +1,4 @@
-package handlers
+package admin
 
 import (
 	"context"
@@ -8,23 +8,23 @@ import (
 	"strconv"
 	"strings"
 
-	"chameth.com/chameth.com/admin/templates"
-	"chameth.com/chameth.com/admin/wordclouds"
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/atproto"
-	"chameth.com/chameth.com/features/embeddings"
+	"chameth.com/chameth.com/features/posts"
+	"chameth.com/chameth.com/features/posts/admin/templates"
+	"chameth.com/chameth.com/features/posts/admin/wordclouds"
 	"github.com/csmith/aca"
 )
 
 func ListPostsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := db.GetDraftPosts(r.Context())
+		drafts, err := posts.GetDraftPosts(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve draft posts", http.StatusInternalServerError)
 			return
 		}
 
-		posts, err := db.GetAllPosts(r.Context())
+		allPosts, err := posts.GetAllPosts(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve posts", http.StatusInternalServerError)
 			return
@@ -40,8 +40,8 @@ func ListPostsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 		}
 
-		postSummaries := make([]templates.PostSummary, len(posts))
-		for i, post := range posts {
+		postSummaries := make([]templates.PostSummary, len(allPosts))
+		for i, post := range allPosts {
 			postSummaries[i] = templates.PostSummary{
 				ID:    post.ID,
 				Title: post.Title,
@@ -70,25 +70,21 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		post, err := db.GetPostByID(r.Context(), id)
+		post, err := posts.GetPostByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Post not found", http.StatusNotFound)
 			return
 		}
 
-		// Fetch media relations for this post
 		mediaRelations, err := db.GetMediaRelationsForEntity(r.Context(), "post", id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve media", http.StatusInternalServerError)
 			return
 		}
 
-		// Group media by primary vs variants
-		// Use two-pass approach to handle cases where variants appear before their parents
 		mediaMap := make(map[int]*templates.PostMediaItem)
 		var primaryMediaIDs []int
 
-		// First pass: add all primary media items
 		for _, rel := range mediaRelations {
 			if rel.ParentMediaID == nil {
 				if _, exists := mediaMap[rel.MediaID]; !exists {
@@ -122,7 +118,6 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 			}
 		}
 
-		// Second pass: add all variants to their parents
 		for _, rel := range mediaRelations {
 			if rel.ParentMediaID != nil {
 				parentID := *rel.ParentMediaID
@@ -137,7 +132,6 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 			}
 		}
 
-		// Convert map to slice in order of discovery
 		mediaItems := make([]templates.PostMediaItem, 0, len(primaryMediaIDs))
 		for _, mediaID := range primaryMediaIDs {
 			mediaItems = append(mediaItems, *mediaMap[mediaID])
@@ -162,7 +156,6 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 
 func CreatePostHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Generate random adjective-color-animal name
 		gen, err := aca.NewDefaultGenerator()
 		if err != nil {
 			http.Error(w, "Failed to generate name", http.StatusInternalServerError)
@@ -171,14 +164,12 @@ func CreatePostHandler() func(http.ResponseWriter, *http.Request) {
 		name := gen.Generate()
 		path := fmt.Sprintf("/%s/", name)
 
-		// Create the new post
-		id, err := db.CreatePost(r.Context(), path, name)
+		id, err := posts.CreatePost(r.Context(), path, name)
 		if err != nil {
 			http.Error(w, "Failed to create post", http.StatusInternalServerError)
 			return
 		}
 
-		// Redirect to edit page
 		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
 	}
 }
@@ -204,14 +195,14 @@ func UpdatePostHandler() func(http.ResponseWriter, *http.Request) {
 		format := r.FormValue("format")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdatePost(r.Context(), id, path, title, postContent, date, format, published); err != nil {
+		if err := posts.UpdatePost(r.Context(), id, path, title, postContent, date, format, published); err != nil {
 			http.Error(w, "Failed to update post", http.StatusInternalServerError)
 			return
 		}
 
 		if published {
 			go func() {
-				if err := embeddings.GenerateAndStore(context.Background(), path); err != nil {
+				if err := posts.GenerateAndStore(context.Background(), path); err != nil {
 					slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
 				}
 			}()
@@ -243,7 +234,6 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 		width := 400
 		height := 300
 
-		// Check if there's an existing wordcloud to update
 		existing, err := db.GetOpenGraphDetailsForEntity(r.Context(), "post", id)
 		if err != nil {
 			slog.Error("Failed to check for existing wordcloud", "error", err)
@@ -263,7 +253,7 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 				return
 			}
 		} else {
-			post, err := db.GetPostByID(r.Context(), id)
+			post, err := posts.GetPostByID(r.Context(), id)
 			if err != nil {
 				http.Error(w, "Post not found", http.StatusNotFound)
 				return

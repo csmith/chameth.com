@@ -1,4 +1,4 @@
-package postlink
+package link
 
 import (
 	"bytes"
@@ -13,6 +13,7 @@ import (
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/content/shortcodes/common"
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/posts"
 )
 
 //go:embed *.gotpl
@@ -42,7 +43,7 @@ func RenderFromText(args []string, _ *common.Context) (string, error) {
 }
 
 func renderForPath(path string) (string, error) {
-	post, err := db.GetPostByPath(context.Background(), path)
+	post, err := posts.GetPostByPath(context.Background(), path)
 	if err != nil {
 		return "", fmt.Errorf("failed to get post by path %s: %w", path, err)
 	}

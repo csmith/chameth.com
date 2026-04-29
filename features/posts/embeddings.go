@@ -1,4 +1,4 @@
-package embeddings
+package posts
 
 import (
 	"bytes"
@@ -13,7 +13,6 @@ import (
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/content/markdown"
-	"chameth.com/chameth.com/db"
 	"github.com/pgvector/pgvector-go"
 )
 
@@ -31,7 +30,7 @@ func GenerateAndStore(ctx context.Context, postPath string) error {
 	embeddingMutex.Lock()
 	defer embeddingMutex.Unlock()
 
-	post, err := db.GetPostByPath(ctx, postPath)
+	post, err := GetPostByPath(ctx, postPath)
 	if err != nil {
 		return fmt.Errorf("failed to get post by path %s: %w", postPath, err)
 	}

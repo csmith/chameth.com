@@ -1,4 +1,4 @@
-package recentposts
+package recent
 
 import (
 	"bytes"
@@ -10,8 +10,9 @@ import (
 
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/content/shortcodes/postlink"
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/posts"
+	"chameth.com/chameth.com/features/posts/link"
 )
 
 //go:embed *.gotpl
@@ -37,20 +38,20 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 		return "", fmt.Errorf("recentposts requires a positive number")
 	}
 
-	posts, err := db.GetRecentPostsWithContent(ctx.Context, count)
+	postList, err := posts.GetRecentPostsWithContent(ctx.Context, count)
 	if err != nil {
 		return "", fmt.Errorf("failed to get recent posts: %w", err)
 	}
 
 	var postLinks strings.Builder
-	for _, post := range posts {
+	for _, post := range postList {
 		summary := markdown.FirstParagraph(post.Content)
 
 		imageVariants, err := db.GetOpenGraphImageVariantsForEntity(ctx.Context, "post", post.ID)
-		var images []postlink.Image
+		var images []link.Image
 		if err == nil {
 			for _, variant := range imageVariants {
-				images = append(images, postlink.Image{
+				images = append(images, link.Image{
 					Url:         variant.Path,
 					ContentType: variant.ContentType,
 					Alt:         variant.Description,
@@ -58,7 +59,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 			}
 		}
 
-		linkHTML, err := postlink.Render(postlink.Data{
+		linkHTML, err := link.Render(link.Data{
 			Url:     post.Path,
 			Title:   post.Title,
 			Summary: template.HTML(summary),

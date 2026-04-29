@@ -1,0 +1,4 @@
+{{/* gotype: chameth.com/chameth.com/features/posts/templates.PostData*/}}
+{{define "article"}}
+    {{ .PostContent }}
+{{end}}

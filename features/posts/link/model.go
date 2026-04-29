@@ -1,4 +1,4 @@
-package postlink
+package link
 
 import "html/template"
 

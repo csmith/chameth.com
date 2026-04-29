@@ -17,10 +17,10 @@ import (
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/atproto"
 	"chameth.com/chameth.com/features/contact"
-	"chameth.com/chameth.com/features/embeddings"
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/music"
+	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/prints"
 	"chameth.com/chameth.com/features/projects"
 	"chameth.com/chameth.com/features/snippets"
@@ -46,6 +46,8 @@ import (
 	_ "chameth.com/chameth.com/features/music/nowplaying"
 	_ "chameth.com/chameth.com/features/music/topalbums"
 	_ "chameth.com/chameth.com/features/music/topartists"
+	_ "chameth.com/chameth.com/features/posts/link"
+	_ "chameth.com/chameth.com/features/posts/recent"
 	_ "chameth.com/chameth.com/features/walks/distance"
 	_ "chameth.com/chameth.com/features/walks/list"
 	_ "chameth.com/chameth.com/features/walks/speed"
@@ -83,7 +85,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	go embeddings.UpdateAllPosts(context.Background())
+	go posts.UpdateAllPosts(context.Background())
 	go atproto.SyndicateAllPosts(context.Background())
 
 	ts := &tsnet.Server{
@@ -126,7 +128,7 @@ func main() {
 	mux.Handle("GET /snippets/feed.xml", http.HandlerFunc(handlers.SnippetsFeed))
 	mux.Handle("GET /films/reviews/feed.xml", http.HandlerFunc(handlers.FilmReviewsFeed))
 	mux.Handle("GET /sitemap.xml", http.HandlerFunc(handlers.XmlSiteMap))
-	mux.Handle("GET /posts/{$}", http.HandlerFunc(handlers.PostsList))
+	mux.Handle("GET /posts/{$}", http.HandlerFunc(posts.PostsListHandler))
 	mux.Handle("GET /prints/{$}", http.HandlerFunc(prints.PrintsListHandler))
 	mux.Handle("GET /projects/{$}", http.HandlerFunc(projects.ProjectsListHandler))
 	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(handlers.HtmlSiteMap))
