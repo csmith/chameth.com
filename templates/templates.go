@@ -6,3 +6,5 @@ import (
 
 //go:embed *.gotpl
 var templates embed.FS
+
+var FS = templates

@@ -77,6 +77,10 @@ func Exec(ctx context.Context, query string, args ...any) (sql.Result, error) {
 	return db.ExecContext(ctx, query, args...)
 }
 
+func BeginTxx(ctx context.Context, opts *sql.TxOptions) (*sqlx.Tx, error) {
+	return db.BeginTxx(ctx, opts)
+}
+
 func NamedExec(ctx context.Context, query string, arg any) (sql.Result, error) {
 	queryLogger(ctx)
 	return db.NamedExecContext(ctx, query, arg)

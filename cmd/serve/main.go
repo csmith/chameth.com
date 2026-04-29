@@ -18,6 +18,7 @@ import (
 	"chameth.com/chameth.com/features/atproto"
 	"chameth.com/chameth.com/features/contact"
 	"chameth.com/chameth.com/features/embeddings"
+	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/music"
 	"chameth.com/chameth.com/features/sudo"
@@ -32,6 +33,13 @@ import (
 	_ "chameth.com/chameth.com/features/boardgames/list"
 	_ "chameth.com/chameth.com/features/boardgames/played"
 	_ "chameth.com/chameth.com/features/contact/form"
+	_ "chameth.com/chameth.com/features/films/list"
+	_ "chameth.com/chameth.com/features/films/ratingdistribution"
+	_ "chameth.com/chameth.com/features/films/recent"
+	_ "chameth.com/chameth.com/features/films/review"
+	_ "chameth.com/chameth.com/features/films/reviews"
+	_ "chameth.com/chameth.com/features/films/search"
+	_ "chameth.com/chameth.com/features/films/watched"
 	_ "chameth.com/chameth.com/features/music/nowplaying"
 	_ "chameth.com/chameth.com/features/music/topalbums"
 	_ "chameth.com/chameth.com/features/music/topartists"
@@ -105,7 +113,7 @@ func main() {
 	mux.Handle("POST /api/form/contact", http.HandlerFunc(contact.ContactFormPost))
 	mux.Handle("POST /api/nod", http.HandlerFunc(handlers.Nod))
 	mux.Handle("POST /api/form/nod", http.HandlerFunc(handlers.NodForm))
-	mux.Handle("GET /api/films/search", http.HandlerFunc(handlers.SearchFilms))
+	mux.Handle("GET /api/films/search", http.HandlerFunc(films.SearchFilmsAPI))
 	mux.Handle("GET /assets/stylesheets/", http.HandlerFunc(handlers.Stylesheet))
 	mux.Handle("GET /assets/scripts/", http.HandlerFunc(handlers.Scripts))
 	mux.Handle("GET /index.xml", http.HandlerFunc(handlers.FullFeed))
@@ -134,6 +142,7 @@ func main() {
 				middleware.CrossOriginProtection(),
 				middleware.ErrorHandler(
 					middleware.WithErrorHandler(http.StatusNotFound, http.HandlerFunc(handlers.NotFound)),
+					middleware.WithErrorHandler(http.StatusInternalServerError, http.HandlerFunc(handlers.ServerError)),
 				),
 				middleware.CacheControl(
 					middleware.WithCacheTimes(map[string]time.Duration{

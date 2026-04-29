@@ -12,23 +12,16 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/audio"
 	"chameth.com/chameth.com/content/shortcodes/common"
 	"chameth.com/chameth.com/content/shortcodes/figure"
-	"chameth.com/chameth.com/content/shortcodes/filmlist"
-	"chameth.com/chameth.com/content/shortcodes/filmratingdistribution"
-	"chameth.com/chameth.com/content/shortcodes/filmreview"
-	"chameth.com/chameth.com/content/shortcodes/filmreviews"
-	"chameth.com/chameth.com/content/shortcodes/filmsearch"
 	"chameth.com/chameth.com/content/shortcodes/link"
 	"chameth.com/chameth.com/content/shortcodes/nod"
 	"chameth.com/chameth.com/content/shortcodes/postlink"
 	"chameth.com/chameth.com/content/shortcodes/rating"
-	"chameth.com/chameth.com/content/shortcodes/recentfilms"
 	"chameth.com/chameth.com/content/shortcodes/recentposts"
 	"chameth.com/chameth.com/content/shortcodes/sidenote"
 	"chameth.com/chameth.com/content/shortcodes/syndication"
 	"chameth.com/chameth.com/content/shortcodes/update"
 	"chameth.com/chameth.com/content/shortcodes/video"
 	"chameth.com/chameth.com/content/shortcodes/warning"
-	"chameth.com/chameth.com/content/shortcodes/watchedfilms"
 )
 
 //go:embed **/*.css
@@ -43,25 +36,18 @@ const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering
 type Renderer func([]string, *common.Context) (string, error)
 
 var renderers = map[string]Renderer{
-	"audio":                  audio.RenderFromText,
-	"figure":                 figure.RenderFromText,
-	"filmlist":               filmlist.RenderFromText,
-	"filmratingdistribution": filmratingdistribution.RenderFromText,
-	"filmreview":             filmreview.RenderFromText,
-	"filmreviews":            filmreviews.RenderFromText,
-	"filmsearch":             filmsearch.RenderFromText,
-	"link":                   link.RenderFromText,
-	"nod":                    nod.RenderFromText,
-	"postlink":               postlink.RenderFromText,
-	"rating":                 rating.RenderFromText,
-	"recentfilms":            recentfilms.RenderFromText,
-	"recentposts":            recentposts.RenderFromText,
-	"sidenote":               sidenote.RenderFromText,
-	"syndication":            syndication.RenderFromText,
-	"update":                 update.RenderFromText,
-	"video":                  video.RenderFromText,
-	"warning":                warning.RenderFromText,
-	"watchedfilms":           watchedfilms.RenderFromText,
+	"audio":        audio.RenderFromText,
+	"figure":       figure.RenderFromText,
+	"link":         link.RenderFromText,
+	"nod":          nod.RenderFromText,
+	"postlink":     postlink.RenderFromText,
+	"rating":       rating.RenderFromText,
+	"recentposts":  recentposts.RenderFromText,
+	"sidenote":     sidenote.RenderFromText,
+	"syndication":  syndication.RenderFromText,
+	"update":       update.RenderFromText,
+	"video":        video.RenderFromText,
+	"warning":      warning.RenderFromText,
 }
 
 func Register(name string, renderer Renderer) {

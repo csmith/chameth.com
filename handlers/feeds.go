@@ -8,6 +8,7 @@ import (
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/templates"
 	"golang.org/x/net/html"
@@ -211,7 +212,7 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 	slog.Debug("Serving feed", "type", "filmreviews", "useragent", r.UserAgent())
 	metrics.RecordFeedRequest("filmreviews", r.UserAgent())
 
-	reviews, err := db.GetRecentPublishedFilmReviewsWithFilmAndPosters(r.Context(), limit)
+	reviews, err := films.GetRecentPublishedFilmReviewsWithFilmAndPosters(r.Context(), limit)
 	if err != nil {
 		slog.Error("Failed to get recent film reviews for feed", "error", err)
 		ServerError(w, r)

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/films"
 )
 
 func Content(w http.ResponseWriter, r *http.Request) {
@@ -31,9 +32,9 @@ func Content(w http.ResponseWriter, r *http.Request) {
 	case "goimport":
 		GoImport(w, r)
 	case "film":
-		Film(w, r)
+		films.FilmPage(w, r)
 	case "film_list":
-		FilmList(w, r)
+		films.FilmListPage(w, r)
 	default:
 		StaticAsset(w, r)
 	}

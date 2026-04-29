@@ -7,6 +7,7 @@ import (
 
 	"chameth.com/chameth.com/admin/templates"
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/films"
 )
 
 func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
@@ -57,7 +58,7 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 			entityPath = page.Path
 		case "film":
-			film, err := db.GetFilmByID(r.Context(), entityID)
+			film, err := films.GetFilmByID(r.Context(), entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return

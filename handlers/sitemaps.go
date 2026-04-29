@@ -8,6 +8,7 @@ import (
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/templates"
 )
 
@@ -59,7 +60,7 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templat
 		})
 	}
 
-	filmReviews, err := db.GetAllPublishedFilmReviewsWithFilmAndPosters(ctx)
+	filmReviews, err := films.GetAllPublishedFilmReviewsWithFilmAndPosters(ctx)
 	if err != nil {
 		return templates.SiteMapData{}, fmt.Errorf("failed to get all film reviews: %w", err)
 	}
@@ -76,7 +77,7 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templat
 		})
 	}
 
-	filmLists, err := db.GetAllFilmLists(ctx)
+	filmLists, err := films.GetAllFilmLists(ctx)
 	if err != nil {
 		return templates.SiteMapData{}, fmt.Errorf("failed to get all film lists: %w", err)
 	}

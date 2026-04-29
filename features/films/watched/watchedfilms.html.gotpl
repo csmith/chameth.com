@@ -1,0 +1,12 @@
+{{/* gotype: chameth.com/chameth.com/features/films/watched.Data*/}}
+<ol class="watched-films">
+{{- range .Films }}
+  <li>
+    <a class="plain-link raised-box" href="{{ .Path }}">
+      <img src="{{ .PosterPath }}" alt="Poster of {{ .Title }}" loading="lazy">
+      <time>{{ .Date }}</time>
+      <div>{{ .Stars }}</div>
+    </a>
+  </li>
+{{- end }}
+</ol>
