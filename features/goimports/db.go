@@ -1,12 +1,14 @@
-package db
+package goimports
 
 import (
 	"context"
 	"fmt"
+
+	"chameth.com/chameth.com/db"
 )
 
 func GetGoImportByPrefix(ctx context.Context, path string) (*GoImport, error) {
-	goimport, err := Get[GoImport](ctx, `
+	goimport, err := db.Get[GoImport](ctx, `
 		SELECT id, path, vcs, repo_url, published
 		FROM goimports
 		WHERE $1 = path OR $1 || '/' = path OR $1 LIKE path || '%'
@@ -20,7 +22,7 @@ func GetGoImportByPrefix(ctx context.Context, path string) (*GoImport, error) {
 }
 
 func GetGoImportByID(ctx context.Context, id int) (*GoImport, error) {
-	goimport, err := Get[GoImport](ctx, "SELECT id, path, vcs, repo_url, published FROM goimports WHERE id = $1", id)
+	goimport, err := db.Get[GoImport](ctx, "SELECT id, path, vcs, repo_url, published FROM goimports WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -28,16 +30,16 @@ func GetGoImportByID(ctx context.Context, id int) (*GoImport, error) {
 }
 
 func GetAllGoImports(ctx context.Context) ([]GoImport, error) {
-	return Select[GoImport](ctx, "SELECT id, path, vcs, repo_url, published FROM goimports WHERE published = true ORDER BY path")
+	return db.Select[GoImport](ctx, "SELECT id, path, vcs, repo_url, published FROM goimports WHERE published = true ORDER BY path")
 }
 
 func GetDraftGoImports(ctx context.Context) ([]GoImport, error) {
-	return Select[GoImport](ctx, "SELECT id, path, vcs, repo_url, published FROM goimports WHERE published = false ORDER BY path")
+	return db.Select[GoImport](ctx, "SELECT id, path, vcs, repo_url, published FROM goimports WHERE published = false ORDER BY path")
 }
 
 func CreateGoImport(ctx context.Context, path, vcs, repoUrl string) (int, error) {
 	var id int
-	err := QueryRow(ctx, `
+	err := db.QueryRow(ctx, `
 		INSERT INTO goimports (path, vcs, repo_url, published)
 		VALUES ($1, $2, $3, false)
 		RETURNING id
@@ -49,7 +51,7 @@ func CreateGoImport(ctx context.Context, path, vcs, repoUrl string) (int, error)
 }
 
 func UpdateGoImport(ctx context.Context, id int, path, vcs, repoUrl string, published bool) error {
-	_, err := Exec(ctx, `
+	_, err := db.Exec(ctx, `
 		UPDATE goimports
 		SET path = $1, vcs = $2, repo_url = $3, published = $4
 		WHERE id = $5

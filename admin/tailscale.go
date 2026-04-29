@@ -9,6 +9,7 @@ import (
 	"chameth.com/chameth.com/admin/handlers"
 	bgadmin "chameth.com/chameth.com/features/boardgames/admin"
 	filmadmin "chameth.com/chameth.com/features/films/admin"
+	goimportadmin "chameth.com/chameth.com/features/goimports/admin"
 	poemadmin "chameth.com/chameth.com/features/poems/admin"
 	projectadmin "chameth.com/chameth.com/features/projects/admin"
 	snippetadmin "chameth.com/chameth.com/features/snippets/admin"
@@ -76,10 +77,10 @@ func Start(s *tsnet.Server) error {
 	httpsMux.HandleFunc("POST /media-relations/update", handlers.UpdateMediaRelationHandler())
 	httpsMux.HandleFunc("POST /media-relations/remove", handlers.RemoveMediaRelationHandler())
 	httpsMux.HandleFunc("POST /media-relations/add", handlers.AddMediaRelationsHandler())
-	httpsMux.HandleFunc("GET /goimports", handlers.ListGoImportsHandler())
-	httpsMux.HandleFunc("POST /goimports", handlers.CreateGoImportHandler())
-	httpsMux.HandleFunc("GET /goimports/edit/{id}", handlers.EditGoImportHandler())
-	httpsMux.HandleFunc("POST /goimports/edit/{id}", handlers.UpdateGoImportHandler())
+	httpsMux.HandleFunc("GET /goimports", goimportadmin.ListGoImportsHandler())
+	httpsMux.HandleFunc("POST /goimports", goimportadmin.CreateGoImportHandler())
+	httpsMux.HandleFunc("GET /goimports/edit/{id}", goimportadmin.EditGoImportHandler())
+	httpsMux.HandleFunc("POST /goimports/edit/{id}", goimportadmin.UpdateGoImportHandler())
 	httpsMux.HandleFunc("GET /films", filmadmin.ListFilmsHandler())
 	httpsMux.HandleFunc("GET /films/search", filmadmin.SearchFilmsHandler())
 	httpsMux.HandleFunc("POST /films", filmadmin.CreateFilmHandler())

@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.EditGoImportData */}}
+{{/* gotype: chameth.com/chameth.com/features/goimports/admin/templates.EditGoImportData */}}
 {{define "content"}}
     <h2>Edit go import: {{.Path}}</h2>
     <a href="https://chameth.com{{.Path}}">View on chameth.com</a>

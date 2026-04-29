@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.ListGoImportsData */}}
+{{/* gotype: chameth.com/chameth.com/features/goimports/admin/templates.ListGoImportsData */}}
 {{define "content"}}
     <form method="POST" action="/goimports">
         <label>Project: <input type="text" name="project" placeholder="e.g., myproject" required /></label>

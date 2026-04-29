@@ -6,6 +6,7 @@ import (
 
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/films"
+	"chameth.com/chameth.com/features/goimports"
 	"chameth.com/chameth.com/features/poems"
 	"chameth.com/chameth.com/features/snippets"
 )
@@ -32,7 +33,7 @@ func Content(w http.ResponseWriter, r *http.Request) {
 	case "media":
 		Media(w, r)
 	case "goimport":
-		GoImport(w, r)
+		goimports.GoImportHandler(w, r)
 	case "film":
 		films.FilmPage(w, r)
 	case "film_list":

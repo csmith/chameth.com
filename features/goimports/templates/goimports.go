@@ -6,12 +6,7 @@ import (
 )
 
 var goImportTemplate = template.Must(
-	template.
-		New("go.html.gotpl").
-		ParseFS(
-			templates,
-			"go.html.gotpl",
-		),
+	template.New("go.html.gotpl").Parse(goImportTemplateContent),
 )
 
 type GoImportData struct {

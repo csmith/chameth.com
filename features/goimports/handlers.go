@@ -1,19 +1,18 @@
-package handlers
+package goimports
 
 import (
 	"log/slog"
 	"net/http"
 	"strings"
 
-	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/templates"
+	"chameth.com/chameth.com/features/goimports/templates"
 )
 
-func GoImport(w http.ResponseWriter, r *http.Request) {
-	goimport, err := db.GetGoImportByPrefix(r.Context(), r.URL.Path)
+func GoImportHandler(w http.ResponseWriter, r *http.Request) {
+	goimport, err := GetGoImportByPrefix(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find goimport by path", "error", err, "path", r.URL.Path)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
