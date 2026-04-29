@@ -1,28 +1,30 @@
-package db
+package projects
 
 import (
 	"context"
 	"fmt"
+
+	"chameth.com/chameth.com/db"
 )
 
 func GetAllProjectSections(ctx context.Context) ([]ProjectSection, error) {
-	return Select[ProjectSection](ctx, "SELECT id, name, sort, description FROM project_sections ORDER BY sort")
+	return db.Select[ProjectSection](ctx, "SELECT id, name, sort, description FROM project_sections ORDER BY sort")
 }
 
 func GetProjectsInSection(ctx context.Context, sectionID int) ([]Project, error) {
-	return Select[Project](ctx, "SELECT id, section, name, icon, pinned, description FROM projects WHERE section = $1 AND published = true ORDER BY pinned DESC, LOWER(name)", sectionID)
+	return db.Select[Project](ctx, "SELECT id, section, name, icon, pinned, description FROM projects WHERE section = $1 AND published = true ORDER BY pinned DESC, LOWER(name)", sectionID)
 }
 
 func GetAllProjects(ctx context.Context) ([]Project, error) {
-	return Select[Project](ctx, "SELECT id, section, name, icon, pinned, description FROM projects WHERE published = true ORDER BY section, pinned DESC, LOWER(name)")
+	return db.Select[Project](ctx, "SELECT id, section, name, icon, pinned, description FROM projects WHERE published = true ORDER BY section, pinned DESC, LOWER(name)")
 }
 
 func GetDraftProjects(ctx context.Context) ([]Project, error) {
-	return Select[Project](ctx, "SELECT id, section, name, icon, pinned, description FROM projects WHERE published = false ORDER BY section, pinned DESC, LOWER(name)")
+	return db.Select[Project](ctx, "SELECT id, section, name, icon, pinned, description FROM projects WHERE published = false ORDER BY section, pinned DESC, LOWER(name)")
 }
 
 func GetProjectByID(ctx context.Context, id int) (*Project, error) {
-	project, err := Get[Project](ctx, "SELECT id, section, name, icon, pinned, description, published FROM projects WHERE id = $1", id)
+	project, err := db.Get[Project](ctx, "SELECT id, section, name, icon, pinned, description, published FROM projects WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +42,7 @@ func CreateProject(ctx context.Context, name string) (int, error) {
 	defaultSection := sections[0].ID
 
 	var id int
-	err = QueryRow(ctx, `
+	err = db.QueryRow(ctx, `
 		INSERT INTO projects (section, name, icon, pinned, description, published)
 		VALUES ($1, $2, '', false, '', false)
 		RETURNING id
@@ -52,7 +54,7 @@ func CreateProject(ctx context.Context, name string) (int, error) {
 }
 
 func UpdateProject(ctx context.Context, id int, name, icon, description string, section int, pinned, published bool) error {
-	_, err := Exec(ctx, `
+	_, err := db.Exec(ctx, `
 		UPDATE projects
 		SET section = $1, name = $2, icon = $3, pinned = $4, description = $5, published = $6
 		WHERE id = $7

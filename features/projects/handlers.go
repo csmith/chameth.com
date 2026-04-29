@@ -1,4 +1,4 @@
-package handlers
+package projects
 
 import (
 	"html/template"
@@ -7,26 +7,26 @@ import (
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/content/markdown"
-	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/templates"
+	projecttemplates "chameth.com/chameth.com/features/projects/templates"
+	parenttemplates "chameth.com/chameth.com/templates"
 )
 
-func ProjectsList(w http.ResponseWriter, r *http.Request) {
-	sections, err := db.GetAllProjectSections(r.Context())
+func ProjectsListHandler(w http.ResponseWriter, r *http.Request) {
+	sections, err := GetAllProjectSections(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all project sections", "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	var groups []templates.ProjectGroup
+	var groups []projecttemplates.ProjectGroup
 	for _, section := range sections {
-		var projectDetails []templates.ProjectDetails
+		var projectDetails []projecttemplates.ProjectDetails
 
-		projects, err := db.GetProjectsInSection(r.Context(), section.ID)
+		projects, err := GetProjectsInSection(r.Context(), section.ID)
 		if err != nil {
 			slog.Error("Failed to get projects in section", "section", section.ID, "error", err)
-			ServerError(w, r)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
@@ -34,10 +34,10 @@ func ProjectsList(w http.ResponseWriter, r *http.Request) {
 			renderedDesc, err := markdown.Render(project.Description)
 			if err != nil {
 				slog.Error("Failed to render markdown for project description", "project", project.Name, "error", err)
-				ServerError(w, r)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 				return
 			}
-			projectDetails = append(projectDetails, templates.ProjectDetails{
+			projectDetails = append(projectDetails, projecttemplates.ProjectDetails{
 				Name:        project.Name,
 				Pinned:      project.Pinned,
 				Icon:        template.HTML(project.Icon),
@@ -45,7 +45,7 @@ func ProjectsList(w http.ResponseWriter, r *http.Request) {
 			})
 		}
 
-		groups = append(groups, templates.ProjectGroup{
+		groups = append(groups, projecttemplates.ProjectGroup{
 			Name:        section.Name,
 			Description: section.Description,
 			Projects:    projectDetails,
@@ -54,8 +54,8 @@ func ProjectsList(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderProjects(w, templates.ProjectsData{
+	err = projecttemplates.RenderProjects(w, projecttemplates.ProjectsData{
 		ProjectGroups: groups,
-		PageData:      content.CreatePageData(r.Context(), "Projects", "/projects/", templates.OpenGraphHeaders{}),
+		PageData:      content.CreatePageData(r.Context(), "Projects", "/projects/", parenttemplates.OpenGraphHeaders{}),
 	})
 }
