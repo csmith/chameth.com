@@ -11,7 +11,7 @@ require (
 	github.com/csmith/slogflags v1.2.0
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/jmoiron/sqlx v1.4.0
-	github.com/lib/pq v1.12.1
+	github.com/lib/pq v1.12.2
 	github.com/pgvector/pgvector-go v0.3.0
 	github.com/yuin/goldmark v1.8.2
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
