@@ -11,13 +11,12 @@ type AlbumArtist struct {
 }
 
 type Album struct {
-	ID            string        `json:"id"`
-	Title         string        `json:"title"`
-	SortName      string        `json:"sortName"`
-	Year          int           `json:"year"`
-	CoverArt      string        `json:"coverArt"`
-	MusicBrainzID string        `json:"musicBrainzId"`
-	AlbumArtists  []AlbumArtist `json:"albumArtists"`
+	ID           string        `json:"id"`
+	Title        string        `json:"title"`
+	SortName     string        `json:"sortName"`
+	Year         int           `json:"year"`
+	CoverArt     string        `json:"coverArt"`
+	AlbumArtists []AlbumArtist `json:"albumArtists"`
 }
 
 type AlbumListResponse struct {
@@ -38,12 +37,11 @@ func (c *Client) GetAlbumList(listType string, size, offset int) (*AlbumListResp
 }
 
 type Song struct {
-	ID            string `json:"id"`
-	Title         string `json:"title"`
-	MusicBrainzID string `json:"musicBrainzId"`
-	Duration      int    `json:"duration"`
-	DiscNumber    int    `json:"discNumber"`
-	TrackNumber   int    `json:"track"`
+	ID          string `json:"id"`
+	Title       string `json:"title"`
+	Duration    int    `json:"duration"`
+	DiscNumber  int    `json:"discNumber"`
+	TrackNumber int    `json:"track"`
 }
 
 type AlbumDetail struct {

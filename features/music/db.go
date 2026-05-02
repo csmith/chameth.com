@@ -10,15 +10,14 @@ import (
 
 func upsertArtist(ctx context.Context, artist musicArtist) (int, error) {
 	id, err := db.Get[int](ctx, `
-		INSERT INTO music_artists (music_brainz_id, subsonic_id, name, sort_name)
-		VALUES ($1, $2, $3, $4)
-		ON CONFLICT (music_brainz_id)
+		INSERT INTO music_artists (subsonic_id, name, sort_name)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (subsonic_id)
 		DO UPDATE SET
-			subsonic_id = EXCLUDED.subsonic_id,
 			name = EXCLUDED.name,
 			sort_name = EXCLUDED.sort_name
 		RETURNING id
-	`, artist.MusicBrainzID, artist.SubsonicID, artist.Name, artist.SortName)
+	`, artist.SubsonicID, artist.Name, artist.SortName)
 	if err != nil {
 		return 0, fmt.Errorf("failed to upsert music artist: %w", err)
 	}
@@ -35,19 +34,26 @@ func artistBySubsonicID(ctx context.Context, subsonicID string) (int, error) {
 
 func upsertAlbum(ctx context.Context, album musicAlbum) (int, error) {
 	id, err := db.Get[int](ctx, `
-		INSERT INTO music_albums (music_brainz_id, subsonic_id, name, sort_name, year, artist_id)
-		VALUES ($1, $2, $3, $4, $5, $6)
-		ON CONFLICT (music_brainz_id)
+		INSERT INTO music_albums (subsonic_id, name, sort_name, year, artist_id)
+		VALUES ($1, $2, $3, $4, $5)
+		ON CONFLICT (subsonic_id)
 		DO UPDATE SET
-			subsonic_id = EXCLUDED.subsonic_id,
 			name = EXCLUDED.name,
 			sort_name = EXCLUDED.sort_name,
 			year = EXCLUDED.year,
 			artist_id = EXCLUDED.artist_id
 		RETURNING id
-	`, album.MusicBrainzID, album.SubsonicID, album.Name, album.SortName, album.Year, album.ArtistID)
+	`, album.SubsonicID, album.Name, album.SortName, album.Year, album.ArtistID)
 	if err != nil {
 		return 0, fmt.Errorf("failed to upsert music album: %w", err)
+	}
+	return id, nil
+}
+
+func albumBySubsonicID(ctx context.Context, subsonicID string) (int, error) {
+	id, err := db.Get[int](ctx, `SELECT id FROM music_albums WHERE subsonic_id = $1`, subsonicID)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get album by subsonic id: %w", err)
 	}
 	return id, nil
 }
@@ -66,18 +72,17 @@ func albumsWithoutTracks(ctx context.Context) ([]musicAlbum, error) {
 
 func upsertTrack(ctx context.Context, track musicTrack) (int, error) {
 	id, err := db.Get[int](ctx, `
-		INSERT INTO music_tracks (subsonic_id, music_brainz_id, album_id, name, duration, disc_number, track_number)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		INSERT INTO music_tracks (subsonic_id, album_id, name, duration, disc_number, track_number)
+		VALUES ($1, $2, $3, $4, $5, $6)
 		ON CONFLICT (subsonic_id)
 		DO UPDATE SET
-			music_brainz_id = EXCLUDED.music_brainz_id,
 			album_id = EXCLUDED.album_id,
 			name = EXCLUDED.name,
 			duration = EXCLUDED.duration,
 			disc_number = EXCLUDED.disc_number,
 			track_number = EXCLUDED.track_number
 		RETURNING id
-	`, track.SubsonicID, track.MusicBrainzID, track.AlbumID, track.Name, track.Duration, track.DiscNumber, track.TrackNumber)
+	`, track.SubsonicID, track.AlbumID, track.Name, track.Duration, track.DiscNumber, track.TrackNumber)
 	if err != nil {
 		return 0, fmt.Errorf("failed to upsert music track: %w", err)
 	}
@@ -85,11 +90,7 @@ func upsertTrack(ctx context.Context, track musicTrack) (int, error) {
 }
 
 func mostRecentPlayTime(ctx context.Context) (time.Time, error) {
-	t, err := db.Get[*time.Time](ctx, `
-		SELECT GREATEST(
-			(SELECT MAX(played_at) FROM music_plays),
-			(SELECT MAX(played_at) FROM unmatched_music_plays)
-		)`)
+	t, err := db.Get[*time.Time](ctx, `SELECT MAX(played_at) FROM music_plays`)
 	if err != nil {
 		return time.Time{}, fmt.Errorf("failed to get most recent play time: %w", err)
 	}
@@ -110,37 +111,10 @@ func insertPlay(ctx context.Context, play musicPlay) error {
 	return nil
 }
 
-func trackByMusicBrainzID(ctx context.Context, musicBrainzID string) (int, error) {
-	id, err := db.Get[int](ctx, `SELECT id FROM music_tracks WHERE music_brainz_id = $1`, musicBrainzID)
+func trackBySubsonicID(ctx context.Context, subsonicID string) (int, error) {
+	id, err := db.Get[int](ctx, `SELECT id FROM music_tracks WHERE subsonic_id = $1`, subsonicID)
 	if err != nil {
-		return 0, fmt.Errorf("failed to get track by music brainz id: %w", err)
+		return 0, fmt.Errorf("failed to get track by subsonic id: %w", err)
 	}
 	return id, nil
-}
-
-func insertUnmatchedPlay(ctx context.Context, play unmatchedMusicPlay) error {
-	_, err := db.Exec(ctx, `
-		INSERT INTO unmatched_music_plays (music_brainz_id, title, played_at, play_count)
-		VALUES ($1, $2, $3, $4)
-	`, play.MusicBrainzID, play.Title, play.PlayedAt, play.PlayCount)
-	if err != nil {
-		return fmt.Errorf("failed to insert unmatched music play: %w", err)
-	}
-	return nil
-}
-
-func unmatchedPlays(ctx context.Context) ([]unmatchedMusicPlay, error) {
-	plays, err := db.Select[unmatchedMusicPlay](ctx, `SELECT * FROM unmatched_music_plays ORDER BY played_at`)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get unmatched music plays: %w", err)
-	}
-	return plays, nil
-}
-
-func deleteUnmatchedPlay(ctx context.Context, id int) error {
-	_, err := db.Exec(ctx, `DELETE FROM unmatched_music_plays WHERE id = $1`, id)
-	if err != nil {
-		return fmt.Errorf("failed to delete unmatched music play: %w", err)
-	}
-	return nil
 }

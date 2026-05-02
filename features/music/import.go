@@ -64,15 +64,10 @@ func importMusicCatalog(ctx context.Context, client *http.Client) {
 
 	for _, idx := range resp.Indexes {
 		for _, artist := range idx.Artists {
-			if artist.MusicBrainzID == "" {
-				continue
-			}
-
 			id, err := upsertArtist(ctx, musicArtist{
-				MusicBrainzID: artist.MusicBrainzID,
-				SubsonicID:    artist.ID,
-				Name:          artist.Name,
-				SortName:      artist.SortName,
+				SubsonicID: artist.ID,
+				Name:       artist.Name,
+				SortName:   artist.SortName,
 			})
 			if err != nil {
 				slog.Error("Failed to upsert artist", "error", err, "name", artist.Name)
@@ -94,8 +89,6 @@ func importMusicCatalog(ctx context.Context, client *http.Client) {
 	if err := importMusicTracks(ctx, sc); err != nil {
 		slog.Error("Failed to import tracks", "error", err)
 	}
-
-	resolveUnmatchedPlays(ctx)
 }
 
 func importMusicPlays(ctx context.Context, client *http.Client) {
@@ -119,10 +112,6 @@ func importMusicAlbums(ctx context.Context, client *http.Client, sc *subsonic.Cl
 		}
 
 		for _, album := range resp.Albums {
-			if album.MusicBrainzID == "" {
-				continue
-			}
-
 			var artistID *int
 			if len(album.AlbumArtists) > 0 {
 				id, err := artistBySubsonicID(ctx, album.AlbumArtists[0].ID)
@@ -139,12 +128,11 @@ func importMusicAlbums(ctx context.Context, client *http.Client, sc *subsonic.Cl
 			}
 
 			id, err := upsertAlbum(ctx, musicAlbum{
-				MusicBrainzID: album.MusicBrainzID,
-				SubsonicID:    album.ID,
-				Name:          normaliseAlbumName(album.Title, album.SortName),
-				SortName:      album.SortName,
-				Year:          year,
-				ArtistID:      artistID,
+				SubsonicID: album.ID,
+				Name:       normaliseAlbumName(album.Title, album.SortName),
+				SortName:   album.SortName,
+				Year:       year,
+				ArtistID:   artistID,
 			})
 			if err != nil {
 				slog.Error("Failed to upsert album", "error", err, "name", album.Title)
@@ -181,10 +169,6 @@ func importMusicTracks(ctx context.Context, sc *subsonic.Client) error {
 		}
 
 		for _, song := range detail.Songs {
-			if song.MusicBrainzID == "" {
-				continue
-			}
-
 			var duration *int
 			if song.Duration != 0 {
 				duration = &song.Duration
@@ -201,13 +185,12 @@ func importMusicTracks(ctx context.Context, sc *subsonic.Client) error {
 			}
 
 			if _, err := upsertTrack(ctx, musicTrack{
-				SubsonicID:    song.ID,
-				MusicBrainzID: song.MusicBrainzID,
-				AlbumID:       album.ID,
-				Name:          song.Title,
-				Duration:      duration,
-				DiscNumber:    discNumber,
-				TrackNumber:   trackNumber,
+				SubsonicID:  song.ID,
+				AlbumID:     album.ID,
+				Name:        song.Title,
+				Duration:    duration,
+				DiscNumber:  discNumber,
+				TrackNumber: trackNumber,
 			}); err != nil {
 				slog.Error("Failed to upsert track", "error", err, "name", song.Title)
 			}
@@ -246,7 +229,7 @@ func importPlays(ctx context.Context, sc *subsonic.Client) error {
 		}
 
 		for _, play := range plays {
-			if play.Recording == "" {
+			if play.ID == "" {
 				continue
 			}
 
@@ -257,17 +240,13 @@ func importPlays(ctx context.Context, sc *subsonic.Client) error {
 				return nil
 			}
 
-			trackID, err := trackByMusicBrainzID(ctx, play.Recording)
+			trackID, err := trackBySubsonicID(ctx, play.ID)
 			if err != nil {
-				if err := insertUnmatchedPlay(ctx, unmatchedMusicPlay{
-					MusicBrainzID: play.Recording,
-					Title:         play.Title,
-					PlayedAt:      playedAt,
-					PlayCount:     play.PlayCount,
-				}); err != nil {
-					slog.Error("Failed to insert unmatched play", "error", err, "title", play.Title)
+				trackID, err = ensureTrackFromPlay(ctx, play)
+				if err != nil {
+					slog.Error("Failed to ensure track for play", "error", err, "title", play.Title)
+					continue
 				}
-				continue
 			}
 
 			if err := insertPlay(ctx, musicPlay{
@@ -291,40 +270,58 @@ func importPlays(ctx context.Context, sc *subsonic.Client) error {
 	return nil
 }
 
-func resolveUnmatchedPlays(ctx context.Context) {
-	unmatched, err := unmatchedPlays(ctx)
-	if err != nil {
-		slog.Error("Failed to get unmatched plays", "error", err)
-		return
-	}
-	if len(unmatched) == 0 {
-		return
-	}
-
-	resolved := 0
-	for _, play := range unmatched {
-		trackID, err := trackByMusicBrainzID(ctx, play.MusicBrainzID)
+func ensureTrackFromPlay(ctx context.Context, play subsonic.Play) (int, error) {
+	var artistID *int
+	if play.AlbumArtistID != "" {
+		id, err := upsertArtist(ctx, musicArtist{
+			SubsonicID: play.AlbumArtistID,
+			Name:       play.AlbumArtist,
+			SortName:   play.AlbumArtist,
+		})
 		if err != nil {
-			continue
+			return 0, fmt.Errorf("failed to ensure artist for play: %w", err)
 		}
-
-		if err := insertPlay(ctx, musicPlay{
-			TrackID:   trackID,
-			PlayedAt:  play.PlayedAt,
-			PlayCount: play.PlayCount,
-		}); err != nil {
-			slog.Error("Failed to insert resolved play", "error", err, "title", play.Title)
-			continue
-		}
-
-		if err := deleteUnmatchedPlay(ctx, play.ID); err != nil {
-			slog.Error("Failed to delete resolved unmatched play", "error", err, "title", play.Title)
-			continue
-		}
-		resolved++
+		artistID = &id
 	}
 
-	slog.Info("Resolved unmatched plays", "resolved", resolved, "remaining", len(unmatched)-resolved)
+	albumID, err := upsertAlbum(ctx, musicAlbum{
+		SubsonicID: play.AlbumID,
+		Name:       play.Album,
+		SortName:   play.Album,
+		ArtistID:   artistID,
+	})
+	if err != nil {
+		return 0, fmt.Errorf("failed to ensure album for play: %w", err)
+	}
+
+	var duration *int
+	if play.Duration != 0 {
+		d := int(play.Duration)
+		duration = &d
+	}
+
+	var discNumber *int
+	if play.DiscNumber != 0 {
+		discNumber = &play.DiscNumber
+	}
+
+	var trackNumber *int
+	if play.TrackNumber != 0 {
+		trackNumber = &play.TrackNumber
+	}
+
+	trackID, err := upsertTrack(ctx, musicTrack{
+		SubsonicID:  play.ID,
+		AlbumID:     albumID,
+		Name:        play.Title,
+		Duration:    duration,
+		DiscNumber:  discNumber,
+		TrackNumber: trackNumber,
+	})
+	if err != nil {
+		return 0, fmt.Errorf("failed to ensure track for play: %w", err)
+	}
+	return trackID, nil
 }
 
 func fetchImage(client *http.Client, imageURL string) ([]byte, int, int, error) {

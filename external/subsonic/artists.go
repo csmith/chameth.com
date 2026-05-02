@@ -6,7 +6,6 @@ type Artist struct {
 	CoverArt       string   `json:"coverArt"`
 	AlbumCount     int      `json:"albumCount"`
 	ArtistImageURL string   `json:"artistImageUrl"`
-	MusicBrainzID  string   `json:"musicBrainzId"`
 	SortName       string   `json:"sortName"`
 	Roles          []string `json:"roles"`
 }

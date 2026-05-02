@@ -14,21 +14,31 @@ import (
 )
 
 type navidromePlay struct {
-	ID             string  `json:"id"`
-	PlayDate       string  `json:"playDate"`
-	PlayCount      int     `json:"playCount"`
-	Title          string  `json:"title"`
-	MbzRecordingID string  `json:"mbzRecordingID"`
-	Duration       float64 `json:"duration"`
-	TrackNumber    int     `json:"trackNumber"`
+	ID            string  `json:"id"`
+	PlayDate      string  `json:"playDate"`
+	PlayCount     int     `json:"playCount"`
+	Title         string  `json:"title"`
+	Duration      float64 `json:"duration"`
+	TrackNumber   int     `json:"trackNumber"`
+	DiscNumber    int     `json:"discNumber"`
+	AlbumID       string  `json:"albumId"`
+	Album         string  `json:"album"`
+	AlbumArtistID string  `json:"albumArtistId"`
+	AlbumArtist   string  `json:"albumArtist"`
 }
 
 type Play struct {
-	ID        string
-	PlayDate  time.Time
-	PlayCount int
-	Recording string // MusicBrainz recording ID
-	Title     string
+	ID            string
+	PlayDate      time.Time
+	PlayCount     int
+	Title         string
+	Duration      float64
+	TrackNumber   int
+	DiscNumber    int
+	AlbumID       string
+	Album         string
+	AlbumArtistID string
+	AlbumArtist   string
 }
 
 func (c *Client) LoginNavidrome(ctx context.Context) (string, error) {
@@ -112,11 +122,17 @@ func (c *Client) GetRecentPlays(ctx context.Context, token string, start, end in
 	for _, s := range songs {
 		playDate, _ := time.Parse(time.RFC3339, s.PlayDate)
 		plays = append(plays, Play{
-			ID:        s.ID,
-			PlayDate:  playDate,
-			PlayCount: s.PlayCount,
-			Recording: s.MbzRecordingID,
-			Title:     s.Title,
+			ID:            s.ID,
+			PlayDate:      playDate,
+			PlayCount:     s.PlayCount,
+			Title:         s.Title,
+			Duration:      s.Duration,
+			TrackNumber:   s.TrackNumber,
+			DiscNumber:    s.DiscNumber,
+			AlbumID:       s.AlbumID,
+			Album:         s.Album,
+			AlbumArtistID: s.AlbumArtistID,
+			AlbumArtist:   s.AlbumArtist,
 		})
 	}
 
