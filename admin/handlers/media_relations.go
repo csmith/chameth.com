@@ -12,6 +12,7 @@ import (
 	"chameth.com/chameth.com/features/poems"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/snippets"
+	"chameth.com/chameth.com/features/videogames"
 )
 
 func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
@@ -69,7 +70,7 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 			entityPath = fmt.Sprintf("/film-%d/", film.ID)
 		case "videogame":
-			game, err := db.GetVideoGameByID(r.Context(), entityID)
+			game, err := videogames.GetVideoGameByID(r.Context(), entityID)
 			if err != nil {
 				http.Error(w, "Entity not found", http.StatusNotFound)
 				return

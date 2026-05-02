@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.EditVideoGameReviewData */}}
+{{/* gotype: chameth.com/chameth.com/features/videogames/admin/templates.EditVideoGameReviewData */}}
 {{define "content"}}
     <h2>Edit review: {{.VideoGameTitle}}</h2>
     <form action="/video-game-reviews/edit/{{.ID}}" method="post">

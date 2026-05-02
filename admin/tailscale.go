@@ -16,6 +16,7 @@ import (
 	poemadmin "chameth.com/chameth.com/features/poems/admin"
 	projectadmin "chameth.com/chameth.com/features/projects/admin"
 	snippetadmin "chameth.com/chameth.com/features/snippets/admin"
+	vgadmin "chameth.com/chameth.com/features/videogames/admin"
 	walksadmin "chameth.com/chameth.com/features/walks/admin"
 	wowadmin "chameth.com/chameth.com/features/wow/admin"
 	"github.com/csmith/middleware"
@@ -122,14 +123,14 @@ func Start(s *tsnet.Server) error {
 	httpsMux.HandleFunc("POST /films/workflow/step/6", filmadmin.FilmReviewWorkflowStep6Handler())
 	httpsMux.HandleFunc("GET /films/workflow/step/7", filmadmin.FilmReviewWorkflowStep7Handler())
 	httpsMux.HandleFunc("POST /films/workflow/step/7", filmadmin.FilmReviewWorkflowStep7Handler())
-	httpsMux.HandleFunc("GET /videogames", handlers.ListVideoGamesHandler())
-	httpsMux.HandleFunc("POST /videogames", handlers.CreateVideoGameHandler())
-	httpsMux.HandleFunc("GET /videogames/edit/{id}", handlers.EditVideoGameHandler())
-	httpsMux.HandleFunc("POST /videogames/edit/{id}", handlers.UpdateVideoGameHandler())
-	httpsMux.HandleFunc("POST /videogames/delete/{id}", handlers.DeleteVideoGameHandler())
-	httpsMux.HandleFunc("GET /video-game-reviews/edit/{id}", handlers.EditVideoGameReviewHandler())
-	httpsMux.HandleFunc("POST /video-game-reviews/create/{id}", handlers.CreateVideoGameReviewHandler())
-	httpsMux.HandleFunc("POST /video-game-reviews/edit/{id}", handlers.UpdateVideoGameReviewHandler())
+	httpsMux.HandleFunc("GET /videogames", vgadmin.ListVideoGamesHandler())
+	httpsMux.HandleFunc("POST /videogames", vgadmin.CreateVideoGameHandler())
+	httpsMux.HandleFunc("GET /videogames/edit/{id}", vgadmin.EditVideoGameHandler())
+	httpsMux.HandleFunc("POST /videogames/edit/{id}", vgadmin.UpdateVideoGameHandler())
+	httpsMux.HandleFunc("POST /videogames/delete/{id}", vgadmin.DeleteVideoGameHandler())
+	httpsMux.HandleFunc("GET /video-game-reviews/edit/{id}", vgadmin.EditVideoGameReviewHandler())
+	httpsMux.HandleFunc("POST /video-game-reviews/create/{id}", vgadmin.CreateVideoGameReviewHandler())
+	httpsMux.HandleFunc("POST /video-game-reviews/edit/{id}", vgadmin.UpdateVideoGameReviewHandler())
 	httpsMux.HandleFunc("GET /syndications", handlers.ListSyndicationsHandler())
 	httpsMux.HandleFunc("POST /syndications/create", handlers.CreateSyndicationHandler())
 	httpsMux.HandleFunc("GET /syndications/edit/{id}", handlers.EditSyndicationHandler())

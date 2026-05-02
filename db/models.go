@@ -1,7 +1,5 @@
 package db
 
-import "time"
-
 type MediaMetadata struct {
 	ID               int    `db:"id"`
 	ContentType      string `db:"content_type"`
@@ -35,35 +33,6 @@ type MediaImageVariant struct {
 	Path        string `db:"path"`
 	ContentType string `db:"content_type"`
 	Description string `db:"description"`
-}
-
-type VideoGameMetadata struct {
-	ID        int    `db:"id"`
-	Title     string `db:"title"`
-	Published bool   `db:"published"`
-	Path      string `db:"path"`
-}
-
-type VideoGame struct {
-	VideoGameMetadata
-	Platform string `db:"platform"`
-	Overview string `db:"overview"`
-}
-
-type VideoGameReview struct {
-	ID               int       `db:"id"`
-	VideoGameID      int       `db:"video_game_id"`
-	PlayedDate       time.Time `db:"played_date"`
-	Rating           int       `db:"rating"`
-	Playtime         *int      `db:"playtime"`
-	CompletionStatus *string   `db:"completion_status"`
-	Notes            string    `db:"notes"`
-	Published        bool      `db:"published"`
-}
-
-type VideoGameWithReview struct {
-	VideoGame
-	Review *VideoGameReview
 }
 
 type Syndication struct {

@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.ListVideoGamesData */}}
+{{/* gotype: chameth.com/chameth.com/features/videogames/admin/templates.ListVideoGamesData */}}
 {{define "content"}}
     <form method="POST" action="/videogames">
         <button type="submit">Create New Video Game</button>

@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.EditVideoGameData */}}
+{{/* gotype: chameth.com/chameth.com/features/videogames/admin/templates.EditVideoGameData */}}
 {{define "content"}}
     <h2>Edit video game: {{.Title}}</h2>
     <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
