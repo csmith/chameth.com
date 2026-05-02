@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"html/template"
 
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/syndications"
 )
 
@@ -25,7 +25,7 @@ type Data struct {
 	Syndications []SyndicationLink
 }
 
-func RenderFromText(args []string, ctx *common.Context) (string, error) {
+func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	return Render(ctx.Context, ctx.URL)
 }
 

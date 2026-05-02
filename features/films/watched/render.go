@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/features/films"
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/shortcodes/rating"
 )
 
@@ -17,7 +17,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("watchedfilms.html.gotpl").ParseFS(templates, "watchedfilms.html.gotpl"))
 
-func RenderFromText(args []string, ctx *common.Context) (string, error) {
+func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 2 {
 		return "", fmt.Errorf("watchedfilms requires 2 arguments (start_date, end_date) in YYYY-MM-DD format")
 	}

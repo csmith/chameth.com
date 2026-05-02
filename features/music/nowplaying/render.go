@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"time"
 
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 )
 
 //go:embed *.gotpl
@@ -15,7 +15,7 @@ var templates string
 
 var tmpl = template.Must(template.New("nowplaying.html.gotpl").Parse(templates))
 
-func RenderFromText(args []string, ctx *common.Context) (string, error) {
+func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	np, err := query(ctx)
 	if err != nil {
 		return "", fmt.Errorf("failed to get now playing: %w", err)

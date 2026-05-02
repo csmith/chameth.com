@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"html/template"
 
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 )
 
 //go:embed *.gotpl
@@ -36,7 +36,7 @@ var pages = map[string]struct {
 	},
 }
 
-func RenderFromText(args []string, _ *common.Context) (string, error) {
+func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("link requires at least 1 argument (page name)")
 	}

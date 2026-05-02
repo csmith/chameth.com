@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"strconv"
 
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 
 	"chameth.com/chameth.com/features/walks"
 )
@@ -17,7 +17,7 @@ var templates string
 
 var tmpl = template.Must(template.New("walkingdistance.html.gotpl").Parse(templates))
 
-func RenderFromText(args []string, ctx *common.Context) (string, error) {
+func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 3 {
 		return "", fmt.Errorf("walkingdistance shortcode requires three arguments: name, distance, svg")
 	}

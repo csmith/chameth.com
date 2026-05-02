@@ -6,7 +6,6 @@ import (
 
 	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/features/shortcodes"
-	"chameth.com/chameth.com/features/shortcodes/common"
 	"chameth.com/chameth.com/features/sudo"
 	"chameth.com/chameth.com/templates"
 )
@@ -26,7 +25,7 @@ func CreatePageData(ctx context.Context, title, path string, ogHeaders templates
 		Scripts:      assets.GetScriptPath(),
 		Stylesheet:   assets.StylesheetPath(),
 		RecentPosts:  RecentPostsProvider(),
-		Component:    shortcodes.NewComponentFunc(&common.Context{Context: ctx, URL: path}),
+		Component:    shortcodes.NewComponentFunc(&shortcodes.Context{Context: ctx, URL: path}),
 		Admin:        sudo.IsAdmin(ctx),
 	}
 }

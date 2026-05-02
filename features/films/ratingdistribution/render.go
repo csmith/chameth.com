@@ -8,7 +8,7 @@ import (
 	"math"
 
 	"chameth.com/chameth.com/features/films"
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/shortcodes/rating"
 )
 
@@ -17,7 +17,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("distribution.html.gotpl").ParseFS(templates, "distribution.html.gotpl"))
 
-func RenderFromText(_ []string, ctx *common.Context) (string, error) {
+func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 	distribution, err := films.GetRatingDistribution(ctx.Context)
 	if err != nil {
 		return "", fmt.Errorf("failed to get film rating distribution: %w", err)

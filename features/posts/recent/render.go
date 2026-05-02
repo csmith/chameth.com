@@ -12,7 +12,7 @@ import (
 	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/posts/link"
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 )
 
 //go:embed *.gotpl
@@ -24,7 +24,7 @@ type Data struct {
 	Posts template.HTML
 }
 
-func RenderFromText(args []string, ctx *common.Context) (string, error) {
+func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("recentposts requires at least 1 argument (count)")
 	}

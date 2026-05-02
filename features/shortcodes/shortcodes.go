@@ -2,6 +2,7 @@ package shortcodes
 
 import (
 	"bytes"
+	"context"
 	"embed"
 	"fmt"
 	"log/slog"
@@ -9,13 +10,7 @@ import (
 	"strings"
 
 	"chameth.com/chameth.com/assets"
-	"chameth.com/chameth.com/features/shortcodes/common"
-	"chameth.com/chameth.com/features/shortcodes/link"
-	"chameth.com/chameth.com/features/shortcodes/nod"
-	"chameth.com/chameth.com/features/shortcodes/rating"
-	"chameth.com/chameth.com/features/shortcodes/sidenote"
-	"chameth.com/chameth.com/features/shortcodes/update"
-	"chameth.com/chameth.com/features/shortcodes/warning"
+	"chameth.com/chameth.com/features/media"
 )
 
 //go:embed **/*.css
@@ -27,24 +22,33 @@ func init() {
 
 const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering failed]</div>\n\n"
 
-type Renderer func([]string, *common.Context) (string, error)
+type Renderer func([]string, *Context) (string, error)
 
-var renderers = map[string]Renderer{
-	"link":     link.RenderFromText,
-	"nod":      nod.RenderFromText,
-	"rating":   rating.RenderFromText,
-	"sidenote": sidenote.RenderFromText,
-	"update":   update.RenderFromText,
-	"warning":  warning.RenderFromText,
-}
+var renderers = map[string]Renderer{}
 
 func Register(name string, renderer Renderer) {
 	renderers[name] = renderer
 }
 
+type Context struct {
+	context.Context
+	Media []media.MediaRelationWithDetails
+	URL   string
+}
+
+func (c *Context) MediaWithDescription(description string) []media.MediaRelationWithDetails {
+	var matching []media.MediaRelationWithDetails
+	for i := range c.Media {
+		if c.Media[i].Description != nil && *c.Media[i].Description == description {
+			matching = append(matching, c.Media[i])
+		}
+	}
+	return matching
+}
+
 var tagRegexp = regexp.MustCompile(`\{%\s*(\w+)(.*?)\s*%\}`)
 
-func Render(input string, ctx *common.Context) string {
+func Render(input string, ctx *Context) string {
 	var res bytes.Buffer
 	lastTag := 0
 

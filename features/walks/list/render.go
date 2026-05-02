@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 
 	"chameth.com/chameth.com/features/walks"
 )
@@ -18,7 +18,7 @@ var templates string
 
 var tmpl = template.Must(template.New("walks.html.gotpl").Parse(templates))
 
-func RenderFromText(_ []string, ctx *common.Context) (string, error) {
+func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 	allWalks, err := walks.AllWalks(ctx.Context)
 	if err != nil {
 		return "", fmt.Errorf("failed to get walks: %w", err)

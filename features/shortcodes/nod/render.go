@@ -5,7 +5,7 @@ import (
 	"embed"
 	"html/template"
 
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 )
 
 //go:embed *.gotpl
@@ -13,7 +13,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("nod.html.gotpl").ParseFS(templates, "nod.html.gotpl"))
 
-func RenderFromText(_ []string, ctx *common.Context) (string, error) {
+func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 	return renderTemplate(Data{
 		Page: ctx.URL,
 	})

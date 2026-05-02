@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"chameth.com/chameth.com/features/films"
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/shortcodes/rating"
 )
 
@@ -17,7 +17,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("recentfilms.html.gotpl").ParseFS(templates, "recentfilms.html.gotpl"))
 
-func RenderFromText(args []string, ctx *common.Context) (string, error) {
+func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("recentfilms requires at least 1 argument (count)")
 	}

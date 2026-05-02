@@ -8,7 +8,7 @@ import (
 	"math/rand"
 	"strconv"
 
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 )
 
 //go:embed *.gotpl
@@ -18,7 +18,7 @@ var tmpl = template.Must(template.New("rating.html.gotpl").Funcs(template.FuncMa
 	"mod": func(a, b int) int { return a % b },
 }).ParseFS(templates, "rating.html.gotpl"))
 
-func RenderFromText(args []string, _ *common.Context) (string, error) {
+func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("rating requires at least 1 argument (value)")
 	}

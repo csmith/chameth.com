@@ -9,7 +9,7 @@ import (
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/films/review"
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/shortcodes/rating"
 )
 
@@ -18,7 +18,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("filmreviews.html.gotpl").ParseFS(templates, "filmreviews.html.gotpl"))
 
-func RenderFromText(_ []string, ctx *common.Context) (string, error) {
+func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 	reviews, err := films.GetAllPublishedFilmReviewsWithFilmAndPosters(ctx.Context)
 	if err != nil {
 		return "", fmt.Errorf("failed to get film reviews: %w", err)

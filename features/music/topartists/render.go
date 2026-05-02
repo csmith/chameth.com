@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"strconv"
 
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 )
 
 //go:embed *.gotpl
@@ -15,7 +15,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("topartists.html.gotpl").ParseFS(templates, "topartists.html.gotpl"))
 
-func RenderFromText(args []string, ctx *common.Context) (string, error) {
+func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	limit := 0
 	if len(args) >= 1 {
 		n, err := strconv.Atoi(args[0])

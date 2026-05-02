@@ -8,7 +8,6 @@ import (
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/shortcodes"
-	"chameth.com/chameth.com/features/shortcodes/common"
 )
 
 // RenderContent renders content (shortcodes + markdown to HTML) for any entity type.
@@ -18,7 +17,7 @@ func RenderContent(ctx context.Context, entityType string, entityID int, content
 		return "", fmt.Errorf("failed to get media relations: %w", err)
 	}
 
-	contentWithShortcodes := shortcodes.Render(content, &common.Context{Media: mediaRelations, URL: url, Context: ctx})
+	contentWithShortcodes := shortcodes.Render(content, &shortcodes.Context{Media: mediaRelations, URL: url, Context: ctx})
 
 	renderedContent, err := markdown.Render(contentWithShortcodes)
 	if err != nil {

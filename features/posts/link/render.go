@@ -13,7 +13,7 @@ import (
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/posts"
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 )
 
 //go:embed *.gotpl
@@ -30,7 +30,7 @@ var postlinkCache = cache.NewKeyed(24*time.Hour, func(path string) *string {
 	return &result
 })
 
-func RenderFromText(args []string, _ *common.Context) (string, error) {
+func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
 		return "", fmt.Errorf("postlink requires at least 1 argument (path)")
 	}

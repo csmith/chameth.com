@@ -7,7 +7,7 @@ import (
 	"html/template"
 	"strings"
 
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/wow"
 )
 
@@ -16,7 +16,7 @@ var templates string
 
 var tmpl = template.Must(template.New("wowchar.html.gotpl").Parse(templates))
 
-func RenderFromText(args []string, ctx *common.Context) (string, error) {
+func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 2 {
 		return "", fmt.Errorf("wowchar requires 2 arguments (realm character)")
 	}

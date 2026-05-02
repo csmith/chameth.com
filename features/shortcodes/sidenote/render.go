@@ -7,7 +7,7 @@ import (
 	"html/template"
 
 	"chameth.com/chameth.com/content/markdown"
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 )
 
 //go:embed *.gotpl
@@ -15,7 +15,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("sidenote.html.gotpl").ParseFS(templates, "sidenote.html.gotpl"))
 
-func RenderFromText(args []string, _ *common.Context) (string, error) {
+func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	if len(args) < 2 {
 		return "", fmt.Errorf("sidenote requires at least 2 arguments (title, content)")
 	}

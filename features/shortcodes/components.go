@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"html/template"
 	"log/slog"
-
-	"chameth.com/chameth.com/features/shortcodes/common"
 )
 
-func NewComponentFunc(ctx *common.Context) func(string, ...any) template.HTML {
+func NewComponentFunc(ctx *Context) func(string, ...any) template.HTML {
 	return func(name string, args ...any) template.HTML {
 		renderer, ok := renderers[name]
 		if !ok {

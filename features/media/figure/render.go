@@ -8,7 +8,7 @@ import (
 
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/features/media"
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 )
 
 //go:embed *.gotpl
@@ -16,7 +16,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("figure.html.gotpl").ParseFS(templates, "figure.html.gotpl"))
 
-func RenderFromText(args []string, ctx *common.Context) (string, error) {
+func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 2 {
 		return "", fmt.Errorf("figure requires at least 2 arguments (class, description)")
 	}

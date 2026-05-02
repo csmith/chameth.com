@@ -8,7 +8,7 @@ import (
 	"math"
 	"strings"
 
-	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
 
 	"chameth.com/chameth.com/features/walks"
 )
@@ -28,7 +28,7 @@ const (
 	contentHeight = height - topPadding - bottomPadding
 )
 
-func RenderFromText(_ []string, ctx *common.Context) (string, error) {
+func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 	speeds, err := walks.MonthlySpeeds(ctx.Context)
 	if err != nil {
 		return "", fmt.Errorf("failed to get monthly walking speeds: %w", err)
