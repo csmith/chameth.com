@@ -8,6 +8,7 @@ import (
 
 	"chameth.com/chameth.com/admin/handlers"
 	bgadmin "chameth.com/chameth.com/features/boardgames/admin"
+	syndicationadmin "chameth.com/chameth.com/features/syndications/admin"
 	filmadmin "chameth.com/chameth.com/features/films/admin"
 	goimportadmin "chameth.com/chameth.com/features/goimports/admin"
 	pageadmin "chameth.com/chameth.com/features/pages/admin"
@@ -131,11 +132,11 @@ func Start(s *tsnet.Server) error {
 	httpsMux.HandleFunc("GET /video-game-reviews/edit/{id}", vgadmin.EditVideoGameReviewHandler())
 	httpsMux.HandleFunc("POST /video-game-reviews/create/{id}", vgadmin.CreateVideoGameReviewHandler())
 	httpsMux.HandleFunc("POST /video-game-reviews/edit/{id}", vgadmin.UpdateVideoGameReviewHandler())
-	httpsMux.HandleFunc("GET /syndications", handlers.ListSyndicationsHandler())
-	httpsMux.HandleFunc("POST /syndications/create", handlers.CreateSyndicationHandler())
-	httpsMux.HandleFunc("GET /syndications/edit/{id}", handlers.EditSyndicationHandler())
-	httpsMux.HandleFunc("POST /syndications/edit/{id}", handlers.UpdateSyndicationHandler())
-	httpsMux.HandleFunc("POST /syndications/delete/{id}", handlers.DeleteSyndicationHandler())
+	httpsMux.HandleFunc("GET /syndications", syndicationadmin.ListSyndicationsHandler())
+	httpsMux.HandleFunc("POST /syndications/create", syndicationadmin.CreateSyndicationHandler())
+	httpsMux.HandleFunc("GET /syndications/edit/{id}", syndicationadmin.EditSyndicationHandler())
+	httpsMux.HandleFunc("POST /syndications/edit/{id}", syndicationadmin.UpdateSyndicationHandler())
+	httpsMux.HandleFunc("POST /syndications/delete/{id}", syndicationadmin.DeleteSyndicationHandler())
 	httpsMux.HandleFunc("GET /", handlers.StaticAsset)
 
 	httpsServer := &http.Server{

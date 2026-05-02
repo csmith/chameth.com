@@ -11,10 +11,10 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/content/shortcodes/rating"
-	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/external/tmdb"
 	films "chameth.com/chameth.com/features/films"
 	filmtemplates "chameth.com/chameth.com/features/films/admin/templates"
+	"chameth.com/chameth.com/features/syndications"
 )
 
 func filmToBasic(film *films.Film) filmtemplates.FilmBasic {
@@ -236,13 +236,13 @@ func FilmReviewWorkflowStep3Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		syndications, err := db.GetSyndicationsByPath(r.Context(), "/films/lists/ranking/")
+		syndicationResults, err := syndications.GetSyndicationsByPath(r.Context(), "/films/lists/ranking/")
 		if err != nil {
 			slog.Warn("Failed to get syndications for ranking list", "path", "/films/lists/ranking/", "error", err)
 		}
 		var letterboxdURL string
-		if len(syndications) > 0 {
-			letterboxdURL = strings.TrimSuffix(syndications[0].ExternalURL, "/") + "/edit/"
+		if len(syndicationResults) > 0 {
+			letterboxdURL = strings.TrimSuffix(syndicationResults[0].ExternalURL, "/") + "/edit/"
 		}
 
 		if r.Method == "GET" {
@@ -399,7 +399,7 @@ func FilmReviewWorkflowStep6Handler() func(http.ResponseWriter, *http.Request) {
 			syndicationName := r.FormValue("syndication_name")
 
 			if syndicationURL != "" {
-				_, err := db.CreateSyndication(r.Context(), film.Path, syndicationURL, syndicationName, true)
+				_, err := syndications.CreateSyndication(r.Context(), film.Path, syndicationURL, syndicationName, true)
 				if err != nil {
 					slog.Error("Failed to create syndication", "error", err)
 				}
@@ -429,13 +429,13 @@ func FilmReviewWorkflowStep7Handler() func(http.ResponseWriter, *http.Request) {
 
 			listsWithUrls := make([]filmtemplates.FilmListWithLetterboxd, 0, len(allLists))
 			for _, list := range allLists {
-				syndications, err := db.GetSyndicationsByPath(r.Context(), list.Path)
+				syndicationResults, err := syndications.GetSyndicationsByPath(r.Context(), list.Path)
 				if err != nil {
 					slog.Warn("Failed to get syndications for list", "path", list.Path, "error", err)
 				}
 				var letterboxdURL string
-				if len(syndications) > 0 {
-					letterboxdURL = strings.TrimSuffix(syndications[0].ExternalURL, "/") + "/edit/"
+				if len(syndicationResults) > 0 {
+					letterboxdURL = strings.TrimSuffix(syndicationResults[0].ExternalURL, "/") + "/edit/"
 				}
 
 				listsWithUrls = append(listsWithUrls, filmtemplates.FilmListWithLetterboxd{

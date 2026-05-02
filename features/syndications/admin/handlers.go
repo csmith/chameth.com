@@ -1,23 +1,23 @@
-package handlers
+package admin
 
 import (
 	"fmt"
 	"net/http"
 	"strconv"
 
-	"chameth.com/chameth.com/admin/templates"
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/syndications"
+	"chameth.com/chameth.com/features/syndications/admin/templates"
 )
 
 func ListSyndicationsHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		unpublished, err := db.GetUnpublishedSyndications(r.Context())
+		unpublished, err := syndications.GetUnpublishedSyndications(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve unpublished syndications", http.StatusInternalServerError)
 			return
 		}
 
-		syndications, err := db.GetAllSyndications(r.Context())
+		all, err := syndications.GetAllSyndications(r.Context())
 		if err != nil {
 			http.Error(w, "Failed to retrieve syndications", http.StatusInternalServerError)
 			return
@@ -34,8 +34,8 @@ func ListSyndicationsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 		}
 
-		syndicationSummaries := make([]templates.SyndicationSummary, len(syndications))
-		for i, s := range syndications {
+		syndicationSummaries := make([]templates.SyndicationSummary, len(all))
+		for i, s := range all {
 			syndicationSummaries[i] = templates.SyndicationSummary{
 				ID:          s.ID,
 				Path:        s.Path,
@@ -65,7 +65,7 @@ func EditSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		syndication, err := db.GetSyndicationByID(r.Context(), id)
+		syndication, err := syndications.GetSyndicationByID(r.Context(), id)
 		if err != nil {
 			http.Error(w, "Syndication not found", http.StatusNotFound)
 			return
@@ -101,7 +101,7 @@ func CreateSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		id, err := db.CreateSyndication(r.Context(), path, externalURL, name, false)
+		id, err := syndications.CreateSyndication(r.Context(), path, externalURL, name, false)
 		if err != nil {
 			http.Error(w, "Failed to create syndication", http.StatusInternalServerError)
 			return
@@ -130,7 +130,7 @@ func UpdateSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 		name := r.FormValue("name")
 		published := r.FormValue("published") == "true"
 
-		if err := db.UpdateSyndication(r.Context(), id, path, externalURL, name, published); err != nil {
+		if err := syndications.UpdateSyndication(r.Context(), id, path, externalURL, name, published); err != nil {
 			http.Error(w, "Failed to update syndication", http.StatusInternalServerError)
 			return
 		}
@@ -148,7 +148,7 @@ func DeleteSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if err := db.DeleteSyndication(r.Context(), id); err != nil {
+		if err := syndications.DeleteSyndication(r.Context(), id); err != nil {
 			http.Error(w, "Failed to delete syndication", http.StatusInternalServerError)
 			return
 		}

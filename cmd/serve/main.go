@@ -15,7 +15,6 @@ import (
 	"chameth.com/chameth.com/admin"
 	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/features/atproto"
 	"chameth.com/chameth.com/features/contact"
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/metrics"
@@ -25,6 +24,7 @@ import (
 	"chameth.com/chameth.com/features/projects"
 	"chameth.com/chameth.com/features/snippets"
 	"chameth.com/chameth.com/features/sudo"
+	"chameth.com/chameth.com/features/syndications"
 	"chameth.com/chameth.com/features/wow"
 	"chameth.com/chameth.com/handlers"
 	"github.com/csmith/envflag/v2"
@@ -48,6 +48,7 @@ import (
 	_ "chameth.com/chameth.com/features/music/topartists"
 	_ "chameth.com/chameth.com/features/posts/link"
 	_ "chameth.com/chameth.com/features/posts/recent"
+	_ "chameth.com/chameth.com/features/syndications/display"
 	_ "chameth.com/chameth.com/features/walks/distance"
 	_ "chameth.com/chameth.com/features/walks/list"
 	_ "chameth.com/chameth.com/features/walks/speed"
@@ -86,7 +87,7 @@ func main() {
 	}
 
 	go posts.UpdateAllPosts(context.Background())
-	go atproto.SyndicateAllPosts(context.Background())
+	go syndications.SyndicateAllPosts(context.Background())
 
 	ts := &tsnet.Server{
 		Hostname: *tailscaleHost,

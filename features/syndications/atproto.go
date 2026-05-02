@@ -1,4 +1,4 @@
-package atproto
+package syndications
 
 import (
 	"context"
@@ -24,18 +24,18 @@ func SyndicateAllPosts(ctx context.Context) {
 		return
 	}
 
-	posts, err := unsyndicatedPosts(ctx)
+	postsToSyndicate, err := GetUnsyndicatedAtProtoPosts(ctx)
 	if err != nil {
 		slog.Error("Failed to get posts needing AT Proto syndication", "error", err)
 		return
 	}
 
-	if len(posts) == 0 {
+	if len(postsToSyndicate) == 0 {
 		slog.Info("No posts need syndicating to ATProto")
 		return
 	}
 
-	for _, p := range posts {
+	for _, p := range postsToSyndicate {
 		if err := syndicatePost(ctx, client, p); err != nil {
 			slog.Error("Unable to syndicate post to ATProto", "error", err, "path", p.Path)
 			continue
@@ -72,6 +72,6 @@ func syndicatePost(ctx context.Context, client *atproto.Client, post posts.PostM
 	}
 
 	slog.Info("Automatically created Bluesky syndication", "path", post.Path, "url", uri)
-	_, err = db.CreateSyndication(ctx, post.Path, uri, "Bluesky", true)
+	_, err = CreateSyndication(ctx, post.Path, uri, "Bluesky", true)
 	return err
 }

@@ -1,4 +1,4 @@
-package syndication
+package shortcode
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"html/template"
 
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/syndications"
 )
 
 //go:embed *.gotpl
@@ -30,17 +30,17 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 }
 
 func Render(ctx context.Context, url string) (string, error) {
-	syndications, err := db.GetSyndicationsByPath(ctx, url)
+	results, err := syndications.GetSyndicationsByPath(ctx, url)
 	if err != nil {
 		return "", fmt.Errorf("failed to get syndications for path %s: %w", url, err)
 	}
 
-	if len(syndications) == 0 {
+	if len(results) == 0 {
 		return "", nil
 	}
 
-	links := make([]SyndicationLink, len(syndications))
-	for i, s := range syndications {
+	links := make([]SyndicationLink, len(results))
+	for i, s := range results {
 		links[i] = SyndicationLink{
 			ExternalURL: s.ExternalURL,
 			Name:        s.Name,

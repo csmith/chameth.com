@@ -16,7 +16,6 @@ import (
 	"chameth.com/chameth.com/content/shortcodes/nod"
 	"chameth.com/chameth.com/content/shortcodes/rating"
 	"chameth.com/chameth.com/content/shortcodes/sidenote"
-	"chameth.com/chameth.com/content/shortcodes/syndication"
 	"chameth.com/chameth.com/content/shortcodes/update"
 	"chameth.com/chameth.com/content/shortcodes/video"
 	"chameth.com/chameth.com/content/shortcodes/warning"
@@ -34,16 +33,15 @@ const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering
 type Renderer func([]string, *common.Context) (string, error)
 
 var renderers = map[string]Renderer{
-	"audio":       audio.RenderFromText,
-	"figure":      figure.RenderFromText,
-	"link":        shortcodlink.RenderFromText,
-	"nod":         nod.RenderFromText,
-	"rating":      rating.RenderFromText,
-	"sidenote":    sidenote.RenderFromText,
-	"syndication": syndication.RenderFromText,
-	"update":      update.RenderFromText,
-	"video":       video.RenderFromText,
-	"warning":     warning.RenderFromText,
+	"audio":    audio.RenderFromText,
+	"figure":   figure.RenderFromText,
+	"link":     shortcodlink.RenderFromText,
+	"nod":      nod.RenderFromText,
+	"rating":   rating.RenderFromText,
+	"sidenote": sidenote.RenderFromText,
+	"update":   update.RenderFromText,
+	"video":    video.RenderFromText,
+	"warning":  warning.RenderFromText,
 }
 
 func Register(name string, renderer Renderer) {

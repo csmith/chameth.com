@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.EditSyndicationData */}}
+{{/* gotype: chameth.com/chameth.com/features/syndications/admin/templates.EditSyndicationData */}}
 {{define "content"}}
     <h2>Edit syndication: {{.Name}}</h2>
     <a href="https://chameth.com{{.Path}}">View on chameth.com</a>

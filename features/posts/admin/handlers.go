@@ -9,10 +9,10 @@ import (
 	"strings"
 
 	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/features/atproto"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/posts/admin/templates"
 	"chameth.com/chameth.com/features/posts/admin/wordclouds"
+	"chameth.com/chameth.com/features/syndications"
 	"github.com/csmith/aca"
 )
 
@@ -207,7 +207,7 @@ func UpdatePostHandler() func(http.ResponseWriter, *http.Request) {
 				}
 			}()
 
-			go atproto.SyndicateAllPosts(context.Background())
+			go syndications.SyndicateAllPosts(context.Background())
 		}
 
 		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
