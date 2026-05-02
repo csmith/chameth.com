@@ -10,7 +10,7 @@ import (
 
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/posts/link"
 )
@@ -47,7 +47,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 	for _, post := range postList {
 		summary := markdown.FirstParagraph(post.Content)
 
-		imageVariants, err := db.GetOpenGraphImageVariantsForEntity(ctx.Context, "post", post.ID)
+		imageVariants, err := media.GetOpenGraphImageVariantsForEntity(ctx.Context, "post", post.ID)
 		var images []link.Image
 		if err == nil {
 			for _, variant := range imageVariants {

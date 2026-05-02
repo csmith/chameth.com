@@ -12,7 +12,7 @@ import (
 	"chameth.com/chameth.com/cache"
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/posts"
 )
 
@@ -50,7 +50,7 @@ func renderForPath(path string) (string, error) {
 
 	summary := markdown.FirstParagraph(post.Content)
 
-	imageVariants, err := db.GetOpenGraphImageVariantsForEntity(context.Background(), "post", post.ID)
+	imageVariants, err := media.GetOpenGraphImageVariantsForEntity(context.Background(), "post", post.ID)
 	var images []Image
 	if err == nil {
 		for _, variant := range imageVariants {

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	admintemplates "chameth.com/chameth.com/admin/templates"
+	mediatemplates "chameth.com/chameth.com/features/media/admin/templates"
 )
 
 //go:embed edit-film.html.gotpl
@@ -28,11 +29,11 @@ type EditFilmData struct {
 	Runtime   string
 	Published bool
 	Path      string
-	Poster    *admintemplates.MediaItem
+	Poster    *mediatemplates.MediaItem
 	Reviews   []FilmReviewSummary
 }
 
-type MediaItem = admintemplates.MediaItem
+type MediaItem = mediatemplates.MediaItem
 
 type FilmReviewSummary struct {
 	ID          int

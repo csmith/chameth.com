@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 
 	"chameth.com/chameth.com/assets"
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/media"
 )
 
 func StaticAsset(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +64,7 @@ func Scripts(w http.ResponseWriter, r *http.Request) {
 }
 
 func Media(w http.ResponseWriter, r *http.Request) {
-	m, err := db.GetMediaByPath(r.Context(), r.URL.Path)
+	m, err := media.GetMediaByPath(r.Context(), r.URL.Path)
 	if err != nil {
 		slog.Error("Failed to find media by path", "error", err, "path", r.URL.Path)
 		ServerError(w, r)

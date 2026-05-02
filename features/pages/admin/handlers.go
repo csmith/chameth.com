@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/pages"
 	"chameth.com/chameth.com/features/pages/admin/templates"
 	"github.com/csmith/aca"
@@ -70,7 +70,7 @@ func EditPageHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		mediaRelations, err := db.GetMediaRelationsForEntity(r.Context(), "staticpage", id)
+		mediaRelations, err := media.GetMediaRelationsForEntity(r.Context(), "staticpage", id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve media", http.StatusInternalServerError)
 			return

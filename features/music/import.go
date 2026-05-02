@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/external/subsonic"
+	"chameth.com/chameth.com/features/media"
 	"golang.org/x/image/draw"
 )
 
@@ -363,7 +363,7 @@ func fetchImage(client *http.Client, imageURL string) ([]byte, int, int, error) 
 }
 
 func saveArtistImage(ctx context.Context, client *http.Client, artistID int, name, imageURL string) error {
-	if ok, err := db.HasMediaRelationForEntity(ctx, "artist", artistID, "image"); err != nil {
+	if ok, err := media.HasMediaRelationForEntity(ctx, "artist", artistID, "image"); err != nil {
 		return err
 	} else if ok {
 		return nil
@@ -377,7 +377,7 @@ func saveArtistImage(ctx context.Context, client *http.Client, artistID int, nam
 	filename := fmt.Sprintf("music-artist-%d.jpg", artistID)
 	mediaPath := fmt.Sprintf("/music/artists/%d/cover.jpg", artistID)
 
-	mediaID, err := db.CreateMedia(ctx, "image/jpeg", filename, imgData, &width, &height, nil)
+	mediaID, err := media.CreateMedia(ctx, "image/jpeg", filename, imgData, &width, &height, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create media: %w", err)
 	}
@@ -385,7 +385,7 @@ func saveArtistImage(ctx context.Context, client *http.Client, artistID int, nam
 	description := fmt.Sprintf("Image of %s", name)
 	caption := name
 	role := "image"
-	if err := db.CreateMediaRelation(ctx, "artist", artistID, mediaID, mediaPath, &caption, &description, &role); err != nil {
+	if err := media.CreateMediaRelation(ctx, "artist", artistID, mediaID, mediaPath, &caption, &description, &role); err != nil {
 		return fmt.Errorf("failed to create media relation: %w", err)
 	}
 
@@ -394,7 +394,7 @@ func saveArtistImage(ctx context.Context, client *http.Client, artistID int, nam
 }
 
 func saveAlbumCover(ctx context.Context, client *http.Client, albumID int, name, imageURL string) error {
-	if ok, err := db.HasMediaRelationForEntity(ctx, "album", albumID, "image"); err != nil {
+	if ok, err := media.HasMediaRelationForEntity(ctx, "album", albumID, "image"); err != nil {
 		return err
 	} else if ok {
 		return nil
@@ -408,7 +408,7 @@ func saveAlbumCover(ctx context.Context, client *http.Client, albumID int, name,
 	filename := fmt.Sprintf("music-album-%d.jpg", albumID)
 	mediaPath := fmt.Sprintf("/music/albums/%d/cover.jpg", albumID)
 
-	mediaID, err := db.CreateMedia(ctx, "image/jpeg", filename, imgData, &width, &height, nil)
+	mediaID, err := media.CreateMedia(ctx, "image/jpeg", filename, imgData, &width, &height, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create media: %w", err)
 	}
@@ -416,7 +416,7 @@ func saveAlbumCover(ctx context.Context, client *http.Client, albumID int, name,
 	description := fmt.Sprintf("Cover art for %s", name)
 	caption := name
 	role := "image"
-	if err := db.CreateMediaRelation(ctx, "album", albumID, mediaID, mediaPath, &caption, &description, &role); err != nil {
+	if err := media.CreateMediaRelation(ctx, "album", albumID, mediaID, mediaPath, &caption, &description, &role); err != nil {
 		return fmt.Errorf("failed to create media relation: %w", err)
 	}
 

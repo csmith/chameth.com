@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/videogames"
 	"chameth.com/chameth.com/features/videogames/admin/templates"
 	"github.com/csmith/aca"
@@ -82,7 +82,7 @@ func EditVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		mediaRelations, err := db.GetMediaRelationsForEntity(r.Context(), "videogame", id)
+		mediaRelations, err := media.GetMediaRelationsForEntity(r.Context(), "videogame", id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve media relations", http.StatusInternalServerError)
 			return

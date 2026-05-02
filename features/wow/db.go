@@ -7,6 +7,7 @@ import (
 
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/external/blizzard"
+	"chameth.com/chameth.com/features/media"
 
 	"github.com/lib/pq"
 )
@@ -97,28 +98,28 @@ func saveCharacterImage(ctx context.Context, characterID int, name string, imgDa
 	filename := fmt.Sprintf("%s.png", name)
 	mediaPath := fmt.Sprintf("/wow/characters/%s.png", name)
 
-	existing, err := db.GetMediaRelationsForEntity(ctx, "wow_character", characterID)
+	existing, err := media.GetMediaRelationsForEntity(ctx, "wow_character", characterID)
 	if err != nil {
 		return fmt.Errorf("failed to check existing media: %w", err)
 	}
 
 	for _, rel := range existing {
 		if rel.Role != nil && *rel.Role == "render" {
-			if err := db.UpdateMedia(ctx, rel.MediaID, "image/png", filename, imgData, &width, &height); err != nil {
+			if err := media.UpdateMedia(ctx, rel.MediaID, "image/png", filename, imgData, &width, &height); err != nil {
 				return fmt.Errorf("failed to update media: %w", err)
 			}
 			return nil
 		}
 	}
 
-	mediaID, err := db.CreateMedia(ctx, "image/png", filename, imgData, &width, &height, nil)
+	mediaID, err := media.CreateMedia(ctx, "image/png", filename, imgData, &width, &height, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create media: %w", err)
 	}
 
 	caption := name
 	role := "render"
-	if err := db.CreateMediaRelation(ctx, "wow_character", characterID, mediaID, mediaPath, &caption, nil, &role); err != nil {
+	if err := media.CreateMediaRelation(ctx, "wow_character", characterID, mediaID, mediaPath, &caption, nil, &role); err != nil {
 		return fmt.Errorf("failed to create media relation: %w", err)
 	}
 

@@ -1,13 +1,15 @@
-package db
+package media
 
 import (
 	"context"
 	"database/sql"
 	"errors"
+
+	"chameth.com/chameth.com/db"
 )
 
 func GetMediaByPath(ctx context.Context, path string) (*Media, error) {
-	media, err := Get[Media](ctx, `
+	media, err := db.Get[Media](ctx, `
 		SELECT m.id, m.content_type, m.original_filename, m.data
 		FROM media m
 		JOIN media_relations mr ON m.id = mr.media_id
@@ -20,7 +22,7 @@ func GetMediaByPath(ctx context.Context, path string) (*Media, error) {
 }
 
 func GetMediaRelationsForEntity(ctx context.Context, entityType string, entityID int) ([]MediaRelationWithDetails, error) {
-	return Select[MediaRelationWithDetails](ctx, `
+	return db.Select[MediaRelationWithDetails](ctx, `
 		SELECT
 			mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id,
 			m.id, m.content_type, m.original_filename, m.width, m.height, m.parent_media_id
@@ -38,11 +40,11 @@ func HasMediaRelationForEntity(ctx context.Context, entityType string, entityID 
 		args = append(args, role)
 	}
 	query += `)`
-	return Get[bool](ctx, query, args...)
+	return db.Get[bool](ctx, query, args...)
 }
 
 func GetOpenGraphDetailsForEntity(ctx context.Context, entityType string, entityID int) (*MediaRelationWithDetails, error) {
-	relation, err := Get[MediaRelationWithDetails](ctx, `
+	relation, err := db.Get[MediaRelationWithDetails](ctx, `
 		SELECT
 			mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id,
 			m.id, m.content_type, m.original_filename, m.width, m.height, m.parent_media_id, m.data
@@ -61,7 +63,7 @@ func GetOpenGraphDetailsForEntity(ctx context.Context, entityType string, entity
 }
 
 func GetOpenGraphImageForEntity(ctx context.Context, entityType string, entityID int) (string, error) {
-	path, err := Get[string](ctx, `
+	path, err := db.Get[string](ctx, `
 		SELECT mr.path
 		FROM media_relations mr
 		WHERE mr.entity_type = $1 AND mr.entity_id = $2 AND mr.role = 'opengraph'
@@ -77,7 +79,7 @@ func GetOpenGraphImageForEntity(ctx context.Context, entityType string, entityID
 }
 
 func GetOpenGraphImageVariantsForEntity(ctx context.Context, entityType string, entityID int) ([]MediaImageVariant, error) {
-	return Select[MediaImageVariant](ctx, `
+	return db.Select[MediaImageVariant](ctx, `
 		SELECT mr.path, m.content_type, COALESCE(mr.description, '') AS description
 		FROM media_relations mr
 		JOIN media m ON mr.media_id = m.id
@@ -94,7 +96,7 @@ func GetOpenGraphImageVariantsForEntity(ctx context.Context, entityType string, 
 }
 
 func CreateMedia(ctx context.Context, contentType, originalFilename string, data []byte, width, height *int, parentMediaID *int) (int, error) {
-	return Get[int](ctx, `
+	return db.Get[int](ctx, `
 		INSERT INTO media (content_type, original_filename, data, width, height, parent_media_id)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id
@@ -102,21 +104,21 @@ func CreateMedia(ctx context.Context, contentType, originalFilename string, data
 }
 
 func UpdateMediaData(ctx context.Context, id int, data []byte, width, height *int) error {
-	_, err := Exec(ctx, `
+	_, err := db.Exec(ctx, `
 		UPDATE media SET data = $1, width = $2, height = $3 WHERE id = $4
 	`, data, width, height, id)
 	return err
 }
 
 func UpdateMedia(ctx context.Context, id int, contentType, originalFilename string, data []byte, width, height *int) error {
-	_, err := Exec(ctx, `
+	_, err := db.Exec(ctx, `
 		UPDATE media SET content_type = $1, original_filename = $2, data = $3, width = $4, height = $5 WHERE id = $6
 	`, contentType, originalFilename, data, width, height, id)
 	return err
 }
 
 func GetAllMedia(ctx context.Context) ([]MediaMetadata, error) {
-	return Select[MediaMetadata](ctx, `
+	return db.Select[MediaMetadata](ctx, `
 		SELECT id, content_type, original_filename, width, height, parent_media_id
 		FROM media
 		ORDER BY id DESC
@@ -124,7 +126,7 @@ func GetAllMedia(ctx context.Context) ([]MediaMetadata, error) {
 }
 
 func GetMediaByID(ctx context.Context, id int) (*Media, error) {
-	media, err := Get[Media](ctx, `
+	media, err := db.Get[Media](ctx, `
 		SELECT id, content_type, original_filename, data, width, height, parent_media_id
 		FROM media
 		WHERE id = $1
@@ -136,7 +138,7 @@ func GetMediaByID(ctx context.Context, id int) (*Media, error) {
 }
 
 func UpdateMediaRelation(ctx context.Context, entityType string, entityID int, path string, caption, description, role *string) error {
-	_, err := Exec(ctx, `
+	_, err := db.Exec(ctx, `
 		UPDATE media_relations
 		SET caption = $1, description = $2, role = $3
 		WHERE entity_type = $4 AND entity_id = $5 AND path = $6
@@ -145,7 +147,7 @@ func UpdateMediaRelation(ctx context.Context, entityType string, entityID int, p
 }
 
 func DeleteMediaRelation(ctx context.Context, entityType string, entityID int, path string) error {
-	_, err := Exec(ctx, `
+	_, err := db.Exec(ctx, `
 		DELETE FROM media_relations
 		WHERE entity_type = $1 AND entity_id = $2 AND path = $3
 	`, entityType, entityID, path)
@@ -153,7 +155,7 @@ func DeleteMediaRelation(ctx context.Context, entityType string, entityID int, p
 }
 
 func UpdateMediaRelationVariants(ctx context.Context, entityType string, entityID, parentMediaID int, caption, description *string) error {
-	_, err := Exec(ctx, `
+	_, err := db.Exec(ctx, `
 		UPDATE media_relations
 		SET caption = $1, description = $2
 		WHERE entity_type = $3 AND entity_id = $4
@@ -165,7 +167,7 @@ func UpdateMediaRelationVariants(ctx context.Context, entityType string, entityI
 }
 
 func GetAvailableMediaForEntity(ctx context.Context, entityType string, entityID int) ([]MediaMetadata, error) {
-	return Select[MediaMetadata](ctx, `
+	return db.Select[MediaMetadata](ctx, `
 		SELECT id, content_type, original_filename, width, height, parent_media_id
 		FROM media
 		WHERE id NOT IN (
@@ -177,7 +179,7 @@ func GetAvailableMediaForEntity(ctx context.Context, entityType string, entityID
 }
 
 func CreateMediaRelation(ctx context.Context, entityType string, entityID, mediaID int, path string, caption, description, role *string) error {
-	_, err := Exec(ctx, `
+	_, err := db.Exec(ctx, `
 		INSERT INTO media_relations (path, media_id, caption, description, role, entity_type, entity_id)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 	`, path, mediaID, caption, description, role, entityType, entityID)
@@ -185,6 +187,6 @@ func CreateMediaRelation(ctx context.Context, entityType string, entityID, media
 }
 
 func DeleteMedia(ctx context.Context, id int) error {
-	_, err := Exec(ctx, "DELETE FROM media WHERE id = $1", id)
+	_, err := db.Exec(ctx, "DELETE FROM media WHERE id = $1", id)
 	return err
 }

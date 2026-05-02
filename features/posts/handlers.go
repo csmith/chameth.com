@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/content"
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/media"
 	posttemplates "chameth.com/chameth.com/features/posts/templates"
 	parenttemplates "chameth.com/chameth.com/templates"
 )
@@ -41,7 +41,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var ogImage string
-	ogPath, err := db.GetOpenGraphImageForEntity(r.Context(), "post", post.ID)
+	ogPath, err := media.GetOpenGraphImageForEntity(r.Context(), "post", post.ID)
 	if err == nil && ogPath != "" {
 		ogImage = fmt.Sprintf("https://chameth.com%s", ogPath)
 	}

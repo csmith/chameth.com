@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	admintemplates "chameth.com/chameth.com/admin/templates"
+	mediatemplates "chameth.com/chameth.com/features/media/admin/templates"
 )
 
 var listVideoGamesTemplate = func() *template.Template {
@@ -49,11 +50,11 @@ type EditVideoGameData struct {
 	Overview  string
 	Published bool
 	Path      string
-	Poster    *admintemplates.MediaItem
+	Poster    *mediatemplates.MediaItem
 	Reviews   []VideoGameReviewSummary
 }
 
-type MediaItem = admintemplates.MediaItem
+type MediaItem = mediatemplates.MediaItem
 
 type VideoGameReviewSummary struct {
 	ID               int

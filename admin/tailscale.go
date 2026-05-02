@@ -8,15 +8,16 @@ import (
 
 	"chameth.com/chameth.com/admin/handlers"
 	bgadmin "chameth.com/chameth.com/features/boardgames/admin"
-	syndicationadmin "chameth.com/chameth.com/features/syndications/admin"
 	filmadmin "chameth.com/chameth.com/features/films/admin"
 	goimportadmin "chameth.com/chameth.com/features/goimports/admin"
+	mediaadmin "chameth.com/chameth.com/features/media/admin"
 	pageadmin "chameth.com/chameth.com/features/pages/admin"
-	postadmin "chameth.com/chameth.com/features/posts/admin"
 	pasteadmin "chameth.com/chameth.com/features/pastes/admin"
 	poemadmin "chameth.com/chameth.com/features/poems/admin"
+	postadmin "chameth.com/chameth.com/features/posts/admin"
 	projectadmin "chameth.com/chameth.com/features/projects/admin"
 	snippetadmin "chameth.com/chameth.com/features/snippets/admin"
+	syndicationadmin "chameth.com/chameth.com/features/syndications/admin"
 	vgadmin "chameth.com/chameth.com/features/videogames/admin"
 	walksadmin "chameth.com/chameth.com/features/walks/admin"
 	wowadmin "chameth.com/chameth.com/features/wow/admin"
@@ -73,15 +74,15 @@ func Start(s *tsnet.Server) error {
 	httpsMux.HandleFunc("POST /projects", projectadmin.CreateProjectHandler())
 	httpsMux.HandleFunc("GET /projects/edit/{id}", projectadmin.EditProjectHandler())
 	httpsMux.HandleFunc("POST /projects/edit/{id}", projectadmin.UpdateProjectHandler())
-	httpsMux.HandleFunc("GET /media", handlers.MediaHandler())
-	httpsMux.HandleFunc("POST /media/upload", handlers.UploadMediaHandler())
-	httpsMux.HandleFunc("GET /media/view/{id}", handlers.ViewMediaHandler())
-	httpsMux.HandleFunc("GET /media/edit/{id}", handlers.EditMediaHandler())
-	httpsMux.HandleFunc("POST /media/edit/{id}", handlers.ReplaceMediaHandler())
-	httpsMux.HandleFunc("GET /media-relations/edit", handlers.EditMediaRelationsHandler())
-	httpsMux.HandleFunc("POST /media-relations/update", handlers.UpdateMediaRelationHandler())
-	httpsMux.HandleFunc("POST /media-relations/remove", handlers.RemoveMediaRelationHandler())
-	httpsMux.HandleFunc("POST /media-relations/add", handlers.AddMediaRelationsHandler())
+	httpsMux.HandleFunc("GET /media", mediaadmin.MediaHandler())
+	httpsMux.HandleFunc("POST /media/upload", mediaadmin.UploadMediaHandler())
+	httpsMux.HandleFunc("GET /media/view/{id}", mediaadmin.ViewMediaHandler())
+	httpsMux.HandleFunc("GET /media/edit/{id}", mediaadmin.EditMediaHandler())
+	httpsMux.HandleFunc("POST /media/edit/{id}", mediaadmin.ReplaceMediaHandler())
+	httpsMux.HandleFunc("GET /media-relations/edit", mediaadmin.EditMediaRelationsHandler())
+	httpsMux.HandleFunc("POST /media-relations/update", mediaadmin.UpdateMediaRelationHandler())
+	httpsMux.HandleFunc("POST /media-relations/remove", mediaadmin.RemoveMediaRelationHandler())
+	httpsMux.HandleFunc("POST /media-relations/add", mediaadmin.AddMediaRelationsHandler())
 	httpsMux.HandleFunc("GET /goimports", goimportadmin.ListGoImportsHandler())
 	httpsMux.HandleFunc("POST /goimports", goimportadmin.CreateGoImportHandler())
 	httpsMux.HandleFunc("GET /goimports/edit/{id}", goimportadmin.EditGoImportHandler())

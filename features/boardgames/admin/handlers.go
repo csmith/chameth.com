@@ -14,8 +14,8 @@ import (
 	"path"
 	"time"
 
-	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/boardgames"
+	"chameth.com/chameth.com/features/media"
 	"golang.org/x/image/draw"
 )
 
@@ -119,7 +119,7 @@ func ImportBoardgamesHandler() func(http.ResponseWriter, *http.Request) {
 }
 
 func downloadBoardgameImage(ctx context.Context, bggID int, name, imageURL string) error {
-	existing, err := db.HasMediaRelationForEntity(ctx, "boardgame", bggID, "image")
+	existing, err := media.HasMediaRelationForEntity(ctx, "boardgame", bggID, "image")
 	if err != nil {
 		return fmt.Errorf("failed to check existing media relations: %w", err)
 	}
@@ -178,7 +178,7 @@ func downloadBoardgameImage(ctx context.Context, bggID int, name, imageURL strin
 	filename := fmt.Sprintf("boardgame-%d%s", bggID, ext)
 	mediaPath := fmt.Sprintf("/boardgames/%d/image%s", bggID, ext)
 
-	mediaID, err := db.CreateMedia(ctx, contentType, filename, imgData, &width, &height, nil)
+	mediaID, err := media.CreateMedia(ctx, contentType, filename, imgData, &width, &height, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create media: %w", err)
 	}
@@ -186,7 +186,7 @@ func downloadBoardgameImage(ctx context.Context, bggID int, name, imageURL strin
 	description := fmt.Sprintf("Box art of %s", name)
 	caption := name
 	role := "image"
-	if err := db.CreateMediaRelation(ctx, "boardgame", bggID, mediaID, mediaPath, &caption, &description, &role); err != nil {
+	if err := media.CreateMediaRelation(ctx, "boardgame", bggID, mediaID, mediaPath, &caption, &description, &role); err != nil {
 		return fmt.Errorf("failed to create media relation: %w", err)
 	}
 

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/posts/admin/templates"
 	"chameth.com/chameth.com/features/posts/admin/wordclouds"
@@ -76,7 +76,7 @@ func EditPostHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		mediaRelations, err := db.GetMediaRelationsForEntity(r.Context(), "post", id)
+		mediaRelations, err := media.GetMediaRelationsForEntity(r.Context(), "post", id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve media", http.StatusInternalServerError)
 			return
@@ -234,7 +234,7 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 		width := 400
 		height := 300
 
-		existing, err := db.GetOpenGraphDetailsForEntity(r.Context(), "post", id)
+		existing, err := media.GetOpenGraphDetailsForEntity(r.Context(), "post", id)
 		if err != nil {
 			slog.Error("Failed to check for existing wordcloud", "error", err)
 			http.Error(w, "Failed to check for existing wordcloud", http.StatusInternalServerError)
@@ -242,12 +242,12 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		if existing != nil && existing.OriginalFilename == "wordcloud.png" {
-			if err := db.UpdateMediaData(r.Context(), existing.MediaID, imageData, &width, &height); err != nil {
+			if err := media.UpdateMediaData(r.Context(), existing.MediaID, imageData, &width, &height); err != nil {
 				slog.Error("Failed to update wordcloud", "error", err)
 				http.Error(w, "Failed to update wordcloud", http.StatusInternalServerError)
 				return
 			}
-			if err := db.UpdateMediaRelation(r.Context(), "post", id, existing.Path, nil, &description, existing.Role); err != nil {
+			if err := media.UpdateMediaRelation(r.Context(), "post", id, existing.Path, nil, &description, existing.Role); err != nil {
 				slog.Error("Failed to update wordcloud description", "error", err)
 				http.Error(w, "Failed to update wordcloud description", http.StatusInternalServerError)
 				return
@@ -259,7 +259,7 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 				return
 			}
 
-			mediaID, err := db.CreateMedia(r.Context(), "image/png", "wordcloud.png", imageData, &width, &height, nil)
+			mediaID, err := media.CreateMedia(r.Context(), "image/png", "wordcloud.png", imageData, &width, &height, nil)
 			if err != nil {
 				slog.Error("Failed to create media", "error", err)
 				http.Error(w, "Failed to save wordcloud", http.StatusInternalServerError)
@@ -268,7 +268,7 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 
 			mediaPath := post.Path + "wordcloud.png"
 			role := "opengraph"
-			err = db.CreateMediaRelation(r.Context(), "post", id, mediaID, mediaPath, nil, &description, &role)
+			err = media.CreateMediaRelation(r.Context(), "post", id, mediaID, mediaPath, nil, &description, &role)
 			if err != nil {
 				slog.Error("Failed to create media relation", "error", err)
 				http.Error(w, "Failed to attach wordcloud to post", http.StatusInternalServerError)

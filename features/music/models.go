@@ -3,19 +3,19 @@ package music
 import "time"
 
 type musicArtist struct {
-	ID       int    `db:"id"`
+	ID         int    `db:"id"`
 	SubsonicID string `db:"subsonic_id"`
-	Name     string `db:"name"`
-	SortName string `db:"sort_name"`
+	Name       string `db:"name"`
+	SortName   string `db:"sort_name"`
 }
 
 type musicAlbum struct {
-	ID       int    `db:"id"`
+	ID         int    `db:"id"`
 	SubsonicID string `db:"subsonic_id"`
-	Name     string `db:"name"`
-	SortName string `db:"sort_name"`
-	Year     *int   `db:"year"`
-	ArtistID *int   `db:"artist_id"`
+	Name       string `db:"name"`
+	SortName   string `db:"sort_name"`
+	Year       *int   `db:"year"`
+	ArtistID   *int   `db:"artist_id"`
 }
 
 type musicTrack struct {

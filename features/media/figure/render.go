@@ -8,7 +8,7 @@ import (
 
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/media"
 )
 
 //go:embed *.gotpl
@@ -30,7 +30,7 @@ func RenderFromText(args []string, ctx *common.Context) (string, error) {
 		return "", fmt.Errorf("figure media not found for description: %s", description)
 	}
 
-	var primaryMedia *db.MediaRelationWithDetails
+	var primaryMedia *media.MediaRelationWithDetails
 	var sources []Source
 
 	for i := range matchingMedia {

@@ -3,7 +3,7 @@ package films
 import (
 	"time"
 
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/media"
 )
 
 type FilmMetadata struct {
@@ -60,7 +60,7 @@ type FilmWithReviewAndPoster struct {
 type FilmReviewWithFilmAndPoster struct {
 	FilmReview `db:"filmreview"`
 	Film       `db:"film"`
-	Poster     db.MediaRelationWithDetails `db:"poster"`
+	Poster     media.MediaRelationWithDetails `db:"poster"`
 }
 
 type FilmList struct {
@@ -85,17 +85,17 @@ type FilmListEntryWithFilm struct {
 
 type FilmListEntryWithDetails struct {
 	FilmListEntryWithFilm
-	Poster        db.MediaRelation `db:"poster"`
-	TimesWatched  int              `db:"times_watched"`
-	AverageRating *float64         `db:"average_rating"`
-	LastWatched   *time.Time       `db:"last_watched"`
+	Poster        media.MediaRelation `db:"poster"`
+	TimesWatched  int                 `db:"times_watched"`
+	AverageRating *float64            `db:"average_rating"`
+	LastWatched   *time.Time          `db:"last_watched"`
 }
 
 type FilmListEntryWithPoster struct {
-	ID       int              `db:"id"`
-	Position int              `db:"position"`
-	Film     Film             `db:"film"`
-	Poster   db.MediaRelation `db:"poster"`
+	ID       int                 `db:"id"`
+	Position int                 `db:"position"`
+	Film     Film                `db:"film"`
+	Poster   media.MediaRelation `db:"poster"`
 }
 
 type FilmSearchResult struct {

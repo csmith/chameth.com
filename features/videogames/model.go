@@ -3,7 +3,7 @@ package videogames
 import (
 	"time"
 
-	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/media"
 )
 
 type VideoGameMetadata struct {
@@ -38,5 +38,5 @@ type VideoGameWithReview struct {
 type VideoGameReviewWithGameAndPoster struct {
 	VideoGameReview `db:"videogamereview"`
 	VideoGame       `db:"videogame"`
-	Poster          db.MediaRelationWithDetails `db:"poster"`
+	Poster          media.MediaRelationWithDetails `db:"poster"`
 }

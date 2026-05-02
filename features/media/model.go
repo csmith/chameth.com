@@ -1,4 +1,4 @@
-package db
+package media
 
 type MediaMetadata struct {
 	ID               int    `db:"id"`

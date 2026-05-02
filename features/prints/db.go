@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/media"
 )
 
 func GetAllPrints(ctx context.Context) ([]Print, error) {
@@ -28,8 +29,8 @@ func GetAllPrintLinks(ctx context.Context) (map[int][]PrintLink, error) {
 	return result, nil
 }
 
-func GetAllPrintMediaRelations(ctx context.Context) (map[int][]db.MediaRelation, error) {
-	relations, err := db.Select[db.MediaRelation](ctx, `
+func GetAllPrintMediaRelations(ctx context.Context) (map[int][]media.MediaRelation, error) {
+	relations, err := db.Select[media.MediaRelation](ctx, `
 		SELECT mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id
 		FROM media_relations mr
 		JOIN prints p ON mr.entity_id = p.id
@@ -38,7 +39,7 @@ func GetAllPrintMediaRelations(ctx context.Context) (map[int][]db.MediaRelation,
 	if err != nil {
 		return nil, err
 	}
-	result := make(map[int][]db.MediaRelation)
+	result := make(map[int][]media.MediaRelation)
 	for _, r := range relations {
 		result[r.EntityID] = append(result[r.EntityID], r)
 	}

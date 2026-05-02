@@ -12,10 +12,10 @@ import (
 	"strings"
 	"time"
 
-	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/external/tmdb"
 	films "chameth.com/chameth.com/features/films"
 	filmtemplates "chameth.com/chameth.com/features/films/admin/templates"
+	"chameth.com/chameth.com/features/media"
 )
 
 var (
@@ -46,17 +46,17 @@ func updateOrCreateFilmPoster(ctx context.Context, filmID int, filmTitle, poster
 		return fmt.Errorf("poster path is empty")
 	}
 
-	mediaRelations, err := db.GetMediaRelationsForEntity(ctx, "film", filmID)
+	mediaRelations, err := media.GetMediaRelationsForEntity(ctx, "film", filmID)
 	if err != nil {
 		return fmt.Errorf("failed to get media relations: %w", err)
 	}
 
 	for _, rel := range mediaRelations {
 		if rel.Role != nil && *rel.Role == "poster" {
-			if err := db.DeleteMediaRelation(ctx, "film", filmID, rel.Path); err != nil {
+			if err := media.DeleteMediaRelation(ctx, "film", filmID, rel.Path); err != nil {
 				return fmt.Errorf("failed to delete existing media relation: %w", err)
 			}
-			if err := db.DeleteMedia(ctx, rel.MediaID); err != nil {
+			if err := media.DeleteMedia(ctx, rel.MediaID); err != nil {
 				return fmt.Errorf("failed to delete existing media: %w", err)
 			}
 			break
@@ -75,7 +75,7 @@ func updateOrCreateFilmPoster(ctx context.Context, filmID int, filmTitle, poster
 	filename := fmt.Sprintf("%d%s", filmID, ext)
 	mediaRelationsPath := fmt.Sprintf("/films/%d/poster%s", filmID, ext)
 
-	mediaID, err := db.CreateMedia(ctx, posterData.ContentType, filename, posterData.Data, &posterData.Width, &posterData.Height, nil)
+	mediaID, err := media.CreateMedia(ctx, posterData.ContentType, filename, posterData.Data, &posterData.Width, &posterData.Height, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create media: %w", err)
 	}
@@ -83,7 +83,7 @@ func updateOrCreateFilmPoster(ctx context.Context, filmID int, filmTitle, poster
 	description := fmt.Sprintf("Poster of %s", filmTitle)
 	caption := filmTitle
 	role := "poster"
-	if err := db.CreateMediaRelation(ctx, "film", filmID, mediaID, mediaRelationsPath, &caption, &description, &role); err != nil {
+	if err := media.CreateMediaRelation(ctx, "film", filmID, mediaID, mediaRelationsPath, &caption, &description, &role); err != nil {
 		return fmt.Errorf("failed to create media relation: %w", err)
 	}
 
@@ -258,7 +258,7 @@ func EditFilmHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		mediaRelations, err := db.GetMediaRelationsForEntity(r.Context(), "film", id)
+		mediaRelations, err := media.GetMediaRelationsForEntity(r.Context(), "film", id)
 		if err != nil {
 			http.Error(w, "Failed to retrieve media relations", http.StatusInternalServerError)
 			return

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/external/atproto"
+	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/posts"
 )
 
@@ -52,7 +52,7 @@ func newClient() (*atproto.Client, error) {
 }
 
 func syndicatePost(ctx context.Context, client *atproto.Client, post posts.PostMetadata) error {
-	openGraph, err := db.GetOpenGraphDetailsForEntity(ctx, "post", post.ID)
+	openGraph, err := media.GetOpenGraphDetailsForEntity(ctx, "post", post.ID)
 	if err != nil {
 		return err
 	}

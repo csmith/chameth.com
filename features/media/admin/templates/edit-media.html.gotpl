@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.EditMediaData */}}
+{{/* gotype: chameth.com/chameth.com/features/media/admin/templates.EditMediaData */}}
 {{define "content"}}
     <h2>Edit Media</h2>
 
