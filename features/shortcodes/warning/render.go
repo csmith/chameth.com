@@ -1,4 +1,4 @@
-package sidenote
+package warning
 
 import (
 	"bytes"
@@ -7,29 +7,27 @@ import (
 	"html/template"
 
 	"chameth.com/chameth.com/content/markdown"
-	"chameth.com/chameth.com/content/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes/common"
 )
 
 //go:embed *.gotpl
 var templates embed.FS
 
-var tmpl = template.Must(template.New("sidenote.html.gotpl").ParseFS(templates, "sidenote.html.gotpl"))
+var tmpl = template.Must(template.New("warning.html.gotpl").ParseFS(templates, "warning.html.gotpl"))
 
 func RenderFromText(args []string, _ *common.Context) (string, error) {
-	if len(args) < 2 {
-		return "", fmt.Errorf("sidenote requires at least 2 arguments (title, content)")
+	if len(args) < 1 {
+		return "", fmt.Errorf("warning requires at least 1 argument (content)")
 	}
 
-	title := args[0]
-	content := args[1]
+	content := args[0]
 
 	md, err := markdown.Render(content)
 	if err != nil {
-		return "", fmt.Errorf("failed to render sidenote markdown: %w", err)
+		return "", fmt.Errorf("failed to render warning markdown: %w", err)
 	}
 
 	return renderTemplate(Data{
-		Title:   title,
 		Content: md,
 	})
 }

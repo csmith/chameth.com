@@ -9,13 +9,13 @@ import (
 	"strings"
 
 	"chameth.com/chameth.com/assets"
-	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/content/shortcodes/link"
-	"chameth.com/chameth.com/content/shortcodes/nod"
-	"chameth.com/chameth.com/content/shortcodes/rating"
-	"chameth.com/chameth.com/content/shortcodes/sidenote"
-	"chameth.com/chameth.com/content/shortcodes/update"
-	"chameth.com/chameth.com/content/shortcodes/warning"
+	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes/link"
+	"chameth.com/chameth.com/features/shortcodes/nod"
+	"chameth.com/chameth.com/features/shortcodes/rating"
+	"chameth.com/chameth.com/features/shortcodes/sidenote"
+	"chameth.com/chameth.com/features/shortcodes/update"
+	"chameth.com/chameth.com/features/shortcodes/warning"
 )
 
 //go:embed **/*.css

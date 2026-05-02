@@ -10,8 +10,8 @@ import (
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/content/markdown"
-	"chameth.com/chameth.com/content/shortcodes/rating"
 	"chameth.com/chameth.com/features/films/templates"
+	"chameth.com/chameth.com/features/shortcodes/rating"
 	maintemplates "chameth.com/chameth.com/templates"
 )
 

@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"log/slog"
 
-	"chameth.com/chameth.com/content/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes/common"
 )
 
 func NewComponentFunc(ctx *common.Context) func(string, ...any) template.HTML {

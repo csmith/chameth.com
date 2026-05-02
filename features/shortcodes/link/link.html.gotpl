@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/content/shortcodes/link.Data*/}}
+{{/* gotype: chameth.com/chameth.com/features/shortcodes/link.Data*/}}
 <a class="page-link plain-link raised-box" data-title="Page link" href="{{.Href}}">
   {{ .Icon }}
   <span>{{ .Href }}</span>

@@ -7,10 +7,10 @@ import (
 	"html/template"
 
 	"chameth.com/chameth.com/content/markdown"
-	"chameth.com/chameth.com/content/shortcodes/common"
-	"chameth.com/chameth.com/content/shortcodes/rating"
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/films/review"
+	"chameth.com/chameth.com/features/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes/rating"
 )
 
 //go:embed *.gotpl

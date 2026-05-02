@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"chameth.com/chameth.com/assets"
-	"chameth.com/chameth.com/content/shortcodes"
-	"chameth.com/chameth.com/content/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes"
+	"chameth.com/chameth.com/features/shortcodes/common"
 	"chameth.com/chameth.com/features/sudo"
 	"chameth.com/chameth.com/templates"
 )

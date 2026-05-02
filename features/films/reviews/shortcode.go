@@ -1,7 +1,7 @@
 package reviews
 
 import (
-	"chameth.com/chameth.com/content/shortcodes"
+	"chameth.com/chameth.com/features/shortcodes"
 )
 
 func init() {

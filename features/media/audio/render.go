@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"html/template"
 
-	"chameth.com/chameth.com/content/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes/common"
 )
 
 //go:embed *.gotpl

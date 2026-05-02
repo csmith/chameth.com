@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"chameth.com/chameth.com/content/shortcodes/common"
+	"chameth.com/chameth.com/features/shortcodes/common"
 
 	"chameth.com/chameth.com/features/walks"
 )

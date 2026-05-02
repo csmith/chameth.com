@@ -10,10 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"chameth.com/chameth.com/content/shortcodes/rating"
 	"chameth.com/chameth.com/external/tmdb"
 	films "chameth.com/chameth.com/features/films"
 	filmtemplates "chameth.com/chameth.com/features/films/admin/templates"
+	"chameth.com/chameth.com/features/shortcodes/rating"
 	"chameth.com/chameth.com/features/syndications"
 )
 

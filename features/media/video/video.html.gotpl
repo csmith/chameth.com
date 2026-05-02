@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/content/shortcodes/video.Data*/}}
+{{/* gotype: chameth.com/chameth.com/features/shortcodes/video.Data*/}}
 <figure class="video full">
   <video src="{{ .Src }}" alt="{{ .Description }}" controls></video>
 </figure>

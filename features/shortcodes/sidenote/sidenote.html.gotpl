@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/content/shortcodes/sidenote.Data*/}}
+{{/* gotype: chameth.com/chameth.com/features/shortcodes/sidenote.Data*/}}
 <aside class="sidenote raised-box">
   <h5 class="plain-header">Side note: {{ .Title }}</h5>
   {{ .Content }}
