@@ -14,4 +14,4 @@
     </section>
 
     {{call .Component "nod"}}
-{{end}}}
+{{end}}
