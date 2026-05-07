@@ -12,55 +12,68 @@ import (
 	"chameth.com/chameth.com/features/media"
 )
 
-func StaticAsset(w http.ResponseWriter, r *http.Request) {
-	stat, err := fs.Stat(assets.Static, filepath.Join("static", r.URL.Path))
-	if err != nil {
-		if errors.Is(err, fs.ErrNotExist) {
+func StaticAsset(staticFS fs.FS) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		stat, err := fs.Stat(staticFS, filepath.Join("static", r.URL.Path))
+		if err != nil {
+			if errors.Is(err, fs.ErrNotExist) {
+				NotFound(w, r)
+				return
+			}
+
+			slog.Error("Failed to open static asset", "error", err)
+			ServerError(w, r)
+			return
+		}
+
+		if stat.IsDir() {
 			NotFound(w, r)
 			return
 		}
 
-		slog.Error("Failed to open static asset", "error", err)
-		ServerError(w, r)
-		return
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		http.ServeFileFS(w, r, staticFS, filepath.Join("static", r.URL.Path))
 	}
-
-	if stat.IsDir() {
-		// No directory listing!
-		NotFound(w, r)
-		return
-	}
-
-	w.Header().Set("Cache-Control", "public, max-age=86400")
-	http.ServeFileFS(w, r, assets.Static, filepath.Join("static", r.URL.Path))
 }
 
-func Stylesheet(w http.ResponseWriter, r *http.Request) {
-	p := r.URL.Path
-	if path.Base(p) != assets.StylesheetPath() {
-		w.Header().Set("Cache-Control", "private, no-cache, must-revalidate")
-		http.Redirect(w, r, path.Join(path.Dir(p), assets.StylesheetPath()), http.StatusFound)
-		return
-	}
+func Stylesheet(mgr *assets.Manager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, checksum := mgr.Bundle(assets.PublicCSS)
+		stylesheetPath := checksum + ".css"
 
-	w.Header().Set("Cache-Control", "public, max-age=86400")
-	w.Header().Set("Content-Type", "text/css; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write(assets.Stylesheet())
+		p := r.URL.Path
+		if path.Base(p) != stylesheetPath {
+			w.Header().Set("Cache-Control", "private, no-cache, must-revalidate")
+			http.Redirect(w, r, path.Join(path.Dir(p), stylesheetPath), http.StatusFound)
+			return
+		}
+
+		content, _ := mgr.Bundle(assets.PublicCSS)
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		w.Header().Set("Content-Type", "text/css; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write(content)
+	}
 }
 
-func Scripts(w http.ResponseWriter, r *http.Request) {
-	p := r.URL.Path
-	if path.Base(p) != assets.GetScriptPath() {
-		w.Header().Set("Cache-Control", "private, no-cache, must-revalidate")
-		http.Redirect(w, r, path.Join(path.Dir(p), assets.GetScriptPath()), http.StatusFound)
-		return
-	}
+func Scripts(mgr *assets.Manager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		_, checksum := mgr.Bundle(assets.PublicJS)
+		scriptPath := checksum + ".js"
 
-	w.Header().Set("Cache-Control", "public, max-age=86400")
-	w.Header().Set("Content-Type", "application/javascript; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte(assets.GetScripts()))
+		p := r.URL.Path
+		if path.Base(p) != scriptPath {
+			w.Header().Set("Cache-Control", "private, no-cache, must-revalidate")
+			http.Redirect(w, r, path.Join(path.Dir(p), scriptPath), http.StatusFound)
+			return
+		}
+
+		content, _ := mgr.Bundle(assets.PublicJS)
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		w.Header().Set("Content-Type", "application/javascript; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write(content)
+	}
 }
 
 func Media(w http.ResponseWriter, r *http.Request) {

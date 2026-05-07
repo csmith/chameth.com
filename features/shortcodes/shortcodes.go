@@ -3,22 +3,13 @@ package shortcodes
 import (
 	"bytes"
 	"context"
-	"embed"
 	"fmt"
 	"log/slog"
 	"regexp"
 	"strings"
 
-	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/features/media"
 )
-
-//go:embed **/*.css
-var shortcodeCSS embed.FS
-
-func init() {
-	assets.Register(shortcodeCSS, "shortcodes")
-}
 
 const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering failed]</div>\n\n"
 

@@ -9,6 +9,6 @@ import (
 //go:embed */*.css */*/*.css
 var assetsFS embed.FS
 
-func init() {
-	assets.Register(assetsFS, "features")
+func RegisterAssets(mgr *assets.Manager) {
+	mgr.Add(assetsFS, "features")
 }

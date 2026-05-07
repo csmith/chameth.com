@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/cache"
-	"chameth.com/chameth.com/content"
 	parenttemplates "chameth.com/chameth.com/templates"
 )
 
@@ -29,8 +28,6 @@ var recentPostsCache = cache.New(time.Minute*10, func() []parenttemplates.Recent
 	return recentPostsList
 })
 
-func init() {
-	content.RecentPostsProvider = func() []parenttemplates.RecentPost {
-		return *recentPostsCache.Get()
-	}
+func Recent() []parenttemplates.RecentPost {
+	return *recentPostsCache.Get()
 }

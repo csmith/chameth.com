@@ -14,7 +14,9 @@ import (
 
 	"chameth.com/chameth.com/admin"
 	"chameth.com/chameth.com/assets"
+	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features"
 	"chameth.com/chameth.com/features/contact"
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/metrics"
@@ -32,7 +34,6 @@ import (
 	"github.com/csmith/slogflags"
 	"tailscale.com/tsnet"
 
-	_ "chameth.com/chameth.com/features"
 	_ "chameth.com/chameth.com/features/boardgames/list"
 	_ "chameth.com/chameth.com/features/boardgames/played"
 	_ "chameth.com/chameth.com/features/contact/form"
@@ -80,20 +81,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	go func() {
-		for {
-			if err := assets.UpdateStylesheet(); err != nil {
-				slog.Error("Failed to update stylesheet", "error", err)
-				os.Exit(1)
-			}
-			time.Sleep(time.Hour)
-		}
-	}()
+	assetsManager := assets.NewManager()
+	assets.RegisterAssets(assetsManager)
+	features.RegisterAssets(assetsManager)
 
-	if err := assets.UpdateScripts(); err != nil {
-		slog.Error("Failed to update scripts", "error", err)
-		os.Exit(1)
-	}
+	content.AssetsManager = assetsManager
+	content.RecentPostsProvider = posts.Recent
 
 	go posts.UpdateAllPosts(context.Background())
 	go syndications.SyndicateAllPosts(context.Background())
@@ -129,8 +122,8 @@ func main() {
 	mux.Handle("POST /api/nod", http.HandlerFunc(handlers.Nod))
 	mux.Handle("POST /api/form/nod", http.HandlerFunc(handlers.NodForm))
 	mux.Handle("GET /api/films/search", http.HandlerFunc(films.SearchFilmsAPI))
-	mux.Handle("GET /assets/stylesheets/", http.HandlerFunc(handlers.Stylesheet))
-	mux.Handle("GET /assets/scripts/", http.HandlerFunc(handlers.Scripts))
+	mux.Handle("GET /assets/stylesheets/", handlers.Stylesheet(assetsManager))
+	mux.Handle("GET /assets/scripts/", handlers.Scripts(assetsManager))
 	mux.Handle("GET /index.xml", http.HandlerFunc(handlers.FullFeed))
 	mux.Handle("GET /short.xml", http.HandlerFunc(handlers.ShortPostsFeed))
 	mux.Handle("GET /long.xml", http.HandlerFunc(handlers.LongPostsFeed))
@@ -144,7 +137,7 @@ func main() {
 	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(handlers.HtmlSiteMap))
 	mux.Handle("GET /snippets/{$}", http.HandlerFunc(snippets.SnippetsListHandler))
 	mux.Handle("GET /sudo", http.HandlerFunc(sudo.Handler))
-	mux.Handle("/", http.HandlerFunc(handlers.Content))
+	mux.Handle("/", handlers.Content(handlers.StaticAsset(assets.Static)))
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", *port),

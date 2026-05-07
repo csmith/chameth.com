@@ -11,6 +11,7 @@ import (
 )
 
 var RecentPostsProvider func() []templates.RecentPost
+var AssetsManager *assets.Manager
 
 func CreatePageData(ctx context.Context, title, path string, ogHeaders templates.OpenGraphHeaders) templates.PageData {
 	canonicalUrl := ""
@@ -22,10 +23,20 @@ func CreatePageData(ctx context.Context, title, path string, ogHeaders templates
 		Title:        fmt.Sprintf("%s · Chameth.com", title),
 		CanonicalUrl: canonicalUrl,
 		OpenGraph:    ogHeaders,
-		Scripts:      assets.GetScriptPath(),
-		Stylesheet:   assets.StylesheetPath(),
+		Scripts:      scriptPath(),
+		Stylesheet:   stylesheetPath(),
 		RecentPosts:  RecentPostsProvider(),
 		Component:    shortcodes.NewComponentFunc(&shortcodes.Context{Context: ctx, URL: path}),
 		Admin:        sudo.IsAdmin(ctx),
 	}
+}
+
+func stylesheetPath() string {
+	_, checksum := AssetsManager.Bundle(assets.PublicCSS)
+	return checksum + ".css"
+}
+
+func scriptPath() string {
+	_, checksum := AssetsManager.Bundle(assets.PublicCSS)
+	return checksum + ".js"
 }
