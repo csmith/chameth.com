@@ -11,7 +11,7 @@ import (
 	parenttemplates "chameth.com/chameth.com/templates"
 )
 
-func ProjectsListHandler(w http.ResponseWriter, r *http.Request) {
+func HandleList(w http.ResponseWriter, r *http.Request) {
 	sections, err := GetAllProjectSections(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all project sections", "error", err)

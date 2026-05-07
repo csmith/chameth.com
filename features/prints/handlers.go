@@ -11,7 +11,7 @@ import (
 	parenttemplates "chameth.com/chameth.com/templates"
 )
 
-func PrintsListHandler(w http.ResponseWriter, r *http.Request) {
+func HandleList(w http.ResponseWriter, r *http.Request) {
 	allPrints, err := GetAllPrints(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all prints", "error", err)

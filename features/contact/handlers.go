@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func ContactForm(w http.ResponseWriter, r *http.Request) {
+func HandleJSON(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get("Content-Type") != "application/json" {
 		http.Error(w, http.StatusText(http.StatusUnsupportedMediaType), http.StatusUnsupportedMediaType)
 		return
@@ -42,7 +42,7 @@ func ContactForm(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusAccepted)
 }
 
-func ContactFormPost(w http.ResponseWriter, r *http.Request) {
+func HandleForm(w http.ResponseWriter, r *http.Request) {
 	req := request{
 		Page:        r.FormValue("page"),
 		SenderName:  r.FormValue("name"),

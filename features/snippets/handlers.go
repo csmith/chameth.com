@@ -42,7 +42,7 @@ func SnippetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func SnippetsListHandler(w http.ResponseWriter, r *http.Request) {
+func HandleList(w http.ResponseWriter, r *http.Request) {
 	allSnippets, err := GetAllSnippets(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all snippets", "error", err)
