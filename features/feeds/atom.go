@@ -1,10 +1,14 @@
-package templates
+package feeds
 
 import (
+	"embed"
 	"html"
-	"net/http"
 	"text/template"
+	"io"
 )
+
+//go:embed atom.xml.gotpl
+var atomTemplateFS embed.FS
 
 var atomTemplate = template.Must(
 	template.
@@ -13,7 +17,7 @@ var atomTemplate = template.Must(
 			"escape": html.EscapeString,
 		}).
 		ParseFS(
-			templates,
+			atomTemplateFS,
 			"atom.xml.gotpl",
 		),
 )
@@ -32,6 +36,6 @@ type FeedItem struct {
 	Content string
 }
 
-func RenderAtom(w http.ResponseWriter, data AtomData) error {
+func renderAtom(w io.Writer, data AtomData) error {
 	return atomTemplate.Execute(w, data)
 }

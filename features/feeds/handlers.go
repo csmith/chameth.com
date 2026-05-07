@@ -1,4 +1,4 @@
-package handlers
+package feeds
 
 import (
 	"fmt"
@@ -12,50 +12,48 @@ import (
 	"chameth.com/chameth.com/features/poems"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/snippets"
-	"chameth.com/chameth.com/templates"
-	"golang.org/x/net/html"
 )
 
-func FullFeed(w http.ResponseWriter, r *http.Request) {
-	renderFeed(w, r, "Chameth.com", "all", 5, "https://chameth.com/index.xml")
+func HandleAllPosts(w http.ResponseWriter, r *http.Request) {
+	renderPostsFeed(w, r, "Chameth.com", "all", 5, "https://chameth.com/index.xml")
 }
 
-func LongPostsFeed(w http.ResponseWriter, r *http.Request) {
-	renderFeed(w, r, "Chameth.com - long posts", "long", 5, "https://chameth.com/long.xml")
+func HandleLongPosts(w http.ResponseWriter, r *http.Request) {
+	renderPostsFeed(w, r, "Chameth.com - long posts", "long", 5, "https://chameth.com/long.xml")
 }
 
-func ShortPostsFeed(w http.ResponseWriter, r *http.Request) {
-	renderFeed(w, r, "Chameth.com - short posts", "short", 5, "https://chameth.com/short.xml")
+func HandleShortPosts(w http.ResponseWriter, r *http.Request) {
+	renderPostsFeed(w, r, "Chameth.com - short posts", "short", 5, "https://chameth.com/short.xml")
 }
 
-func PoemsFeed(w http.ResponseWriter, r *http.Request) {
+func HandlePoems(w http.ResponseWriter, r *http.Request) {
 	slog.Debug("Serving feed", "type", "poems", "useragent", r.UserAgent())
 	metrics.RecordFeedRequest("poems", r.UserAgent())
 
 	allPoems, err := poems.GetRecentPoemsWithContent(r.Context(), 5)
 	if err != nil {
 		slog.Error("Failed to get recent poems for feed", "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	var feedItems []templates.FeedItem
+	var feedItems []FeedItem
 	for _, poem := range allPoems {
 		renderedContent, err := content.RenderContent(r.Context(), "poem", poem.ID, poem.Poem, poem.Path)
 		if err != nil {
 			slog.Error("Failed to render poem content for feed", "poem", poem.Title, "error", err)
-			ServerError(w, r)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
-		absoluteContent, err := MakeURLsAbsolute(string(renderedContent), "https://chameth.com")
+		absoluteContent, err := makeURLsAbsolute(string(renderedContent), "https://chameth.com")
 		if err != nil {
 			slog.Error("Failed to make URLs absolute for feed", "poem", poem.Title, "error", err)
-			ServerError(w, r)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
-		feedItems = append(feedItems, templates.FeedItem{
+		feedItems = append(feedItems, FeedItem{
 			Title:   poem.Title,
 			Link:    fmt.Sprintf("https://chameth.com%s", poem.Path),
 			Updated: poem.Date.Format("2006-01-02T15:04:05Z"),
@@ -70,7 +68,7 @@ func PoemsFeed(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderAtom(w, templates.AtomData{
+	err = renderAtom(w, AtomData{
 		FeedTitle:       "Chameth.com - poems",
 		FeedSelfLink:    "https://chameth.com/poems/feed.xml",
 		FeedLastUpdated: lastUpdated,
@@ -81,34 +79,34 @@ func PoemsFeed(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func SnippetsFeed(w http.ResponseWriter, r *http.Request) {
+func HandleSnippets(w http.ResponseWriter, r *http.Request) {
 	slog.Debug("Serving feed", "type", "snippets", "useragent", r.UserAgent())
 	metrics.RecordFeedRequest("snippets", r.UserAgent())
 
 	allSnippets, err := snippets.GetRecentSnippetsWithContent(r.Context(), 5)
 	if err != nil {
 		slog.Error("Failed to get recent snippets for feed", "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	var feedItems []templates.FeedItem
+	var feedItems []FeedItem
 	for _, snippet := range allSnippets {
 		renderedContent, err := content.RenderContent(r.Context(), "snippet", snippet.ID, snippet.Content, snippet.Path)
 		if err != nil {
 			slog.Error("Failed to render snippet content for feed", "snippet", snippet.Title, "error", err)
-			ServerError(w, r)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
-		absoluteContent, err := MakeURLsAbsolute(string(renderedContent), "https://chameth.com")
+		absoluteContent, err := makeURLsAbsolute(string(renderedContent), "https://chameth.com")
 		if err != nil {
 			slog.Error("Failed to make URLs absolute for feed", "snippet", snippet.Title, "error", err)
-			ServerError(w, r)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
-		feedItems = append(feedItems, templates.FeedItem{
+		feedItems = append(feedItems, FeedItem{
 			Title:   snippet.Title,
 			Link:    fmt.Sprintf("https://chameth.com%s", snippet.Path),
 			Updated: "1970-01-01T00:00:00Z",
@@ -118,7 +116,7 @@ func SnippetsFeed(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderAtom(w, templates.AtomData{
+	err = renderAtom(w, AtomData{
 		FeedTitle:       "Chameth.com - snippets",
 		FeedSelfLink:    "https://chameth.com/snippets/feed.xml",
 		FeedLastUpdated: "1970-01-01T00:00:00Z",
@@ -129,11 +127,11 @@ func SnippetsFeed(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func FilmReviewsFeed(w http.ResponseWriter, r *http.Request) {
+func HandleFilmReviews(w http.ResponseWriter, r *http.Request) {
 	renderFilmReviewsFeed(w, r, "Chameth.com - film reviews", 5, "https://chameth.com/films/reviews/feed.xml")
 }
 
-func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, limit int, selfLink string) {
+func renderPostsFeed(w http.ResponseWriter, r *http.Request, title, format string, limit int, selfLink string) {
 	slog.Debug("Serving feed", "type", "posts", "format", format, "useragent", r.UserAgent())
 	metrics.RecordFeedRequest(format, r.UserAgent())
 
@@ -148,27 +146,27 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 
 	if err != nil {
 		slog.Error("Failed to get recent posts for feed", "error", err, "format", format)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	var feedItems []templates.FeedItem
+	var feedItems []FeedItem
 	for _, post := range postList {
 		renderedContent, err := content.RenderContent(r.Context(), "post", post.ID, post.Content, post.Path)
 		if err != nil {
 			slog.Error("Failed to render post content for feed", "post", post.Title, "error", err)
-			ServerError(w, r)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
-		absoluteContent, err := MakeURLsAbsolute(string(renderedContent), "https://chameth.com")
+		absoluteContent, err := makeURLsAbsolute(string(renderedContent), "https://chameth.com")
 		if err != nil {
 			slog.Error("Failed to make URLs absolute for feed", "post", post.Title, "error", err)
-			ServerError(w, r)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 
-		feedItems = append(feedItems, templates.FeedItem{
+		feedItems = append(feedItems, FeedItem{
 			Title:   post.Title,
 			Link:    fmt.Sprintf("https://chameth.com%s", post.Path),
 			Updated: post.Date.Format("2006-01-02T15:04:05Z"),
@@ -183,7 +181,7 @@ func renderFeed(w http.ResponseWriter, r *http.Request, title, format string, li
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderAtom(w, templates.AtomData{
+	err = renderAtom(w, AtomData{
 		FeedTitle:       title,
 		FeedSelfLink:    selfLink,
 		FeedLastUpdated: lastUpdated,
@@ -201,11 +199,11 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 	reviews, err := films.GetRecentPublishedFilmReviewsWithFilmAndPosters(r.Context(), limit)
 	if err != nil {
 		slog.Error("Failed to get recent film reviews for feed", "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	var feedItems []templates.FeedItem
+	var feedItems []FeedItem
 	for _, review := range reviews {
 		var content strings.Builder
 		content.WriteString("<p>")
@@ -221,7 +219,7 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 
 		reviewURL := fmt.Sprintf("https://chameth.com%s", review.Film.Path)
 
-		feedItems = append(feedItems, templates.FeedItem{
+		feedItems = append(feedItems, FeedItem{
 			Title:   review.Film.Title,
 			Link:    reviewURL,
 			Updated: review.FilmReview.WatchedDate.Format("2006-01-02T15:04:05Z"),
@@ -236,7 +234,7 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderAtom(w, templates.AtomData{
+	err = renderAtom(w, AtomData{
 		FeedTitle:       title,
 		FeedSelfLink:    selfLink,
 		FeedLastUpdated: lastUpdated,
@@ -245,54 +243,4 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 	if err != nil {
 		slog.Error("Failed to render atom feed", "error", err)
 	}
-}
-
-func MakeURLsAbsolute(htmlContent, baseURL string) (string, error) {
-	doc, err := html.Parse(strings.NewReader(htmlContent))
-	if err != nil {
-		return "", fmt.Errorf("failed to parse HTML: %w", err)
-	}
-
-	var processNode func(*html.Node)
-	processNode = func(n *html.Node) {
-		if n.Type == html.ElementNode {
-			for i, attr := range n.Attr {
-				if (attr.Key == "href" || attr.Key == "src") && strings.HasPrefix(attr.Val, "/") && !strings.HasPrefix(attr.Val, "//") {
-					n.Attr[i].Val = baseURL + attr.Val
-				}
-				if attr.Key == "srcset" {
-					n.Attr[i].Val = makeSrcsetAbsolute(attr.Val, baseURL)
-				}
-			}
-		}
-		for c := n.FirstChild; c != nil; c = c.NextSibling {
-			processNode(c)
-		}
-	}
-
-	processNode(doc)
-
-	var buf strings.Builder
-	if err := html.Render(&buf, doc); err != nil {
-		return "", fmt.Errorf("failed to render HTML: %w", err)
-	}
-
-	result := buf.String()
-	result = strings.TrimPrefix(result, "<html><head></head><body>")
-	result = strings.TrimSuffix(result, "</body></html>")
-
-	return result, nil
-}
-
-func makeSrcsetAbsolute(srcset, baseURL string) string {
-	parts := strings.Split(srcset, ",")
-	for i, part := range parts {
-		part = strings.TrimSpace(part)
-		urlAndDescriptor := strings.Fields(part)
-		if len(urlAndDescriptor) > 0 && strings.HasPrefix(urlAndDescriptor[0], "/") && !strings.HasPrefix(urlAndDescriptor[0], "//") {
-			urlAndDescriptor[0] = baseURL + urlAndDescriptor[0]
-			parts[i] = strings.Join(urlAndDescriptor, " ")
-		}
-	}
-	return strings.Join(parts, ", ")
 }

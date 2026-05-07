@@ -18,6 +18,7 @@ import (
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features"
 	"chameth.com/chameth.com/features/contact"
+	"chameth.com/chameth.com/features/feeds"
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/music"
@@ -124,12 +125,12 @@ func main() {
 	mux.Handle("GET /api/films/search", http.HandlerFunc(films.HandleSearch))
 	mux.Handle("GET /assets/stylesheets/", handlers.Stylesheet(assetsManager))
 	mux.Handle("GET /assets/scripts/", handlers.Scripts(assetsManager))
-	mux.Handle("GET /index.xml", http.HandlerFunc(handlers.FullFeed))
-	mux.Handle("GET /short.xml", http.HandlerFunc(handlers.ShortPostsFeed))
-	mux.Handle("GET /long.xml", http.HandlerFunc(handlers.LongPostsFeed))
-	mux.Handle("GET /poems/feed.xml", http.HandlerFunc(handlers.PoemsFeed))
-	mux.Handle("GET /snippets/feed.xml", http.HandlerFunc(handlers.SnippetsFeed))
-	mux.Handle("GET /films/reviews/feed.xml", http.HandlerFunc(handlers.FilmReviewsFeed))
+	mux.Handle("GET /index.xml", http.HandlerFunc(feeds.HandleAllPosts))
+	mux.Handle("GET /short.xml", http.HandlerFunc(feeds.HandleShortPosts))
+	mux.Handle("GET /long.xml", http.HandlerFunc(feeds.HandleLongPosts))
+	mux.Handle("GET /poems/feed.xml", http.HandlerFunc(feeds.HandlePoems))
+	mux.Handle("GET /snippets/feed.xml", http.HandlerFunc(feeds.HandleSnippets))
+	mux.Handle("GET /films/reviews/feed.xml", http.HandlerFunc(feeds.HandleFilmReviews))
 	mux.Handle("GET /sitemap.xml", http.HandlerFunc(handlers.XmlSiteMap))
 	mux.Handle("GET /posts/{$}", http.HandlerFunc(posts.HandleList))
 	mux.Handle("GET /prints/{$}", http.HandlerFunc(prints.HandleList))
