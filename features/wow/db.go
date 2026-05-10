@@ -143,6 +143,7 @@ func upsertMythicPlusRun(ctx context.Context, characterID, seasonID int, run *bl
 			keystone_level = EXCLUDED.keystone_level,
 			is_completed_within_time = EXCLUDED.is_completed_within_time,
 			mythic_rating = EXCLUDED.mythic_rating
+		WHERE EXCLUDED.mythic_rating >= wow_mythic_runs.mythic_rating
 	`, characterID, seasonID, run.Dungeon.ID, run.Dungeon.Name, run.CompletedTimestamp, run.Duration, run.KeystoneLevel, run.IsCompletedWithinTime, rating)
 	if err != nil {
 		return fmt.Errorf("failed to upsert mythic+ run: %w", err)
