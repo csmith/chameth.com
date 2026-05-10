@@ -6,8 +6,24 @@
     margin-bottom: var(--medium-space);
     gap: var(--smedium-space);
 
-    img {
-        height: 400px;
+    .overview {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: var(--small-space);
+
+        img {
+            height: 400px;
+            filter: drop-shadow(10px 10px 10px var(--background-alt-colour));
+            margin-bottom: var(--smedium-space);
+        }
+    }
+
+    .detail {
+        font-size: var(--font-size-small);
+        color: var(--text-alt-colour);
+        margin: 0;
+        padding: 0;
     }
 
     .info {
@@ -15,9 +31,10 @@
         flex-direction: column;
         flex: 1;
         gap: var(--small-space);
-        padding: var(--small-space);
+        padding: var(--small-space) var(--smedium-space);
 
-        h3 {
+        h3,
+        h4 {
             margin: 0;
             padding: 0;
         }
@@ -26,11 +43,6 @@
             color: var(--text-alt-colour);
             font-size: var(--font-size-small);
             padding-left: 4px;
-        }
-
-        .detail {
-            font-size: var(--font-size-small);
-            color: var(--text-alt-colour);
         }
 
         .professions {
@@ -49,10 +61,48 @@
             .tier-count {
                 color: var(--text-alt-colour);
                 padding-left: var(--small-space);
+                text-align: right;
             }
 
             .tier-progress {
                 accent-color: var(--accent-colour);
+            }
+        }
+
+        table + h4 {
+            margin-top: var(--small-space);
+        }
+
+        .mythic-plus {
+            font-size: var(--font-size-small);
+
+            td,
+            th {
+                vertical-align: middle;
+                padding: 1px 0;
+                text-align: right;
+            }
+
+            .dungeon {
+                color: var(--text-alt-colour);
+                text-align: left;
+                padding-right: var(--small-space);
+            }
+
+            .level,
+            .duration {
+                color: var(--text-alt-colour);
+                padding-left: var(--small-space);
+            }
+
+            .rating {
+                padding-left: var(--small-space);
+            }
+
+            .total th,
+            .total td {
+                border-top: 1px solid var(--background-alt-colour);
+                font-weight: normal;
             }
         }
 
@@ -62,6 +112,7 @@
             justify-content: flex-end;
             gap: var(--smedium-space);
             font-size: var(--font-size-tiny);
+            padding-top: var(--smedium-space);
 
             a {
                 text-decoration-thickness: 2px;
@@ -72,11 +123,6 @@
     @media (width <= 750px) {
         width: unset;
         flex-direction: column;
-
-        img {
-            height: unset;
-            width: 100%;
-        }
 
         .info {
             padding: var(--medium-space);

@@ -24,7 +24,7 @@ td {
     font-size: var(--font-size-small);
 }
 
-th {
+th:not(.plain-header) {
     background-color: var(--background-colour);
     border-bottom: 2px solid var(--accent-colour);
     padding: 0.4em;

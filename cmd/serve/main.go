@@ -63,7 +63,7 @@ import (
 	_ "chameth.com/chameth.com/features/walks/distance"
 	_ "chameth.com/chameth.com/features/walks/list"
 	_ "chameth.com/chameth.com/features/walks/speed"
-	_ "chameth.com/chameth.com/features/wow/wowchar"
+	_ "chameth.com/chameth.com/features/wow/char"
 )
 
 var (

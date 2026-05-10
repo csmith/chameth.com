@@ -127,6 +127,32 @@ func (c *Client) GetCharacterProfessions(realm, character string) (*CharacterPro
 	return &professions, nil
 }
 
+func (c *Client) GetMythicKeystoneProfile(realm, character string) (*MythicKeystoneProfile, error) {
+	var profile MythicKeystoneProfile
+	err := c.get(
+		fmt.Sprintf("/profile/wow/character/%s/%s/mythic-keystone-profile?namespace=profile-eu&locale=en_GB",
+			strings.ToLower(realm), strings.ToLower(character)),
+		&profile,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get mythic keystone profile for %s-%s: %w", realm, character, err)
+	}
+	return &profile, nil
+}
+
+func (c *Client) GetMythicKeystoneSeasonProfile(realm, character string, seasonID int) (*MythicKeystoneSeasonProfile, error) {
+	var profile MythicKeystoneSeasonProfile
+	err := c.get(
+		fmt.Sprintf("/profile/wow/character/%s/%s/mythic-keystone-profile/season/%d?namespace=profile-eu&locale=en_GB",
+			strings.ToLower(realm), strings.ToLower(character), seasonID),
+		&profile,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get mythic keystone season profile for %s-%s season %d: %w", realm, character, seasonID, err)
+	}
+	return &profile, nil
+}
+
 func (c *Client) GetCharacterMedia(realm, character string) (*CharacterMedia, error) {
 	var media CharacterMedia
 	err := c.get(

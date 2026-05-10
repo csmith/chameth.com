@@ -61,5 +61,23 @@ func syncCharacter(ctx context.Context, realm, name string) (int, error) {
 		return 0, fmt.Errorf("failed to sync professions: %w", err)
 	}
 
+	mplus, err := bc.GetMythicKeystoneProfile(realm, name)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get mythic keystone profile: %w", err)
+	}
+
+	seasonID := currentSeasonID(mplus)
+	if seasonID > 0 {
+		season, err := bc.GetMythicKeystoneSeasonProfile(realm, name, seasonID)
+		if err != nil {
+			return 0, fmt.Errorf("failed to get mythic keystone season profile: %w", err)
+		}
+		for i := range season.BestRuns {
+			if err := upsertMythicPlusRun(ctx, characterID, seasonID, &season.BestRuns[i]); err != nil {
+				return 0, fmt.Errorf("failed to upsert mythic+ run: %w", err)
+			}
+		}
+	}
+
 	return characterID, nil
 }

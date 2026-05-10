@@ -67,3 +67,23 @@ type ProfessionTier struct {
 	MaxSkillPoints int      `json:"max_skill_points"`
 	Tier           NamedRef `json:"tier"`
 }
+
+type MythicKeystoneProfile struct {
+	Seasons []NamedRef `json:"seasons"`
+}
+
+type MythicKeystoneSeasonProfile struct {
+	Season    NamedRef   `json:"season"`
+	BestRuns  []MythicRun `json:"best_runs"`
+}
+
+type MythicRun struct {
+	CompletedTimestamp    int64    `json:"completed_timestamp"`
+	Duration              int64    `json:"duration"`
+	KeystoneLevel         int      `json:"keystone_level"`
+	Dungeon               NamedRef `json:"dungeon"`
+	IsCompletedWithinTime bool     `json:"is_completed_within_time"`
+	MythicRating          *struct {
+		Rating float64 `json:"rating"`
+	} `json:"mythic_rating"`
+}

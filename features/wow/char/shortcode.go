@@ -1,4 +1,4 @@
-package wowchar
+package char
 
 import (
 	"chameth.com/chameth.com/features/shortcodes"

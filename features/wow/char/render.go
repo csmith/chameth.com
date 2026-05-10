@@ -1,4 +1,4 @@
-package wowchar
+package char
 
 import (
 	"bytes"
@@ -14,7 +14,7 @@ import (
 //go:embed *.gotpl
 var templates string
 
-var tmpl = template.Must(template.New("wowchar.html.gotpl").Parse(templates))
+var tmpl = template.Must(template.New("char.html.gotpl").Parse(templates))
 
 func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 2 {
@@ -69,6 +69,7 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 		RealmLower:        strings.ToLower(c.RealmName),
 		NameLower:         strings.ToLower(c.CharacterName),
 		Professions:       dataProfessions,
+		MythicPlus:         buildMythicPlusData(ctx, c.ID),
 	})
 }
 
@@ -79,4 +80,41 @@ func renderTemplate(data Data) (string, error) {
 		return "", err
 	}
 	return buf.String(), nil
+}
+
+func formatDuration(ms int64) string {
+	totalSeconds := ms / 1000
+	minutes := totalSeconds / 60
+	seconds := totalSeconds % 60
+	return fmt.Sprintf("%d:%02d", minutes, seconds)
+}
+
+func buildMythicPlusData(ctx *shortcodes.Context, characterID int) *MythicPlusData {
+	seasonID, err := wow.GetCurrentSeasonID(ctx)
+	if err != nil || seasonID == 0 {
+		return nil
+	}
+
+	runs, err := wow.GetCharacterMythicPlusRuns(ctx, characterID, seasonID)
+	if err != nil || len(runs) == 0 {
+		return nil
+	}
+
+	var totalRating float64
+	dataRuns := make([]MythicPlusRun, len(runs))
+	for i, r := range runs {
+		totalRating += r.MythicRating
+		dataRuns[i] = MythicPlusRun{
+			DungeonName:   r.DungeonName,
+			KeystoneLevel: r.KeystoneLevel,
+			Duration:      formatDuration(r.Duration),
+			Overtime:      !r.IsCompletedWithinTime,
+			Rating:        fmt.Sprintf("%.0f", r.MythicRating),
+		}
+	}
+
+	return &MythicPlusData{
+		Runs:        dataRuns,
+		TotalRating: fmt.Sprintf("%.0f", totalRating),
+	}
 }

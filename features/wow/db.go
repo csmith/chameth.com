@@ -126,6 +126,48 @@ func saveCharacterImage(ctx context.Context, characterID int, name string, imgDa
 	return nil
 }
 
+func upsertMythicPlusRun(ctx context.Context, characterID, seasonID int, run *blizzard.MythicRun) error {
+	rating := 0.0
+	if run.MythicRating != nil {
+		rating = run.MythicRating.Rating
+	}
+
+	_, err := db.Exec(ctx, `
+		INSERT INTO wow_mythic_runs (character_id, season_id, dungeon_id, dungeon_name, completed_timestamp, duration, keystone_level, is_completed_within_time, mythic_rating)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		ON CONFLICT (character_id, season_id, dungeon_id)
+		DO UPDATE SET
+			dungeon_name = EXCLUDED.dungeon_name,
+			completed_timestamp = EXCLUDED.completed_timestamp,
+			duration = EXCLUDED.duration,
+			keystone_level = EXCLUDED.keystone_level,
+			is_completed_within_time = EXCLUDED.is_completed_within_time,
+			mythic_rating = EXCLUDED.mythic_rating
+	`, characterID, seasonID, run.Dungeon.ID, run.Dungeon.Name, run.CompletedTimestamp, run.Duration, run.KeystoneLevel, run.IsCompletedWithinTime, rating)
+	if err != nil {
+		return fmt.Errorf("failed to upsert mythic+ run: %w", err)
+	}
+	return nil
+}
+
+func GetCharacterMythicPlusRuns(ctx context.Context, characterID, seasonID int) ([]MythicPlusRun, error) {
+	runs, err := db.Select[MythicPlusRun](ctx, `
+		SELECT * FROM wow_mythic_runs WHERE character_id = $1 AND season_id = $2 ORDER BY dungeon_name
+	`, characterID, seasonID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get mythic+ runs: %w", err)
+	}
+	return runs, nil
+}
+
+func GetCurrentSeasonID(ctx context.Context) (int, error) {
+	id, err := db.Get[int](ctx, `SELECT MAX(season_id) FROM wow_mythic_runs`)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get current season id: %w", err)
+	}
+	return id, nil
+}
+
 func GetCharacterProfessions(ctx context.Context, characterID int) ([]CharacterProfession, error) {
 	professions, err := db.Select[CharacterProfession](ctx, `
 		SELECT * FROM wow_character_professions WHERE character_id = $1 ORDER BY kind, profession_name, tier_name

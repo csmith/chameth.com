@@ -1,0 +1,46 @@
+{{/* gotype: chameth.com/chameth.com/features/wow/char.Data*/}}
+<div class="wow-char raised-box" data-title="World of Warcraft Character Data">
+<div class="overview">
+<img src="/wow/characters/{{.Name}}.png" alt="{{.Name}}" loading="lazy">
+<p class="detail">Level {{.Level}}</p>
+<p class="detail">{{.Gender}} {{.Race}}</p>
+<p class="detail"><span class="{{.CSSClass}}">{{.Spec}} {{.Class}}</span></p>
+<p class="detail">{{.EquippedItemLevel}} average item level</p>
+</div>
+<div class="info">
+<h3 class="plain-header">{{.Name}}<span class="realm">-{{.Realm}}</span></h3>
+{{- if .Professions }}
+<h4 class="plain-header">Professions</h4>
+<table class="plain-table professions">
+{{- range .Professions }}
+<tr><td>{{.LatestTier.Name}}</td><td><progress class="tier-progress" value="{{.LatestTier.SkillPoints}}" max="{{.LatestTier.MaxSkillPoints}}"></progress></td><td class="tier-count">{{.LatestTier.SkillPoints}}/{{.LatestTier.MaxSkillPoints}}</td></tr>
+{{ end -}}
+</table>
+{{ end -}}
+{{- if .MythicPlus }}
+<h4 class="plain-header">Mythic+</h4>
+<table class="plain-table mythic-plus">
+{{- range .MythicPlus.Runs }}
+<tr>
+<td class="dungeon">{{.DungeonName}}</td>
+<td class="level">+{{.KeystoneLevel}}</td>
+{{- if .Overtime }}
+<td class="duration"><s>{{.Duration}}</s></td>
+{{- else }}
+<td class="duration">{{.Duration}}</td>
+{{- end }}
+<td class="rating">{{.Rating}}</td>
+</tr>
+{{ end -}}
+<tr class="total">
+<th colspan="3" class="plain-header">Total M+ rating</th>
+<td class="rating">{{.MythicPlus.TotalRating}}</td>
+</tr>
+</table>
+{{ end -}}
+<div class="links">
+<a href="https://worldofwarcraft.blizzard.com/en-gb/character/eu/{{.RealmLower}}/{{.NameLower}}">View on blizzard.com</a>
+<a href="https://raider.io/characters/eu/{{.RealmLower}}/{{.Name}}">View on raider.io</a>
+</div>
+</div>
+</div>

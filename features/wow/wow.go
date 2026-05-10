@@ -26,6 +26,19 @@ func client() *blizzard.Client {
 	return blizzardClient
 }
 
+func currentSeasonID(p *blizzard.MythicKeystoneProfile) int {
+	if len(p.Seasons) == 0 {
+		return 0
+	}
+	maxID := p.Seasons[0].ID
+	for _, s := range p.Seasons[1:] {
+		if s.ID > maxID {
+			maxID = s.ID
+		}
+	}
+	return maxID
+}
+
 func RunSync(ctx context.Context) {
 	if *blizzardClientID == "" {
 		return
@@ -58,32 +71,10 @@ func syncCharacters(ctx context.Context) {
 	}
 
 	for _, c := range characters {
-		profile, err := client().GetCharacterProfile(c.RealmName, c.CharacterName)
-		if err != nil {
-			slog.Error("Failed to get character profile", "error", err, "realm", c.RealmName, "character", c.CharacterName)
-			continue
+		if _, err := syncCharacter(ctx, c.RealmName, c.CharacterName); err != nil {
+			slog.Error("Failed to sync character", "error", err, "realm", c.RealmName, "character", c.CharacterName)
+		} else {
+			slog.Info("Updated WoW character", "realm", c.RealmName, "character", c.CharacterName)
 		}
-
-		characterID, err := upsertCharacter(ctx, c.RealmName, profile)
-		if err != nil {
-			slog.Error("Failed to upsert character", "error", err, "character", profile.Name)
-			continue
-		}
-
-		media, err := client().GetCharacterMedia(c.RealmName, c.CharacterName)
-		if err != nil {
-			slog.Error("Failed to get character media", "error", err, "realm", c.RealmName, "character", c.CharacterName)
-		} else if err := fetchAndSaveCharacterImage(ctx, characterID, profile.Name, media); err != nil {
-			slog.Error("Failed to update character image", "error", err, "character", profile.Name)
-		}
-
-		professions, err := client().GetCharacterProfessions(c.RealmName, c.CharacterName)
-		if err != nil {
-			slog.Error("Failed to get character professions", "error", err, "realm", c.RealmName, "character", c.CharacterName)
-		} else if err := syncProfessions(ctx, characterID, professions); err != nil {
-			slog.Error("Failed to sync professions", "error", err, "character", profile.Name)
-		}
-
-		slog.Info("Updated WoW character", "character", profile.Name, "realm", profile.Realm.Name)
 	}
 }

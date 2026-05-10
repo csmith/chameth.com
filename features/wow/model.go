@@ -29,3 +29,16 @@ type CharacterProfession struct {
 	MaxSkillPoints int    `db:"max_skill_points"`
 	Kind           string `db:"kind"`
 }
+
+type MythicPlusRun struct {
+	ID                    int     `db:"id"`
+	CharacterID           int     `db:"character_id"`
+	SeasonID              int     `db:"season_id"`
+	DungeonID             int     `db:"dungeon_id"`
+	DungeonName           string  `db:"dungeon_name"`
+	CompletedTimestamp     int64   `db:"completed_timestamp"`
+	Duration              int64   `db:"duration"`
+	KeystoneLevel         int     `db:"keystone_level"`
+	IsCompletedWithinTime bool    `db:"is_completed_within_time"`
+	MythicRating          float64 `db:"mythic_rating"`
+}

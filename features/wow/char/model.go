@@ -1,4 +1,4 @@
-package wowchar
+package char
 
 type Data struct {
 	Name              string
@@ -14,6 +14,7 @@ type Data struct {
 	RealmLower        string
 	NameLower         string
 	Professions       []Profession
+	MythicPlus         *MythicPlusData
 }
 
 type Profession struct {
@@ -26,4 +27,17 @@ type ProfessionTier struct {
 	Name           string
 	SkillPoints    int
 	MaxSkillPoints int
+}
+
+type MythicPlusRun struct {
+	DungeonName   string
+	KeystoneLevel int
+	Duration      string
+	Overtime      bool
+	Rating        string
+}
+
+type MythicPlusData struct {
+	Runs        []MythicPlusRun
+	TotalRating string
 }
