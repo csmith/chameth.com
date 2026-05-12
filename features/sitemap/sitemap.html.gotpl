@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/templates.SiteMapData*/}}
+{{/* gotype: chameth.com/chameth.com/features/sitemap.SiteMapData*/}}
 {{define "content"}}
     <h2>Sitemap</h2>
 

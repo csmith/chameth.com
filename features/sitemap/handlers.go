@@ -1,4 +1,4 @@
-package handlers
+package sitemap
 
 import (
 	"context"
@@ -15,20 +15,20 @@ import (
 	"chameth.com/chameth.com/templates"
 )
 
-func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templates.SiteMapData, error) {
+func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMapData, error) {
 	poemDetails, err := poems.SitemapEntries(ctx)
 	if err != nil {
-		return templates.SiteMapData{}, err
+		return SiteMapData{}, err
 	}
 
 	snippetDetails, err := snippets.SitemapEntries(ctx)
 	if err != nil {
-		return templates.SiteMapData{}, err
+		return SiteMapData{}, err
 	}
 
 	allPosts, err := posts.GetAllPosts(ctx)
 	if err != nil {
-		return templates.SiteMapData{}, fmt.Errorf("failed to get all posts: %w", err)
+		return SiteMapData{}, fmt.Errorf("failed to get all posts: %w", err)
 	}
 
 	var postDetails []templates.ContentDetails
@@ -45,7 +45,7 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templat
 
 	filmReviews, err := films.GetAllPublishedFilmReviewsWithFilmAndPosters(ctx)
 	if err != nil {
-		return templates.SiteMapData{}, fmt.Errorf("failed to get all film reviews: %w", err)
+		return SiteMapData{}, fmt.Errorf("failed to get all film reviews: %w", err)
 	}
 
 	var filmDetails []templates.ContentDetails
@@ -62,7 +62,7 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templat
 
 	filmLists, err := films.GetAllFilmLists(ctx)
 	if err != nil {
-		return templates.SiteMapData{}, fmt.Errorf("failed to get all film lists: %w", err)
+		return SiteMapData{}, fmt.Errorf("failed to get all film lists: %w", err)
 	}
 
 	var filmListDetails []templates.ContentDetails
@@ -75,19 +75,19 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templat
 
 	sitemapPages, err := pages.GetSitemapStaticPages(ctx)
 	if err != nil {
-		return templates.SiteMapData{}, fmt.Errorf("failed to get sitemap pages: %w", err)
+		return SiteMapData{}, fmt.Errorf("failed to get sitemap pages: %w", err)
 	}
 
-	var pageDetails []templates.SiteMapPageDetails
+	var pageDetails []SiteMapPageDetails
 	for _, p := range sitemapPages {
-		pageDetails = append(pageDetails, templates.SiteMapPageDetails{
+		pageDetails = append(pageDetails, SiteMapPageDetails{
 			Path:      p.Path,
 			Frequency: *p.SitemapFrequency,
 			Priority:  fmt.Sprintf("%.1f", *p.SitemapPriority),
 		})
 	}
 
-	return templates.SiteMapData{
+	return SiteMapData{
 		Posts:     postDetails,
 		Poems:     poemDetails,
 		Snippets:  snippetDetails,
@@ -98,33 +98,33 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (templat
 	}, nil
 }
 
-func HtmlSiteMap(w http.ResponseWriter, r *http.Request) {
+func HandleHtml(w http.ResponseWriter, r *http.Request) {
 	siteMapData, err := buildSiteMapData(r.Context(), content.CreatePageData(r.Context(), "Sitemap", "/sitemap/", templates.OpenGraphHeaders{}))
 	if err != nil {
 		slog.Error("Failed to build site map data", "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderHtmlSiteMap(w, siteMapData)
+	err = renderHtmlSiteMap(w, siteMapData)
 	if err != nil {
 		slog.Error("Failed to render site map template", "error", err)
 	}
 }
 
-func XmlSiteMap(w http.ResponseWriter, r *http.Request) {
+func HandleXml(w http.ResponseWriter, r *http.Request) {
 	siteMapData, err := buildSiteMapData(r.Context(), templates.PageData{})
 	if err != nil {
 		slog.Error("Failed to build site map data", "error", err)
-		ServerError(w, r)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderXmlSiteMap(w, siteMapData)
+	err = renderXmlSiteMap(w, siteMapData)
 	if err != nil {
 		slog.Error("Failed to render site map template", "error", err)
 	}

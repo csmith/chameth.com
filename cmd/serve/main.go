@@ -25,6 +25,7 @@ import (
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/prints"
 	"chameth.com/chameth.com/features/projects"
+	"chameth.com/chameth.com/features/sitemap"
 	"chameth.com/chameth.com/features/snippets"
 	"chameth.com/chameth.com/features/sudo"
 	"chameth.com/chameth.com/features/syndications"
@@ -131,11 +132,11 @@ func main() {
 	mux.Handle("GET /poems/feed.xml", http.HandlerFunc(feeds.HandlePoems))
 	mux.Handle("GET /snippets/feed.xml", http.HandlerFunc(feeds.HandleSnippets))
 	mux.Handle("GET /films/reviews/feed.xml", http.HandlerFunc(feeds.HandleFilmReviews))
-	mux.Handle("GET /sitemap.xml", http.HandlerFunc(handlers.XmlSiteMap))
+	mux.Handle("GET /sitemap.xml", http.HandlerFunc(sitemap.HandleXml))
 	mux.Handle("GET /posts/{$}", http.HandlerFunc(posts.HandleList))
 	mux.Handle("GET /prints/{$}", http.HandlerFunc(prints.HandleList))
 	mux.Handle("GET /projects/{$}", http.HandlerFunc(projects.HandleList))
-	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(handlers.HtmlSiteMap))
+	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(sitemap.HandleHtml))
 	mux.Handle("GET /snippets/{$}", http.HandlerFunc(snippets.HandleList))
 	mux.Handle("GET /sudo", http.HandlerFunc(sudo.Handle))
 	mux.Handle("/", handlers.Content(handlers.StaticAsset(assets.Static)))

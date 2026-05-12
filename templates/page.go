@@ -23,3 +23,14 @@ type RecentPost struct {
 	Url   string
 	Date  string
 }
+
+type ContentDetails struct {
+	Title string
+	Path  string
+	Date  ContentDate
+}
+
+type ContentDate struct {
+	Iso      string
+	Friendly string
+}
