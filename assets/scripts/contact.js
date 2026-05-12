@@ -44,8 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.nod-container').forEach((el) => {
         const form = el.querySelector('form')
 
-        form.addEventListener('click', () => {
-            form.querySelector('.submit').click()
+        form.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('submit')) {
+                form.querySelector('.submit').click()
+            }
         })
 
         form.addEventListener('keydown', (e) => {
