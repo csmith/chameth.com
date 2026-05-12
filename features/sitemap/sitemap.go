@@ -47,9 +47,11 @@ type SiteMapData struct {
 }
 
 type SiteMapPageDetails struct {
-	Path      string
-	Frequency string
-	Priority  string
+	Title       string
+	Path        string
+	Frequency   string
+	Priority    string
+	CurrentPage bool
 }
 
 func renderHtmlSiteMap(w io.Writer, data SiteMapData) error {

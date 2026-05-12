@@ -7,18 +7,9 @@
     <h3>Primary pages</h3>
 
     <ul class="sitemap">
-        <li><a href="/">About</a></li>
-        <li><a href="/colophon">Colophon</a></li>
-        <li><a href="/contact/">Contact me</a></li>
-        <li><a href="/feeds/">Feeds</a></li>
-        <li><a href="/films/">Films</a></li>
-        <li><a href="/interests/">My interests</a></li>
-        <li><a href="/posts/">Posts</a></li>
-        <li><a href="/prints/">3D Prints</a></li>
-        <li><a href="/projects/">Projects</a></li>
-        <li><a href="/sitemap/">Sitemap</a> &larr; you are here</li>
-        <li><a href="/snippets/">Snippets</a></li>
-        <li><a href="/uses/">Things I use</a></li>
+        {{- range .Pages }}
+            <li><a href="{{ .Path }}">{{ .Title }}</a>{{ if .CurrentPage }} &larr; you are here{{ end }}</li>
+        {{ end -}}
     </ul>
 
     <h3>Feeds</h3>

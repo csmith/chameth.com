@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"slices"
+	"strings"
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/features/films"
@@ -80,12 +82,34 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 
 	var pageDetails []SiteMapPageDetails
 	for _, p := range sitemapPages {
+		if strings.Count(p.Path, "/") > 2 {
+			continue
+		}
 		pageDetails = append(pageDetails, SiteMapPageDetails{
+			Title:     p.Title,
 			Path:      p.Path,
 			Frequency: *p.SitemapFrequency,
 			Priority:  fmt.Sprintf("%.1f", *p.SitemapPriority),
 		})
 	}
+
+	pageDetails = append(pageDetails,
+		SiteMapPageDetails{Title: "Posts", Path: "/posts/"},
+		SiteMapPageDetails{Title: "3D Prints", Path: "/prints/"},
+		SiteMapPageDetails{Title: "Projects", Path: "/projects/"},
+		SiteMapPageDetails{Title: "Sitemap", Path: "/sitemap/", CurrentPage: true},
+		SiteMapPageDetails{Title: "Snippets", Path: "/snippets/"},
+	)
+
+	slices.SortFunc(pageDetails, func(a, b SiteMapPageDetails) int {
+		if a.Path < b.Path {
+			return -1
+		}
+		if a.Path > b.Path {
+			return 1
+		}
+		return 0
+	})
 
 	return SiteMapData{
 		Posts:     postDetails,
