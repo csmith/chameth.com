@@ -53,7 +53,7 @@ import (
 	_ "chameth.com/chameth.com/features/music/nowplaying"
 	_ "chameth.com/chameth.com/features/music/topalbums"
 	_ "chameth.com/chameth.com/features/music/topartists"
-	_ "chameth.com/chameth.com/features/nod/shortcode"
+	_ "chameth.com/chameth.com/features/nod/form"
 	_ "chameth.com/chameth.com/features/posts/link"
 	_ "chameth.com/chameth.com/features/posts/recent"
 	_ "chameth.com/chameth.com/features/shortcodes/link"
