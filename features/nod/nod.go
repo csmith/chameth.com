@@ -1,12 +1,10 @@
-package handlers
+package nod
 
 import (
 	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io"
-	"log/slog"
 	"net/http"
 	"net/url"
 	"strings"
@@ -17,10 +15,6 @@ var (
 	ircCatApiKey     = flag.String("irc-cat-key", "", "API key for IRC notifications")
 	ircCatNodChannel = flag.String("irc-cat-nod-channel", "", "Channel to post nod messages to")
 )
-
-type nodRequest struct {
-	Page string `json:"page"`
-}
 
 func processNod(page string) error {
 	if len(page) == 0 || len(page) > 512 {
@@ -37,47 +31,6 @@ func processNod(page string) error {
 	}
 
 	return announceToIrc(fmt.Sprintf("\00311\002[CHAMETH.COM]\002\003 Someone nodded at %s", page))
-}
-
-func Nod(w http.ResponseWriter, r *http.Request) {
-	if r.Header.Get("Content-Type") != "application/json" {
-		http.Error(w, http.StatusText(http.StatusUnsupportedMediaType), http.StatusUnsupportedMediaType)
-		return
-	}
-
-	defer r.Body.Close()
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		slog.Error("Error reading nod body", "error", err)
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
-
-	var nr nodRequest
-	if err = json.Unmarshal(body, &nr); err != nil {
-		slog.Error("Error parsing nod payload", "error", err, "payload", string(body))
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
-
-	if err = processNod(nr.Page); err != nil {
-		slog.Error("Error processing nod", "error", err)
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
-
-	w.WriteHeader(http.StatusAccepted)
-}
-
-func NodForm(w http.ResponseWriter, r *http.Request) {
-	if err := processNod(r.FormValue("page")); err != nil {
-		slog.Error("Error processing nod form", "error", err)
-		http.Error(w, "Something went wrong", http.StatusBadRequest)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprint(w, "Your nod has been received and is appreciated")
 }
 
 func announceToIrc(message string) error {

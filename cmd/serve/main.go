@@ -22,6 +22,7 @@ import (
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/music"
+	"chameth.com/chameth.com/features/nod"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/prints"
 	"chameth.com/chameth.com/features/projects"
@@ -52,10 +53,10 @@ import (
 	_ "chameth.com/chameth.com/features/music/nowplaying"
 	_ "chameth.com/chameth.com/features/music/topalbums"
 	_ "chameth.com/chameth.com/features/music/topartists"
+	_ "chameth.com/chameth.com/features/nod/shortcode"
 	_ "chameth.com/chameth.com/features/posts/link"
 	_ "chameth.com/chameth.com/features/posts/recent"
 	_ "chameth.com/chameth.com/features/shortcodes/link"
-	_ "chameth.com/chameth.com/features/shortcodes/nod"
 	_ "chameth.com/chameth.com/features/shortcodes/rating"
 	_ "chameth.com/chameth.com/features/shortcodes/sidenote"
 	_ "chameth.com/chameth.com/features/shortcodes/update"
@@ -121,8 +122,8 @@ func main() {
 	mux := http.NewServeMux()
 	mux.Handle("POST /api/contact", http.HandlerFunc(contact.HandleJSON))
 	mux.Handle("POST /api/form/contact", http.HandlerFunc(contact.HandleForm))
-	mux.Handle("POST /api/nod", http.HandlerFunc(handlers.Nod))
-	mux.Handle("POST /api/form/nod", http.HandlerFunc(handlers.NodForm))
+	mux.Handle("POST /api/nod", http.HandlerFunc(nod.HandleJSON))
+	mux.Handle("POST /api/form/nod", http.HandlerFunc(nod.HandleForm))
 	mux.Handle("GET /api/films/search", http.HandlerFunc(films.HandleSearch))
 	mux.Handle("GET /assets/stylesheets/", handlers.Stylesheet(assetsManager))
 	mux.Handle("GET /assets/scripts/", handlers.Scripts(assetsManager))

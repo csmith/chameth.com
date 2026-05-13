@@ -73,8 +73,8 @@ type MythicKeystoneProfile struct {
 }
 
 type MythicKeystoneSeasonProfile struct {
-	Season    NamedRef   `json:"season"`
-	BestRuns  []MythicRun `json:"best_runs"`
+	Season   NamedRef    `json:"season"`
+	BestRuns []MythicRun `json:"best_runs"`
 }
 
 type MythicRun struct {

@@ -1,4 +1,4 @@
-package nod
+package shortcode
 
 import (
 	"bytes"

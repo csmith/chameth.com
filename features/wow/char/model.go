@@ -14,7 +14,7 @@ type Data struct {
 	RealmLower        string
 	NameLower         string
 	Professions       []Profession
-	MythicPlus         *MythicPlusData
+	MythicPlus        *MythicPlusData
 }
 
 type Profession struct {

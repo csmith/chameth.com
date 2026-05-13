@@ -3,8 +3,8 @@ package feeds
 import (
 	"embed"
 	"html"
-	"text/template"
 	"io"
+	"text/template"
 )
 
 //go:embed atom.xml.gotpl

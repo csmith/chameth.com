@@ -1,4 +1,4 @@
-package nod
+package shortcode
 
 import (
 	"chameth.com/chameth.com/features/shortcodes"

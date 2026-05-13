@@ -36,7 +36,7 @@ type MythicPlusRun struct {
 	SeasonID              int     `db:"season_id"`
 	DungeonID             int     `db:"dungeon_id"`
 	DungeonName           string  `db:"dungeon_name"`
-	CompletedTimestamp     int64   `db:"completed_timestamp"`
+	CompletedTimestamp    int64   `db:"completed_timestamp"`
 	Duration              int64   `db:"duration"`
 	KeystoneLevel         int     `db:"keystone_level"`
 	IsCompletedWithinTime bool    `db:"is_completed_within_time"`

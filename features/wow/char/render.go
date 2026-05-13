@@ -69,7 +69,7 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 		RealmLower:        strings.ToLower(c.RealmName),
 		NameLower:         strings.ToLower(c.CharacterName),
 		Professions:       dataProfessions,
-		MythicPlus:         buildMythicPlusData(ctx, c.ID),
+		MythicPlus:        buildMythicPlusData(ctx, c.ID),
 	})
 }
 
