@@ -12,6 +12,7 @@ import (
 
 var RecentPostsProvider func() []templates.RecentPost
 var AssetsManager *assets.Manager
+var ShortcodesManager *shortcodes.Manager
 
 func CreatePageData(ctx context.Context, title, path string, ogHeaders templates.OpenGraphHeaders) templates.PageData {
 	canonicalUrl := ""
@@ -26,7 +27,7 @@ func CreatePageData(ctx context.Context, title, path string, ogHeaders templates
 		Scripts:      scriptPath(),
 		Stylesheet:   stylesheetPath(),
 		RecentPosts:  RecentPostsProvider(),
-		Component:    shortcodes.NewComponentFunc(&shortcodes.Context{Context: ctx, URL: path}),
+		Component:    ShortcodesManager.NewComponentFunc(&shortcodes.Context{Context: ctx, URL: path}),
 		Admin:        sudo.IsAdmin(ctx),
 	}
 }

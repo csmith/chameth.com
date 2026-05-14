@@ -10,8 +10,8 @@ import (
 //go:embed star-empty.png star-flat.png star-half.png star.png
 var starImages embed.FS
 
-func init() {
-	shortcodes.Register("rating", RenderFromText)
+func RegisterShortcodes(mgr *shortcodes.Manager) {
+	mgr.Register("rating", RenderFromText)
 }
 
 func RegisterAssets(mgr *assets.Manager) {

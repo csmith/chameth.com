@@ -15,10 +15,18 @@ const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering
 
 type Renderer func([]string, *Context) (string, error)
 
-var renderers = map[string]Renderer{}
+type Manager struct {
+	renderers map[string]Renderer
+}
 
-func Register(name string, renderer Renderer) {
-	renderers[name] = renderer
+func NewManager() *Manager {
+	return &Manager{
+		renderers: map[string]Renderer{},
+	}
+}
+
+func (m *Manager) Register(name string, renderer Renderer) {
+	m.renderers[name] = renderer
 }
 
 type Context struct {
@@ -39,7 +47,7 @@ func (c *Context) MediaWithDescription(description string) []media.MediaRelation
 
 var tagRegexp = regexp.MustCompile(`\{%\s*(\w+)(.*?)\s*%\}`)
 
-func Render(input string, ctx *Context) string {
+func (m *Manager) Render(input string, ctx *Context) string {
 	var res bytes.Buffer
 	lastTag := 0
 
@@ -61,7 +69,7 @@ func Render(input string, ctx *Context) string {
 			}
 		}
 
-		renderer, ok := renderers[name]
+		renderer, ok := m.renderers[name]
 		if !ok {
 			slog.Error("unknown shortcode", "name", name, "url", ctx.URL)
 			res.WriteString(input[lastTag:start])

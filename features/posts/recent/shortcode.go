@@ -4,6 +4,6 @@ import (
 	"chameth.com/chameth.com/features/shortcodes"
 )
 
-func init() {
-	shortcodes.Register("recentposts", RenderFromText)
+func RegisterShortcodes(mgr *shortcodes.Manager) {
+	mgr.Register("recentposts", RenderFromText)
 }

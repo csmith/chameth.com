@@ -4,6 +4,6 @@ import (
 	"chameth.com/chameth.com/features/shortcodes"
 )
 
-func init() {
-	shortcodes.Register("filmreview", RenderFromText)
+func RegisterShortcodes(mgr *shortcodes.Manager) {
+	mgr.Register("filmreview", RenderFromText)
 }

@@ -6,9 +6,9 @@ import (
 	"log/slog"
 )
 
-func NewComponentFunc(ctx *Context) func(string, ...any) template.HTML {
+func (m *Manager) NewComponentFunc(ctx *Context) func(string, ...any) template.HTML {
 	return func(name string, args ...any) template.HTML {
-		renderer, ok := renderers[name]
+		renderer, ok := m.renderers[name]
 		if !ok {
 			slog.Error("Unknown component", "name", name, "url", ctx.URL)
 			return ""
