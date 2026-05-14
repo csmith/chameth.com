@@ -24,7 +24,7 @@ table is changed.
 ### Shortcodes
 
 Reusable chunks of content are exposed as shortcodes, defined under
-`content/shortcodes`. These are usable in dynamic content via
+`features/shortcodes`. These are usable in dynamic content via
 `{%shortcodename arg1 arg%}` or `{%shortcodename arg1%}arg2{%endshortcodename%}`
 markup. They can also expose a `Render()` function when the
 content is needed programatically.
@@ -42,7 +42,8 @@ stylesheet served by the site.
 
 Global frontend styles are in `assets/stylesheet`. CSS must NEVER be
 inlined in HTML in the frontend. Selectors should be nested where
-possible/appropriate.
+possible/appropriate. Public CSS and JS files that should be bundled
+must use the `.public.css` and `.public.js` extensions respectively.
 
 ### Configuration and secrets
 
@@ -58,6 +59,10 @@ New code should prefer keeping code and resources together in their
 feature domains: DB operations, CSS, business logic, etc, should
 be in a single package. New HTTP handlers should be a thin wiring
 layer that hands over to the feature package.
+
+Shortcodes and their CSS should be defined within the relevant
+feature slice where possible, rather than in `features/shortcodes/`
+(which is only for truly cross-cutting shortcodes).
 
 When doing this, DB operations should be placed in a `db.go` file
 in the package. These operations should be as minimal as possible:

@@ -20,8 +20,8 @@ func NewManager() *Manager {
 
 	manager.register(AdminCSS, ".admin.css")
 	manager.register(AdminJS, ".admin.js")
-	manager.register(PublicCSS, ".css")
-	manager.register(PublicJS, ".js")
+	manager.register(PublicCSS, ".public.css")
+	manager.register(PublicJS, ".public.js")
 
 	return manager
 }
