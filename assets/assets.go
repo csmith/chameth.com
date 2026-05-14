@@ -25,6 +25,7 @@ var (
 )
 
 func RegisterAssets(m *Manager) {
+	m.AddStatic(Static, "static")
 	m.Add(stylesheets, "assets/stylesheet")
 	m.Add(scripts, "assets/scripts")
 

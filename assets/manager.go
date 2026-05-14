@@ -7,15 +7,22 @@ import (
 	"time"
 )
 
+type staticAsset struct {
+	fsys   fs.FS
+	fsPath string
+}
+
 type Manager struct {
-	bundles  map[BundleKind]*bundle
-	suffixes map[BundleKind]string
+	bundles      map[BundleKind]*bundle
+	suffixes     map[BundleKind]string
+	staticAssets map[string]staticAsset
 }
 
 func NewManager() *Manager {
 	manager := &Manager{
-		bundles:  make(map[BundleKind]*bundle),
-		suffixes: make(map[BundleKind]string),
+		bundles:      make(map[BundleKind]*bundle),
+		suffixes:     make(map[BundleKind]string),
+		staticAssets: make(map[string]staticAsset),
 	}
 
 	manager.register(AdminCSS, ".admin.css")
@@ -54,6 +61,27 @@ func (m *Manager) Add(fsys fs.FS, pathPrefix string) {
 
 		return nil
 	})
+}
+
+func (m *Manager) AddStatic(fsys fs.FS, basePath string) {
+	fs.WalkDir(fsys, ".", func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			return nil
+		}
+
+		urlPath := "/" + strings.TrimPrefix(p, basePath+"/")
+		m.staticAssets[urlPath] = staticAsset{fsys: fsys, fsPath: p}
+		return nil
+	})
+}
+
+func (m *Manager) StaticAsset(urlPath string) (fs.FS, string, bool) {
+	asset, ok := m.staticAssets[urlPath]
+	return asset.fsys, asset.fsPath, ok
 }
 
 func (m *Manager) register(kind BundleKind, suffix string) {

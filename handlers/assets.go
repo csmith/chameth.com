@@ -1,38 +1,24 @@
 package handlers
 
 import (
-	"errors"
-	"io/fs"
 	"log/slog"
 	"net/http"
 	"path"
-	"path/filepath"
 
 	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/features/media"
 )
 
-func StaticAsset(staticFS fs.FS) http.HandlerFunc {
+func StaticAsset(mgr *assets.Manager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		stat, err := fs.Stat(staticFS, filepath.Join("static", r.URL.Path))
-		if err != nil {
-			if errors.Is(err, fs.ErrNotExist) {
-				NotFound(w, r)
-				return
-			}
-
-			slog.Error("Failed to open static asset", "error", err)
-			ServerError(w, r)
-			return
-		}
-
-		if stat.IsDir() {
+		fsys, fsPath, ok := mgr.StaticAsset(r.URL.Path)
+		if !ok {
 			NotFound(w, r)
 			return
 		}
 
 		w.Header().Set("Cache-Control", "public, max-age=86400")
-		http.ServeFileFS(w, r, staticFS, filepath.Join("static", r.URL.Path))
+		http.ServeFileFS(w, r, fsys, fsPath)
 	}
 }
 

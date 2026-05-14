@@ -26,6 +26,7 @@ import (
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/prints"
 	"chameth.com/chameth.com/features/projects"
+	"chameth.com/chameth.com/features/shortcodes/rating"
 	"chameth.com/chameth.com/features/sitemap"
 	"chameth.com/chameth.com/features/snippets"
 	"chameth.com/chameth.com/features/sudo"
@@ -87,6 +88,8 @@ func main() {
 	assetsManager := assets.NewManager()
 	assets.RegisterAssets(assetsManager)
 	features.RegisterAssets(assetsManager)
+	feeds.RegisterAssets(assetsManager)
+	rating.RegisterAssets(assetsManager)
 
 	content.AssetsManager = assetsManager
 	content.RecentPostsProvider = posts.Recent
@@ -106,7 +109,7 @@ func main() {
 	}
 
 	go func() {
-		if err := admin.Start(ts); err != nil {
+		if err := admin.Start(ts, assetsManager); err != nil {
 			slog.Error("Failed to start admin interface", "error", err)
 			os.Exit(1)
 		}
@@ -140,7 +143,7 @@ func main() {
 	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(sitemap.HandleHtml))
 	mux.Handle("GET /snippets/{$}", http.HandlerFunc(snippets.HandleList))
 	mux.Handle("GET /sudo", http.HandlerFunc(sudo.Handle))
-	mux.Handle("/", handlers.Content(handlers.StaticAsset(assets.Static)))
+	mux.Handle("/", handlers.Content(handlers.StaticAsset(assetsManager)))
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", *port),

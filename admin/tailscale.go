@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/admin/handlers"
+	"chameth.com/chameth.com/assets"
 	bgadmin "chameth.com/chameth.com/features/boardgames/admin"
 	filmadmin "chameth.com/chameth.com/features/films/admin"
 	goimportadmin "chameth.com/chameth.com/features/goimports/admin"
@@ -25,7 +26,7 @@ import (
 	"tailscale.com/tsnet"
 )
 
-func Start(s *tsnet.Server) error {
+func Start(s *tsnet.Server, assetsManager *assets.Manager) error {
 	if err := s.Start(); err != nil {
 		return err
 	}
@@ -138,7 +139,7 @@ func Start(s *tsnet.Server) error {
 	httpsMux.HandleFunc("GET /syndications/edit/{id}", syndicationadmin.EditSyndicationHandler())
 	httpsMux.HandleFunc("POST /syndications/edit/{id}", syndicationadmin.UpdateSyndicationHandler())
 	httpsMux.HandleFunc("POST /syndications/delete/{id}", syndicationadmin.DeleteSyndicationHandler())
-	httpsMux.HandleFunc("GET /", handlers.StaticAsset)
+	httpsMux.HandleFunc("GET /", handlers.StaticAsset(assetsManager))
 
 	httpsServer := &http.Server{
 		Handler: middleware.Chain(
