@@ -16,51 +16,21 @@ import (
 	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/features"
-	bglist "chameth.com/chameth.com/features/boardgames/list"
-	bgplayed "chameth.com/chameth.com/features/boardgames/played"
 	"chameth.com/chameth.com/features/contact"
-	contactform "chameth.com/chameth.com/features/contact/form"
 	"chameth.com/chameth.com/features/feeds"
 	"chameth.com/chameth.com/features/films"
-	filmlist "chameth.com/chameth.com/features/films/list"
-	"chameth.com/chameth.com/features/films/ratingdistribution"
-	filmrecent "chameth.com/chameth.com/features/films/recent"
-	"chameth.com/chameth.com/features/films/review"
-	"chameth.com/chameth.com/features/films/reviews"
-	"chameth.com/chameth.com/features/films/search"
-	"chameth.com/chameth.com/features/films/watched"
-	"chameth.com/chameth.com/features/media/audio"
-	"chameth.com/chameth.com/features/media/figure"
-	"chameth.com/chameth.com/features/media/video"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/music"
-	"chameth.com/chameth.com/features/music/nowplaying"
-	"chameth.com/chameth.com/features/music/topalbums"
-	"chameth.com/chameth.com/features/music/topartists"
 	"chameth.com/chameth.com/features/nod"
-	nodform "chameth.com/chameth.com/features/nod/form"
 	"chameth.com/chameth.com/features/posts"
-	postslink "chameth.com/chameth.com/features/posts/link"
-	postsrecent "chameth.com/chameth.com/features/posts/recent"
 	"chameth.com/chameth.com/features/prints"
 	"chameth.com/chameth.com/features/projects"
 	"chameth.com/chameth.com/features/shortcodes"
-	sclink "chameth.com/chameth.com/features/shortcodes/link"
-	"chameth.com/chameth.com/features/shortcodes/rating"
-	"chameth.com/chameth.com/features/shortcodes/sidenote"
-	scupdate "chameth.com/chameth.com/features/shortcodes/update"
-	scwarning "chameth.com/chameth.com/features/shortcodes/warning"
 	"chameth.com/chameth.com/features/sitemap"
 	"chameth.com/chameth.com/features/snippets"
 	"chameth.com/chameth.com/features/sudo"
 	"chameth.com/chameth.com/features/syndications"
-	syndisplay "chameth.com/chameth.com/features/syndications/display"
-	"chameth.com/chameth.com/features/walks/distance"
-	walkslist "chameth.com/chameth.com/features/walks/list"
-	"chameth.com/chameth.com/features/walks/speed"
 	"chameth.com/chameth.com/features/wow"
-	wowchar "chameth.com/chameth.com/features/wow/char"
 	"chameth.com/chameth.com/handlers"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
@@ -91,40 +61,8 @@ func main() {
 	content.RecentPostsProvider = posts.Recent
 	content.ShortcodesManager = shortcodesManager
 
-	assets.RegisterAssets(assetsManager)
-	features.RegisterAssets(assetsManager)
-	feeds.RegisterAssets(assetsManager)
-	rating.RegisterAssets(assetsManager)
-
-	bglist.RegisterShortcodes(shortcodesManager)
-	bgplayed.RegisterShortcodes(shortcodesManager)
-	contactform.RegisterShortcodes(shortcodesManager)
-	filmlist.RegisterShortcodes(shortcodesManager)
-	ratingdistribution.RegisterShortcodes(shortcodesManager)
-	filmrecent.RegisterShortcodes(shortcodesManager)
-	review.RegisterShortcodes(shortcodesManager)
-	reviews.RegisterShortcodes(shortcodesManager)
-	search.RegisterShortcodes(shortcodesManager)
-	watched.RegisterShortcodes(shortcodesManager)
-	audio.RegisterShortcodes(shortcodesManager)
-	figure.RegisterShortcodes(shortcodesManager)
-	video.RegisterShortcodes(shortcodesManager)
-	nowplaying.RegisterShortcodes(shortcodesManager)
-	topalbums.RegisterShortcodes(shortcodesManager)
-	topartists.RegisterShortcodes(shortcodesManager)
-	nodform.RegisterShortcodes(shortcodesManager)
-	postslink.RegisterShortcodes(shortcodesManager)
-	postsrecent.RegisterShortcodes(shortcodesManager)
-	sclink.RegisterShortcodes(shortcodesManager)
-	rating.RegisterShortcodes(shortcodesManager)
-	sidenote.RegisterShortcodes(shortcodesManager)
-	scupdate.RegisterShortcodes(shortcodesManager)
-	scwarning.RegisterShortcodes(shortcodesManager)
-	syndisplay.RegisterShortcodes(shortcodesManager)
-	distance.RegisterShortcodes(shortcodesManager)
-	walkslist.RegisterShortcodes(shortcodesManager)
-	speed.RegisterShortcodes(shortcodesManager)
-	wowchar.RegisterShortcodes(shortcodesManager)
+	registerAssets(assetsManager)
+	registerShortcodes(shortcodesManager)
 
 	go posts.UpdateAllPosts(context.Background())
 	go syndications.SyndicateAllPosts(context.Background())

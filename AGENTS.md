@@ -7,6 +7,7 @@ go templates for rendering content.
 ## Project structure
 
 - `cmd/serve` - main program code
+- `cmd/generate` - code generator for shortcode/asset registrations
 - `admin` - admin interface, exposed on tailscale
 - `db` - shared database handling code
 - `external` - packages for interacting with external systems/APIs
@@ -68,6 +69,17 @@ When doing this, DB operations should be placed in a `db.go` file
 in the package. These operations should be as minimal as possible:
 simple inserts or retrievals. There should be as little business
 logic as possibl in the database files.
+
+### Shortcode and asset registration
+
+Packages that expose shortcodes should define a
+`RegisterShortcodes(mgr *shortcodes.Manager)` function. Packages
+that need to register static assets should define a
+`RegisterAssets(mgr *assets.Manager)` function. These are
+automatically discovered by the code generator (`cmd/generate`)
+and written to `cmd/serve/register.go`. There is no need to
+manually wire up new registrations — just add the function to
+the package and run `go generate ./cmd/serve/`.
 
 ### Admin interface
 
