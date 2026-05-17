@@ -39,7 +39,13 @@ func currentSeasonID(p *blizzard.MythicKeystoneProfile) int {
 	return maxID
 }
 
-func RunSync(ctx context.Context) {
+func RegisterGoroutine(ctx context.Context) func() {
+	return func() {
+		runSync(ctx)
+	}
+}
+
+func runSync(ctx context.Context) {
 	if *blizzardClientID == "" {
 		return
 	}

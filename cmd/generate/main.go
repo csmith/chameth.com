@@ -24,9 +24,11 @@ type pkg struct {
 	hasShortcodes   bool
 	hasAssets       bool
 	hasRoutes       bool
+	hasGoroutines   bool
 	shortcodeParams []int
 	assetParams     []int
 	routeParams     []int
+	goroutineParams []int
 }
 
 func main() {
@@ -123,11 +125,11 @@ func parseSite(root string) []provider {
 				if len(field.Names) != 1 {
 					continue
 				}
-				star, ok := field.Type.(*ast.StarExpr)
-				if !ok {
-					continue
+				typeExpr := field.Type
+				if star, ok := typeExpr.(*ast.StarExpr); ok {
+					typeExpr = star.X
 				}
-				sel, ok := star.X.(*ast.SelectorExpr)
+				sel, ok := typeExpr.(*ast.SelectorExpr)
 				if !ok {
 					continue
 				}
@@ -160,11 +162,11 @@ func matchProviders(fn *ast.FuncDecl, fileImports map[string]string, providers [
 	}
 	var matched []int
 	for _, param := range fn.Type.Params.List {
-		star, ok := param.Type.(*ast.StarExpr)
-		if !ok {
-			continue
+		typeExpr := param.Type
+		if star, ok := typeExpr.(*ast.StarExpr); ok {
+			typeExpr = star.X
 		}
-		switch x := star.X.(type) {
+		switch x := typeExpr.(type) {
 		case *ast.SelectorExpr:
 			ident, ok := x.X.(*ast.Ident)
 			if !ok {
@@ -261,11 +263,14 @@ func scan(root, mod string, providers []provider) map[string]*pkg {
 				found = true
 				p.hasRoutes = true
 				p.routeParams = append(p.routeParams, matchProviders(fn, fileImports, providers, importPath)...)
+			case "RegisterGoroutine":
+				found = true
+				p.hasGoroutines = true
+				p.goroutineParams = append(p.goroutineParams, matchProviders(fn, fileImports, providers, importPath)...)
 			}
 		}
-		if !found {
+		if !found && !p.hasShortcodes && !p.hasAssets && !p.hasRoutes && !p.hasGoroutines {
 			delete(pkgs, importPath)
-			return nil
 		}
 		return nil
 	})
@@ -308,7 +313,7 @@ func gen(root string, pkgs map[string]*pkg, providers []provider) {
 	}
 	buf.WriteString(")\n\n")
 
-	var assetPkgs, shortcodePkgs, routePkgs []*pkg
+	var assetPkgs, shortcodePkgs, routePkgs, goroutinePkgs []*pkg
 	for _, path := range sortedPaths {
 		p := pkgs[path]
 		if p.hasAssets {
@@ -319,6 +324,9 @@ func gen(root string, pkgs map[string]*pkg, providers []provider) {
 		}
 		if p.hasRoutes {
 			routePkgs = append(routePkgs, p)
+		}
+		if p.hasGoroutines {
+			goroutinePkgs = append(goroutinePkgs, p)
 		}
 	}
 
@@ -338,6 +346,14 @@ func gen(root string, pkgs map[string]*pkg, providers []provider) {
 		buf.WriteString("func (s *site) registerRoutes() {\n")
 		for _, p := range routePkgs {
 			fmt.Fprintf(&buf, "\t%s.RegisterRoutes(%s)\n", p.alias, buildArgs(p.routeParams, providers))
+		}
+		buf.WriteString("}\n")
+	}
+
+	if len(goroutinePkgs) > 0 {
+		buf.WriteString("\nfunc (s *site) launchGoroutines() {\n")
+		for _, p := range goroutinePkgs {
+			fmt.Fprintf(&buf, "\tgo %s.RegisterGoroutine(%s)()\n", p.alias, buildArgs(p.goroutineParams, providers))
 		}
 		buf.WriteString("}\n")
 	}

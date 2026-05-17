@@ -4,11 +4,14 @@
 package main
 
 import (
+	admin "chameth.com/chameth.com/admin"
+	assets "chameth.com/chameth.com/assets"
 	features "chameth.com/chameth.com/features"
 	featuresBoardgamesList "chameth.com/chameth.com/features/boardgames/list"
 	featuresBoardgamesPlayed "chameth.com/chameth.com/features/boardgames/played"
 	featuresContact "chameth.com/chameth.com/features/contact"
 	featuresContactForm "chameth.com/chameth.com/features/contact/form"
+	featuresFeeds "chameth.com/chameth.com/features/feeds"
 	featuresFilms "chameth.com/chameth.com/features/films"
 	featuresFilmsList "chameth.com/chameth.com/features/films/list"
 	featuresFilmsRatingdistribution "chameth.com/chameth.com/features/films/ratingdistribution"
@@ -20,6 +23,8 @@ import (
 	featuresMediaAudio "chameth.com/chameth.com/features/media/audio"
 	featuresMediaFigure "chameth.com/chameth.com/features/media/figure"
 	featuresMediaVideo "chameth.com/chameth.com/features/media/video"
+	featuresMetrics "chameth.com/chameth.com/features/metrics"
+	featuresMusic "chameth.com/chameth.com/features/music"
 	featuresMusicNowplaying "chameth.com/chameth.com/features/music/nowplaying"
 	featuresMusicTopalbums "chameth.com/chameth.com/features/music/topalbums"
 	featuresMusicTopartists "chameth.com/chameth.com/features/music/topartists"
@@ -35,16 +40,23 @@ import (
 	featuresShortcodesSidenote "chameth.com/chameth.com/features/shortcodes/sidenote"
 	featuresShortcodesUpdate "chameth.com/chameth.com/features/shortcodes/update"
 	featuresShortcodesWarning "chameth.com/chameth.com/features/shortcodes/warning"
+	featuresSitemap "chameth.com/chameth.com/features/sitemap"
+	featuresSnippets "chameth.com/chameth.com/features/snippets"
+	featuresSudo "chameth.com/chameth.com/features/sudo"
+	featuresSyndications "chameth.com/chameth.com/features/syndications"
 	featuresSyndicationsDisplay "chameth.com/chameth.com/features/syndications/display"
 	featuresWalksDistance "chameth.com/chameth.com/features/walks/distance"
 	featuresWalksList "chameth.com/chameth.com/features/walks/list"
 	featuresWalksSpeed "chameth.com/chameth.com/features/walks/speed"
+	featuresWow "chameth.com/chameth.com/features/wow"
 	featuresWowChar "chameth.com/chameth.com/features/wow/char"
 	handlers "chameth.com/chameth.com/handlers"
 )
 
 func (s *site) registerAssets() {
+	assets.RegisterAssets(s.Assets)
 	features.RegisterAssets(s.Assets)
+	featuresFeeds.RegisterAssets(s.Assets)
 	featuresShortcodesRating.RegisterAssets(s.Assets)
 }
 
@@ -82,10 +94,23 @@ func (s *site) registerShortcodes() {
 
 func (s *site) registerRoutes() {
 	featuresContact.RegisterRoutes(s.Mux)
+	featuresFeeds.RegisterRoutes(s.Mux)
 	featuresFilms.RegisterRoutes(s.Mux)
 	featuresNod.RegisterRoutes(s.Mux)
 	featuresPosts.RegisterRoutes(s.Mux)
 	featuresPrints.RegisterRoutes(s.Mux)
 	featuresProjects.RegisterRoutes(s.Mux)
+	featuresSitemap.RegisterRoutes(s.Mux)
+	featuresSnippets.RegisterRoutes(s.Mux)
+	featuresSudo.RegisterRoutes(s.Mux)
 	handlers.RegisterRoutes(s.Mux, s.Assets)
+}
+
+func (s *site) launchGoroutines() {
+	go admin.RegisterGoroutine(s.Tailscale, s.Assets)()
+	go featuresMetrics.RegisterGoroutine()()
+	go featuresMusic.RegisterGoroutine(s.Context, s.Tailscale)()
+	go featuresPosts.RegisterGoroutine(s.Context)()
+	go featuresSyndications.RegisterGoroutine(s.Context)()
+	go featuresWow.RegisterGoroutine(s.Context)()
 }

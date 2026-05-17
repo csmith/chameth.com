@@ -12,17 +12,13 @@ import (
 	"syscall"
 	"time"
 
-	"chameth.com/chameth.com/admin"
 	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/metrics"
-	"chameth.com/chameth.com/features/music"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/sudo"
-	"chameth.com/chameth.com/features/syndications"
-	"chameth.com/chameth.com/features/wow"
 	"chameth.com/chameth.com/handlers"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
@@ -40,13 +36,26 @@ func main() {
 	envflag.Parse()
 	_ = slogflags.Logger(slogflags.WithSetDefault(true))
 
-	metrics.StartMetricsServer()
 	if err := db.Init(metrics.LogQuery); err != nil {
 		slog.Error("Failed to initialize database", "error", err)
 		os.Exit(1)
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	s := &site{
+		Context: ctx,
+		Tailscale: &tsnet.Server{
+			Hostname: *tailscaleHost,
+			Dir:      *tailscaleDir,
+			UserLogf: func(s string, v ...any) {
+				slog.Info(fmt.Sprintf(s, v...), "source", "tailscale")
+			},
+			Logf: func(s string, v ...any) {
+				slog.Debug(fmt.Sprintf(s, v...), "source", "tailscale")
+			},
+		},
 		Assets:     assets.NewManager(),
 		Shortcodes: shortcodes.NewManager(),
 		Mux:        http.NewServeMux(),
@@ -59,34 +68,7 @@ func main() {
 	s.registerAssets()
 	s.registerShortcodes()
 	s.registerRoutes()
-
-	go posts.UpdateAllPosts(context.Background())
-	go syndications.SyndicateAllPosts(context.Background())
-
-	ts := &tsnet.Server{
-		Hostname: *tailscaleHost,
-		Dir:      *tailscaleDir,
-		UserLogf: func(s string, v ...any) {
-			slog.Info(fmt.Sprintf(s, v...), "source", "tailscale")
-		},
-		Logf: func(s string, v ...any) {
-			slog.Debug(fmt.Sprintf(s, v...), "source", "tailscale")
-		},
-	}
-
-	go func() {
-		if err := admin.Start(ts, s.Assets); err != nil {
-			slog.Error("Failed to start admin interface", "error", err)
-			os.Exit(1)
-		}
-	}()
-
-	go func() {
-		ts.Up(context.Background())
-		music.RunImport(context.Background(), ts.HTTPClient())
-	}()
-
-	go wow.RunSync(context.Background())
+	s.launchGoroutines()
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", *port),
@@ -141,9 +123,11 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
-	if err := server.Shutdown(ctx); err != nil {
+	cancel()
+
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer shutdownCancel()
+	if err := server.Shutdown(shutdownCtx); err != nil {
 		slog.Error("Failed to shutdown HTTP server", "error", err)
 		panic(err)
 	}

@@ -17,6 +17,12 @@ var (
 	password = flag.String("atproto-password", "", "App-specific password for the account on the ATProto PDS")
 )
 
+func RegisterGoroutine(ctx context.Context) func() {
+	return func() {
+		SyndicateAllPosts(ctx)
+	}
+}
+
 func SyndicateAllPosts(ctx context.Context) {
 	client, err := newClient()
 	if err != nil {

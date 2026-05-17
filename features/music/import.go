@@ -16,6 +16,7 @@ import (
 	"chameth.com/chameth.com/external/subsonic"
 	"chameth.com/chameth.com/features/media"
 	"golang.org/x/image/draw"
+	"tailscale.com/tsnet"
 )
 
 var (
@@ -24,7 +25,14 @@ var (
 	subsonicPassword = flag.String("subsonic-password", "", "Password for the Subsonic API")
 )
 
-func RunImport(ctx context.Context, client *http.Client) {
+func RegisterGoroutine(ctx context.Context, ts *tsnet.Server) func() {
+	return func() {
+		ts.Up(ctx)
+		runImport(ctx, ts.HTTPClient())
+	}
+}
+
+func runImport(ctx context.Context, client *http.Client) {
 	if *subsonicBaseUrl == "" {
 		return
 	}

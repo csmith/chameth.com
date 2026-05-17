@@ -23,10 +23,20 @@ import (
 	walksadmin "chameth.com/chameth.com/features/walks/admin"
 	wowadmin "chameth.com/chameth.com/features/wow/admin"
 	"github.com/csmith/middleware"
+	"os"
 	"tailscale.com/tsnet"
 )
 
-func Start(s *tsnet.Server, assetsManager *assets.Manager) error {
+func RegisterGoroutine(ts *tsnet.Server, assetsManager *assets.Manager) func() {
+	return func() {
+		if err := start(ts, assetsManager); err != nil {
+			slog.Error("Failed to start admin interface", "error", err)
+			os.Exit(1)
+		}
+	}
+}
+
+func start(s *tsnet.Server, assetsManager *assets.Manager) error {
 	if err := s.Start(); err != nil {
 		return err
 	}

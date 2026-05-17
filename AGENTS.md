@@ -81,11 +81,12 @@ registrations — just add the function to the package and run
 - `RegisterShortcodes(mgr *shortcodes.Manager)` — for shortcode registration
 - `RegisterAssets(mgr *assets.Manager)` — for static asset registration
 - `RegisterRoutes(mux *http.ServeMux)` — for HTTP route registration
+- `RegisterGoroutine(...) func()` — for background goroutines, returns a function to launch
 
-Route registration can optionally accept additional parameters that
-the generator knows how to provide (currently `*assets.Manager`). The
-generator inspects the function signature and passes the matching
-arguments automatically.
+All registration functions can optionally accept parameters whose types match
+fields on the `site` struct (e.g. `context.Context`, `*assets.Manager`,
+`*tsnet.Server`). The generator inspects the function signature and passes the
+matching arguments automatically.
 
 ### Admin interface
 

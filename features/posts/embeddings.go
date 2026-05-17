@@ -87,8 +87,8 @@ func GenerateAndStore(ctx context.Context, postPath string) error {
 	return nil
 }
 
-// UpdateAllPosts generates embeddings for all posts that don't have one
-func UpdateAllPosts(ctx context.Context) {
+// updateAllPosts generates embeddings for all posts that don't have one
+func updateAllPosts(ctx context.Context) {
 	slog.Info("Starting to update post embeddings")
 
 	paths, err := postPathsWithoutEmbeddings(ctx)
@@ -119,6 +119,12 @@ func UpdateAllPosts(ctx context.Context) {
 	}
 
 	slog.Info("Finished updating post embeddings", "success", successCount, "failures", failureCount, "total", len(paths))
+}
+
+func RegisterGoroutine(ctx context.Context) func() {
+	return func() {
+		updateAllPosts(ctx)
+	}
 }
 
 // RelatedPosts finds posts that are semantically similar to the given post.
