@@ -79,7 +79,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleList(w http.ResponseWriter, r *http.Request) {
+func handleList(w http.ResponseWriter, r *http.Request) {
 	allPosts, err := GetAllPosts(r.Context())
 	if err != nil {
 		slog.Error("Failed to get all posts", "error", err)

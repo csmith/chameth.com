@@ -22,7 +22,7 @@ func StaticAsset(mgr *assets.Manager) http.HandlerFunc {
 	}
 }
 
-func Stylesheet(mgr *assets.Manager) http.HandlerFunc {
+func stylesheet(mgr *assets.Manager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, checksum := mgr.Bundle(assets.PublicCSS)
 		stylesheetPath := checksum + ".css"
@@ -42,7 +42,7 @@ func Stylesheet(mgr *assets.Manager) http.HandlerFunc {
 	}
 }
 
-func Scripts(mgr *assets.Manager) http.HandlerFunc {
+func scripts(mgr *assets.Manager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, checksum := mgr.Bundle(assets.PublicJS)
 		scriptPath := checksum + ".js"

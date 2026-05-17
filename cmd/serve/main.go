@@ -16,18 +16,10 @@ import (
 	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/features/contact"
-	"chameth.com/chameth.com/features/feeds"
-	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/music"
-	"chameth.com/chameth.com/features/nod"
 	"chameth.com/chameth.com/features/posts"
-	"chameth.com/chameth.com/features/prints"
-	"chameth.com/chameth.com/features/projects"
 	"chameth.com/chameth.com/features/shortcodes"
-	"chameth.com/chameth.com/features/sitemap"
-	"chameth.com/chameth.com/features/snippets"
 	"chameth.com/chameth.com/features/sudo"
 	"chameth.com/chameth.com/features/syndications"
 	"chameth.com/chameth.com/features/wow"
@@ -56,6 +48,7 @@ func main() {
 
 	assetsManager := assets.NewManager()
 	shortcodesManager := shortcodes.NewManager()
+	mux := http.NewServeMux()
 
 	content.AssetsManager = assetsManager
 	content.RecentPostsProvider = posts.Recent
@@ -63,6 +56,7 @@ func main() {
 
 	registerAssets(assetsManager)
 	registerShortcodes(shortcodesManager)
+	registerRoutes(mux, assetsManager)
 
 	go posts.UpdateAllPosts(context.Background())
 	go syndications.SyndicateAllPosts(context.Background())
@@ -91,29 +85,6 @@ func main() {
 	}()
 
 	go wow.RunSync(context.Background())
-
-	mux := http.NewServeMux()
-	mux.Handle("POST /api/contact", http.HandlerFunc(contact.HandleJSON))
-	mux.Handle("POST /api/form/contact", http.HandlerFunc(contact.HandleForm))
-	mux.Handle("POST /api/nod", http.HandlerFunc(nod.HandleJSON))
-	mux.Handle("POST /api/form/nod", http.HandlerFunc(nod.HandleForm))
-	mux.Handle("GET /api/films/search", http.HandlerFunc(films.HandleSearch))
-	mux.Handle("GET /assets/stylesheets/", handlers.Stylesheet(assetsManager))
-	mux.Handle("GET /assets/scripts/", handlers.Scripts(assetsManager))
-	mux.Handle("GET /index.xml", http.HandlerFunc(feeds.HandleAllPosts))
-	mux.Handle("GET /short.xml", http.HandlerFunc(feeds.HandleShortPosts))
-	mux.Handle("GET /long.xml", http.HandlerFunc(feeds.HandleLongPosts))
-	mux.Handle("GET /poems/feed.xml", http.HandlerFunc(feeds.HandlePoems))
-	mux.Handle("GET /snippets/feed.xml", http.HandlerFunc(feeds.HandleSnippets))
-	mux.Handle("GET /films/reviews/feed.xml", http.HandlerFunc(feeds.HandleFilmReviews))
-	mux.Handle("GET /sitemap.xml", http.HandlerFunc(sitemap.HandleXml))
-	mux.Handle("GET /posts/{$}", http.HandlerFunc(posts.HandleList))
-	mux.Handle("GET /prints/{$}", http.HandlerFunc(prints.HandleList))
-	mux.Handle("GET /projects/{$}", http.HandlerFunc(projects.HandleList))
-	mux.Handle("GET /sitemap/{$}", http.HandlerFunc(sitemap.HandleHtml))
-	mux.Handle("GET /snippets/{$}", http.HandlerFunc(snippets.HandleList))
-	mux.Handle("GET /sudo", http.HandlerFunc(sudo.Handle))
-	mux.Handle("/", handlers.Content(handlers.StaticAsset(assetsManager)))
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", *port),

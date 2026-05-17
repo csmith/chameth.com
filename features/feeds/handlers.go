@@ -14,19 +14,19 @@ import (
 	"chameth.com/chameth.com/features/snippets"
 )
 
-func HandleAllPosts(w http.ResponseWriter, r *http.Request) {
+func handleAllPosts(w http.ResponseWriter, r *http.Request) {
 	renderPostsFeed(w, r, "Chameth.com", "all", 5, "https://chameth.com/index.xml")
 }
 
-func HandleLongPosts(w http.ResponseWriter, r *http.Request) {
+func handleLongPosts(w http.ResponseWriter, r *http.Request) {
 	renderPostsFeed(w, r, "Chameth.com - long posts", "long", 5, "https://chameth.com/long.xml")
 }
 
-func HandleShortPosts(w http.ResponseWriter, r *http.Request) {
+func handleShortPosts(w http.ResponseWriter, r *http.Request) {
 	renderPostsFeed(w, r, "Chameth.com - short posts", "short", 5, "https://chameth.com/short.xml")
 }
 
-func HandlePoems(w http.ResponseWriter, r *http.Request) {
+func handlePoems(w http.ResponseWriter, r *http.Request) {
 	slog.Debug("Serving feed", "type", "poems", "useragent", r.UserAgent())
 	metrics.RecordFeedRequest("poems", r.UserAgent())
 
@@ -79,7 +79,7 @@ func HandlePoems(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleSnippets(w http.ResponseWriter, r *http.Request) {
+func handleSnippets(w http.ResponseWriter, r *http.Request) {
 	slog.Debug("Serving feed", "type", "snippets", "useragent", r.UserAgent())
 	metrics.RecordFeedRequest("snippets", r.UserAgent())
 
@@ -127,7 +127,7 @@ func HandleSnippets(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleFilmReviews(w http.ResponseWriter, r *http.Request) {
+func handleFilmReviews(w http.ResponseWriter, r *http.Request) {
 	renderFilmReviewsFeed(w, r, "Chameth.com - film reviews", 5, "https://chameth.com/films/reviews/feed.xml")
 }
 

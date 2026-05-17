@@ -187,7 +187,7 @@ func FilmListPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleSearch(w http.ResponseWriter, r *http.Request) {
+func handleSearch(w http.ResponseWriter, r *http.Request) {
 	query := strings.TrimSpace(r.URL.Query().Get("q"))
 	if len(query) < 2 {
 		w.Header().Set("Content-Type", "application/json")

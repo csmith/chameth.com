@@ -70,16 +70,22 @@ in the package. These operations should be as minimal as possible:
 simple inserts or retrievals. There should be as little business
 logic as possibl in the database files.
 
-### Shortcode and asset registration
+### Registration functions
 
-Packages that expose shortcodes should define a
-`RegisterShortcodes(mgr *shortcodes.Manager)` function. Packages
-that need to register static assets should define a
-`RegisterAssets(mgr *assets.Manager)` function. These are
-automatically discovered by the code generator (`cmd/generate`)
-and written to `cmd/serve/register.go`. There is no need to
-manually wire up new registrations — just add the function to
-the package and run `go generate ./cmd/serve/`.
+Packages can define registration functions that are automatically
+discovered by the code generator (`cmd/generate`) and wired into
+`cmd/serve/register.go`. There is no need to manually wire up new
+registrations — just add the function to the package and run
+`go generate ./cmd/serve/`.
+
+- `RegisterShortcodes(mgr *shortcodes.Manager)` — for shortcode registration
+- `RegisterAssets(mgr *assets.Manager)` — for static asset registration
+- `RegisterRoutes(mux *http.ServeMux)` — for HTTP route registration
+
+Route registration can optionally accept additional parameters that
+the generator knows how to provide (currently `*assets.Manager`). The
+generator inspects the function signature and passes the matching
+arguments automatically.
 
 ### Admin interface
 

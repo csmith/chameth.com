@@ -14,7 +14,7 @@ import (
 	"chameth.com/chameth.com/features/snippets"
 )
 
-func Content(staticHandler http.HandlerFunc) http.HandlerFunc {
+func contentHandler(staticHandler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		contentType, err := db.FindContentByPath(r.Context(), r.URL.Path)
 		if err != nil {

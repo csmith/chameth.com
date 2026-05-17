@@ -122,7 +122,7 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 	}, nil
 }
 
-func HandleHtml(w http.ResponseWriter, r *http.Request) {
+func handleHtml(w http.ResponseWriter, r *http.Request) {
 	siteMapData, err := buildSiteMapData(r.Context(), content.CreatePageData(r.Context(), "Sitemap", "/sitemap/", templates.OpenGraphHeaders{}))
 	if err != nil {
 		slog.Error("Failed to build site map data", "error", err)
@@ -138,7 +138,7 @@ func HandleHtml(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleXml(w http.ResponseWriter, r *http.Request) {
+func handleXml(w http.ResponseWriter, r *http.Request) {
 	siteMapData, err := buildSiteMapData(r.Context(), templates.PageData{})
 	if err != nil {
 		slog.Error("Failed to build site map data", "error", err)

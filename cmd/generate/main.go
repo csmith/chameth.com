@@ -12,18 +12,29 @@ import (
 	"strings"
 )
 
+type provider struct {
+	importPath string
+	typeName   string
+	varName    string
+}
+
 type pkg struct {
 	importPath    string
 	alias         string
 	hasShortcodes bool
 	hasAssets     bool
+	hasRoutes     bool
+	routeParams   []int
 }
 
 func main() {
 	root := repoRoot()
 	mod := moduleName(filepath.Join(root, "go.mod"))
-	pkgs := scan(root, mod)
-	gen(root, mod, pkgs)
+	providers := []provider{
+		{importPath: mod + "/assets", typeName: "Manager", varName: "assetsManager"},
+	}
+	pkgs := scan(root, mod, providers)
+	gen(root, mod, pkgs, providers)
 }
 
 func die(msg string, args ...any) {
@@ -74,7 +85,39 @@ func makeAlias(mod, importPath string) string {
 	return a.String()
 }
 
-func scan(root, mod string) map[string]*pkg {
+func matchProviders(fn *ast.FuncDecl, fileImports map[string]string, providers []provider) []int {
+	if fn.Type.Params == nil || len(fn.Type.Params.List) < 2 {
+		return nil
+	}
+	var matched []int
+	for _, param := range fn.Type.Params.List[1:] {
+		star, ok := param.Type.(*ast.StarExpr)
+		if !ok {
+			continue
+		}
+		sel, ok := star.X.(*ast.SelectorExpr)
+		if !ok {
+			continue
+		}
+		ident, ok := sel.X.(*ast.Ident)
+		if !ok {
+			continue
+		}
+		impPath, ok := fileImports[ident.Name]
+		if !ok {
+			continue
+		}
+		for i, p := range providers {
+			if impPath == p.importPath && sel.Sel.Name == p.typeName {
+				matched = append(matched, i)
+				break
+			}
+		}
+	}
+	return matched
+}
+
+func scan(root, mod string, providers []provider) map[string]*pkg {
 	pkgs := map[string]*pkg{}
 	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -97,6 +140,17 @@ func scan(root, mod string) map[string]*pkg {
 			return nil
 		}
 
+		fileImports := map[string]string{}
+		for _, imp := range f.Imports {
+			impPath := strings.Trim(imp.Path.Value, "\"")
+			if imp.Name != nil {
+				fileImports[imp.Name.Name] = impPath
+			} else {
+				parts := strings.Split(impPath, "/")
+				fileImports[parts[len(parts)-1]] = impPath
+			}
+		}
+
 		rel, err := filepath.Rel(root, path)
 		if err != nil {
 			return nil
@@ -107,7 +161,8 @@ func scan(root, mod string) map[string]*pkg {
 		}
 		importPath := mod + "/" + filepath.ToSlash(dir)
 
-		var sc, as bool
+		var sc, as, rt bool
+		var rp []int
 		for _, d := range f.Decls {
 			fn, ok := d.(*ast.FuncDecl)
 			if !ok {
@@ -118,9 +173,12 @@ func scan(root, mod string) map[string]*pkg {
 				sc = true
 			case "RegisterAssets":
 				as = true
+			case "RegisterRoutes":
+				rt = true
+				rp = matchProviders(fn, fileImports, providers)
 			}
 		}
-		if !sc && !as {
+		if !sc && !as && !rt {
 			return nil
 		}
 
@@ -131,12 +189,14 @@ func scan(root, mod string) map[string]*pkg {
 		}
 		p.hasShortcodes = p.hasShortcodes || sc
 		p.hasAssets = p.hasAssets || as
+		p.hasRoutes = p.hasRoutes || rt
+		p.routeParams = append(p.routeParams, rp...)
 		return nil
 	})
 	return pkgs
 }
 
-func gen(root, mod string, pkgs map[string]*pkg) {
+func gen(root, mod string, pkgs map[string]*pkg, providers []provider) {
 	shortcodesPath := mod + "/features/shortcodes"
 	shortcodesAlias := makeAlias(mod, shortcodesPath)
 
@@ -145,6 +205,28 @@ func gen(root, mod string, pkgs map[string]*pkg) {
 		allImports[p.alias] = p.importPath
 	}
 	allImports[shortcodesAlias] = shortcodesPath
+
+	usedProviders := map[int]bool{}
+	for _, p := range pkgs {
+		for _, idx := range p.routeParams {
+			usedProviders[idx] = true
+		}
+	}
+
+	hasRoutes := false
+	for _, p := range pkgs {
+		if p.hasRoutes {
+			hasRoutes = true
+			break
+		}
+	}
+
+	if hasRoutes {
+		allImports["http"] = "net/http"
+		for idx := range usedProviders {
+			allImports[makeAlias(mod, providers[idx].importPath)] = providers[idx].importPath
+		}
+	}
 
 	sortedAliases := make([]string, 0, len(allImports))
 	for a := range allImports {
@@ -189,7 +271,39 @@ func gen(root, mod string, pkgs map[string]*pkg) {
 	for _, p := range shortcodePkgs {
 		fmt.Fprintf(&buf, "\t%s.RegisterShortcodes(mgr)\n", p.alias)
 	}
-	buf.WriteString("}\n")
+	buf.WriteString("}\n\n")
+
+	var routePkgs []*pkg
+	for _, path := range sortedPaths {
+		p := pkgs[path]
+		if p.hasRoutes {
+			routePkgs = append(routePkgs, p)
+		}
+	}
+
+	if len(routePkgs) > 0 {
+		var params []string
+		params = append(params, "mux *http.ServeMux")
+		sortedUsedProviders := make([]int, 0, len(usedProviders))
+		for idx := range usedProviders {
+			sortedUsedProviders = append(sortedUsedProviders, idx)
+		}
+		sort.Ints(sortedUsedProviders)
+		for _, idx := range sortedUsedProviders {
+			prov := providers[idx]
+			params = append(params, fmt.Sprintf("%s *%s.%s", prov.varName, makeAlias(mod, prov.importPath), prov.typeName))
+		}
+
+		fmt.Fprintf(&buf, "func registerRoutes(%s) {\n", strings.Join(params, ", "))
+		for _, p := range routePkgs {
+			args := []string{"mux"}
+			for _, idx := range p.routeParams {
+				args = append(args, providers[idx].varName)
+			}
+			fmt.Fprintf(&buf, "\t%s.RegisterRoutes(%s)\n", p.alias, strings.Join(args, ", "))
+		}
+		buf.WriteString("}\n")
+	}
 
 	out := filepath.Join(root, "cmd", "serve", "register.go")
 	if err := os.WriteFile(out, buf.Bytes(), 0644); err != nil {
