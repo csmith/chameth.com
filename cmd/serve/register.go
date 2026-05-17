@@ -4,13 +4,11 @@
 package main
 
 import (
-	assets "chameth.com/chameth.com/assets"
 	features "chameth.com/chameth.com/features"
 	featuresBoardgamesList "chameth.com/chameth.com/features/boardgames/list"
 	featuresBoardgamesPlayed "chameth.com/chameth.com/features/boardgames/played"
 	featuresContact "chameth.com/chameth.com/features/contact"
 	featuresContactForm "chameth.com/chameth.com/features/contact/form"
-	featuresFeeds "chameth.com/chameth.com/features/feeds"
 	featuresFilms "chameth.com/chameth.com/features/films"
 	featuresFilmsList "chameth.com/chameth.com/features/films/list"
 	featuresFilmsRatingdistribution "chameth.com/chameth.com/features/films/ratingdistribution"
@@ -32,73 +30,62 @@ import (
 	featuresPostsRecent "chameth.com/chameth.com/features/posts/recent"
 	featuresPrints "chameth.com/chameth.com/features/prints"
 	featuresProjects "chameth.com/chameth.com/features/projects"
-	featuresShortcodes "chameth.com/chameth.com/features/shortcodes"
 	featuresShortcodesLink "chameth.com/chameth.com/features/shortcodes/link"
 	featuresShortcodesRating "chameth.com/chameth.com/features/shortcodes/rating"
 	featuresShortcodesSidenote "chameth.com/chameth.com/features/shortcodes/sidenote"
 	featuresShortcodesUpdate "chameth.com/chameth.com/features/shortcodes/update"
 	featuresShortcodesWarning "chameth.com/chameth.com/features/shortcodes/warning"
-	featuresSitemap "chameth.com/chameth.com/features/sitemap"
-	featuresSnippets "chameth.com/chameth.com/features/snippets"
-	featuresSudo "chameth.com/chameth.com/features/sudo"
 	featuresSyndicationsDisplay "chameth.com/chameth.com/features/syndications/display"
 	featuresWalksDistance "chameth.com/chameth.com/features/walks/distance"
 	featuresWalksList "chameth.com/chameth.com/features/walks/list"
 	featuresWalksSpeed "chameth.com/chameth.com/features/walks/speed"
 	featuresWowChar "chameth.com/chameth.com/features/wow/char"
 	handlers "chameth.com/chameth.com/handlers"
-	http "net/http"
 )
 
-func registerAssets(mgr *assets.Manager) {
-	assets.RegisterAssets(mgr)
-	features.RegisterAssets(mgr)
-	featuresFeeds.RegisterAssets(mgr)
-	featuresShortcodesRating.RegisterAssets(mgr)
+func (s *site) registerAssets() {
+	features.RegisterAssets(s.Assets)
+	featuresShortcodesRating.RegisterAssets(s.Assets)
 }
 
-func registerShortcodes(mgr *featuresShortcodes.Manager) {
-	featuresBoardgamesList.RegisterShortcodes(mgr)
-	featuresBoardgamesPlayed.RegisterShortcodes(mgr)
-	featuresContactForm.RegisterShortcodes(mgr)
-	featuresFilmsList.RegisterShortcodes(mgr)
-	featuresFilmsRatingdistribution.RegisterShortcodes(mgr)
-	featuresFilmsRecent.RegisterShortcodes(mgr)
-	featuresFilmsReview.RegisterShortcodes(mgr)
-	featuresFilmsReviews.RegisterShortcodes(mgr)
-	featuresFilmsSearch.RegisterShortcodes(mgr)
-	featuresFilmsWatched.RegisterShortcodes(mgr)
-	featuresMediaAudio.RegisterShortcodes(mgr)
-	featuresMediaFigure.RegisterShortcodes(mgr)
-	featuresMediaVideo.RegisterShortcodes(mgr)
-	featuresMusicNowplaying.RegisterShortcodes(mgr)
-	featuresMusicTopalbums.RegisterShortcodes(mgr)
-	featuresMusicTopartists.RegisterShortcodes(mgr)
-	featuresNodForm.RegisterShortcodes(mgr)
-	featuresPostsLink.RegisterShortcodes(mgr)
-	featuresPostsRecent.RegisterShortcodes(mgr)
-	featuresShortcodesLink.RegisterShortcodes(mgr)
-	featuresShortcodesRating.RegisterShortcodes(mgr)
-	featuresShortcodesSidenote.RegisterShortcodes(mgr)
-	featuresShortcodesUpdate.RegisterShortcodes(mgr)
-	featuresShortcodesWarning.RegisterShortcodes(mgr)
-	featuresSyndicationsDisplay.RegisterShortcodes(mgr)
-	featuresWalksDistance.RegisterShortcodes(mgr)
-	featuresWalksList.RegisterShortcodes(mgr)
-	featuresWalksSpeed.RegisterShortcodes(mgr)
-	featuresWowChar.RegisterShortcodes(mgr)
+func (s *site) registerShortcodes() {
+	featuresBoardgamesList.RegisterShortcodes(s.Shortcodes)
+	featuresBoardgamesPlayed.RegisterShortcodes(s.Shortcodes)
+	featuresContactForm.RegisterShortcodes(s.Shortcodes)
+	featuresFilmsList.RegisterShortcodes(s.Shortcodes)
+	featuresFilmsRatingdistribution.RegisterShortcodes(s.Shortcodes)
+	featuresFilmsRecent.RegisterShortcodes(s.Shortcodes)
+	featuresFilmsReview.RegisterShortcodes(s.Shortcodes)
+	featuresFilmsReviews.RegisterShortcodes(s.Shortcodes)
+	featuresFilmsSearch.RegisterShortcodes(s.Shortcodes)
+	featuresFilmsWatched.RegisterShortcodes(s.Shortcodes)
+	featuresMediaAudio.RegisterShortcodes(s.Shortcodes)
+	featuresMediaFigure.RegisterShortcodes(s.Shortcodes)
+	featuresMediaVideo.RegisterShortcodes(s.Shortcodes)
+	featuresMusicNowplaying.RegisterShortcodes(s.Shortcodes)
+	featuresMusicTopalbums.RegisterShortcodes(s.Shortcodes)
+	featuresMusicTopartists.RegisterShortcodes(s.Shortcodes)
+	featuresNodForm.RegisterShortcodes(s.Shortcodes)
+	featuresPostsLink.RegisterShortcodes(s.Shortcodes)
+	featuresPostsRecent.RegisterShortcodes(s.Shortcodes)
+	featuresShortcodesLink.RegisterShortcodes(s.Shortcodes)
+	featuresShortcodesRating.RegisterShortcodes(s.Shortcodes)
+	featuresShortcodesSidenote.RegisterShortcodes(s.Shortcodes)
+	featuresShortcodesUpdate.RegisterShortcodes(s.Shortcodes)
+	featuresShortcodesWarning.RegisterShortcodes(s.Shortcodes)
+	featuresSyndicationsDisplay.RegisterShortcodes(s.Shortcodes)
+	featuresWalksDistance.RegisterShortcodes(s.Shortcodes)
+	featuresWalksList.RegisterShortcodes(s.Shortcodes)
+	featuresWalksSpeed.RegisterShortcodes(s.Shortcodes)
+	featuresWowChar.RegisterShortcodes(s.Shortcodes)
 }
 
-func registerRoutes(mux *http.ServeMux, assetsManager *assets.Manager) {
-	featuresContact.RegisterRoutes(mux)
-	featuresFeeds.RegisterRoutes(mux)
-	featuresFilms.RegisterRoutes(mux)
-	featuresNod.RegisterRoutes(mux)
-	featuresPosts.RegisterRoutes(mux)
-	featuresPrints.RegisterRoutes(mux)
-	featuresProjects.RegisterRoutes(mux)
-	featuresSitemap.RegisterRoutes(mux)
-	featuresSnippets.RegisterRoutes(mux)
-	featuresSudo.RegisterRoutes(mux)
-	handlers.RegisterRoutes(mux, assetsManager)
+func (s *site) registerRoutes() {
+	featuresContact.RegisterRoutes(s.Mux)
+	featuresFilms.RegisterRoutes(s.Mux)
+	featuresNod.RegisterRoutes(s.Mux)
+	featuresPosts.RegisterRoutes(s.Mux)
+	featuresPrints.RegisterRoutes(s.Mux)
+	featuresProjects.RegisterRoutes(s.Mux)
+	handlers.RegisterRoutes(s.Mux, s.Assets)
 }

@@ -46,17 +46,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	assetsManager := assets.NewManager()
-	shortcodesManager := shortcodes.NewManager()
-	mux := http.NewServeMux()
+	s := &site{
+		Assets:     assets.NewManager(),
+		Shortcodes: shortcodes.NewManager(),
+		Mux:        http.NewServeMux(),
+	}
 
-	content.AssetsManager = assetsManager
+	content.AssetsManager = s.Assets
 	content.RecentPostsProvider = posts.Recent
-	content.ShortcodesManager = shortcodesManager
+	content.ShortcodesManager = s.Shortcodes
 
-	registerAssets(assetsManager)
-	registerShortcodes(shortcodesManager)
-	registerRoutes(mux, assetsManager)
+	s.registerAssets()
+	s.registerShortcodes()
+	s.registerRoutes()
 
 	go posts.UpdateAllPosts(context.Background())
 	go syndications.SyndicateAllPosts(context.Background())
@@ -73,7 +75,7 @@ func main() {
 	}
 
 	go func() {
-		if err := admin.Start(ts, assetsManager); err != nil {
+		if err := admin.Start(ts, s.Assets); err != nil {
 			slog.Error("Failed to start admin interface", "error", err)
 			os.Exit(1)
 		}
@@ -124,7 +126,7 @@ func main() {
 				sudo.Middleware,
 				middleware.Recover(),
 			),
-		)(mux),
+		)(s.Mux),
 	}
 
 	go func() {

@@ -15,26 +15,26 @@ import (
 type provider struct {
 	importPath string
 	typeName   string
-	varName    string
+	fieldName  string
 }
 
 type pkg struct {
-	importPath    string
-	alias         string
-	hasShortcodes bool
-	hasAssets     bool
-	hasRoutes     bool
-	routeParams   []int
+	importPath      string
+	alias           string
+	hasShortcodes   bool
+	hasAssets       bool
+	hasRoutes       bool
+	shortcodeParams []int
+	assetParams     []int
+	routeParams     []int
 }
 
 func main() {
 	root := repoRoot()
 	mod := moduleName(filepath.Join(root, "go.mod"))
-	providers := []provider{
-		{importPath: mod + "/assets", typeName: "Manager", varName: "assetsManager"},
-	}
+	providers := parseSite(root)
 	pkgs := scan(root, mod, providers)
-	gen(root, mod, pkgs, providers)
+	gen(root, pkgs, providers)
 }
 
 func die(msg string, args ...any) {
@@ -85,32 +85,107 @@ func makeAlias(mod, importPath string) string {
 	return a.String()
 }
 
-func matchProviders(fn *ast.FuncDecl, fileImports map[string]string, providers []provider) []int {
-	if fn.Type.Params == nil || len(fn.Type.Params.List) < 2 {
+func parseSite(root string) []provider {
+	siteFile := filepath.Join(root, "cmd", "serve", "site.go")
+	fset := token.NewFileSet()
+	f, err := parser.ParseFile(fset, siteFile, nil, 0)
+	if err != nil {
+		die("failed to parse site.go: %v", err)
+	}
+
+	fileImports := map[string]string{}
+	for _, imp := range f.Imports {
+		impPath := strings.Trim(imp.Path.Value, "\"")
+		if imp.Name != nil {
+			fileImports[imp.Name.Name] = impPath
+		} else {
+			parts := strings.Split(impPath, "/")
+			fileImports[parts[len(parts)-1]] = impPath
+		}
+	}
+
+	var providers []provider
+	for _, d := range f.Decls {
+		gd, ok := d.(*ast.GenDecl)
+		if !ok || gd.Tok != token.TYPE {
+			continue
+		}
+		for _, spec := range gd.Specs {
+			ts, ok := spec.(*ast.TypeSpec)
+			if !ok || ts.Name.Name != "site" {
+				continue
+			}
+			st, ok := ts.Type.(*ast.StructType)
+			if !ok {
+				continue
+			}
+			for _, field := range st.Fields.List {
+				if len(field.Names) != 1 {
+					continue
+				}
+				star, ok := field.Type.(*ast.StarExpr)
+				if !ok {
+					continue
+				}
+				sel, ok := star.X.(*ast.SelectorExpr)
+				if !ok {
+					continue
+				}
+				ident, ok := sel.X.(*ast.Ident)
+				if !ok {
+					continue
+				}
+				impPath, ok := fileImports[ident.Name]
+				if !ok {
+					continue
+				}
+				providers = append(providers, provider{
+					importPath: impPath,
+					typeName:   sel.Sel.Name,
+					fieldName:  field.Names[0].Name,
+				})
+			}
+		}
+	}
+
+	if len(providers) == 0 {
+		die("no providers found in site struct")
+	}
+	return providers
+}
+
+func matchProviders(fn *ast.FuncDecl, fileImports map[string]string, providers []provider, pkgImportPath string) []int {
+	if fn.Type.Params == nil || len(fn.Type.Params.List) == 0 {
 		return nil
 	}
 	var matched []int
-	for _, param := range fn.Type.Params.List[1:] {
+	for _, param := range fn.Type.Params.List {
 		star, ok := param.Type.(*ast.StarExpr)
 		if !ok {
 			continue
 		}
-		sel, ok := star.X.(*ast.SelectorExpr)
-		if !ok {
-			continue
-		}
-		ident, ok := sel.X.(*ast.Ident)
-		if !ok {
-			continue
-		}
-		impPath, ok := fileImports[ident.Name]
-		if !ok {
-			continue
-		}
-		for i, p := range providers {
-			if impPath == p.importPath && sel.Sel.Name == p.typeName {
-				matched = append(matched, i)
-				break
+		switch x := star.X.(type) {
+		case *ast.SelectorExpr:
+			ident, ok := x.X.(*ast.Ident)
+			if !ok {
+				continue
+			}
+			impPath, ok := fileImports[ident.Name]
+			if !ok {
+				continue
+			}
+			for i, p := range providers {
+				if impPath == p.importPath && x.Sel.Name == p.typeName {
+					matched = append(matched, i)
+					break
+				}
+			}
+		case *ast.Ident:
+			for i, p := range providers {
+				if pkgImportPath == p.importPath && x.Name == p.typeName {
+					matched = append(matched, i)
+					break
+				}
 			}
 		}
 	}
@@ -161,8 +236,13 @@ func scan(root, mod string, providers []provider) map[string]*pkg {
 		}
 		importPath := mod + "/" + filepath.ToSlash(dir)
 
-		var sc, as, rt bool
-		var rp []int
+		p, ok := pkgs[importPath]
+		if !ok {
+			p = &pkg{importPath: importPath, alias: makeAlias(mod, importPath)}
+			pkgs[importPath] = p
+		}
+
+		var found bool
 		for _, d := range f.Decls {
 			fn, ok := d.(*ast.FuncDecl)
 			if !ok {
@@ -170,62 +250,40 @@ func scan(root, mod string, providers []provider) map[string]*pkg {
 			}
 			switch fn.Name.Name {
 			case "RegisterShortcodes":
-				sc = true
+				found = true
+				p.hasShortcodes = true
+				p.shortcodeParams = append(p.shortcodeParams, matchProviders(fn, fileImports, providers, importPath)...)
 			case "RegisterAssets":
-				as = true
+				found = true
+				p.hasAssets = true
+				p.assetParams = append(p.assetParams, matchProviders(fn, fileImports, providers, importPath)...)
 			case "RegisterRoutes":
-				rt = true
-				rp = matchProviders(fn, fileImports, providers)
+				found = true
+				p.hasRoutes = true
+				p.routeParams = append(p.routeParams, matchProviders(fn, fileImports, providers, importPath)...)
 			}
 		}
-		if !sc && !as && !rt {
+		if !found {
+			delete(pkgs, importPath)
 			return nil
 		}
-
-		p, ok := pkgs[importPath]
-		if !ok {
-			p = &pkg{importPath: importPath, alias: makeAlias(mod, importPath)}
-			pkgs[importPath] = p
-		}
-		p.hasShortcodes = p.hasShortcodes || sc
-		p.hasAssets = p.hasAssets || as
-		p.hasRoutes = p.hasRoutes || rt
-		p.routeParams = append(p.routeParams, rp...)
 		return nil
 	})
 	return pkgs
 }
 
-func gen(root, mod string, pkgs map[string]*pkg, providers []provider) {
-	shortcodesPath := mod + "/features/shortcodes"
-	shortcodesAlias := makeAlias(mod, shortcodesPath)
+func buildArgs(paramIndices []int, providers []provider) string {
+	var args []string
+	for _, idx := range paramIndices {
+		args = append(args, "s."+providers[idx].fieldName)
+	}
+	return strings.Join(args, ", ")
+}
 
+func gen(root string, pkgs map[string]*pkg, providers []provider) {
 	allImports := map[string]string{}
 	for _, p := range pkgs {
 		allImports[p.alias] = p.importPath
-	}
-	allImports[shortcodesAlias] = shortcodesPath
-
-	usedProviders := map[int]bool{}
-	for _, p := range pkgs {
-		for _, idx := range p.routeParams {
-			usedProviders[idx] = true
-		}
-	}
-
-	hasRoutes := false
-	for _, p := range pkgs {
-		if p.hasRoutes {
-			hasRoutes = true
-			break
-		}
-	}
-
-	if hasRoutes {
-		allImports["http"] = "net/http"
-		for idx := range usedProviders {
-			allImports[makeAlias(mod, providers[idx].importPath)] = providers[idx].importPath
-		}
 	}
 
 	sortedAliases := make([]string, 0, len(allImports))
@@ -250,7 +308,7 @@ func gen(root, mod string, pkgs map[string]*pkg, providers []provider) {
 	}
 	buf.WriteString(")\n\n")
 
-	var assetPkgs, shortcodePkgs []*pkg
+	var assetPkgs, shortcodePkgs, routePkgs []*pkg
 	for _, path := range sortedPaths {
 		p := pkgs[path]
 		if p.hasAssets {
@@ -259,48 +317,27 @@ func gen(root, mod string, pkgs map[string]*pkg, providers []provider) {
 		if p.hasShortcodes {
 			shortcodePkgs = append(shortcodePkgs, p)
 		}
-	}
-
-	buf.WriteString("func registerAssets(mgr *assets.Manager) {\n")
-	for _, p := range assetPkgs {
-		fmt.Fprintf(&buf, "\t%s.RegisterAssets(mgr)\n", p.alias)
-	}
-	buf.WriteString("}\n\n")
-
-	fmt.Fprintf(&buf, "func registerShortcodes(mgr *%s.Manager) {\n", shortcodesAlias)
-	for _, p := range shortcodePkgs {
-		fmt.Fprintf(&buf, "\t%s.RegisterShortcodes(mgr)\n", p.alias)
-	}
-	buf.WriteString("}\n\n")
-
-	var routePkgs []*pkg
-	for _, path := range sortedPaths {
-		p := pkgs[path]
 		if p.hasRoutes {
 			routePkgs = append(routePkgs, p)
 		}
 	}
 
-	if len(routePkgs) > 0 {
-		var params []string
-		params = append(params, "mux *http.ServeMux")
-		sortedUsedProviders := make([]int, 0, len(usedProviders))
-		for idx := range usedProviders {
-			sortedUsedProviders = append(sortedUsedProviders, idx)
-		}
-		sort.Ints(sortedUsedProviders)
-		for _, idx := range sortedUsedProviders {
-			prov := providers[idx]
-			params = append(params, fmt.Sprintf("%s *%s.%s", prov.varName, makeAlias(mod, prov.importPath), prov.typeName))
-		}
+	buf.WriteString("func (s *site) registerAssets() {\n")
+	for _, p := range assetPkgs {
+		fmt.Fprintf(&buf, "\t%s.RegisterAssets(%s)\n", p.alias, buildArgs(p.assetParams, providers))
+	}
+	buf.WriteString("}\n\n")
 
-		fmt.Fprintf(&buf, "func registerRoutes(%s) {\n", strings.Join(params, ", "))
+	buf.WriteString("func (s *site) registerShortcodes() {\n")
+	for _, p := range shortcodePkgs {
+		fmt.Fprintf(&buf, "\t%s.RegisterShortcodes(%s)\n", p.alias, buildArgs(p.shortcodeParams, providers))
+	}
+	buf.WriteString("}\n\n")
+
+	if len(routePkgs) > 0 {
+		buf.WriteString("func (s *site) registerRoutes() {\n")
 		for _, p := range routePkgs {
-			args := []string{"mux"}
-			for _, idx := range p.routeParams {
-				args = append(args, providers[idx].varName)
-			}
-			fmt.Fprintf(&buf, "\t%s.RegisterRoutes(%s)\n", p.alias, strings.Join(args, ", "))
+			fmt.Fprintf(&buf, "\t%s.RegisterRoutes(%s)\n", p.alias, buildArgs(p.routeParams, providers))
 		}
 		buf.WriteString("}\n")
 	}
