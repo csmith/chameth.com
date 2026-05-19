@@ -4,28 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"regexp"
-	"strings"
 	"time"
 
 	"chameth.com/chameth.com/db"
 )
-
-func generateVideoGamePath(title string) string {
-	lowered := strings.ToLower(title)
-	replaced := strings.Map(func(r rune) rune {
-		if r == ' ' {
-			return '-'
-		}
-		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
-			return r
-		}
-		return '-'
-	}, lowered)
-	cleaned := regexp.MustCompile(`-+`).ReplaceAllString(replaced, "-")
-	cleaned = regexp.MustCompile(`^-+|-+$`).ReplaceAllString(cleaned, "")
-	return "/videogames/" + cleaned + "/"
-}
 
 func GetVideoGameByID(ctx context.Context, id int) (*VideoGame, error) {
 	game, err := db.Get[VideoGame](ctx, "SELECT id, title, platform, overview, published, path FROM video_games WHERE id = $1", id)

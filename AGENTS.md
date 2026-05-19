@@ -118,7 +118,13 @@ etc.
 To build the app and test it compiles:
 
 ```
-go build -o /tmp/serve ./cmd/serve
+make build
+```
+
+To run verification (build + vet + fix + staticcheck + fmt):
+
+```
+make verify
 ```
 
 To query the database:

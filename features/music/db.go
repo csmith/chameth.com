@@ -50,14 +50,6 @@ func upsertAlbum(ctx context.Context, album musicAlbum) (int, error) {
 	return id, nil
 }
 
-func albumBySubsonicID(ctx context.Context, subsonicID string) (int, error) {
-	id, err := db.Get[int](ctx, `SELECT id FROM music_albums WHERE subsonic_id = $1`, subsonicID)
-	if err != nil {
-		return 0, fmt.Errorf("failed to get album by subsonic id: %w", err)
-	}
-	return id, nil
-}
-
 func albumsWithoutTracks(ctx context.Context) ([]musicAlbum, error) {
 	albums, err := db.Select[musicAlbum](ctx, `
 		SELECT a.* FROM music_albums a

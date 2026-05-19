@@ -54,8 +54,11 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = projecttemplates.RenderProjects(w, projecttemplates.ProjectsData{
+	if err := projecttemplates.RenderProjects(w, projecttemplates.ProjectsData{
 		ProjectGroups: groups,
 		PageData:      content.CreatePageData(r.Context(), "Projects", "/projects/", parenttemplates.OpenGraphHeaders{}),
-	})
+	}); err != nil {
+		slog.Error("Failed to render projects", "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 }
