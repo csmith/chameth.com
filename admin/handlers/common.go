@@ -3,20 +3,14 @@ package handlers
 import (
 	"net/http"
 
-	"chameth.com/chameth.com/admin/assets"
 	"chameth.com/chameth.com/admin/templates"
-	publicAssets "chameth.com/chameth.com/assets"
+	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/features/routing"
 )
 
-func RegisterRoutes(rm *routing.Manager, assetsMgr *publicAssets.Manager) {
-	rm.Admin.Handle("GET /assets/", http.StripPrefix("/assets/", AssetsHandler()))
+func RegisterRoutes(rm *routing.Manager, assetsMgr *assets.Manager) {
 	rm.Admin.HandleFunc("GET /{$}", IndexHandler())
 	rm.Admin.HandleFunc("GET /", StaticAsset(assetsMgr))
-}
-
-func AssetsHandler() http.Handler {
-	return http.FileServer(http.FS(assets.FS))
 }
 
 func IndexHandler() func(http.ResponseWriter, *http.Request) {
@@ -28,9 +22,9 @@ func IndexHandler() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func StaticAsset(mgr *publicAssets.Manager) http.HandlerFunc {
+func StaticAsset(mgr *assets.Manager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fsys, fsPath, ok := mgr.StaticAsset(r.URL.Path)
+		fsys, fsPath, ok := mgr.StaticAssetWithFallback(r.URL.Path)
 		if !ok {
 			http.NotFound(w, r)
 			return

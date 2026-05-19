@@ -69,6 +69,7 @@ import (
 )
 
 func (s *site) registerAssets() {
+	admin.RegisterAssets(s.Assets)
 	assets.RegisterAssets(s.Assets)
 	features.RegisterAssets(s.Assets)
 	featuresFeeds.RegisterAssets(s.Assets)

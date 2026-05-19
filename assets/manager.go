@@ -13,16 +13,18 @@ type staticAsset struct {
 }
 
 type Manager struct {
-	bundles      map[BundleKind]*bundle
-	suffixes     map[BundleKind]string
-	staticAssets map[string]staticAsset
+	bundles           map[BundleKind]*bundle
+	suffixes          map[BundleKind]string
+	staticAssets      map[string]staticAsset
+	adminStaticAssets map[string]staticAsset
 }
 
 func NewManager() *Manager {
 	manager := &Manager{
-		bundles:      make(map[BundleKind]*bundle),
-		suffixes:     make(map[BundleKind]string),
-		staticAssets: make(map[string]staticAsset),
+		bundles:           make(map[BundleKind]*bundle),
+		suffixes:          make(map[BundleKind]string),
+		staticAssets:      make(map[string]staticAsset),
+		adminStaticAssets: make(map[string]staticAsset),
 	}
 
 	manager.register(AdminCSS, ".admin.css")
@@ -80,6 +82,30 @@ func (m *Manager) AddStatic(fsys fs.FS, basePath string) {
 }
 
 func (m *Manager) StaticAsset(urlPath string) (fs.FS, string, bool) {
+	asset, ok := m.staticAssets[urlPath]
+	return asset.fsys, asset.fsPath, ok
+}
+
+func (m *Manager) AddAdminStatic(fsys fs.FS, urlPrefix string) {
+	fs.WalkDir(fsys, ".", func(p string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			return nil
+		}
+
+		urlPath := urlPrefix + "/" + p
+		m.adminStaticAssets[urlPath] = staticAsset{fsys: fsys, fsPath: p}
+		return nil
+	})
+}
+
+func (m *Manager) StaticAssetWithFallback(urlPath string) (fs.FS, string, bool) {
+	if asset, ok := m.adminStaticAssets[urlPath]; ok {
+		return asset.fsys, asset.fsPath, true
+	}
 	asset, ok := m.staticAssets[urlPath]
 	return asset.fsys, asset.fsPath, ok
 }

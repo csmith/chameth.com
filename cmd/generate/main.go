@@ -82,7 +82,8 @@ func makeAlias(mod, importPath string) string {
 	var a strings.Builder
 	a.WriteString(parts[0])
 	for _, p := range parts[1:] {
-		a.WriteString(strings.ToUpper(p[:1]) + p[1:])
+		a.WriteString(strings.ToUpper(p[:1]))
+		a.WriteString(p[1:])
 	}
 	return a.String()
 }
