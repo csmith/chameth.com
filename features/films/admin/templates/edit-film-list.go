@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"net/http"
 
-	admintemplates "chameth.com/chameth.com/admin/templates"
+	admintemplates "chameth.com/chameth.com/features/admin/templates"
 )
 
 //go:embed edit-film-list.html.gotpl

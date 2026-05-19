@@ -1,10 +1,14 @@
 package admin
 
 import (
-	adminAssets "chameth.com/chameth.com/admin/assets"
+	"embed"
+
 	"chameth.com/chameth.com/assets"
 )
 
+//go:embed assets/harper/*.*
+var staticFS embed.FS
+
 func RegisterAssets(mgr *assets.Manager) {
-	mgr.AddAdminStatic(adminAssets.FS, "/assets")
+	mgr.AddAdminStatic(staticFS, "/assets")
 }

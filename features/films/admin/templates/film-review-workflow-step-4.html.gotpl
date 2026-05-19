@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.Step4Data */}}
+{{/* gotype: chameth.com/chameth.com/features/admin/templates.Step4Data */}}
 {{define "content"}}
 <h2>Add Watched Film - Step 4: Write Review</h2>
 

@@ -4,9 +4,9 @@
 package main
 
 import (
-	admin "chameth.com/chameth.com/admin"
 	assets "chameth.com/chameth.com/assets"
 	features "chameth.com/chameth.com/features"
+	featuresAdmin "chameth.com/chameth.com/features/admin"
 	featuresBoardgamesAdmin "chameth.com/chameth.com/features/boardgames/admin"
 	featuresBoardgamesList "chameth.com/chameth.com/features/boardgames/list"
 	featuresBoardgamesPlayed "chameth.com/chameth.com/features/boardgames/played"
@@ -68,9 +68,9 @@ import (
 )
 
 func (s *site) registerAssets() {
-	admin.RegisterAssets(s.Assets)
 	assets.RegisterAssets(s.Assets)
 	features.RegisterAssets(s.Assets)
+	featuresAdmin.RegisterAssets(s.Assets)
 	featuresFeeds.RegisterAssets(s.Assets)
 	featuresShortcodesRating.RegisterAssets(s.Assets)
 }
@@ -108,8 +108,8 @@ func (s *site) registerShortcodes() {
 }
 
 func (s *site) registerRoutes() {
-	admin.RegisterRoutes(s.Routes, s.Assets)
 	assets.RegisterRoutes(s.Routes, s.Assets)
+	featuresAdmin.RegisterRoutes(s.Routes, s.Assets)
 	featuresBoardgamesAdmin.RegisterRoutes(s.Routes)
 	featuresContact.RegisterRoutes(s.Routes)
 	featuresFeeds.RegisterRoutes(s.Routes)
@@ -138,7 +138,7 @@ func (s *site) registerRoutes() {
 }
 
 func (s *site) launchGoroutines() {
-	go admin.RegisterGoroutine(s.Tailscale, s.Routes)()
+	go featuresAdmin.RegisterGoroutine(s.Tailscale, s.Routes)()
 	go featuresMetrics.RegisterGoroutine()()
 	go featuresMusic.RegisterGoroutine(s.Context, s.Tailscale)()
 	go featuresPosts.RegisterGoroutine(s.Context)()

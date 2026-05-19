@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.ListFilmsData */}}
+{{/* gotype: chameth.com/chameth.com/features/admin/templates.ListFilmsData */}}
 {{define "content"}}
     <h2>Add Film by TMDB ID</h2>
     <form method="POST" action="/films">

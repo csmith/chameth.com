@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"net/http"
 
-	adminTemplates "chameth.com/chameth.com/admin/templates"
+	adminTemplates "chameth.com/chameth.com/features/admin/templates"
 )
 
 //go:embed *.gotpl

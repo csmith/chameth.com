@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.EditFilmReviewData */}}
+{{/* gotype: chameth.com/chameth.com/features/admin/templates.EditFilmReviewData */}}
 {{define "content"}}
     <h2>Edit review: {{.FilmTitle}}</h2>
     <form action="/film-reviews/edit/{{.ID}}" method="post">

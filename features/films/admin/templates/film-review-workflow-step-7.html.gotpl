@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.Step7Data */}}
+{{/* gotype: chameth.com/chameth.com/features/admin/templates.Step7Data */}}
 {{define "content"}}
 <h2>Add Watched Film - Step 7: Additional Lists</h2>
 

@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.EditFilmData */}}
+{{/* gotype: chameth.com/chameth.com/features/admin/templates.EditFilmData */}}
 {{define "content"}}
     <h2>Edit film: {{.Title}}</h2>
     <a href="https://chameth.com{{.Path}}">View on chameth.com</a>

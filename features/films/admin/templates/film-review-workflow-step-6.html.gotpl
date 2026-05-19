@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.Step6Data */}}
+{{/* gotype: chameth.com/chameth.com/features/admin/templates.Step6Data */}}
 {{define "content"}}
 <h2>Add Watched Film - Step 6: Add Syndication Link</h2>
 

@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.Step5Data */}}
+{{/* gotype: chameth.com/chameth.com/features/admin/templates.Step5Data */}}
 {{define "content"}}
 <h2>Add Watched Film - Step 5: Copy Review to Letterboxd</h2>
 

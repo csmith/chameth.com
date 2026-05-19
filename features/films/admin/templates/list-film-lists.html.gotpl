@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.ListFilmListsData */}}
+{{/* gotype: chameth.com/chameth.com/features/admin/templates.ListFilmListsData */}}
 {{define "content"}}
     <h2>Film Lists</h2>
     <form method="POST" action="/film-lists">

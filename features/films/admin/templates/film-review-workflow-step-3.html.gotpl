@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/admin/templates.Step3Data */}}
+{{/* gotype: chameth.com/chameth.com/features/admin/templates.Step3Data */}}
 {{define "content"}}
 <h2>Add Watched Film - Step 3: Update Letterboxd List</h2>
 

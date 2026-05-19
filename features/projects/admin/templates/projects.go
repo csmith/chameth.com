@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"net/http"
 
-	admintemplates "chameth.com/chameth.com/admin/templates"
+	admintemplates "chameth.com/chameth.com/features/admin/templates"
 )
 
 var listProjectsTemplate = func() *template.Template {
