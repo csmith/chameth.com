@@ -7,6 +7,7 @@ import (
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/goimports"
+	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/pages"
 	"chameth.com/chameth.com/features/pastes"
 	"chameth.com/chameth.com/features/poems"
@@ -35,7 +36,7 @@ func contentHandler(staticHandler http.HandlerFunc) http.HandlerFunc {
 		case "paste":
 			pastes.PasteHandler(w, r)
 		case "media":
-			Media(w, r)
+			media.ServeMedia(w, r)
 		case "goimport":
 			goimports.GoImportHandler(w, r)
 		case "film":

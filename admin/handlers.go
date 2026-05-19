@@ -1,4 +1,4 @@
-package handlers
+package admin
 
 import (
 	"net/http"
@@ -9,11 +9,11 @@ import (
 )
 
 func RegisterRoutes(rm *routing.Manager, assetsMgr *assets.Manager) {
-	rm.Admin.HandleFunc("GET /{$}", IndexHandler())
-	rm.Admin.HandleFunc("GET /", StaticAsset(assetsMgr))
+	rm.Admin.HandleFunc("GET /{$}", handleIndex())
+	rm.Admin.HandleFunc("GET /", handleAssets(assetsMgr))
 }
 
-func IndexHandler() func(http.ResponseWriter, *http.Request) {
+func handleIndex() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		data := templates.IndexData{}
 		if err := templates.RenderIndex(w, data); err != nil {
@@ -22,7 +22,7 @@ func IndexHandler() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
-func StaticAsset(mgr *assets.Manager) http.HandlerFunc {
+func handleAssets(mgr *assets.Manager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fsys, fsPath, ok := mgr.StaticAssetWithFallback(r.URL.Path)
 		if !ok {

@@ -1,19 +1,22 @@
-package handlers
+package assets
 
 import (
-	"log/slog"
 	"net/http"
 	"path"
 
-	"chameth.com/chameth.com/assets"
-	"chameth.com/chameth.com/features/media"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func StaticAsset(mgr *assets.Manager) http.HandlerFunc {
+func RegisterRoutes(rm *routing.Manager, mgr *Manager) {
+	rm.Public.Handle("GET /assets/stylesheets/", stylesheetHandler(mgr))
+	rm.Public.Handle("GET /assets/scripts/", scriptsHandler(mgr))
+}
+
+func StaticAssetHandler(mgr *Manager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		fsys, fsPath, ok := mgr.StaticAsset(r.URL.Path)
 		if !ok {
-			NotFound(w, r)
+			http.NotFound(w, r)
 			return
 		}
 
@@ -22,9 +25,9 @@ func StaticAsset(mgr *assets.Manager) http.HandlerFunc {
 	}
 }
 
-func stylesheet(mgr *assets.Manager) http.HandlerFunc {
+func stylesheetHandler(mgr *Manager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, checksum := mgr.Bundle(assets.PublicCSS)
+		_, checksum := mgr.Bundle(PublicCSS)
 		stylesheetPath := checksum + ".css"
 
 		p := r.URL.Path
@@ -34,7 +37,7 @@ func stylesheet(mgr *assets.Manager) http.HandlerFunc {
 			return
 		}
 
-		content, _ := mgr.Bundle(assets.PublicCSS)
+		content, _ := mgr.Bundle(PublicCSS)
 		w.Header().Set("Cache-Control", "public, max-age=86400")
 		w.Header().Set("Content-Type", "text/css; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
@@ -42,9 +45,9 @@ func stylesheet(mgr *assets.Manager) http.HandlerFunc {
 	}
 }
 
-func scripts(mgr *assets.Manager) http.HandlerFunc {
+func scriptsHandler(mgr *Manager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, checksum := mgr.Bundle(assets.PublicJS)
+		_, checksum := mgr.Bundle(PublicJS)
 		scriptPath := checksum + ".js"
 
 		p := r.URL.Path
@@ -54,24 +57,10 @@ func scripts(mgr *assets.Manager) http.HandlerFunc {
 			return
 		}
 
-		content, _ := mgr.Bundle(assets.PublicJS)
+		content, _ := mgr.Bundle(PublicJS)
 		w.Header().Set("Cache-Control", "public, max-age=86400")
 		w.Header().Set("Content-Type", "application/javascript; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write(content)
 	}
-}
-
-func Media(w http.ResponseWriter, r *http.Request) {
-	m, err := media.GetMediaByPath(r.Context(), r.URL.Path)
-	if err != nil {
-		slog.Error("Failed to find media by path", "error", err, "path", r.URL.Path)
-		ServerError(w, r)
-		return
-	}
-
-	w.Header().Set("Content-Type", m.ContentType)
-	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
-	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write(m.Data)
 }

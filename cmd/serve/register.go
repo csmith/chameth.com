@@ -5,7 +5,6 @@ package main
 
 import (
 	admin "chameth.com/chameth.com/admin"
-	adminHandlers "chameth.com/chameth.com/admin/handlers"
 	assets "chameth.com/chameth.com/assets"
 	features "chameth.com/chameth.com/features"
 	featuresBoardgamesAdmin "chameth.com/chameth.com/features/boardgames/admin"
@@ -109,7 +108,8 @@ func (s *site) registerShortcodes() {
 }
 
 func (s *site) registerRoutes() {
-	adminHandlers.RegisterRoutes(s.Routes, s.Assets)
+	admin.RegisterRoutes(s.Routes, s.Assets)
+	assets.RegisterRoutes(s.Routes, s.Assets)
 	featuresBoardgamesAdmin.RegisterRoutes(s.Routes)
 	featuresContact.RegisterRoutes(s.Routes)
 	featuresFeeds.RegisterRoutes(s.Routes)
