@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/templates.NotFoundData*/}}
+{{/* gotype: chameth.com/chameth.com/features/errorpages/templates.NotFoundData*/}}
 {{define "content"}}
     <h2>Not found</h2>
 

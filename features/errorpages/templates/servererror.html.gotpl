@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/templates.ServerErrorData*/}}
+{{/* gotype: chameth.com/chameth.com/features/errorpages/templates.ServerErrorData*/}}
 {{define "content"}}
     <h2>Server error</h2>
 

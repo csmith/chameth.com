@@ -15,12 +15,12 @@ import (
 	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/errorpages"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/routing"
 	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/sudo"
-	"chameth.com/chameth.com/handlers"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
 	"github.com/csmith/slogflags"
@@ -81,8 +81,8 @@ func main() {
 				middleware.RealAddress(),
 				middleware.CrossOriginProtection(),
 				middleware.ErrorHandler(
-					middleware.WithErrorHandler(http.StatusNotFound, http.HandlerFunc(handlers.NotFound)),
-					middleware.WithErrorHandler(http.StatusInternalServerError, http.HandlerFunc(handlers.ServerError)),
+					middleware.WithErrorHandler(http.StatusNotFound, http.HandlerFunc(errorpages.NotFound)),
+					middleware.WithErrorHandler(http.StatusInternalServerError, http.HandlerFunc(errorpages.ServerError)),
 				),
 				middleware.CacheControl(
 					middleware.WithCacheTimes(map[string]time.Duration{

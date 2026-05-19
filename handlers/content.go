@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/errorpages"
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/goimports"
 	"chameth.com/chameth.com/features/media"
@@ -20,7 +21,7 @@ func contentHandler(staticHandler http.HandlerFunc) http.HandlerFunc {
 		contentType, err := db.FindContentByPath(r.Context(), r.URL.Path)
 		if err != nil {
 			slog.Error("Failed to find content by path", "error", err, "path", r.URL.Path)
-			ServerError(w, r)
+			errorpages.ServerError(w, r)
 			return
 		}
 
