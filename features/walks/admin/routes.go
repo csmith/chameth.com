@@ -1,9 +1,9 @@
-package snippets
+package admin
 
 import (
 	"chameth.com/chameth.com/features/routing"
 )
 
 func RegisterRoutes(rm *routing.Manager) {
-	rm.Public.HandleFunc("GET /snippets/{$}", handleList)
+	rm.Admin.HandleFunc("POST /api/walks/import", ImportWalksHandler())
 }

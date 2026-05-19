@@ -1,9 +1,9 @@
 package posts
 
 import (
-	"net/http"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /posts/{$}", handleList)
+func RegisterRoutes(rm *routing.Manager) {
+	rm.Public.HandleFunc("GET /posts/{$}", handleList)
 }

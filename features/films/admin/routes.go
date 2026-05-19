@@ -1,0 +1,41 @@
+package admin
+
+import (
+	"chameth.com/chameth.com/features/routing"
+)
+
+func RegisterRoutes(rm *routing.Manager) {
+	rm.Admin.HandleFunc("GET /films", ListFilmsHandler())
+	rm.Admin.HandleFunc("GET /films/search", SearchFilmsHandler())
+	rm.Admin.HandleFunc("POST /films", CreateFilmHandler())
+	rm.Admin.HandleFunc("GET /films/edit/{id}", EditFilmHandler())
+	rm.Admin.HandleFunc("POST /films/edit/{id}", UpdateFilmHandler())
+	rm.Admin.HandleFunc("POST /films/delete/{id}", DeleteFilmHandler())
+	rm.Admin.HandleFunc("POST /films/fetch-poster/{id}", FetchFilmPosterHandler())
+	rm.Admin.HandleFunc("GET /film-reviews/edit/{id}", EditFilmReviewHandler())
+	rm.Admin.HandleFunc("POST /film-reviews/create/{id}", CreateFilmReviewHandler())
+	rm.Admin.HandleFunc("POST /film-reviews/edit/{id}", UpdateFilmReviewHandler())
+	rm.Admin.HandleFunc("GET /film-lists", ListFilmListsHandler())
+	rm.Admin.HandleFunc("POST /film-lists", CreateFilmListHandler())
+	rm.Admin.HandleFunc("GET /film-lists/{id}/edit", EditFilmListHandler())
+	rm.Admin.HandleFunc("POST /film-lists/{id}/edit", UpdateFilmListHandler())
+	rm.Admin.HandleFunc("POST /film-lists/{id}/entries", AddFilmToListHandler())
+	rm.Admin.HandleFunc("POST /film-lists/{id}/entries/remove/{entryId}", RemoveFilmFromListHandler())
+	rm.Admin.HandleFunc("POST /film-lists/{id}/entries/position/{entryId}", UpdateEntryPositionHandler())
+	rm.Admin.HandleFunc("POST /film-lists/{id}/entries/reorder", ReorderFilmListEntriesHandler())
+	rm.Admin.HandleFunc("GET /api/films/reviews/", GetFilmsWithReviewsHandler())
+	rm.Admin.HandleFunc("GET /films/workflow/step/1", FilmReviewWorkflowStep1Handler())
+	rm.Admin.HandleFunc("POST /films/workflow/step/1", FilmReviewWorkflowStep1Handler())
+	rm.Admin.HandleFunc("GET /films/workflow/step/2", FilmReviewWorkflowStep2Handler())
+	rm.Admin.HandleFunc("POST /films/workflow/step/2", FilmReviewWorkflowStep2Handler())
+	rm.Admin.HandleFunc("GET /films/workflow/step/3", FilmReviewWorkflowStep3Handler())
+	rm.Admin.HandleFunc("POST /films/workflow/step/3", FilmReviewWorkflowStep3Handler())
+	rm.Admin.HandleFunc("GET /films/workflow/step/4", FilmReviewWorkflowStep4Handler())
+	rm.Admin.HandleFunc("POST /films/workflow/step/4", FilmReviewWorkflowStep4Handler())
+	rm.Admin.HandleFunc("GET /films/workflow/step/5", FilmReviewWorkflowStep5Handler())
+	rm.Admin.HandleFunc("POST /films/workflow/step/5", FilmReviewWorkflowStep5Handler())
+	rm.Admin.HandleFunc("GET /films/workflow/step/6", FilmReviewWorkflowStep6Handler())
+	rm.Admin.HandleFunc("POST /films/workflow/step/6", FilmReviewWorkflowStep6Handler())
+	rm.Admin.HandleFunc("GET /films/workflow/step/7", FilmReviewWorkflowStep7Handler())
+	rm.Admin.HandleFunc("POST /films/workflow/step/7", FilmReviewWorkflowStep7Handler())
+}

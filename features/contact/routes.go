@@ -1,10 +1,10 @@
 package contact
 
 import (
-	"net/http"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("POST /api/contact", handleJSON)
-	mux.HandleFunc("POST /api/form/contact", handleForm)
+func RegisterRoutes(rm *routing.Manager) {
+	rm.Public.HandleFunc("POST /api/contact", handleJSON)
+	rm.Public.HandleFunc("POST /api/form/contact", handleForm)
 }

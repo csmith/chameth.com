@@ -1,14 +1,14 @@
 package feeds
 
 import (
-	"net/http"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /index.xml", handleAllPosts)
-	mux.HandleFunc("GET /short.xml", handleShortPosts)
-	mux.HandleFunc("GET /long.xml", handleLongPosts)
-	mux.HandleFunc("GET /poems/feed.xml", handlePoems)
-	mux.HandleFunc("GET /snippets/feed.xml", handleSnippets)
-	mux.HandleFunc("GET /films/reviews/feed.xml", handleFilmReviews)
+func RegisterRoutes(rm *routing.Manager) {
+	rm.Public.HandleFunc("GET /index.xml", handleAllPosts)
+	rm.Public.HandleFunc("GET /short.xml", handleShortPosts)
+	rm.Public.HandleFunc("GET /long.xml", handleLongPosts)
+	rm.Public.HandleFunc("GET /poems/feed.xml", handlePoems)
+	rm.Public.HandleFunc("GET /snippets/feed.xml", handleSnippets)
+	rm.Public.HandleFunc("GET /films/reviews/feed.xml", handleFilmReviews)
 }

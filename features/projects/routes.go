@@ -1,9 +1,9 @@
 package projects
 
 import (
-	"net/http"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /projects/{$}", handleList)
+func RegisterRoutes(rm *routing.Manager) {
+	rm.Public.HandleFunc("GET /projects/{$}", handleList)
 }

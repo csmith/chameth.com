@@ -17,6 +17,7 @@ import (
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/posts"
+	"chameth.com/chameth.com/features/routing"
 	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/sudo"
 	"chameth.com/chameth.com/handlers"
@@ -58,7 +59,7 @@ func main() {
 		},
 		Assets:     assets.NewManager(),
 		Shortcodes: shortcodes.NewManager(),
-		Mux:        http.NewServeMux(),
+		Routes:     routing.NewManager(),
 	}
 
 	content.AssetsManager = s.Assets
@@ -104,11 +105,11 @@ func main() {
 					middleware.WithHeader("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload"),
 					middleware.WithHeader("Referrer-Policy", "no-referrer-when-downgrade"),
 				),
-				applyRedirects(),
+				routing.ApplyRedirects(),
 				sudo.Middleware,
 				middleware.Recover(),
 			),
-		)(s.Mux),
+		)(s.Routes.Public),
 	}
 
 	go func() {

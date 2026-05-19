@@ -1,10 +1,10 @@
 package sitemap
 
 import (
-	"net/http"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /sitemap.xml", handleXml)
-	mux.HandleFunc("GET /sitemap/{$}", handleHtml)
+func RegisterRoutes(rm *routing.Manager) {
+	rm.Public.HandleFunc("GET /sitemap.xml", handleXml)
+	rm.Public.HandleFunc("GET /sitemap/{$}", handleHtml)
 }

@@ -1,4 +1,4 @@
-package main
+package routing
 
 import (
 	"net/http"
@@ -11,10 +11,8 @@ type redirect struct {
 }
 
 var redirects = []redirect{
-	// URLs should be folders, not individual HTML files
 	{regexp.MustCompile(`^(.*/)index\.html$`), `$1`},
 	{regexp.MustCompile(`^(.*)\.html$`), `$1/`},
-	// Old paths for images from before "content bundles"
 	{regexp.MustCompile(`^/res/images/sense/(.*)$`), `/sense-api/$1`},
 	{regexp.MustCompile(`^/res/images/wemo/(.*)$`), `/monitoring-power-with-wemo/$1`},
 	{regexp.MustCompile(`^/res/images/docker/(.*)$`), `/docker-automatic-nginx-proxy/$1`},
@@ -29,7 +27,6 @@ var redirects = []redirect{
 	{regexp.MustCompile(`^/res/images/debugging/(.*)$`), `/debugging-beyond-the-debugger/$1`},
 	{regexp.MustCompile(`^/res/images/unsplash/(.*)$`), `/debugging-beyond-the-debugger/$1`},
 	{regexp.MustCompile(`^/res/images/obfuscation/(.*)$`), `/obfuscating-kotlin-proguard/$1`},
-	// Old paths for posts and other bits
 	{regexp.MustCompile(`^/20[0-9][0-9]/[0-9][0-9]/[0-9][0-9]/(.*)/?$`), `/$1/`},
 	{regexp.MustCompile(`^/page/(.*)/?$`), `/posts/$1/`},
 	{regexp.MustCompile(`^/poem/(.*)/?$`), `/$1/`},
@@ -46,7 +43,19 @@ var redirects = []redirect{
 	{regexp.MustCompile(`^/catalogue/?$`), `/posts/`},
 }
 
-func applyRedirects() func(http.Handler) http.Handler {
+type Manager struct {
+	Public *http.ServeMux
+	Admin  *http.ServeMux
+}
+
+func NewManager() *Manager {
+	return &Manager{
+		Public: http.NewServeMux(),
+		Admin:  http.NewServeMux(),
+	}
+}
+
+func ApplyRedirects() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			for _, rw := range redirects {

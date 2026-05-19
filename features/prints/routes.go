@@ -1,9 +1,9 @@
 package prints
 
 import (
-	"net/http"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /prints/{$}", handleList)
+func RegisterRoutes(rm *routing.Manager) {
+	rm.Public.HandleFunc("GET /prints/{$}", handleList)
 }

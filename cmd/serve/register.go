@@ -5,14 +5,17 @@ package main
 
 import (
 	admin "chameth.com/chameth.com/admin"
+	adminHandlers "chameth.com/chameth.com/admin/handlers"
 	assets "chameth.com/chameth.com/assets"
 	features "chameth.com/chameth.com/features"
+	featuresBoardgamesAdmin "chameth.com/chameth.com/features/boardgames/admin"
 	featuresBoardgamesList "chameth.com/chameth.com/features/boardgames/list"
 	featuresBoardgamesPlayed "chameth.com/chameth.com/features/boardgames/played"
 	featuresContact "chameth.com/chameth.com/features/contact"
 	featuresContactForm "chameth.com/chameth.com/features/contact/form"
 	featuresFeeds "chameth.com/chameth.com/features/feeds"
 	featuresFilms "chameth.com/chameth.com/features/films"
+	featuresFilmsAdmin "chameth.com/chameth.com/features/films/admin"
 	featuresFilmsList "chameth.com/chameth.com/features/films/list"
 	featuresFilmsRatingdistribution "chameth.com/chameth.com/features/films/ratingdistribution"
 	featuresFilmsRecent "chameth.com/chameth.com/features/films/recent"
@@ -20,6 +23,8 @@ import (
 	featuresFilmsReviews "chameth.com/chameth.com/features/films/reviews"
 	featuresFilmsSearch "chameth.com/chameth.com/features/films/search"
 	featuresFilmsWatched "chameth.com/chameth.com/features/films/watched"
+	featuresGoimportsAdmin "chameth.com/chameth.com/features/goimports/admin"
+	featuresMediaAdmin "chameth.com/chameth.com/features/media/admin"
 	featuresMediaAudio "chameth.com/chameth.com/features/media/audio"
 	featuresMediaFigure "chameth.com/chameth.com/features/media/figure"
 	featuresMediaVideo "chameth.com/chameth.com/features/media/video"
@@ -30,11 +35,16 @@ import (
 	featuresMusicTopartists "chameth.com/chameth.com/features/music/topartists"
 	featuresNod "chameth.com/chameth.com/features/nod"
 	featuresNodForm "chameth.com/chameth.com/features/nod/form"
+	featuresPagesAdmin "chameth.com/chameth.com/features/pages/admin"
+	featuresPastesAdmin "chameth.com/chameth.com/features/pastes/admin"
+	featuresPoemsAdmin "chameth.com/chameth.com/features/poems/admin"
 	featuresPosts "chameth.com/chameth.com/features/posts"
+	featuresPostsAdmin "chameth.com/chameth.com/features/posts/admin"
 	featuresPostsLink "chameth.com/chameth.com/features/posts/link"
 	featuresPostsRecent "chameth.com/chameth.com/features/posts/recent"
 	featuresPrints "chameth.com/chameth.com/features/prints"
 	featuresProjects "chameth.com/chameth.com/features/projects"
+	featuresProjectsAdmin "chameth.com/chameth.com/features/projects/admin"
 	featuresShortcodesLink "chameth.com/chameth.com/features/shortcodes/link"
 	featuresShortcodesRating "chameth.com/chameth.com/features/shortcodes/rating"
 	featuresShortcodesSidenote "chameth.com/chameth.com/features/shortcodes/sidenote"
@@ -42,13 +52,18 @@ import (
 	featuresShortcodesWarning "chameth.com/chameth.com/features/shortcodes/warning"
 	featuresSitemap "chameth.com/chameth.com/features/sitemap"
 	featuresSnippets "chameth.com/chameth.com/features/snippets"
+	featuresSnippetsAdmin "chameth.com/chameth.com/features/snippets/admin"
 	featuresSudo "chameth.com/chameth.com/features/sudo"
 	featuresSyndications "chameth.com/chameth.com/features/syndications"
+	featuresSyndicationsAdmin "chameth.com/chameth.com/features/syndications/admin"
 	featuresSyndicationsDisplay "chameth.com/chameth.com/features/syndications/display"
+	featuresVideogamesAdmin "chameth.com/chameth.com/features/videogames/admin"
+	featuresWalksAdmin "chameth.com/chameth.com/features/walks/admin"
 	featuresWalksDistance "chameth.com/chameth.com/features/walks/distance"
 	featuresWalksList "chameth.com/chameth.com/features/walks/list"
 	featuresWalksSpeed "chameth.com/chameth.com/features/walks/speed"
 	featuresWow "chameth.com/chameth.com/features/wow"
+	featuresWowAdmin "chameth.com/chameth.com/features/wow/admin"
 	featuresWowChar "chameth.com/chameth.com/features/wow/char"
 	handlers "chameth.com/chameth.com/handlers"
 )
@@ -93,21 +108,36 @@ func (s *site) registerShortcodes() {
 }
 
 func (s *site) registerRoutes() {
-	featuresContact.RegisterRoutes(s.Mux)
-	featuresFeeds.RegisterRoutes(s.Mux)
-	featuresFilms.RegisterRoutes(s.Mux)
-	featuresNod.RegisterRoutes(s.Mux)
-	featuresPosts.RegisterRoutes(s.Mux)
-	featuresPrints.RegisterRoutes(s.Mux)
-	featuresProjects.RegisterRoutes(s.Mux)
-	featuresSitemap.RegisterRoutes(s.Mux)
-	featuresSnippets.RegisterRoutes(s.Mux)
-	featuresSudo.RegisterRoutes(s.Mux)
-	handlers.RegisterRoutes(s.Mux, s.Assets)
+	adminHandlers.RegisterRoutes(s.Routes, s.Assets)
+	featuresBoardgamesAdmin.RegisterRoutes(s.Routes)
+	featuresContact.RegisterRoutes(s.Routes)
+	featuresFeeds.RegisterRoutes(s.Routes)
+	featuresFilms.RegisterRoutes(s.Routes)
+	featuresFilmsAdmin.RegisterRoutes(s.Routes)
+	featuresGoimportsAdmin.RegisterRoutes(s.Routes)
+	featuresMediaAdmin.RegisterRoutes(s.Routes)
+	featuresNod.RegisterRoutes(s.Routes)
+	featuresPagesAdmin.RegisterRoutes(s.Routes)
+	featuresPastesAdmin.RegisterRoutes(s.Routes)
+	featuresPoemsAdmin.RegisterRoutes(s.Routes)
+	featuresPosts.RegisterRoutes(s.Routes)
+	featuresPostsAdmin.RegisterRoutes(s.Routes)
+	featuresPrints.RegisterRoutes(s.Routes)
+	featuresProjects.RegisterRoutes(s.Routes)
+	featuresProjectsAdmin.RegisterRoutes(s.Routes)
+	featuresSitemap.RegisterRoutes(s.Routes)
+	featuresSnippets.RegisterRoutes(s.Routes)
+	featuresSnippetsAdmin.RegisterRoutes(s.Routes)
+	featuresSudo.RegisterRoutes(s.Routes)
+	featuresSyndicationsAdmin.RegisterRoutes(s.Routes)
+	featuresVideogamesAdmin.RegisterRoutes(s.Routes)
+	featuresWalksAdmin.RegisterRoutes(s.Routes)
+	featuresWowAdmin.RegisterRoutes(s.Routes)
+	handlers.RegisterRoutes(s.Routes, s.Assets)
 }
 
 func (s *site) launchGoroutines() {
-	go admin.RegisterGoroutine(s.Tailscale, s.Assets)()
+	go admin.RegisterGoroutine(s.Tailscale, s.Routes)()
 	go featuresMetrics.RegisterGoroutine()()
 	go featuresMusic.RegisterGoroutine(s.Context, s.Tailscale)()
 	go featuresPosts.RegisterGoroutine(s.Context)()

@@ -1,9 +1,9 @@
 package sudo
 
 import (
-	"net/http"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /sudo", handle)
+func RegisterRoutes(rm *routing.Manager) {
+	rm.Public.HandleFunc("GET /sudo", handle)
 }

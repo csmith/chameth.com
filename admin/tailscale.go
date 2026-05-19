@@ -6,37 +6,22 @@ import (
 	"net/http"
 	"time"
 
-	"chameth.com/chameth.com/admin/handlers"
-	"chameth.com/chameth.com/assets"
-	bgadmin "chameth.com/chameth.com/features/boardgames/admin"
-	filmadmin "chameth.com/chameth.com/features/films/admin"
-	goimportadmin "chameth.com/chameth.com/features/goimports/admin"
-	mediaadmin "chameth.com/chameth.com/features/media/admin"
-	pageadmin "chameth.com/chameth.com/features/pages/admin"
-	pasteadmin "chameth.com/chameth.com/features/pastes/admin"
-	poemadmin "chameth.com/chameth.com/features/poems/admin"
-	postadmin "chameth.com/chameth.com/features/posts/admin"
-	projectadmin "chameth.com/chameth.com/features/projects/admin"
-	snippetadmin "chameth.com/chameth.com/features/snippets/admin"
-	syndicationadmin "chameth.com/chameth.com/features/syndications/admin"
-	vgadmin "chameth.com/chameth.com/features/videogames/admin"
-	walksadmin "chameth.com/chameth.com/features/walks/admin"
-	wowadmin "chameth.com/chameth.com/features/wow/admin"
+	"chameth.com/chameth.com/features/routing"
 	"github.com/csmith/middleware"
 	"os"
 	"tailscale.com/tsnet"
 )
 
-func RegisterGoroutine(ts *tsnet.Server, assetsManager *assets.Manager) func() {
+func RegisterGoroutine(ts *tsnet.Server, rm *routing.Manager) func() {
 	return func() {
-		if err := start(ts, assetsManager); err != nil {
+		if err := start(ts, rm); err != nil {
 			slog.Error("Failed to start admin interface", "error", err)
 			os.Exit(1)
 		}
 	}
 }
 
-func start(s *tsnet.Server, assetsManager *assets.Manager) error {
+func start(s *tsnet.Server, rm *routing.Manager) error {
 	if err := s.Start(); err != nil {
 		return err
 	}
@@ -52,104 +37,14 @@ func start(s *tsnet.Server, assetsManager *assets.Manager) error {
 	}
 
 	httpServer := &http.Server{
-		Handler: http.HandlerFunc(handlers.RedirectHandler(func() string {
-			return fullHostName(s)
-		})),
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			httpsURL := "https://" + fullHostName(s) + r.URL.Path
+			if r.URL.RawQuery != "" {
+				httpsURL += "?" + r.URL.RawQuery
+			}
+			http.Redirect(w, r, httpsURL, http.StatusMovedPermanently)
+		}),
 	}
-
-	httpsMux := http.NewServeMux()
-	httpsMux.Handle("GET /assets/", http.StripPrefix("/assets/", handlers.AssetsHandler()))
-	httpsMux.HandleFunc("GET /{$}", handlers.IndexHandler())
-	httpsMux.HandleFunc("GET /posts", postadmin.ListPostsHandler())
-	httpsMux.HandleFunc("POST /posts", postadmin.CreatePostHandler())
-	httpsMux.HandleFunc("GET /posts/edit/{id}", postadmin.EditPostHandler())
-	httpsMux.HandleFunc("POST /posts/edit/{id}", postadmin.UpdatePostHandler())
-	httpsMux.HandleFunc("POST /posts/generate-wordcloud/{id}", postadmin.GenerateWordcloudHandler())
-	httpsMux.HandleFunc("GET /pages", pageadmin.ListPagesHandler())
-	httpsMux.HandleFunc("POST /pages", pageadmin.CreatePageHandler())
-	httpsMux.HandleFunc("GET /pages/edit/{id}", pageadmin.EditPageHandler())
-	httpsMux.HandleFunc("POST /pages/edit/{id}", pageadmin.UpdatePageHandler())
-	httpsMux.HandleFunc("GET /snippets", snippetadmin.ListSnippetsHandler())
-	httpsMux.HandleFunc("POST /snippets", snippetadmin.CreateSnippetHandler())
-	httpsMux.HandleFunc("GET /snippets/edit/{id}", snippetadmin.EditSnippetHandler())
-	httpsMux.HandleFunc("POST /snippets/edit/{id}", snippetadmin.UpdateSnippetHandler())
-	httpsMux.HandleFunc("GET /poems", poemadmin.ListPoemsHandler())
-	httpsMux.HandleFunc("POST /poems", poemadmin.CreatePoemHandler())
-	httpsMux.HandleFunc("GET /poems/edit/{id}", poemadmin.EditPoemHandler())
-	httpsMux.HandleFunc("POST /poems/edit/{id}", poemadmin.UpdatePoemHandler())
-	httpsMux.HandleFunc("GET /pastes", pasteadmin.ListPastesHandler())
-	httpsMux.HandleFunc("POST /pastes", pasteadmin.CreatePasteHandler())
-	httpsMux.HandleFunc("GET /pastes/edit/{id}", pasteadmin.EditPasteHandler())
-	httpsMux.HandleFunc("POST /pastes/edit/{id}", pasteadmin.UpdatePasteHandler())
-	httpsMux.HandleFunc("GET /projects", projectadmin.ListProjectsHandler())
-	httpsMux.HandleFunc("POST /projects", projectadmin.CreateProjectHandler())
-	httpsMux.HandleFunc("GET /projects/edit/{id}", projectadmin.EditProjectHandler())
-	httpsMux.HandleFunc("POST /projects/edit/{id}", projectadmin.UpdateProjectHandler())
-	httpsMux.HandleFunc("GET /media", mediaadmin.MediaHandler())
-	httpsMux.HandleFunc("POST /media/upload", mediaadmin.UploadMediaHandler())
-	httpsMux.HandleFunc("GET /media/view/{id}", mediaadmin.ViewMediaHandler())
-	httpsMux.HandleFunc("GET /media/edit/{id}", mediaadmin.EditMediaHandler())
-	httpsMux.HandleFunc("POST /media/edit/{id}", mediaadmin.ReplaceMediaHandler())
-	httpsMux.HandleFunc("GET /media-relations/edit", mediaadmin.EditMediaRelationsHandler())
-	httpsMux.HandleFunc("POST /media-relations/update", mediaadmin.UpdateMediaRelationHandler())
-	httpsMux.HandleFunc("POST /media-relations/remove", mediaadmin.RemoveMediaRelationHandler())
-	httpsMux.HandleFunc("POST /media-relations/add", mediaadmin.AddMediaRelationsHandler())
-	httpsMux.HandleFunc("GET /goimports", goimportadmin.ListGoImportsHandler())
-	httpsMux.HandleFunc("POST /goimports", goimportadmin.CreateGoImportHandler())
-	httpsMux.HandleFunc("GET /goimports/edit/{id}", goimportadmin.EditGoImportHandler())
-	httpsMux.HandleFunc("POST /goimports/edit/{id}", goimportadmin.UpdateGoImportHandler())
-	httpsMux.HandleFunc("GET /films", filmadmin.ListFilmsHandler())
-	httpsMux.HandleFunc("GET /films/search", filmadmin.SearchFilmsHandler())
-	httpsMux.HandleFunc("POST /films", filmadmin.CreateFilmHandler())
-	httpsMux.HandleFunc("GET /films/edit/{id}", filmadmin.EditFilmHandler())
-	httpsMux.HandleFunc("POST /films/edit/{id}", filmadmin.UpdateFilmHandler())
-	httpsMux.HandleFunc("POST /films/delete/{id}", filmadmin.DeleteFilmHandler())
-	httpsMux.HandleFunc("POST /films/fetch-poster/{id}", filmadmin.FetchFilmPosterHandler())
-	httpsMux.HandleFunc("GET /film-reviews/edit/{id}", filmadmin.EditFilmReviewHandler())
-	httpsMux.HandleFunc("POST /film-reviews/create/{id}", filmadmin.CreateFilmReviewHandler())
-	httpsMux.HandleFunc("POST /film-reviews/edit/{id}", filmadmin.UpdateFilmReviewHandler())
-	httpsMux.HandleFunc("GET /film-lists", filmadmin.ListFilmListsHandler())
-	httpsMux.HandleFunc("POST /film-lists", filmadmin.CreateFilmListHandler())
-	httpsMux.HandleFunc("GET /film-lists/{id}/edit", filmadmin.EditFilmListHandler())
-	httpsMux.HandleFunc("POST /film-lists/{id}/edit", filmadmin.UpdateFilmListHandler())
-	httpsMux.HandleFunc("POST /film-lists/{id}/entries", filmadmin.AddFilmToListHandler())
-	httpsMux.HandleFunc("POST /film-lists/{id}/entries/remove/{entryId}", filmadmin.RemoveFilmFromListHandler())
-	httpsMux.HandleFunc("POST /film-lists/{id}/entries/position/{entryId}", filmadmin.UpdateEntryPositionHandler())
-	httpsMux.HandleFunc("POST /film-lists/{id}/entries/reorder", filmadmin.ReorderFilmListEntriesHandler())
-	httpsMux.HandleFunc("GET /api/films/reviews/", filmadmin.GetFilmsWithReviewsHandler())
-	httpsMux.HandleFunc("POST /api/walks/import", walksadmin.ImportWalksHandler())
-	httpsMux.HandleFunc("POST /api/boardgames/import", bgadmin.ImportBoardgamesHandler())
-	httpsMux.HandleFunc("GET /wow", wowadmin.ListCharactersHandler())
-	httpsMux.HandleFunc("POST /wow/import", wowadmin.ImportCharacterHandler())
-	httpsMux.HandleFunc("GET /wow/refresh/{id}", wowadmin.RefreshCharacterHandler())
-	httpsMux.HandleFunc("GET /films/workflow/step/1", filmadmin.FilmReviewWorkflowStep1Handler())
-	httpsMux.HandleFunc("POST /films/workflow/step/1", filmadmin.FilmReviewWorkflowStep1Handler())
-	httpsMux.HandleFunc("GET /films/workflow/step/2", filmadmin.FilmReviewWorkflowStep2Handler())
-	httpsMux.HandleFunc("POST /films/workflow/step/2", filmadmin.FilmReviewWorkflowStep2Handler())
-	httpsMux.HandleFunc("GET /films/workflow/step/3", filmadmin.FilmReviewWorkflowStep3Handler())
-	httpsMux.HandleFunc("POST /films/workflow/step/3", filmadmin.FilmReviewWorkflowStep3Handler())
-	httpsMux.HandleFunc("GET /films/workflow/step/4", filmadmin.FilmReviewWorkflowStep4Handler())
-	httpsMux.HandleFunc("POST /films/workflow/step/4", filmadmin.FilmReviewWorkflowStep4Handler())
-	httpsMux.HandleFunc("GET /films/workflow/step/5", filmadmin.FilmReviewWorkflowStep5Handler())
-	httpsMux.HandleFunc("POST /films/workflow/step/5", filmadmin.FilmReviewWorkflowStep5Handler())
-	httpsMux.HandleFunc("GET /films/workflow/step/6", filmadmin.FilmReviewWorkflowStep6Handler())
-	httpsMux.HandleFunc("POST /films/workflow/step/6", filmadmin.FilmReviewWorkflowStep6Handler())
-	httpsMux.HandleFunc("GET /films/workflow/step/7", filmadmin.FilmReviewWorkflowStep7Handler())
-	httpsMux.HandleFunc("POST /films/workflow/step/7", filmadmin.FilmReviewWorkflowStep7Handler())
-	httpsMux.HandleFunc("GET /videogames", vgadmin.ListVideoGamesHandler())
-	httpsMux.HandleFunc("POST /videogames", vgadmin.CreateVideoGameHandler())
-	httpsMux.HandleFunc("GET /videogames/edit/{id}", vgadmin.EditVideoGameHandler())
-	httpsMux.HandleFunc("POST /videogames/edit/{id}", vgadmin.UpdateVideoGameHandler())
-	httpsMux.HandleFunc("POST /videogames/delete/{id}", vgadmin.DeleteVideoGameHandler())
-	httpsMux.HandleFunc("GET /video-game-reviews/edit/{id}", vgadmin.EditVideoGameReviewHandler())
-	httpsMux.HandleFunc("POST /video-game-reviews/create/{id}", vgadmin.CreateVideoGameReviewHandler())
-	httpsMux.HandleFunc("POST /video-game-reviews/edit/{id}", vgadmin.UpdateVideoGameReviewHandler())
-	httpsMux.HandleFunc("GET /syndications", syndicationadmin.ListSyndicationsHandler())
-	httpsMux.HandleFunc("POST /syndications/create", syndicationadmin.CreateSyndicationHandler())
-	httpsMux.HandleFunc("GET /syndications/edit/{id}", syndicationadmin.EditSyndicationHandler())
-	httpsMux.HandleFunc("POST /syndications/edit/{id}", syndicationadmin.UpdateSyndicationHandler())
-	httpsMux.HandleFunc("POST /syndications/delete/{id}", syndicationadmin.DeleteSyndicationHandler())
-	httpsMux.HandleFunc("GET /", handlers.StaticAsset(assetsManager))
 
 	httpsServer := &http.Server{
 		Handler: middleware.Chain(
@@ -168,7 +63,7 @@ func start(s *tsnet.Server, assetsManager *assets.Manager) error {
 					slog.Error("Panic serving admin site", "url", r.RequestURI, "error", err)
 				})),
 			),
-		)(httpsMux),
+		)(rm.Admin),
 	}
 
 	go httpServer.Serve(httpListener)

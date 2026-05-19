@@ -1,22 +1,18 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"chameth.com/chameth.com/admin/assets"
 	"chameth.com/chameth.com/admin/templates"
 	publicAssets "chameth.com/chameth.com/assets"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func RedirectHandler(hostname func() string) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		httpsURL := fmt.Sprintf("https://%s%s", hostname(), r.URL.Path)
-		if r.URL.RawQuery != "" {
-			httpsURL += "?" + r.URL.RawQuery
-		}
-		http.Redirect(w, r, httpsURL, http.StatusMovedPermanently)
-	}
+func RegisterRoutes(rm *routing.Manager, assetsMgr *publicAssets.Manager) {
+	rm.Admin.Handle("GET /assets/", http.StripPrefix("/assets/", AssetsHandler()))
+	rm.Admin.HandleFunc("GET /{$}", IndexHandler())
+	rm.Admin.HandleFunc("GET /", StaticAsset(assetsMgr))
 }
 
 func AssetsHandler() http.Handler {

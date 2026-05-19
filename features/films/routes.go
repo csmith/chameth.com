@@ -1,9 +1,9 @@
 package films
 
 import (
-	"net/http"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /api/films/search", handleSearch)
+func RegisterRoutes(rm *routing.Manager) {
+	rm.Public.HandleFunc("GET /api/films/search", handleSearch)
 }
