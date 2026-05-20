@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"sync"
 	"sync/atomic"
 	"time"
 )
@@ -29,7 +30,9 @@ func (c *Cache[T]) Get() *T {
 }
 
 type KeyedCache[T any] struct {
+	mutex  sync.RWMutex
 	values map[string]*Cache[*T]
+
 	update func(key string) *T
 	maxAge time.Duration
 }
@@ -43,12 +46,16 @@ func NewKeyed[T any](maxAge time.Duration, update func(key string) *T) *KeyedCac
 }
 
 func (c *KeyedCache[T]) Get(key string) *T {
+	c.mutex.RLock()
 	cache, ok := c.values[key]
+	c.mutex.RUnlock()
 	if !ok {
 		cache = New(c.maxAge, func() *T {
 			return c.update(key)
 		})
+		c.mutex.Lock()
 		c.values[key] = cache
+		c.mutex.Unlock()
 	}
 	return *cache.Get()
 }
