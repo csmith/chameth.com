@@ -22,7 +22,9 @@ import (
 	featuresFilmsReviews "chameth.com/chameth.com/features/films/reviews"
 	featuresFilmsSearch "chameth.com/chameth.com/features/films/search"
 	featuresFilmsWatched "chameth.com/chameth.com/features/films/watched"
+	featuresGoimports "chameth.com/chameth.com/features/goimports"
 	featuresGoimportsAdmin "chameth.com/chameth.com/features/goimports/admin"
+	featuresMedia "chameth.com/chameth.com/features/media"
 	featuresMediaAdmin "chameth.com/chameth.com/features/media/admin"
 	featuresMediaAudio "chameth.com/chameth.com/features/media/audio"
 	featuresMediaFigure "chameth.com/chameth.com/features/media/figure"
@@ -34,8 +36,11 @@ import (
 	featuresMusicTopartists "chameth.com/chameth.com/features/music/topartists"
 	featuresNod "chameth.com/chameth.com/features/nod"
 	featuresNodForm "chameth.com/chameth.com/features/nod/form"
+	featuresPages "chameth.com/chameth.com/features/pages"
 	featuresPagesAdmin "chameth.com/chameth.com/features/pages/admin"
+	featuresPastes "chameth.com/chameth.com/features/pastes"
 	featuresPastesAdmin "chameth.com/chameth.com/features/pastes/admin"
+	featuresPoems "chameth.com/chameth.com/features/poems"
 	featuresPoemsAdmin "chameth.com/chameth.com/features/poems/admin"
 	featuresPosts "chameth.com/chameth.com/features/posts"
 	featuresPostsAdmin "chameth.com/chameth.com/features/posts/admin"
@@ -44,6 +49,7 @@ import (
 	featuresPrints "chameth.com/chameth.com/features/prints"
 	featuresProjects "chameth.com/chameth.com/features/projects"
 	featuresProjectsAdmin "chameth.com/chameth.com/features/projects/admin"
+	featuresRouting "chameth.com/chameth.com/features/routing"
 	featuresShortcodesLink "chameth.com/chameth.com/features/shortcodes/link"
 	featuresShortcodesRating "chameth.com/chameth.com/features/shortcodes/rating"
 	featuresShortcodesSidenote "chameth.com/chameth.com/features/shortcodes/sidenote"
@@ -64,7 +70,6 @@ import (
 	featuresWow "chameth.com/chameth.com/features/wow"
 	featuresWowAdmin "chameth.com/chameth.com/features/wow/admin"
 	featuresWowChar "chameth.com/chameth.com/features/wow/char"
-	handlers "chameth.com/chameth.com/handlers"
 )
 
 func (s *site) registerAssets() {
@@ -126,6 +131,7 @@ func (s *site) registerRoutes() {
 	featuresPrints.RegisterRoutes(s.Routes)
 	featuresProjects.RegisterRoutes(s.Routes)
 	featuresProjectsAdmin.RegisterRoutes(s.Routes)
+	featuresRouting.RegisterRoutes(s.Routes)
 	featuresSitemap.RegisterRoutes(s.Routes)
 	featuresSnippets.RegisterRoutes(s.Routes)
 	featuresSnippetsAdmin.RegisterRoutes(s.Routes)
@@ -134,7 +140,6 @@ func (s *site) registerRoutes() {
 	featuresVideogamesAdmin.RegisterRoutes(s.Routes)
 	featuresWalksAdmin.RegisterRoutes(s.Routes)
 	featuresWowAdmin.RegisterRoutes(s.Routes)
-	handlers.RegisterRoutes(s.Routes, s.Assets)
 }
 
 func (s *site) launchGoroutines() {
@@ -144,4 +149,15 @@ func (s *site) launchGoroutines() {
 	go featuresPosts.RegisterGoroutine(s.Context)()
 	go featuresSyndications.RegisterGoroutine(s.Context)()
 	go featuresWow.RegisterGoroutine(s.Context)()
+}
+
+func (s *site) registerContentTypes() {
+	featuresFilms.RegisterContentTypes(s.Routes)
+	featuresGoimports.RegisterContentTypes(s.Routes)
+	featuresMedia.RegisterContentTypes(s.Routes)
+	featuresPages.RegisterContentTypes(s.Routes)
+	featuresPastes.RegisterContentTypes(s.Routes)
+	featuresPoems.RegisterContentTypes(s.Routes)
+	featuresPosts.RegisterContentTypes(s.Routes)
+	featuresSnippets.RegisterContentTypes(s.Routes)
 }

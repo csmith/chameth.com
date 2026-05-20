@@ -19,16 +19,18 @@ type provider struct {
 }
 
 type pkg struct {
-	importPath      string
-	alias           string
-	hasShortcodes   bool
-	hasAssets       bool
-	hasRoutes       bool
-	hasGoroutines   bool
-	shortcodeParams []int
-	assetParams     []int
-	routeParams     []int
-	goroutineParams []int
+	importPath        string
+	alias             string
+	hasShortcodes     bool
+	hasAssets         bool
+	hasRoutes         bool
+	hasGoroutines     bool
+	hasContentTypes   bool
+	shortcodeParams   []int
+	assetParams       []int
+	routeParams       []int
+	goroutineParams   []int
+	contentTypeParams []int
 }
 
 func main() {
@@ -268,9 +270,13 @@ func scan(root, mod string, providers []provider) map[string]*pkg {
 				found = true
 				p.hasGoroutines = true
 				p.goroutineParams = append(p.goroutineParams, matchProviders(fn, fileImports, providers, importPath)...)
+			case "RegisterContentTypes":
+				found = true
+				p.hasContentTypes = true
+				p.contentTypeParams = append(p.contentTypeParams, matchProviders(fn, fileImports, providers, importPath)...)
 			}
 		}
-		if !found && !p.hasShortcodes && !p.hasAssets && !p.hasRoutes && !p.hasGoroutines {
+		if !found && !p.hasShortcodes && !p.hasAssets && !p.hasRoutes && !p.hasGoroutines && !p.hasContentTypes {
 			delete(pkgs, importPath)
 		}
 		return nil
@@ -314,7 +320,7 @@ func gen(root string, pkgs map[string]*pkg, providers []provider) {
 	}
 	buf.WriteString(")\n\n")
 
-	var assetPkgs, shortcodePkgs, routePkgs, goroutinePkgs []*pkg
+	var assetPkgs, shortcodePkgs, routePkgs, goroutinePkgs, contentTypePkgs []*pkg
 	for _, path := range sortedPaths {
 		p := pkgs[path]
 		if p.hasAssets {
@@ -328,6 +334,9 @@ func gen(root string, pkgs map[string]*pkg, providers []provider) {
 		}
 		if p.hasGoroutines {
 			goroutinePkgs = append(goroutinePkgs, p)
+		}
+		if p.hasContentTypes {
+			contentTypePkgs = append(contentTypePkgs, p)
 		}
 	}
 
@@ -355,6 +364,14 @@ func gen(root string, pkgs map[string]*pkg, providers []provider) {
 		buf.WriteString("\nfunc (s *site) launchGoroutines() {\n")
 		for _, p := range goroutinePkgs {
 			fmt.Fprintf(&buf, "\tgo %s.RegisterGoroutine(%s)()\n", p.alias, buildArgs(p.goroutineParams, providers))
+		}
+		buf.WriteString("}\n")
+	}
+
+	if len(contentTypePkgs) > 0 {
+		buf.WriteString("\nfunc (s *site) registerContentTypes() {\n")
+		for _, p := range contentTypePkgs {
+			fmt.Fprintf(&buf, "\t%s.RegisterContentTypes(%s)\n", p.alias, buildArgs(p.contentTypeParams, providers))
 		}
 		buf.WriteString("}\n")
 	}

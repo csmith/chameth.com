@@ -1,8 +1,11 @@
 package routing
 
 import (
+	"log/slog"
 	"net/http"
 	"regexp"
+
+	"chameth.com/chameth.com/db"
 )
 
 type redirect struct {
@@ -46,13 +49,23 @@ var redirects = []redirect{
 type Manager struct {
 	Public *http.ServeMux
 	Admin  *http.ServeMux
+
+	contentTypes map[string]http.HandlerFunc
+	fallback     http.HandlerFunc
 }
 
-func NewManager() *Manager {
+func NewManager(fallback http.HandlerFunc) *Manager {
 	return &Manager{
 		Public: http.NewServeMux(),
 		Admin:  http.NewServeMux(),
+
+		contentTypes: make(map[string]http.HandlerFunc),
+		fallback:     fallback,
 	}
+}
+
+func (m *Manager) RegisterContentType(contentType string, handler http.HandlerFunc) {
+	m.contentTypes[contentType] = handler
 }
 
 func ApplyRedirects() func(http.Handler) http.Handler {
@@ -70,4 +83,22 @@ func ApplyRedirects() func(http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 		})
 	}
+}
+
+func (m *Manager) contentHandler() http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		contentType, err := db.FindContentByPath(r.Context(), r.URL.Path)
+		if err != nil {
+			slog.Error("Failed to find content by path", "error", err, "path", r.URL.Path)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		if handler, ok := m.contentTypes[contentType]; ok {
+			handler(w, r)
+			return
+		}
+
+		m.fallback(w, r)
+	})
 }

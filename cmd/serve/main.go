@@ -45,6 +45,8 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	am := assets.NewManager()
+
 	s := &site{
 		Context: ctx,
 		Tailscale: &tsnet.Server{
@@ -57,9 +59,9 @@ func main() {
 				slog.Debug(fmt.Sprintf(s, v...), "source", "tailscale")
 			},
 		},
-		Assets:     assets.NewManager(),
+		Assets:     am,
 		Shortcodes: shortcodes.NewManager(),
-		Routes:     routing.NewManager(),
+		Routes:     routing.NewManager(assets.StaticAssetHandler(am)),
 	}
 
 	content.AssetsManager = s.Assets
@@ -68,6 +70,7 @@ func main() {
 
 	s.registerAssets()
 	s.registerShortcodes()
+	s.registerContentTypes()
 	s.registerRoutes()
 	s.launchGoroutines()
 
