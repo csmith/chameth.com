@@ -38,6 +38,6 @@ func stylesheetPath() string {
 }
 
 func scriptPath() string {
-	_, checksum := AssetsManager.Bundle(assets.PublicCSS)
+	_, checksum := AssetsManager.Bundle(assets.PublicJS)
 	return checksum + ".js"
 }
