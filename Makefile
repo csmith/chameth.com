@@ -4,7 +4,11 @@ db:
 	docker-compose up -d
 
 dev:	build db
+ifndef AGENT
 	bash -c "export $$(grep -v '^#' .env | xargs -d '\n'); /tmp/chamethdotcom"
+else
+	$(error The dev target should not be run by agents)
+endif
 
 build:
 	go generate ./...
