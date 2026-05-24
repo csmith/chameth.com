@@ -1,0 +1,21 @@
+{{/* gotype: chameth.com/chameth.com/features/media/labelledfigure.Data*/}}
+<figure class="image full labelled-figure">
+<label class="labelled-figure-controls"><input type="checkbox" class="show-all-regions">Show all regions</label>
+<div class="labelled-figure-container">
+<picture>
+{{range .Sources}}<source srcset="{{ .Src }}" type="{{ .Type }}">{{end}}
+<img src="{{ .Src }}" alt="{{ .Description }}" loading="lazy" width="{{ .Width }}" height="{{ .Height }}">
+</picture>
+<svg class="labelled-figure-overlay" viewBox="0 0 {{ .Width }} {{ .Height }}" xmlns="http://www.w3.org/2000/svg">
+{{- range .Regions }}
+<g class="region" tabindex="0" role="region" aria-label="{{ .Label }}">
+<rect class="region-hit" x="{{ .X }}" y="{{ .Y }}" width="{{ .W }}" height="{{ .H }}" fill="transparent"></rect>
+<rect class="region-border" x="{{ .X }}" y="{{ .Y }}" width="{{ .W }}" height="{{ .H }}" fill="none" stroke="{{ .Colour }}" stroke-width="2" vector-effect="non-scaling-stroke" rx="4"></rect>
+<text class="region-label" x="{{ .CenterX }}" y="{{ .CenterY }}" fill="{{ .Colour }}" font-size="{{ .FontSize }}">{{ .Label }}</text>
+</g>
+{{ end -}}
+</svg>
+</div>
+<figcaption>{{ .Caption }}</figcaption>
+</figure>
+</div>
