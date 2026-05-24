@@ -77,6 +77,15 @@ type MythicKeystoneSeasonProfile struct {
 	BestRuns []MythicRun `json:"best_runs"`
 }
 
+type CharacterAchievements struct {
+	Achievements []CharacterAchievement `json:"achievements"`
+}
+
+type CharacterAchievement struct {
+	Achievement        NamedRef `json:"achievement"`
+	CompletedTimestamp int64    `json:"completed_timestamp"`
+}
+
 type MythicRun struct {
 	CompletedTimestamp    int64    `json:"completed_timestamp"`
 	Duration              int64    `json:"duration"`

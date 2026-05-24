@@ -153,6 +153,19 @@ func (c *Client) GetMythicKeystoneSeasonProfile(realm, character string, seasonI
 	return &profile, nil
 }
 
+func (c *Client) GetCharacterAchievements(realm, character string) (*CharacterAchievements, error) {
+	var achievements CharacterAchievements
+	err := c.get(
+		fmt.Sprintf("/profile/wow/character/%s/%s/achievements?namespace=profile-eu&locale=en_GB",
+			strings.ToLower(realm), strings.ToLower(character)),
+		&achievements,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get achievements for %s-%s: %w", realm, character, err)
+	}
+	return &achievements, nil
+}
+
 func (c *Client) GetCharacterMedia(realm, character string) (*CharacterMedia, error) {
 	var media CharacterMedia
 	err := c.get(

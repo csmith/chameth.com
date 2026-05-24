@@ -256,3 +256,77 @@ func syncProfessions(ctx context.Context, characterID int, profs *blizzard.Chara
 
 	return nil
 }
+
+type RecentAchievement struct {
+	AchievementID   int       `db:"achievement_id"`
+	AchievementName string    `db:"achievement_name"`
+	CompletedAt     time.Time `db:"completed_at"`
+	CharacterName   string    `db:"character_name"`
+	IsAccountWide   bool      `db:"is_account_wide"`
+}
+
+func GetRecentAchievements(ctx context.Context, limit int) ([]RecentAchievement, error) {
+	achievements, err := db.Select[RecentAchievement](ctx, `
+		WITH ordered AS (
+			SELECT
+				a.achievement_id,
+				a.achievement_name,
+				a.completed_at,
+				a.character_id,
+				LAG(a.completed_at) OVER (PARTITION BY a.achievement_id ORDER BY a.completed_at) AS prev_at
+			FROM wow_achievements a
+		),
+		islands AS (
+			SELECT
+				achievement_id,
+				achievement_name,
+				completed_at,
+				character_id,
+				SUM(CASE WHEN prev_at IS NULL OR EXTRACT(EPOCH FROM (completed_at - prev_at)) >= 60 THEN 1 ELSE 0 END)
+					OVER (PARTITION BY achievement_id ORDER BY completed_at) AS grp
+			FROM ordered
+		),
+		deduped AS (
+			SELECT DISTINCT ON (achievement_id, grp)
+				achievement_id, achievement_name, completed_at, character_id, grp
+			FROM islands
+			ORDER BY achievement_id, grp, completed_at
+		)
+		SELECT
+			d.achievement_id,
+			d.achievement_name,
+			d.completed_at,
+			c.character_name,
+			(SELECT COUNT(*) > 1 FROM islands i2 WHERE i2.achievement_id = d.achievement_id AND i2.grp = d.grp) AS is_account_wide
+		FROM deduped d
+		JOIN wow_characters c ON c.id = d.character_id
+		ORDER BY d.completed_at DESC
+		LIMIT $1
+	`, limit)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get recent achievements: %w", err)
+	}
+	return achievements, nil
+}
+
+func syncAchievements(ctx context.Context, characterID int, achievements *blizzard.CharacterAchievements) error {
+	for _, a := range achievements.Achievements {
+		if a.CompletedTimestamp == 0 {
+			continue
+		}
+
+		completedAt := time.UnixMilli(a.CompletedTimestamp)
+
+		_, err := db.Exec(ctx, `
+			INSERT INTO wow_achievements (achievement_id, achievement_name, completed_at, character_id)
+			VALUES ($1, $2, $3, $4)
+			ON CONFLICT (achievement_id, completed_at, character_id)
+			DO NOTHING
+		`, a.Achievement.ID, a.Achievement.Name, completedAt, characterID)
+		if err != nil {
+			return fmt.Errorf("failed to upsert achievement %d: %w", a.Achievement.ID, err)
+		}
+	}
+
+	return nil
+}

@@ -1,0 +1,45 @@
+.wow-achievements {
+    margin-bottom: var(--medium-space);
+    padding: var(--raised-box-title-padding) var(--smedium-space)
+        var(--smedium-space);
+
+    .achievement-list {
+        font-size: var(--font-size-small);
+        width: 100%;
+
+        td {
+            vertical-align: middle;
+            padding: 2px 0;
+        }
+
+        .achievement-name {
+            color: var(--text-colour);
+        }
+
+        .achievement-earned {
+            color: var(--text-alt-colour);
+            font-size: var(--font-size-tiny);
+            padding-left: var(--small-space);
+        }
+
+        .achievement-date {
+            color: var(--text-alt-colour);
+            font-size: var(--font-size-tiny);
+            text-align: right;
+            padding-left: var(--small-space);
+            white-space: nowrap;
+        }
+
+        .achievement-link {
+            color: var(--text-alt-colour);
+            font-size: var(--font-size-tiny);
+            text-align: right;
+            padding-left: var(--small-space);
+            white-space: nowrap;
+
+            a {
+                text-decoration-thickness: 2px;
+            }
+        }
+    }
+}

@@ -42,3 +42,11 @@ type MythicPlusRun struct {
 	IsCompletedWithinTime bool    `db:"is_completed_within_time"`
 	MythicRating          float64 `db:"mythic_rating"`
 }
+
+type Achievement struct {
+	ID              int       `db:"id"`
+	AchievementID   int       `db:"achievement_id"`
+	AchievementName string    `db:"achievement_name"`
+	CompletedAt     time.Time `db:"completed_at"`
+	CharacterID     int       `db:"character_id"`
+}

@@ -61,6 +61,15 @@ func syncCharacter(ctx context.Context, realm, name string) (int, error) {
 		return 0, fmt.Errorf("failed to sync professions: %w", err)
 	}
 
+	achievements, err := bc.GetCharacterAchievements(realm, name)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get character achievements: %w", err)
+	}
+
+	if err := syncAchievements(ctx, characterID, achievements); err != nil {
+		return 0, fmt.Errorf("failed to sync achievements: %w", err)
+	}
+
 	mplus, err := bc.GetMythicKeystoneProfile(realm, name)
 	if err != nil {
 		return 0, fmt.Errorf("failed to get mythic keystone profile: %w", err)
