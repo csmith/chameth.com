@@ -23,5 +23,10 @@
         </label>
         <input type="submit" />
     </form>
+    {{if not .Published}}
+    <form action="/film-reviews/delete/{{.ID}}" method="post" onsubmit="return confirm('Delete this review?')">
+        <input type="submit" value="Delete" />
+    </form>
+    {{end}}
     <a href="/films/edit/{{.FilmID}}">Back to film</a>
 {{end}}

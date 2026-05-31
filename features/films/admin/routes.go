@@ -16,6 +16,7 @@ func RegisterRoutes(rm *routing.Manager) {
 	rm.Admin.HandleFunc("GET /film-reviews/edit/{id}", EditFilmReviewHandler())
 	rm.Admin.HandleFunc("POST /film-reviews/create/{id}", CreateFilmReviewHandler())
 	rm.Admin.HandleFunc("POST /film-reviews/edit/{id}", UpdateFilmReviewHandler())
+	rm.Admin.HandleFunc("POST /film-reviews/delete/{id}", DeleteFilmReviewHandler())
 	rm.Admin.HandleFunc("GET /film-lists", ListFilmListsHandler())
 	rm.Admin.HandleFunc("POST /film-lists", CreateFilmListHandler())
 	rm.Admin.HandleFunc("GET /film-lists/{id}/edit", EditFilmListHandler())

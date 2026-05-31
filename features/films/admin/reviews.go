@@ -76,6 +76,36 @@ func CreateFilmReviewHandler() func(http.ResponseWriter, *http.Request) {
 	}
 }
 
+func DeleteFilmReviewHandler() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := r.PathValue("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid review ID", http.StatusBadRequest)
+			return
+		}
+
+		review, err := films.GetFilmReviewByID(r.Context(), id)
+		if err != nil {
+			http.Error(w, "Review not found", http.StatusNotFound)
+			return
+		}
+
+		if review.Published {
+			http.Error(w, "Cannot delete published review", http.StatusBadRequest)
+			return
+		}
+
+		if err := films.DeleteFilmReview(r.Context(), id); err != nil {
+			slog.Error("Failed to delete film review", "error", err, "id", id)
+			http.Error(w, "Failed to delete film review", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, fmt.Sprintf("/films/edit/%d", review.FilmID), http.StatusSeeOther)
+	}
+}
+
 func UpdateFilmReviewHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idStr := r.PathValue("id")

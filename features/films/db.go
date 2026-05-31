@@ -279,6 +279,14 @@ func CreateFilmReview(ctx context.Context, filmID int, rating int, watchedDate a
 	return id, nil
 }
 
+func DeleteFilmReview(ctx context.Context, id int) error {
+	_, err := db.Exec(ctx, "DELETE FROM film_reviews WHERE id = $1 AND published = false", id)
+	if err != nil {
+		return fmt.Errorf("failed to delete film review: %w", err)
+	}
+	return nil
+}
+
 func UpdateFilmReview(ctx context.Context, id int, rating int, watchedDate string, isRewatch, hasSpoilers, published bool, reviewText string) error {
 	_, err := db.Exec(ctx, `
 		UPDATE film_reviews
