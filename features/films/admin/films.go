@@ -1,10 +1,15 @@
 package admin
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
+	"image"
+	"image/jpeg"
+	"image/png"
+	"io"
 	"log/slog"
 	"net/http"
 	"regexp"
@@ -16,6 +21,7 @@ import (
 	films "chameth.com/chameth.com/features/films"
 	filmtemplates "chameth.com/chameth.com/features/films/admin/templates"
 	"chameth.com/chameth.com/features/media"
+	"golang.org/x/image/draw"
 )
 
 var (
@@ -41,11 +47,7 @@ func generateFilmPath(title string, year int) string {
 	return "/films/" + cleaned + "/"
 }
 
-func updateOrCreateFilmPoster(ctx context.Context, filmID int, filmTitle, posterPath string) error {
-	if posterPath == "" {
-		return fmt.Errorf("poster path is empty")
-	}
-
+func removeExistingPoster(ctx context.Context, filmID int) error {
 	mediaRelations, err := media.GetMediaRelationsForEntity(ctx, "film", filmID)
 	if err != nil {
 		return fmt.Errorf("failed to get media relations: %w", err)
@@ -62,20 +64,22 @@ func updateOrCreateFilmPoster(ctx context.Context, filmID int, filmTitle, poster
 			break
 		}
 	}
+	return nil
+}
 
-	posterData, err := tmdb.DownloadPoster(*tmdbAPIKey, posterPath, 500)
-	if err != nil {
-		return fmt.Errorf("failed to download poster: %w", err)
+func setFilmPoster(ctx context.Context, filmID int, filmTitle, contentType string, data []byte, width, height int) error {
+	if err := removeExistingPoster(ctx, filmID); err != nil {
+		return err
 	}
 
 	ext := ".jpg"
-	if posterData.ContentType == "image/png" {
+	if contentType == "image/png" {
 		ext = ".png"
 	}
 	filename := fmt.Sprintf("%d%s", filmID, ext)
 	mediaRelationsPath := fmt.Sprintf("/films/%d/poster%s", filmID, ext)
 
-	mediaID, err := media.CreateMedia(ctx, posterData.ContentType, filename, posterData.Data, &posterData.Width, &posterData.Height, nil)
+	mediaID, err := media.CreateMedia(ctx, contentType, filename, data, &width, &height, nil)
 	if err != nil {
 		return fmt.Errorf("failed to create media: %w", err)
 	}
@@ -88,6 +92,53 @@ func updateOrCreateFilmPoster(ctx context.Context, filmID int, filmTitle, poster
 	}
 
 	return nil
+}
+
+func resizeAndCrop(img image.Image, targetW, targetH int) image.Image {
+	srcW := img.Bounds().Dx()
+	srcH := img.Bounds().Dy()
+	scaleX := float64(targetW) / float64(srcW)
+	scaleY := float64(targetH) / float64(srcH)
+	scale := max(scaleX, scaleY)
+
+	scaledW := int(float64(srcW) * scale)
+	scaledH := int(float64(srcH) * scale)
+
+	scaled := image.NewRGBA(image.Rect(0, 0, scaledW, scaledH))
+	draw.CatmullRom.Scale(scaled, scaled.Bounds(), img, img.Bounds(), draw.Over, nil)
+
+	cropX := (scaledW - targetW) / 2
+	cropY := (scaledH - targetH) / 2
+	return scaled.SubImage(image.Rect(cropX, cropY, cropX+targetW, cropY+targetH))
+}
+
+func encodeImage(img image.Image, format string) ([]byte, string, error) {
+	var buf bytes.Buffer
+	switch format {
+	case "png":
+		if err := png.Encode(&buf, img); err != nil {
+			return nil, "", err
+		}
+		return buf.Bytes(), "image/png", nil
+	default:
+		if err := jpeg.Encode(&buf, img, &jpeg.Options{Quality: 90}); err != nil {
+			return nil, "", err
+		}
+		return buf.Bytes(), "image/jpeg", nil
+	}
+}
+
+func updateOrCreateFilmPoster(ctx context.Context, filmID int, filmTitle, posterPath string) error {
+	if posterPath == "" {
+		return fmt.Errorf("poster path is empty")
+	}
+
+	posterData, err := tmdb.DownloadPoster(*tmdbAPIKey, posterPath, 500)
+	if err != nil {
+		return fmt.Errorf("failed to download poster: %w", err)
+	}
+
+	return setFilmPoster(ctx, filmID, filmTitle, posterData.ContentType, posterData.Data, posterData.Width, posterData.Height)
 }
 
 func ListFilmsHandler() func(http.ResponseWriter, *http.Request) {
@@ -436,6 +487,62 @@ func FetchFilmPosterHandler() func(http.ResponseWriter, *http.Request) {
 		if err := updateOrCreateFilmPoster(r.Context(), id, film.Title, movie.PosterPath); err != nil {
 			slog.Error("Failed to update film poster", "error", err)
 			http.Error(w, "Failed to update film poster", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, fmt.Sprintf("/films/edit/%d", id), http.StatusSeeOther)
+	}
+}
+
+func UploadFilmPosterHandler() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		idStr := r.PathValue("id")
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid film ID", http.StatusBadRequest)
+			return
+		}
+
+		film, err := films.GetFilmByID(r.Context(), id)
+		if err != nil {
+			http.Error(w, "Film not found", http.StatusNotFound)
+			return
+		}
+
+		if err := r.ParseMultipartForm(32 << 20); err != nil {
+			http.Error(w, "Failed to parse form", http.StatusBadRequest)
+			return
+		}
+
+		file, _, err := r.FormFile("poster")
+		if err != nil {
+			http.Error(w, "No poster file provided", http.StatusBadRequest)
+			return
+		}
+		defer file.Close()
+
+		fileData, err := io.ReadAll(file)
+		if err != nil {
+			http.Error(w, "Failed to read file", http.StatusInternalServerError)
+			return
+		}
+
+		img, format, err := image.Decode(bytes.NewReader(fileData))
+		if err != nil {
+			http.Error(w, "Failed to decode image", http.StatusBadRequest)
+			return
+		}
+
+		cropped := resizeAndCrop(img, 500, 750)
+		encoded, contentType, err := encodeImage(cropped, format)
+		if err != nil {
+			http.Error(w, "Failed to encode image", http.StatusInternalServerError)
+			return
+		}
+
+		if err := setFilmPoster(r.Context(), id, film.Title, contentType, encoded, 500, 750); err != nil {
+			slog.Error("Failed to set film poster", "error", err)
+			http.Error(w, "Failed to set film poster", http.StatusInternalServerError)
 			return
 		}
 

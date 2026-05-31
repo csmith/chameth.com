@@ -35,6 +35,13 @@
     </form>
     {{end}}
 
+    <h2>Upload Poster</h2>
+    <form method="POST" action="/films/upload-poster/{{.ID}}" enctype="multipart/form-data">
+        <input type="file" name="poster" accept="image/jpeg,image/png" required />
+        <button type="submit">Upload Poster</button>
+        <p><small>Image will be cropped to 500×750.</small></p>
+    </form>
+
     <h2>Reviews</h2>
     <form method="POST" action="/film-reviews/create/{{.ID}}">
         <button type="submit">Add New Review</button>
