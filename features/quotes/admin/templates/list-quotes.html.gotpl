@@ -1,0 +1,33 @@
+{{/* gotype: chameth.com/chameth.com/features/quotes/admin/templates.ListQuotesData */}}
+{{define "content"}}
+    <form method="POST" action="/quotes">
+        <button type="submit">Create New Quote</button>
+    </form>
+
+    <h2>Quotes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Text</th>
+                <th>Author</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .Quotes}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Text}}</td>
+                <td>{{.Author}}</td>
+                <td>
+                    <a href="/quotes/edit/{{.ID}}">Edit</a>
+                    <form method="POST" action="/quotes/delete/{{.ID}}" style="display:inline">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+{{end}}

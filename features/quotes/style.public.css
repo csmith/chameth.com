@@ -1,0 +1,15 @@
+.random-quote {
+    font-style: italic;
+    margin: 0;
+    color: var(--text-alt-colour);
+
+    p {
+        margin: 0;
+    }
+
+    cite {
+        display: block;
+        font-style: normal;
+        margin-top: var(--small-space);
+    }
+}

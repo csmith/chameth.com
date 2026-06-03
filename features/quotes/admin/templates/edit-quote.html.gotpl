@@ -1,0 +1,12 @@
+{{/* gotype: chameth.com/chameth.com/features/quotes/admin/templates.EditQuoteData */}}
+{{define "content"}}
+    <h2>Edit Quote</h2>
+    <form action="/quotes/edit/{{.ID}}" method="post">
+        <label>
+            Text:
+            <textarea name="text" id="editor">{{.Text}}</textarea>
+        </label>
+        <label>Author: <input type="text" name="author" value="{{.Author}}" /></label>
+        <input type="submit" />
+    </form>
+{{end}}

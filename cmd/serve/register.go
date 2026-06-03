@@ -50,6 +50,8 @@ import (
 	featuresPrints "chameth.com/chameth.com/features/prints"
 	featuresProjects "chameth.com/chameth.com/features/projects"
 	featuresProjectsAdmin "chameth.com/chameth.com/features/projects/admin"
+	featuresQuotes "chameth.com/chameth.com/features/quotes"
+	featuresQuotesAdmin "chameth.com/chameth.com/features/quotes/admin"
 	featuresRouting "chameth.com/chameth.com/features/routing"
 	featuresShortcodesLink "chameth.com/chameth.com/features/shortcodes/link"
 	featuresShortcodesRating "chameth.com/chameth.com/features/shortcodes/rating"
@@ -103,6 +105,7 @@ func (s *site) registerShortcodes() {
 	featuresNodForm.RegisterShortcodes(s.Shortcodes)
 	featuresPostsLink.RegisterShortcodes(s.Shortcodes)
 	featuresPostsRecent.RegisterShortcodes(s.Shortcodes)
+	featuresQuotes.RegisterShortcodes(s.Shortcodes)
 	featuresShortcodesLink.RegisterShortcodes(s.Shortcodes)
 	featuresShortcodesRating.RegisterShortcodes(s.Shortcodes)
 	featuresShortcodesSidenote.RegisterShortcodes(s.Shortcodes)
@@ -135,6 +138,7 @@ func (s *site) registerRoutes() {
 	featuresPrints.RegisterRoutes(s.Routes)
 	featuresProjects.RegisterRoutes(s.Routes)
 	featuresProjectsAdmin.RegisterRoutes(s.Routes)
+	featuresQuotesAdmin.RegisterRoutes(s.Routes)
 	featuresRouting.RegisterRoutes(s.Routes)
 	featuresSitemap.RegisterRoutes(s.Routes)
 	featuresSnippets.RegisterRoutes(s.Routes)
