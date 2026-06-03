@@ -1,4 +1,4 @@
-FROM golang:1.26.3-alpine AS go
+FROM golang:1.26.4-alpine AS go
 RUN apk add git
 WORKDIR /usr/src/app
 ADD . .
