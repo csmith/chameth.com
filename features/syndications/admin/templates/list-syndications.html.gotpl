@@ -4,6 +4,15 @@
         <label>Path: <input type="text" name="path" placeholder="/posts/my-post/" /></label>
         <label>External URL: <input type="text" name="external_url" placeholder="https://medium.com/@user/post" /></label>
         <label>Name: <input type="text" name="name" placeholder="Medium" /></label>
+        <label>
+            Disposition:
+            <select name="disposition">
+                <option value="anchor" selected>Anchor</option>
+                <option value="link">Link</option>
+                <option value="hidden">Hidden</option>
+            </select>
+        </label>
+        <label>Rel: <input type="text" name="rel" /></label>
         <button type="submit">Create Syndication</button>
     </form>
 
@@ -16,6 +25,7 @@
                 <th>Path</th>
                 <th>Name</th>
                 <th>External URL</th>
+                <th>Disposition</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -26,6 +36,7 @@
                 <td>{{.Path}}</td>
                 <td>{{.Name}}</td>
                 <td>{{.ExternalURL}}</td>
+                <td>{{.Disposition}}</td>
                 <td><a href="/syndications/edit/{{.ID}}">Edit</a></td>
             </tr>
             {{end}}
@@ -41,6 +52,7 @@
                 <th>Path</th>
                 <th>Name</th>
                 <th>External URL</th>
+                <th>Disposition</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -51,6 +63,7 @@
                 <td>{{.Path}}</td>
                 <td>{{.Name}}</td>
                 <td>{{.ExternalURL}}</td>
+                <td>{{.Disposition}}</td>
                 <td><a href="/syndications/edit/{{.ID}}">Edit</a></td>
             </tr>
             {{end}}

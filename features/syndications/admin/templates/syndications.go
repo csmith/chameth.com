@@ -33,6 +33,8 @@ type SyndicationSummary struct {
 	ExternalURL string
 	Name        string
 	Published   bool
+	Disposition string
+	Rel         string
 }
 
 type EditSyndicationData struct {
@@ -42,6 +44,8 @@ type EditSyndicationData struct {
 	ExternalURL string
 	Name        string
 	Published   bool
+	Disposition string
+	Rel         string
 }
 
 func RenderListSyndications(w http.ResponseWriter, data ListSyndicationsData) error {

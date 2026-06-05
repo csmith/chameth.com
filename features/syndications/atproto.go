@@ -78,6 +78,6 @@ func syndicatePost(ctx context.Context, client *atproto.Client, post posts.PostM
 	}
 
 	slog.Info("Automatically created Bluesky syndication", "path", post.Path, "url", uri)
-	_, err = CreateSyndication(ctx, post.Path, uri, "Bluesky", true)
+	_, err = CreateSyndication(ctx, post.Path, uri, "Bluesky", true, "anchor", nil)
 	return err
 }

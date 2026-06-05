@@ -30,7 +30,7 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 }
 
 func Render(ctx context.Context, url string) (string, error) {
-	results, err := syndications.GetSyndicationsByPath(ctx, url)
+	results, err := syndications.GetSyndicationsByPath(ctx, url, "anchor")
 	if err != nil {
 		return "", fmt.Errorf("failed to get syndications for path %s: %w", url, err)
 	}

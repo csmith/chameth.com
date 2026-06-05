@@ -236,7 +236,7 @@ func FilmReviewWorkflowStep3Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		syndicationResults, err := syndications.GetSyndicationsByPath(r.Context(), "/films/lists/ranking/")
+		syndicationResults, err := syndications.GetSyndicationsByPath(r.Context(), "/films/lists/ranking/", "anchor")
 		if err != nil {
 			slog.Warn("Failed to get syndications for ranking list", "path", "/films/lists/ranking/", "error", err)
 		}
@@ -399,7 +399,7 @@ func FilmReviewWorkflowStep6Handler() func(http.ResponseWriter, *http.Request) {
 			syndicationName := r.FormValue("syndication_name")
 
 			if syndicationURL != "" {
-				_, err := syndications.CreateSyndication(r.Context(), film.Path, syndicationURL, syndicationName, true)
+				_, err := syndications.CreateSyndication(r.Context(), film.Path, syndicationURL, syndicationName, true, "anchor", nil)
 				if err != nil {
 					slog.Error("Failed to create syndication", "error", err)
 				}
@@ -429,7 +429,7 @@ func FilmReviewWorkflowStep7Handler() func(http.ResponseWriter, *http.Request) {
 
 			listsWithUrls := make([]filmtemplates.FilmListWithLetterboxd, 0, len(allLists))
 			for _, list := range allLists {
-				syndicationResults, err := syndications.GetSyndicationsByPath(r.Context(), list.Path)
+				syndicationResults, err := syndications.GetSyndicationsByPath(r.Context(), list.Path, "anchor")
 				if err != nil {
 					slog.Warn("Failed to get syndications for list", "path", list.Path, "error", err)
 				}

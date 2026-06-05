@@ -25,24 +25,34 @@ func ListSyndicationsHandler() func(http.ResponseWriter, *http.Request) {
 
 		unpublishedSummaries := make([]templates.SyndicationSummary, len(unpublished))
 		for i, s := range unpublished {
-			unpublishedSummaries[i] = templates.SyndicationSummary{
+			summary := templates.SyndicationSummary{
 				ID:          s.ID,
 				Path:        s.Path,
 				ExternalURL: s.ExternalURL,
 				Name:        s.Name,
 				Published:   s.Published,
+				Disposition: s.Disposition,
 			}
+			if s.Rel != nil {
+				summary.Rel = *s.Rel
+			}
+			unpublishedSummaries[i] = summary
 		}
 
 		syndicationSummaries := make([]templates.SyndicationSummary, len(all))
 		for i, s := range all {
-			syndicationSummaries[i] = templates.SyndicationSummary{
+			summary := templates.SyndicationSummary{
 				ID:          s.ID,
 				Path:        s.Path,
 				ExternalURL: s.ExternalURL,
 				Name:        s.Name,
 				Published:   s.Published,
+				Disposition: s.Disposition,
 			}
+			if s.Rel != nil {
+				summary.Rel = *s.Rel
+			}
+			syndicationSummaries[i] = summary
 		}
 
 		data := templates.ListSyndicationsData{
@@ -77,6 +87,10 @@ func EditSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 			ExternalURL: syndication.ExternalURL,
 			Name:        syndication.Name,
 			Published:   syndication.Published,
+			Disposition: syndication.Disposition,
+		}
+		if syndication.Rel != nil {
+			data.Rel = *syndication.Rel
 		}
 
 		if err := templates.RenderEditSyndication(w, data); err != nil {
@@ -95,13 +109,24 @@ func CreateSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 		path := r.FormValue("path")
 		externalURL := r.FormValue("external_url")
 		name := r.FormValue("name")
+		disposition := r.FormValue("disposition")
+		relStr := r.FormValue("rel")
 
 		if path == "" || externalURL == "" || name == "" {
 			http.Error(w, "Path, external URL, and name are required", http.StatusBadRequest)
 			return
 		}
 
-		id, err := syndications.CreateSyndication(r.Context(), path, externalURL, name, false)
+		if disposition == "" {
+			disposition = "anchor"
+		}
+
+		var rel *string
+		if relStr != "" {
+			rel = &relStr
+		}
+
+		id, err := syndications.CreateSyndication(r.Context(), path, externalURL, name, false, disposition, rel)
 		if err != nil {
 			http.Error(w, "Failed to create syndication", http.StatusInternalServerError)
 			return
@@ -129,8 +154,15 @@ func UpdateSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 		externalURL := r.FormValue("external_url")
 		name := r.FormValue("name")
 		published := r.FormValue("published") == "true"
+		disposition := r.FormValue("disposition")
+		relStr := r.FormValue("rel")
 
-		if err := syndications.UpdateSyndication(r.Context(), id, path, externalURL, name, published); err != nil {
+		var rel *string
+		if relStr != "" {
+			rel = &relStr
+		}
+
+		if err := syndications.UpdateSyndication(r.Context(), id, path, externalURL, name, published, disposition, rel); err != nil {
 			http.Error(w, "Failed to update syndication", http.StatusInternalServerError)
 			return
 		}

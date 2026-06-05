@@ -7,6 +7,15 @@
         <label>External URL: <input type="text" name="external_url" value="{{.ExternalURL}}" /></label>
         <label>Name: <input type="text" name="name" value="{{.Name}}" /></label>
         <label>
+            Disposition:
+            <select name="disposition">
+                <option value="anchor" {{if eq .Disposition "anchor"}}selected{{end}}>Anchor</option>
+                <option value="link" {{if eq .Disposition "link"}}selected{{end}}>Link</option>
+                <option value="hidden" {{if eq .Disposition "hidden"}}selected{{end}}>Hidden</option>
+            </select>
+        </label>
+        <label>Rel: <input type="text" name="rel" value="{{.Rel}}" /></label>
+        <label>
             <input type="checkbox" name="published" value="true" {{if .Published}}checked{{end}} />
             Published
         </label>
