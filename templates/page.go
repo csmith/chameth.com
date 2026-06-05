@@ -11,6 +11,7 @@ type PageData struct {
 	RecentPosts  []RecentPost
 	Component    func(string, ...any) template.HTML
 	Admin        bool
+	Links        []Link
 }
 
 type OpenGraphHeaders struct {
@@ -33,4 +34,9 @@ type ContentDetails struct {
 type ContentDate struct {
 	Iso      string
 	Friendly string
+}
+
+type Link struct {
+	Rel  string
+	Href string
 }

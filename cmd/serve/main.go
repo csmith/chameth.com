@@ -21,6 +21,7 @@ import (
 	"chameth.com/chameth.com/features/routing"
 	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/sudo"
+	"chameth.com/chameth.com/features/syndications"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
 	"github.com/csmith/slogflags"
@@ -67,6 +68,7 @@ func main() {
 	content.AssetsManager = s.Assets
 	content.RecentPostsProvider = posts.Recent
 	content.ShortcodesManager = s.Shortcodes
+	content.LinksProvider = syndications.GetLinksByPath
 
 	s.registerAssets()
 	s.registerShortcodes()

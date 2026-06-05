@@ -6,6 +6,7 @@ import (
 
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/features/posts"
+	"chameth.com/chameth.com/templates"
 )
 
 func GetSyndicationByID(ctx context.Context, id int) (*Syndication, error) {
@@ -30,6 +31,10 @@ func GetAllSyndicationsWithUnpublished(ctx context.Context) ([]Syndication, erro
 
 func GetSyndicationsByPath(ctx context.Context, path, disposition string) ([]Syndication, error) {
 	return db.Select[Syndication](ctx, "SELECT id, path, external_url, name, published, disposition, rel FROM syndications WHERE path = $1 AND published = true AND disposition = $2", path, disposition)
+}
+
+func GetLinksByPath(ctx context.Context, path string) ([]templates.Link, error) {
+	return db.Select[templates.Link](ctx, "SELECT COALESCE(rel, 'alternate') AS rel, external_url AS href FROM syndications WHERE path = $1 AND published = true AND disposition = 'link'", path)
 }
 
 func CreateSyndication(ctx context.Context, path, externalURL, name string, published bool, disposition string, rel *string) (int, error) {

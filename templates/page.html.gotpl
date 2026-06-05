@@ -14,6 +14,9 @@
     {{ if .CanonicalUrl -}}
         <link rel="canonical" href="{{.CanonicalUrl}}"/>
     {{end -}}
+    {{ range .Links -}}
+        <link rel="{{.Rel}}" href="{{.Href}}"/>
+    {{ end -}}
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
     <meta property="og:title" content="{{.Title}}"/>
     {{ if .CanonicalUrl -}}
