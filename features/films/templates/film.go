@@ -30,7 +30,7 @@ var filmListTemplate = func() *template.Template {
 
 type FilmData struct {
 	parenttemplates.PageData
-	Title         string
+	FilmTitle     string
 	Year          string
 	TMDBID        *int
 	Overview      template.HTML

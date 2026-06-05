@@ -2,7 +2,7 @@
 {{define "content"}}
     <article class="film-page" data-film-id="{{ .TMDBID }}">
         <header>
-            <h2><a href="/films/">Films</a> &raquo; {{.Title}}</h2>
+            <h2><a href="/films/">Films</a> &raquo; {{.FilmTitle}}</h2>
             <p class="meta">Watched {{.TimesWatched}} time{{if ne .TimesWatched 1}}s{{end}}{{if .AverageRating}}, average rating {{call .Component "rating" .AverageRating}}{{end}}</p>
         </header>
 
@@ -33,7 +33,7 @@
 
         <aside class="film-sidebar raised-box">
             {{if .PosterPath}}
-            <img src="{{.PosterPath}}" alt="{{.Title}} poster" class="film-poster">
+            <img src="{{.PosterPath}}" alt="{{.FilmTitle}} poster" class="film-poster">
             {{end}}
             {{if .Year}}
             <p class="release-date">Released in <time datetime="{{ .Year }}">{{ .Year }}</time></p>
