@@ -11,7 +11,7 @@
     <link rel="alternate" type="application/atom+xml" title="RSS feed (all posts)" href="/index.xml">
     <link rel="alternate" type="application/atom+xml" title="RSS feed (long format posts)" href="/long.xml">
     <link rel="alternate" type="application/atom+xml" title="RSS feed (short format posts)" href="/short.xml">
-    <link rel="site.standard.publication" href="at://did:plc:dqehxkfb3kv6bx7tfkvyzdt4/site.standard.publication/3mnmo5pjxxk2e">
+    <link rel="site.standard.publication" href="at://did:plc:hwpfviglvxef74s5w4fhywt7/site.standard.publication/3mnmr7tmggs2e">
     {{ if .CanonicalUrl -}}
         <link rel="canonical" href="{{.CanonicalUrl}}"/>
     {{end -}}

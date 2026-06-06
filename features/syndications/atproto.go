@@ -19,7 +19,7 @@ var (
 	password = flag.String("atproto-password", "", "App-specific password for the account on the ATProto PDS")
 )
 
-const standardSitePublicationUri = "at://did:plc:dqehxkfb3kv6bx7tfkvyzdt4/site.standard.publication/3mnmo5pjxxk2e"
+const standardSitePublicationUri = "at://did:plc:hwpfviglvxef74s5w4fhywt7/site.standard.publication/3mnmr7tmggs2e"
 const authorDid = "did:plc:dqehxkfb3kv6bx7tfkvyzdt4"
 
 func RegisterGoroutine(ctx context.Context) func() {
