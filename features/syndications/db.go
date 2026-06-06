@@ -80,14 +80,13 @@ func getUnsyndicatedAtProtoPosts(ctx context.Context) ([]posts.PostMetadata, err
 	`)
 }
 
-func getPostsNeedingDocumentBackfill(ctx context.Context) ([]blueskySyndicationWithPost, error) {
-	return db.Select[blueskySyndicationWithPost](ctx, `
-		SELECT s.id, s.path, s.external_url, s.name, s.published, s.disposition, s.rel,
-		       p.id, p.path, p.title, p.date, p.format, p.published
-		FROM syndications s
-		JOIN posts p ON s.path = p.path
-		WHERE s.name = 'Bluesky' AND s.published
-		  AND s.path NOT IN (
+func getPostsNeedingDocumentBackfill(ctx context.Context) ([]Syndication, error) {
+	return db.Select[Syndication](ctx, `
+		SELECT id, path, external_url, name, published, disposition, rel
+		FROM syndications
+		WHERE name = 'Bluesky' AND published
+		  AND path IN (SELECT path FROM posts WHERE published)
+		  AND path NOT IN (
 			SELECT path FROM syndications WHERE rel = 'site.standard.document'
 		  )
 	`)

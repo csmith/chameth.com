@@ -66,25 +66,26 @@ func backfillStandardSiteDocuments(ctx context.Context, client *atproto.Client) 
 
 	for _, item := range postsToBackfill {
 		if err := backfillStandardSiteDocument(ctx, client, item); err != nil {
-			slog.Error("Unable to backfill document", "error", err, "path", item.PostMetadata.Path)
+			slog.Error("Unable to backfill document", "error", err, "path", item.Path)
 			continue
 		}
 	}
 }
 
-func backfillStandardSiteDocument(ctx context.Context, client *atproto.Client, item blueskySyndicationWithPost) error {
-	parts := strings.Split(item.ExternalURL, "/")
+func backfillStandardSiteDocument(ctx context.Context, client *atproto.Client, syndication Syndication) error {
+	post, err := posts.GetPostByPath(ctx, syndication.Path)
+	if err != nil {
+		return fmt.Errorf("failed to get post: %w", err)
+	}
+
+	parts := strings.Split(syndication.ExternalURL, "/")
 	rkey := parts[len(parts)-1]
 	postUri := fmt.Sprintf("at://%s/app.bsky.feed.post/%s", client.DID(), rkey)
 
-	fullPost, err := posts.GetPostByID(ctx, item.PostMetadata.ID)
-	if err != nil {
-		return fmt.Errorf("failed to get post content: %w", err)
-	}
-	description := markdown.FirstParagraph(fullPost.Content)
+	description := markdown.FirstParagraph(post.Content)
 
 	var blob *atproto.Blob
-	openGraph, err := media.GetOpenGraphDetailsForEntity(ctx, "post", item.PostMetadata.ID)
+	openGraph, err := media.GetOpenGraphDetailsForEntity(ctx, "post", post.ID)
 	if err != nil {
 		return err
 	}
@@ -99,12 +100,12 @@ func backfillStandardSiteDocument(ctx context.Context, client *atproto.Client, i
 		atproto.StandardSiteDocumentCollection,
 		atproto.NewStandardSiteDocument(
 			standardSitePublicationUri,
-			item.PostMetadata.Path,
-			item.PostMetadata.Title,
+			post.Path,
+			post.Title,
 			description,
 			blob,
 			postUri,
-			item.PostMetadata.Date,
+			post.Date,
 			authorDid,
 		),
 	)
@@ -112,8 +113,8 @@ func backfillStandardSiteDocument(ctx context.Context, client *atproto.Client, i
 		return fmt.Errorf("failed to create standard.site.document: %w", err)
 	}
 
-	slog.Info("Backfilled standard.site.document", "path", item.PostMetadata.Path, "uri", docAtURI)
-	_, err = CreateSyndication(ctx, item.PostMetadata.Path, docAtURI, "standard.site document", true, "link", new("site.standard.document"))
+	slog.Info("Backfilled standard.site.document", "path", post.Path, "uri", docAtURI)
+	_, err = CreateSyndication(ctx, post.Path, docAtURI, "standard.site document", true, "link", new("site.standard.document"))
 	return err
 }
 
