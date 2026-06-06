@@ -5,7 +5,8 @@ import "fmt"
 type Collection string
 
 const (
-	BlueskyPostCollection Collection = "app.bsky.feed.post"
+	BlueskyPostCollection          Collection = "app.bsky.feed.post"
+	StandardSiteDocumentCollection Collection = "site.standard.document"
 )
 
 func (c Collection) publicURL(handle, recordID string) string {
@@ -14,6 +15,5 @@ func (c Collection) publicURL(handle, recordID string) string {
 		return fmt.Sprintf("https://bsky.app/profile/%s/post/%s", handle, recordID)
 	}
 
-	// Shouldn't happen
 	return ""
 }

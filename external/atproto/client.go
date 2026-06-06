@@ -61,7 +61,13 @@ func (c *Client) authenticate(password string) error {
 	return nil
 }
 
-func (c *Client) CreateRecord(collection Collection, record Record) (string, error) {
+func (c *Client) DID() string {
+	return c.did
+}
+
+func (c *Client) CreateRecord(collection Collection, record Record) (atURI string, publicURL string, err error) {
+	recordKey := generateTID()
+
 	payload := struct {
 		Repository string     `json:"repo"`
 		Collection Collection `json:"collection"`
@@ -70,7 +76,7 @@ func (c *Client) CreateRecord(collection Collection, record Record) (string, err
 	}{
 		Repository: c.did,
 		Collection: collection,
-		RecordKey:  generateTID(),
+		RecordKey:  recordKey,
 		Record:     record,
 	}
 
@@ -80,10 +86,10 @@ func (c *Client) CreateRecord(collection Collection, record Record) (string, err
 	}{}
 
 	if err := c.postJson(putRecordEndpoint, payload, &result); err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return collection.publicURL(c.handle, payload.RecordKey), nil
+	return result.URI, collection.publicURL(c.handle, recordKey), nil
 }
 
 func (c *Client) UploadBlob(mimeType string, data []byte) (*Blob, error) {
