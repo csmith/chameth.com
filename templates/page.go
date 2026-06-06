@@ -38,5 +38,5 @@ type ContentDate struct {
 
 type Link struct {
 	Rel  string
-	Href string
+	Href template.URL
 }
