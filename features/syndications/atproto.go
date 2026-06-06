@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"html"
 	"log/slog"
 	"strings"
 
@@ -86,7 +87,7 @@ func backfillStandardSiteDocument(ctx context.Context, client *atproto.Client, s
 		return fmt.Errorf("failed to get existing bluesky post: %w", err)
 	}
 
-	description := markdown.FirstParagraph(post.Content)
+	description := html.UnescapeString(markdown.FirstParagraph(post.Content))
 
 	var blob *atproto.Blob
 	openGraph, err := media.GetOpenGraphDetailsForEntity(ctx, "post", post.ID)
@@ -135,7 +136,7 @@ func syndicatePost(ctx context.Context, client *atproto.Client, post posts.PostM
 	if err != nil {
 		return fmt.Errorf("failed to get post content: %w", err)
 	}
-	description := markdown.FirstParagraph(fullPost.Content)
+	description := html.UnescapeString(markdown.FirstParagraph(fullPost.Content))
 
 	openGraph, err := media.GetOpenGraphDetailsForEntity(ctx, "post", post.ID)
 	if err != nil {
