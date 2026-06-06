@@ -80,7 +80,11 @@ func backfillStandardSiteDocument(ctx context.Context, client *atproto.Client, s
 
 	parts := strings.Split(syndication.ExternalURL, "/")
 	rkey := parts[len(parts)-1]
-	postUri := fmt.Sprintf("at://%s/app.bsky.feed.post/%s", client.DID(), rkey)
+
+	postRef, err := client.GetRecord(atproto.BlueskyPostCollection, rkey)
+	if err != nil {
+		return fmt.Errorf("failed to get existing bluesky post: %w", err)
+	}
 
 	description := markdown.FirstParagraph(post.Content)
 
@@ -104,7 +108,7 @@ func backfillStandardSiteDocument(ctx context.Context, client *atproto.Client, s
 			post.Title,
 			description,
 			blob,
-			postUri,
+			postRef,
 			post.Date,
 			authorDid,
 		),
@@ -113,8 +117,8 @@ func backfillStandardSiteDocument(ctx context.Context, client *atproto.Client, s
 		return fmt.Errorf("failed to create standard.site.document: %w", err)
 	}
 
-	slog.Info("Backfilled standard.site.document", "path", post.Path, "uri", docAtURI)
-	_, err = CreateSyndication(ctx, post.Path, docAtURI, "standard.site document", true, "link", new("site.standard.document"))
+	slog.Info("Backfilled standard.site.document", "path", post.Path, "uri", docAtURI.URI)
+	_, err = CreateSyndication(ctx, post.Path, docAtURI.URI, "standard.site document", true, "link", new("site.standard.document"))
 	return err
 }
 
@@ -147,7 +151,7 @@ func syndicatePost(ctx context.Context, client *atproto.Client, post posts.PostM
 	}
 
 	embed := atproto.NewBlueskyExternalEmbed("https://chameth.com"+post.Path, post.Title, "", blob)
-	postAtURI, publicURL, err := client.CreateRecord(atproto.BlueskyPostCollection, atproto.NewBlueskyPost("", []string{"en"}, post.Date, &embed))
+	postRef, publicURL, err := client.CreateRecord(atproto.BlueskyPostCollection, atproto.NewBlueskyPost("", []string{"en"}, post.Date, &embed))
 	if err != nil {
 		return err
 	}
@@ -158,7 +162,7 @@ func syndicatePost(ctx context.Context, client *atproto.Client, post posts.PostM
 		return fmt.Errorf("failed to create Bluesky syndication: %w", err)
 	}
 
-	docAtURI, _, err := client.CreateRecord(
+	docRef, _, err := client.CreateRecord(
 		atproto.StandardSiteDocumentCollection,
 		atproto.NewStandardSiteDocument(
 			standardSitePublicationUri,
@@ -166,7 +170,7 @@ func syndicatePost(ctx context.Context, client *atproto.Client, post posts.PostM
 			post.Title,
 			description,
 			blob,
-			postAtURI,
+			postRef,
 			post.Date,
 			authorDid,
 		))
@@ -174,7 +178,7 @@ func syndicatePost(ctx context.Context, client *atproto.Client, post posts.PostM
 		return fmt.Errorf("failed to create standard.site.document: %w", err)
 	}
 
-	slog.Info("Automatically created standard.site.document", "path", post.Path, "uri", docAtURI)
-	_, err = CreateSyndication(ctx, post.Path, docAtURI, "standard.site document", true, "link", new("site.standard.document"))
+	slog.Info("Automatically created standard.site.document", "path", post.Path, "uri", docRef.URI)
+	_, err = CreateSyndication(ctx, post.Path, docRef.URI, "standard.site document", true, "link", new("site.standard.document"))
 	return err
 }

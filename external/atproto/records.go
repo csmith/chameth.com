@@ -76,6 +76,11 @@ type standardSiteContributor struct {
 	Role string `json:"role"`
 }
 
+type StrongRef struct {
+	CID string `json:"cid"`
+	URI string `json:"uri"`
+}
+
 type standardSiteDocument struct {
 	Type         string                    `json:"$type"`
 	Site         string                    `json:"site"`
@@ -83,12 +88,12 @@ type standardSiteDocument struct {
 	Title        string                    `json:"title"`
 	Description  string                    `json:"description"`
 	CoverImage   *Blob                     `json:"coverImage,omitempty"`
-	BskyPostRef  string                    `json:"bskyPostRef"`
+	BskyPostRef  StrongRef                 `json:"bskyPostRef"`
 	PublishedAt  time.Time                 `json:"publishedAt"`
 	Contributors []standardSiteContributor `json:"contributors"`
 }
 
-func NewStandardSiteDocument(site, path, title, description string, coverImage *Blob, bskyPostRef string, publishedAt time.Time, authorDid string) Record {
+func NewStandardSiteDocument(site, path, title, description string, coverImage *Blob, bskyPostRef StrongRef, publishedAt time.Time, authorDid string) Record {
 	return &standardSiteDocument{
 		Type:        "site.standard.document",
 		Site:        site,

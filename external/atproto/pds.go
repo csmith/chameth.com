@@ -10,6 +10,7 @@ type endpoint string
 
 const (
 	createSessionEndpoint endpoint = "/xrpc/com.atproto.server.createSession"
+	getRecordEndpoint     endpoint = "/xrpc/com.atproto.repo.getRecord"
 	putRecordEndpoint     endpoint = "/xrpc/com.atproto.repo.putRecord"
 	uploadBlobEndpoint    endpoint = "/xrpc/com.atproto.repo.uploadBlob"
 )

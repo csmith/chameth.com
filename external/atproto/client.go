@@ -65,7 +65,7 @@ func (c *Client) DID() string {
 	return c.did
 }
 
-func (c *Client) CreateRecord(collection Collection, record Record) (atURI string, publicURL string, err error) {
+func (c *Client) CreateRecord(collection Collection, record Record) (StrongRef, string, error) {
 	recordKey := generateTID()
 
 	payload := struct {
@@ -86,10 +86,49 @@ func (c *Client) CreateRecord(collection Collection, record Record) (atURI strin
 	}{}
 
 	if err := c.postJson(putRecordEndpoint, payload, &result); err != nil {
-		return "", "", err
+		return StrongRef{}, "", err
 	}
 
-	return result.URI, collection.publicURL(c.handle, recordKey), nil
+	return StrongRef{CID: result.CID, URI: result.URI}, collection.publicURL(c.handle, recordKey), nil
+}
+
+func (c *Client) GetRecord(collection Collection, recordKey string) (StrongRef, error) {
+	e := endpoint(fmt.Sprintf("%s?repo=%s&collection=%s&rkey=%s", getRecordEndpoint, c.did, collection, recordKey))
+
+	req, err := http.NewRequest(http.MethodGet, c.pds.url(e), nil)
+	if err != nil {
+		return StrongRef{}, err
+	}
+
+	req.Header.Set("Accept", "application/json")
+	if c.accessToken != "" {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.accessToken))
+	}
+
+	res, err := c.h.Do(req)
+	if err != nil {
+		return StrongRef{}, err
+	}
+	defer res.Body.Close()
+
+	b, err := io.ReadAll(res.Body)
+	if err != nil {
+		return StrongRef{}, err
+	}
+
+	if res.StatusCode >= 400 {
+		return StrongRef{}, fmt.Errorf("bad status code: %d: %s", res.StatusCode, string(b))
+	}
+
+	var result struct {
+		URI string `json:"uri"`
+		CID string `json:"cid"`
+	}
+	if err := json.Unmarshal(b, &result); err != nil {
+		return StrongRef{}, err
+	}
+
+	return StrongRef{CID: result.CID, URI: result.URI}, nil
 }
 
 func (c *Client) UploadBlob(mimeType string, data []byte) (*Blob, error) {
