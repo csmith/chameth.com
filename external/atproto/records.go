@@ -33,11 +33,12 @@ type externalEmbedEmbeddedExternal struct {
 }
 
 type blueskyExternalEmbed struct {
-	Type     string                        `json:"$type"` // always "app.bsky.embed.external"
-	External externalEmbedEmbeddedExternal `json:"external"`
+	Type           string                        `json:"$type"`
+	External       externalEmbedEmbeddedExternal `json:"external"`
+	AssociatedRefs []StrongRef                   `json:"associatedRefs,omitempty"`
 }
 
-func NewBlueskyExternalEmbed(uri, title, description string, thumb *Blob) Embed {
+func NewBlueskyExternalEmbed(uri, title, description string, thumb *Blob, associatedRefs []StrongRef) Embed {
 	return &blueskyExternalEmbed{
 		Type: "app.bsky.embed.external",
 		External: externalEmbedEmbeddedExternal{
@@ -46,6 +47,7 @@ func NewBlueskyExternalEmbed(uri, title, description string, thumb *Blob) Embed 
 			Description: description,
 			Thumb:       thumb,
 		},
+		AssociatedRefs: associatedRefs,
 	}
 }
 
@@ -88,12 +90,11 @@ type standardSiteDocument struct {
 	Title        string                    `json:"title"`
 	Description  string                    `json:"description"`
 	CoverImage   *Blob                     `json:"coverImage,omitempty"`
-	BskyPostRef  StrongRef                 `json:"bskyPostRef"`
 	PublishedAt  time.Time                 `json:"publishedAt"`
 	Contributors []standardSiteContributor `json:"contributors"`
 }
 
-func NewStandardSiteDocument(site, path, title, description string, coverImage *Blob, bskyPostRef StrongRef, publishedAt time.Time, authorDid string) Record {
+func NewStandardSiteDocument(site, path, title, description string, coverImage *Blob, publishedAt time.Time, authorDid string) Record {
 	return &standardSiteDocument{
 		Type:        "site.standard.document",
 		Site:        site,
@@ -101,7 +102,6 @@ func NewStandardSiteDocument(site, path, title, description string, coverImage *
 		Title:       title,
 		Description: description,
 		CoverImage:  coverImage,
-		BskyPostRef: bskyPostRef,
 		PublishedAt: publishedAt,
 		Contributors: []standardSiteContributor{
 			{DID: authorDid, Role: "author"},

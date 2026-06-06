@@ -5,8 +5,9 @@ import "fmt"
 type Collection string
 
 const (
-	BlueskyPostCollection          Collection = "app.bsky.feed.post"
-	StandardSiteDocumentCollection Collection = "site.standard.document"
+	BlueskyPostCollection             Collection = "app.bsky.feed.post"
+	StandardSitePublicationCollection Collection = "site.standard.publication"
+	StandardSiteDocumentCollection    Collection = "site.standard.document"
 )
 
 func (c Collection) publicURL(handle, recordID string) string {
