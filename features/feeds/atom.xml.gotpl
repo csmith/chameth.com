@@ -14,7 +14,7 @@
     {{- range .FeedItems }}
     <entry>
         <title>{{ .Title | escape }}</title>
-        <link href="{{ .Link | escape }}" rel="self"/>
+        <link href="{{ .Link | escape }}"/>
         <updated>{{ .Updated }}</updated>
         <id>{{ .Link | escape }}</id>
         <content xml:lang="en" type="html">{{ .Content | escape }}</content>
