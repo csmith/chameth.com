@@ -76,5 +76,5 @@ require (
 require (
 	github.com/kljensen/snowball v0.10.0
 	github.com/prometheus/client_golang v1.23.2
-	golang.org/x/text v0.38.0
+	golang.org/x/text v0.39.0
 )
