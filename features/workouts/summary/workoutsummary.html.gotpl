@@ -1,0 +1,32 @@
+{{/* gotype: chameth.com/chameth.com/features/workouts/summary.Data*/}}
+{{- if .Sections }}
+<div class="workout-summary-sections">
+{{- range .Sections }}
+<div class="workout-summary-section raised-box" data-title="{{ .Title }}">
+<div class="stat-row">
+{{- template "stats" .Stats }}
+</div>
+{{- if .PBs }}
+<ul class="workout-summary-pbs">
+{{- range .PBs }}
+<li class="workout-summary-pb">
+<span class="pb-trophy">🏆️</span>
+<span class="pb-label">New PB</span>
+<span class="pb-distance">{{ .Label }}</span>
+<span class="pb-time">{{ .Time }}</span>
+</li>
+{{- end }}
+</ul>
+{{- end }}
+</div>
+{{- end }}
+</div>
+{{- end }}
+{{ define "stats" }}
+{{- range . }}
+<div class="stat">
+<p class="stat-value">{{ .Value }}</p>
+<p class="stat-label">{{ .Label }}</p>
+</div>
+{{- end }}
+{{ end }}

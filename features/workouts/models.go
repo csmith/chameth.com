@@ -55,3 +55,33 @@ type workoutSegment struct {
 	BestS         *float64  `db:"best_s"`
 	Rank          int       `db:"rank"`
 }
+
+// PeriodTotals holds per-activity workout counts and distances for a date
+// range. Running distance comes from the dedicated run interval column
+// rather than a workout's total distance, since a single workout (e.g. a
+// couch-to-5k session) can mix running and walking intervals.
+type PeriodTotals struct {
+	CycleCount     int     `db:"cycle_count"`
+	CycleDistanceM float64 `db:"cycle_distance_m"`
+	CycleDurationS float64 `db:"cycle_duration_s"`
+	RunCount       int     `db:"run_count"`
+	RunDistanceM   float64 `db:"run_distance_m"`
+	RunDurationS   float64 `db:"run_duration_s"`
+}
+
+// FurthestWorkout describes the single longest workout (or run/walk
+// interval within a workout) for a date range.
+type FurthestWorkout struct {
+	Activity  string    `db:"activity"`
+	DistanceM float64   `db:"distance_m"`
+	StartTime time.Time `db:"start_time"`
+}
+
+// PersonalBest describes a segment-distance PB set within a date range.
+type PersonalBest struct {
+	ActivityGroup string    `db:"activity_group"`
+	Activity      string    `db:"activity"`
+	DistanceM     float64   `db:"distance_m"`
+	ElapsedS      float64   `db:"elapsed_s"`
+	StartTime     time.Time `db:"start_time"`
+}
