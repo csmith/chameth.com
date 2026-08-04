@@ -70,6 +70,7 @@ import (
 	featuresWalksDistance "chameth.com/chameth.com/features/walks/distance"
 	featuresWalksList "chameth.com/chameth.com/features/walks/list"
 	featuresWalksSpeed "chameth.com/chameth.com/features/walks/speed"
+	featuresWorkouts "chameth.com/chameth.com/features/workouts"
 	featuresWow "chameth.com/chameth.com/features/wow"
 	featuresWowAchievements "chameth.com/chameth.com/features/wow/achievements"
 	featuresWowAdmin "chameth.com/chameth.com/features/wow/admin"
@@ -156,6 +157,7 @@ func (s *site) launchGoroutines() {
 	go featuresMusic.RegisterGoroutine(s.Context, s.Tailscale)()
 	go featuresPosts.RegisterGoroutine(s.Context)()
 	go featuresSyndications.RegisterGoroutine(s.Context)()
+	go featuresWorkouts.RegisterGoroutine(s.Context, s.Tailscale)()
 	go featuresWow.RegisterGoroutine(s.Context)()
 }
 
