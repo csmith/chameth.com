@@ -132,3 +132,9 @@ To query the database:
 ```
 docker compose exec -T database psql -U postgres -c "SELECT * FROM films;"
 ```
+
+## Data preservation rules
+
+- Do NOT touch the dev DB or tailscale folders (`.postgres` and `tsdata`)
+- Do NOT attempt to run service: the user will do manual verification
+- Do NOT manually modify the database
