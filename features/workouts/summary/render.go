@@ -100,8 +100,9 @@ func pbsForGroup(pbs []workouts.PersonalBest, group string) []PB {
 			continue
 		}
 		result = append(result, PB{
-			Label: formatDistanceLabel(pb.DistanceM),
-			Time:  formatDuration(pb.ElapsedS),
+			Label:    formatDistanceLabel(pb.DistanceM),
+			Time:     formatDuration(pb.ElapsedS),
+			Previous: formatPreviousBest(pb.PreviousBestS),
 		})
 	}
 	return result

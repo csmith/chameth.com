@@ -75,5 +75,15 @@
             font-size: var(--font-size-large);
             line-height: 1em;
         }
+
+        .pb-previous {
+            font-size: var(--font-size-small);
+            color: var(--text-alt-colour);
+            text-decoration: line-through;
+        }
+
+        .pb-time {
+            line-height: 1em;
+        }
     }
 }

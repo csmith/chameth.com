@@ -83,10 +83,17 @@ func FurthestRunInRange(ctx context.Context, start, end time.Time) (*FurthestWor
 // RecentPBsInRange returns, for each cycle/run segment-distance
 // combination, the fastest (and therefore most recent) PB set within
 // [start, end]. Other activity groups (e.g. walking) are excluded.
+// PreviousBestS is taken from the earliest PB set within the range, so it
+// reflects the record that stood before the period began, rather than the
+// time it most recently improved on (if it was beaten more than once
+// within the range).
 func RecentPBsInRange(ctx context.Context, start, end time.Time) ([]PersonalBest, error) {
 	return db.Select[PersonalBest](ctx, `
 		SELECT DISTINCT ON (w.activity_group, ws.distance_m)
-			w.activity_group, w.activity, ws.distance_m, ws.elapsed_s, ws.start_time
+			w.activity_group, w.activity, ws.distance_m, ws.elapsed_s, ws.start_time,
+			FIRST_VALUE(ws.previous_best_s) OVER (
+				PARTITION BY w.activity_group, ws.distance_m ORDER BY ws.start_time ASC
+			) AS previous_best_s
 		FROM workout_segments ws
 		JOIN workouts w ON w.id = ws.workout_id
 		WHERE ws.is_pb = true AND w.activity_group IN ('cycle', 'run')

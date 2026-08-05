@@ -6,8 +6,9 @@ type Stat struct {
 }
 
 type PB struct {
-	Label string
-	Time  string
+	Label    string
+	Time     string
+	Previous string
 }
 
 type Section struct {

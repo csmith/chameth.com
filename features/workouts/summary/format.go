@@ -38,6 +38,15 @@ func formatDurationLong(seconds float64) string {
 	return fmt.Sprintf("%dm", m)
 }
 
+// formatPreviousBest formats the time a PB replaced, or "no previous" if
+// this was the first time the segment distance had been recorded.
+func formatPreviousBest(seconds *float64) string {
+	if seconds == nil {
+		return "no previous"
+	}
+	return formatDuration(*seconds)
+}
+
 // formatDistanceLabel turns a segment distance in metres into a short,
 // human-friendly label, e.g. "5km", "800m", "1 mile".
 func formatDistanceLabel(m float64) string {

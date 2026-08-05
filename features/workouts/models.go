@@ -84,4 +84,5 @@ type PersonalBest struct {
 	DistanceM     float64   `db:"distance_m"`
 	ElapsedS      float64   `db:"elapsed_s"`
 	StartTime     time.Time `db:"start_time"`
+	PreviousBestS *float64  `db:"previous_best_s"`
 }

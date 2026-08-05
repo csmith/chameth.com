@@ -13,6 +13,7 @@
 <span class="pb-trophy">🏆️</span>
 <span class="pb-label">New PB</span>
 <span class="pb-distance">{{ .Label }}</span>
+<span class="pb-previous">{{ .Previous }}</span>
 <span class="pb-time">{{ .Time }}</span>
 </li>
 {{- end }}
