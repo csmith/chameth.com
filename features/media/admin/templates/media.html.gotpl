@@ -2,7 +2,7 @@
 {{define "content"}}
     <h2>Upload Media</h2>
     <form id="upload-form" action="/media/upload" method="post" enctype="multipart/form-data">
-        <div id="drop-zone" style="border: 2px dashed #ccc; padding: 40px; text-align: center; margin-bottom: 20px; cursor: pointer;">
+        <div id="drop-zone">
             <p>Drag and drop files here or click to browse</p>
             <input type="file" name="files" id="file-input" multiple style="display: none;" />
         </div>
@@ -36,15 +36,13 @@
 
         ['dragenter', 'dragover'].forEach(eventName => {
             dropZone.addEventListener(eventName, () => {
-                dropZone.style.borderColor = '#000';
-                dropZone.style.backgroundColor = '#f0f0f0';
+                dropZone.classList.add('dragover');
             }, false);
         });
 
         ['dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, () => {
-                dropZone.style.borderColor = '#ccc';
-                dropZone.style.backgroundColor = '';
+                dropZone.classList.remove('dragover');
             }, false);
         });
 

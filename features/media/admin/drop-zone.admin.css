@@ -1,0 +1,14 @@
+#drop-zone {
+    border: 2px dashed var(--border-2);
+    border-radius: 4px;
+    padding: 40px;
+    text-align: center;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+#drop-zone.dragover {
+    border-color: var(--link);
+    background: var(--surface-2);
+}

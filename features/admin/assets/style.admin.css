@@ -1,3 +1,38 @@
+:root {
+    color-scheme: dark;
+
+    /* Surfaces */
+    --bg: #161616;
+    --surface: #1f1f1f;
+    --surface-2: #262626;
+    --surface-3: #2e2e2e;
+    --header-bg: #101010;
+
+    /* Borders */
+    --border: #333;
+    --border-2: #444;
+
+    /* Text */
+    --text: #e0e0e0;
+    --text-2: #a8a8a8;
+    --text-3: #7d7d7d;
+    --text-bright: #fff;
+
+    /* Links / primary accent */
+    --link: #5aa0ff;
+    --link-hover: #8bbcff;
+    --accent: #2f6fb3;
+    --accent-hover: #3d82cf;
+    --accent-focus: rgba(90, 160, 255, 0.35);
+
+    /* Status colours */
+    --success: #2e9e4a;
+    --success-hover: #38b657;
+    --danger: #d3455b;
+    --danger-hover: #e3556b;
+    --shadow: rgba(0, 0, 0, 0.5);
+}
+
 * {
     box-sizing: border-box;
 }
@@ -6,12 +41,13 @@ body {
     font-family: system-ui, -apple-system, sans-serif;
     line-height: 1.6;
     margin: 0;
-    background: #f5f5f5;
+    background: var(--bg);
+    color: var(--text);
 }
 
 header {
-    background: #333;
-    color: white;
+    background: var(--header-bg);
+    color: var(--text-bright);
     padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
@@ -29,13 +65,13 @@ header nav {
 }
 
 header nav a {
-    color: #e0e0e0;
+    color: var(--text-2);
     text-decoration: none;
     font-weight: 500;
 }
 
 header nav a:hover {
-    color: white;
+    color: var(--text-bright);
     text-decoration: underline;
 }
 
@@ -50,13 +86,13 @@ table {
 }
 
 thead {
-    background: #f0f0f0;
+    background: var(--surface-2);
 }
 
 th, td {
     padding: 0.75rem;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--border);
 }
 
 th {
@@ -64,7 +100,7 @@ th {
 }
 
 a {
-    color: #0066cc;
+    color: var(--link);
     text-decoration: none;
 }
 
@@ -89,10 +125,12 @@ label {
 input[type="text"],
 textarea {
     padding: 0.5rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-2);
     border-radius: 4px;
     font-family: inherit;
     font-size: 1rem;
+    background: var(--surface);
+    color: var(--text);
 }
 
 textarea {
@@ -102,8 +140,8 @@ textarea {
 
 input[type="submit"] {
     padding: 0.75rem 1.5rem;
-    background: #0066cc;
-    color: white;
+    background: var(--accent);
+    color: var(--text-bright);
     border: none;
     border-radius: 4px;
     font-size: 1rem;
@@ -112,13 +150,13 @@ input[type="submit"] {
 }
 
 input[type="submit"]:hover {
-    background: #0052a3;
+    background: var(--accent-hover);
 }
 
 button {
     padding: 0.75rem 1.5rem;
-    background: #0066cc;
-    color: white;
+    background: var(--accent);
+    color: var(--text-bright);
     border: none;
     border-radius: 4px;
     font-size: 1rem;
@@ -126,11 +164,11 @@ button {
 }
 
 button:hover {
-    background: #0052a3;
+    background: var(--accent-hover);
 }
 
 fieldset {
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-2);
     border-radius: 4px;
     padding: 1rem;
     margin: 0;
@@ -164,10 +202,10 @@ label:has(input[type="checkbox"]) {
 
 /* Media table styling */
 .media-table {
-    background: white;
+    background: var(--surface);
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px var(--shadow);
 }
 
 .media-table .preview-cell {
@@ -197,7 +235,7 @@ label:has(input[type="checkbox"]) {
 }
 
 .media-table .preview-cell .no-preview {
-    color: #999;
+    color: var(--text-3);
     font-style: italic;
     font-size: 0.875rem;
 }
@@ -209,12 +247,12 @@ label:has(input[type="checkbox"]) {
 
 .media-table .title-cell strong {
     display: block;
-    color: #333;
+    color: var(--text);
 }
 
 .media-table .title-cell em {
     display: inline;
-    color: #666;
+    color: var(--text-2);
     font-size: 0.9rem;
     margin-top: 0.25rem;
 }
@@ -224,27 +262,27 @@ label:has(input[type="checkbox"]) {
     margin-left: 0.5rem;
     padding: 0.2rem 0.5rem;
     font-size: 0.75rem;
-    background: #f0f0f0;
-    color: #333;
-    border: 1px solid #ccc;
+    background: var(--surface-3);
+    color: var(--text);
+    border: 1px solid var(--border-2);
     border-radius: 3px;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .media-table .title-cell .copy-btn:hover {
-    background: #e0e0e0;
-    border-color: #999;
+    background: var(--border-2);
+    border-color: var(--text-3);
 }
 
 .media-table .title-cell .copy-btn.copied {
-    background: #4caf50;
-    color: white;
-    border-color: #4caf50;
+    background: var(--success);
+    color: var(--text-bright);
+    border-color: var(--success);
 }
 
 .media-table code {
-    background: #f5f5f5;
+    background: var(--surface-2);
     padding: 0.2rem 0.4rem;
     border-radius: 3px;
     font-family: 'Monaco', 'Courier New', monospace;
@@ -252,7 +290,7 @@ label:has(input[type="checkbox"]) {
 }
 
 .variants-row {
-    background: #fafafa;
+    background: var(--surface-2);
 }
 
 .variants-row td {
@@ -267,7 +305,7 @@ label:has(input[type="checkbox"]) {
 .variants-row summary {
     cursor: pointer;
     font-weight: 500;
-    color: #0066cc;
+    color: var(--link);
     user-select: none;
 }
 
@@ -282,7 +320,7 @@ label:has(input[type="checkbox"]) {
 }
 
 .variants-table thead {
-    background: #e8e8e8;
+    background: var(--surface-3);
 }
 
 .variants-table th,
@@ -312,10 +350,10 @@ label:has(input[type="checkbox"]) {
 
 /* Media relations editing table */
 .media-relations-table {
-    background: white;
+    background: var(--surface);
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px var(--shadow);
 }
 
 .media-relations-table .preview-cell {
@@ -345,7 +383,7 @@ label:has(input[type="checkbox"]) {
 }
 
 .media-relations-table .preview-cell .no-preview {
-    color: #999;
+    color: var(--text-3);
     font-style: italic;
     font-size: 0.875rem;
 }
@@ -353,8 +391,8 @@ label:has(input[type="checkbox"]) {
 .media-relations-table .preview-cell .variant-label {
     display: block;
     font-size: 0.75rem;
-    color: #666;
-    background: #f0f0f0;
+    color: var(--text-2);
+    background: var(--surface-3);
     padding: 0.2rem 0.4rem;
     border-radius: 3px;
     margin-top: 0.25rem;
@@ -362,11 +400,11 @@ label:has(input[type="checkbox"]) {
 }
 
 .media-relations-table .variant-row {
-    background: #fafafa;
+    background: var(--surface-2);
 }
 
 .media-relations-table code {
-    background: #f5f5f5;
+    background: var(--surface-2);
     padding: 0.2rem 0.4rem;
     border-radius: 3px;
     font-family: 'Monaco', 'Courier New', monospace;
@@ -376,10 +414,12 @@ label:has(input[type="checkbox"]) {
 .media-relations-table .inline-input {
     width: 100%;
     padding: 0.4rem;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 3px;
     font-family: inherit;
     font-size: 0.9rem;
+    background: var(--surface);
+    color: var(--text);
 }
 
 .media-relations-table .inline-input.short {
@@ -388,15 +428,15 @@ label:has(input[type="checkbox"]) {
 
 .media-relations-table .inline-input:focus {
     outline: none;
-    border-color: #0066cc;
-    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+    border-color: var(--link);
+    box-shadow: 0 0 0 2px var(--accent-focus);
 }
 
 .media-relations-table .inline-input:disabled {
-    background-color: #f5f5f5;
-    color: #999;
+    background-color: var(--surface-2);
+    color: var(--text-3);
     cursor: not-allowed;
-    border-color: #e0e0e0;
+    border-color: var(--border);
 }
 
 .media-relations-table .actions-cell {
@@ -414,22 +454,22 @@ label:has(input[type="checkbox"]) {
 }
 
 .media-relations-table .btn-update {
-    background: #0066cc;
-    color: white;
+    background: var(--accent);
+    color: var(--text-bright);
     margin-right: 0.5rem;
 }
 
 .media-relations-table .btn-update:hover {
-    background: #0052a3;
+    background: var(--accent-hover);
 }
 
 .media-relations-table .btn-remove {
-    background: #dc3545;
-    color: white;
+    background: var(--danger);
+    color: var(--text-bright);
 }
 
 .media-relations-table .btn-remove:hover {
-    background: #c82333;
+    background: var(--danger-hover);
 }
 
 /* Media picker section */
@@ -451,17 +491,19 @@ label:has(input[type="checkbox"]) {
 
 .media-filter {
     padding: 0.5rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-2);
     border-radius: 4px;
     font-family: inherit;
     font-size: 0.9rem;
     width: 250px;
+    background: var(--surface);
+    color: var(--text);
 }
 
 .media-filter:focus {
     outline: none;
-    border-color: #0066cc;
-    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+    border-color: var(--link);
+    box-shadow: 0 0 0 2px var(--accent-focus);
 }
 
 .media-picker-header {
@@ -470,19 +512,19 @@ label:has(input[type="checkbox"]) {
     align-items: center;
     margin-bottom: 1rem;
     padding: 1rem;
-    background: #f5f5f5;
+    background: var(--surface-2);
     border-radius: 4px;
 }
 
 .media-picker-header #selection-count {
     font-weight: 600;
-    color: #333;
+    color: var(--text);
 }
 
 .btn-add-media {
     padding: 0.6rem 1.2rem;
-    background: #28a745;
-    color: white;
+    background: var(--success);
+    color: var(--text-bright);
     border: none;
     border-radius: 4px;
     font-size: 1rem;
@@ -491,7 +533,7 @@ label:has(input[type="checkbox"]) {
 }
 
 .btn-add-media:hover {
-    background: #218838;
+    background: var(--success-hover);
 }
 
 .media-grid {
@@ -503,17 +545,17 @@ label:has(input[type="checkbox"]) {
 
 .media-item {
     display: block;
-    border: 2px solid #ddd;
+    border: 2px solid var(--border);
     border-radius: 8px;
     padding: 0.5rem;
     cursor: pointer;
     transition: all 0.2s;
-    background: white;
+    background: var(--surface);
 }
 
 .media-item:hover {
-    border-color: #0066cc;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: var(--link);
+    box-shadow: 0 2px 8px var(--shadow);
 }
 
 .media-item input[type="checkbox"] {
@@ -521,7 +563,7 @@ label:has(input[type="checkbox"]) {
 }
 
 .media-item input[type="checkbox"]:checked ~ .media-preview {
-    outline: 3px solid #0066cc;
+    outline: 3px solid var(--link);
     outline-offset: -3px;
 }
 
@@ -532,7 +574,7 @@ label:has(input[type="checkbox"]) {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f9f9f9;
+    background: var(--surface-2);
     border-radius: 4px;
     margin-bottom: 0.5rem;
     overflow: hidden;
@@ -554,8 +596,8 @@ label:has(input[type="checkbox"]) {
     position: absolute;
     top: 0.25rem;
     right: 0.25rem;
-    background: #f0f0f0;
-    color: #666;
+    background: var(--surface-3);
+    color: var(--text-2);
     padding: 0.2rem 0.4rem;
     border-radius: 3px;
     font-size: 0.7rem;
@@ -564,7 +606,7 @@ label:has(input[type="checkbox"]) {
 
 .media-filename {
     font-size: 0.8rem;
-    color: #666;
+    color: var(--text-2);
     word-break: break-word;
     line-height: 1.3;
 }
@@ -575,14 +617,14 @@ label:has(input[type="checkbox"]) {
     align-items: center;
     gap: 1rem;
     padding: 1rem;
-    background: #f5f5f5;
+    background: var(--surface-2);
     border-radius: 4px;
 }
 
 .pagination-controls button {
     padding: 0.5rem 1rem;
-    background: #0066cc;
-    color: white;
+    background: var(--accent);
+    color: var(--text-bright);
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -590,17 +632,17 @@ label:has(input[type="checkbox"]) {
 }
 
 .pagination-controls button:hover:not(:disabled) {
-    background: #0052a3;
+    background: var(--accent-hover);
 }
 
 .pagination-controls button:disabled {
-    background: #ccc;
+    background: var(--border-2);
     cursor: not-allowed;
 }
 
 .pagination-controls #pageInfo {
     font-weight: 600;
-    color: #333;
+    color: var(--text);
 }
 
 /* Workflow progress indicator */
@@ -614,22 +656,22 @@ label:has(input[type="checkbox"]) {
 
 .workflow-progress .step {
     padding: 0.5rem 1rem;
-    background: #e0e0e0;
+    background: var(--surface-3);
     border-radius: 4px;
     font-size: 0.9rem;
     position: relative;
 }
 
 .workflow-progress .step.completed {
-    background: #a8d5a8;
-    color: #3d5a3d;
+    background: #1f3a24;
+    color: #9fd6a8;
 }
 
 .workflow-progress .step.current {
-    background: #87ceeb;
-    color: #1a3a4a;
+    background: #14384a;
+    color: #8bd0ec;
     font-weight: bold;
-    box-shadow: 0 0 8px rgba(135, 206, 235, 0.5);
+    box-shadow: 0 0 8px rgba(90, 160, 255, 0.4);
 }
 
 .workflow-progress .step:not(.completed):not(.current) {
@@ -637,7 +679,7 @@ label:has(input[type="checkbox"]) {
 }
 
 .workflow-progress .step:not(.current) {
-    color: #666;
+    color: var(--text-2);
 }
 
 /* Ranked list for workflow step 2 */
@@ -668,7 +710,7 @@ label:has(input[type="checkbox"]) {
 .ranked-list li {
     margin: 0.5rem 0;
     padding: 0.5rem;
-    background: #f9f9f9;
+    background: var(--surface-2);
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -701,8 +743,8 @@ label:has(input[type="checkbox"]) {
 
 .ranked-list .insert-button {
     padding: 0.5rem 1rem;
-    background: #0066cc;
-    color: white;
+    background: var(--accent);
+    color: var(--text-bright);
     border: none;
     border-radius: 4px;
     font-size: 0.875rem;
@@ -712,7 +754,7 @@ label:has(input[type="checkbox"]) {
 }
 
 .ranked-list .insert-button:hover {
-    background: #0052a3;
+    background: var(--accent-hover);
 }
 
 /* Action buttons container */
@@ -722,8 +764,8 @@ label:has(input[type="checkbox"]) {
 
 .btn-primary {
     padding: 0.75rem 1.5rem;
-    background: #28a745;
-    color: white;
+    background: var(--success);
+    color: var(--text-bright);
     border: none;
     border-radius: 4px;
     font-size: 1rem;
@@ -734,17 +776,17 @@ label:has(input[type="checkbox"]) {
 }
 
 .btn-primary:hover {
-    background: #218838;
+    background: var(--success-hover);
 }
 
 /* Edit media page */
 .edit-media-preview {
-    background: white;
+    background: var(--surface);
     border-radius: 8px;
     padding: 1rem;
     margin: 1rem 0;
     text-align: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px var(--shadow);
 }
 
 .edit-media-preview img {
@@ -761,7 +803,7 @@ label:has(input[type="checkbox"]) {
 }
 
 .edit-media-preview .no-preview {
-    color: #999;
+    color: var(--text-3);
     font-style: italic;
 }
 
@@ -779,7 +821,7 @@ label:has(input[type="checkbox"]) {
     flex-wrap: wrap;
     gap: 0.25rem;
     font-size: 0.75rem;
-    color: #888;
+    color: var(--text-3);
     margin-top: 0.25rem;
 }
 
