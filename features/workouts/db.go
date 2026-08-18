@@ -154,6 +154,20 @@ func RecentPBsInRange(ctx context.Context, start, end time.Time) ([]PersonalBest
 	`, start, end)
 }
 
+// PBsForGroup returns, for each segment distance within the given activity
+// group, the fastest segment ever recorded: the current all-time record
+// for that distance. Rows are ordered by distance ascending.
+func PBsForGroup(ctx context.Context, group string) ([]ActivityRecord, error) {
+	return db.Select[ActivityRecord](ctx, `
+		SELECT DISTINCT ON (ws.distance_m)
+			ws.distance_m, ws.elapsed_s, ws.pace_s_per_km, ws.start_time
+		FROM workout_segments ws
+		JOIN workouts w ON w.id = ws.workout_id
+		WHERE w.activity_group = $1
+		ORDER BY ws.distance_m, ws.elapsed_s ASC
+	`, group)
+}
+
 // insertWorkoutWithSegments inserts a workout and its segments in a single
 // transaction. If a workout with the same external_id already exists, this
 // is a no-op rather than an error.

@@ -96,3 +96,13 @@ type PersonalBest struct {
 	StartTime     time.Time `db:"start_time"`
 	PreviousBestS *float64  `db:"previous_best_s"`
 }
+
+// ActivityRecord is the current all-time record for one segment distance
+// within an activity group: the fastest segment ever recorded over that
+// distance.
+type ActivityRecord struct {
+	DistanceM  float64   `db:"distance_m"`
+	ElapsedS   float64   `db:"elapsed_s"`
+	PaceSPerKm float64   `db:"pace_s_per_km"`
+	StartTime  time.Time `db:"start_time"`
+}

@@ -1,0 +1,23 @@
+{{/* gotype: chameth.com/chameth.com/features/workouts/pbs.Data*/}}
+<div class="workout-pbs raised-box" data-title="{{ .Title }}">
+    <table class="plain-table">
+        <thead>
+        <tr>
+            <th scope="col">Distance</th>
+            <th scope="col">Time</th>
+            <th scope="col">Pace</th>
+            <th scope="col">Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{- range .Rows }}
+        <tr>
+            <td>{{ .Distance }}</td>
+            <td>{{ .Time }}</td>
+            <td>{{ .Pace }}</td>
+            <td>{{ .Date }}</td>
+        </tr>
+        {{- end }}
+        </tbody>
+    </table>
+</div>
