@@ -7,13 +7,14 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"net/url"
 	"time"
 
 	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/database/pgx/v5"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
 )
 
 //go:embed migrations/*.sql
@@ -31,7 +32,7 @@ func Init(queryLogFn func(context.Context)) error {
 	queryLogger = queryLogFn
 
 	var err error
-	db, err = sqlx.Connect("postgres", *connString)
+	db, err = sqlx.Connect("pgx", *connString)
 	if err != nil {
 		return fmt.Errorf("failed to connect to database: %w", err)
 	}
@@ -46,7 +47,13 @@ func Init(queryLogFn func(context.Context)) error {
 		return fmt.Errorf("failed to create migration source: %w", err)
 	}
 
-	m, err := migrate.NewWithSourceInstance("iofs", sourceDriver, *connString)
+	migrateURL, err := url.Parse(*connString)
+	if err != nil {
+		return fmt.Errorf("failed to parse database connection string: %w", err)
+	}
+	migrateURL.Scheme = "pgx5"
+
+	m, err := migrate.NewWithSourceInstance("iofs", sourceDriver, migrateURL.String())
 	if err != nil {
 		return fmt.Errorf("failed to create migration instance: %w", err)
 	}

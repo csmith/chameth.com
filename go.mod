@@ -11,11 +11,11 @@ require (
 	github.com/csmith/slogflags v1.2.0
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/jmoiron/sqlx v1.4.0
-	github.com/lib/pq v1.12.3
+	github.com/lib/pq v1.12.3 // indirect
 	github.com/pgvector/pgvector-go v0.4.0
 	github.com/yuin/goldmark v1.8.4
 	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
-	golang.org/x/image v0.44.0
+	golang.org/x/image v0.45.0
 	golang.org/x/net v0.57.0
 	tailscale.com v1.100.0
 )
@@ -39,6 +39,10 @@ require (
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/hdevalence/ed25519consensus v0.2.0 // indirect
 	github.com/huin/goupnp v1.3.0 // indirect
+	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jsimonetti/rtnetlink v1.4.0 // indirect
 	github.com/klauspost/compress v1.19.0 // indirect
 	github.com/mdlayher/netlink v1.7.3-0.20250113171957-fbb4dce95f42 // indirect
@@ -73,7 +77,8 @@ require (
 )
 
 require (
+	github.com/jackc/pgx/v5 v5.10.0
 	github.com/kljensen/snowball v0.10.0
 	github.com/prometheus/client_golang v1.24.0
-	golang.org/x/text v0.40.0
+	golang.org/x/text v0.41.0
 )

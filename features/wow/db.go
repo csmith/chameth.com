@@ -8,8 +8,6 @@ import (
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/external/blizzard"
 	"chameth.com/chameth.com/features/media"
-
-	"github.com/lib/pq"
 )
 
 func AllCharacters(ctx context.Context) ([]Character, error) {
@@ -200,7 +198,7 @@ func syncProfessions(ctx context.Context, characterID int, profs *blizzard.Chara
 		_, err := db.Exec(ctx, `
 			DELETE FROM wow_character_professions
 			WHERE character_id = $1 AND NOT (tier_id = ANY($2))
-		`, characterID, pq.Array(allTierIDs))
+		`, characterID, allTierIDs)
 		if err != nil {
 			return fmt.Errorf("failed to delete old professions: %w", err)
 		}
