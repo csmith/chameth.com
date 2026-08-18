@@ -2,7 +2,6 @@ aside.countdown {
     clear: both;
     padding: var(--smedium-space);
     padding-top: var(--raised-box-title-padding);
-    margin: var(--large-space) 0;
 
     .countdown-event {
         margin: 0;
