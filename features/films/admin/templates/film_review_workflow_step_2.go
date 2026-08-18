@@ -27,14 +27,9 @@ type FilmListEntryWithPoster struct {
 //go:embed film-review-workflow-step-2.html.gotpl
 var filmReviewWorkflowStep2Gotpl string
 
-var filmReviewWorkflowStep2Template = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Funcs(template.FuncMap{
-		"add": func(a, b int) int { return a + b },
-	}).Parse(string(page)))
-	template.Must(t.Parse(filmReviewWorkflowStep2Gotpl))
-	return t
-}()
+var filmReviewWorkflowStep2Template = admintemplates.ParsePageWithFuncs(template.FuncMap{
+	"add": func(a, b int) int { return a + b },
+}, filmReviewWorkflowStep2Gotpl)
 
 func RenderFilmReviewWorkflowStep2(w http.ResponseWriter, data Step2Data) error {
 	return filmReviewWorkflowStep2Template.Execute(w, data)

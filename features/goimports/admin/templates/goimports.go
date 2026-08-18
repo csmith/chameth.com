@@ -1,31 +1,15 @@
 package templates
 
 import (
-	"html/template"
 	"net/http"
 
 	admintemplates "chameth.com/chameth.com/features/admin/templates"
 )
 
-var listGoImportsTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(listGoImportsGotpl))
-	return t
-}()
+var listGoImportsTemplate = admintemplates.ParsePage(listGoImportsGotpl)
+var editGoImportTemplate = admintemplates.ParsePage(editGoImportGotpl)
 
-var editGoImportTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(editGoImportGotpl))
-	return t
-}()
-
-type ListGoImportsData struct {
-	admintemplates.PageData
-	Drafts    []GoImportSummary
-	GoImports []GoImportSummary
-}
+type ListGoImportsData = admintemplates.ListData[GoImportSummary]
 
 type GoImportSummary struct {
 	ID      int

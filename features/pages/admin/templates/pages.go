@@ -1,31 +1,16 @@
 package templates
 
 import (
-	"html/template"
 	"net/http"
 
 	admintemplates "chameth.com/chameth.com/features/admin/templates"
+	"chameth.com/chameth.com/features/media"
 )
 
-var listPagesTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(listPagesGotpl))
-	return t
-}()
+var listPagesTemplate = admintemplates.ParsePage(listPagesGotpl)
+var editPageTemplate = admintemplates.ParsePage(editPageGotpl)
 
-var editPageTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(editPageGotpl))
-	return t
-}()
-
-type ListPagesData struct {
-	admintemplates.PageData
-	Drafts []PageSummary
-	Pages  []PageSummary
-}
+type ListPagesData = admintemplates.ListData[PageSummary]
 
 type PageSummary struct {
 	ID    int
@@ -45,26 +30,7 @@ type EditPageData struct {
 	AvailableParents []PageSummary
 	SitemapFrequency string
 	SitemapPriority  string
-	Media            []PageMediaItem
-}
-
-type PageMediaItem struct {
-	Path        string
-	Title       string
-	AltText     string
-	Width       *int
-	Height      *int
-	Role        string
-	ContentType string
-	MediaID     int
-	Variants    []PageMediaVariant
-}
-
-type PageMediaVariant struct {
-	MediaID     int
-	ContentType string
-	Width       *int
-	Height      *int
+	Media            []media.GroupedMedia
 }
 
 func RenderListPages(w http.ResponseWriter, data ListPagesData) error {

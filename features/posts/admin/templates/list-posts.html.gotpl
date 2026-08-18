@@ -42,7 +42,7 @@
             </tr>
         </thead>
         <tbody>
-            {{range .Posts}}
+            {{range .Items}}
             <tr>
                 <td>{{.ID}}</td>
                 <td>{{.Title}}</td>

@@ -1,27 +1,16 @@
 package admin
 
 import (
-	"embed"
-	"html/template"
+	_ "embed"
 	"net/http"
 
 	adminTemplates "chameth.com/chameth.com/features/admin/templates"
 )
 
-//go:embed *.gotpl
-var templates embed.FS
+//go:embed list-characters.html.gotpl
+var listCharactersGotpl string
 
-var listCharactersTemplate = template.Must(
-	template.Must(
-		template.New("page.html.gotpl").ParseFS(
-			adminTemplates.Templates,
-			"page.html.gotpl",
-		),
-	).ParseFS(
-		templates,
-		"list-characters.html.gotpl",
-	),
-)
+var listCharactersTemplate = adminTemplates.ParsePage(listCharactersGotpl)
 
 type ListCharactersData struct {
 	adminTemplates.PageData

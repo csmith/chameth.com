@@ -1,179 +1,121 @@
 package admin
 
 import (
-	"fmt"
+	"context"
 	"html/template"
-	"net/http"
+	"net/url"
 	"strconv"
 
+	"chameth.com/chameth.com/features/admin/crud"
 	"chameth.com/chameth.com/features/projects"
 	"chameth.com/chameth.com/features/projects/admin/templates"
-	"github.com/csmith/aca"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func ListProjectsHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := projects.GetDraftProjects(r.Context())
-		if err != nil {
-			http.Error(w, "Failed to retrieve draft projects", http.StatusInternalServerError)
-			return
-		}
+// projectWithSection carries the section name and ordering position that the
+// list page shows alongside each project.
+type projectWithSection struct {
+	projects.Project
+	SectionName  string
+	SectionOrder int
+}
 
-		allProjects, err := projects.GetAllProjects(r.Context())
-		if err != nil {
-			http.Error(w, "Failed to retrieve projects", http.StatusInternalServerError)
-			return
-		}
+func RegisterRoutes(rm *routing.Manager) {
+	crud.Register(rm.Admin, "/projects", crud.Routes{
+		List:   crud.List("project", fetchProjects, toSummary, templates.RenderListProjects),
+		Create: crud.Create("project", "/projects", crud.GenerateName(projects.CreateProject)),
+		Edit:   crud.Edit("project", projects.GetProjectByID, toEditData, templates.RenderEditProject),
+		Update: crud.Update("project", "/projects", applyUpdate),
+	})
+}
 
-		sections, err := projects.GetAllProjectSections(r.Context())
-		if err != nil {
-			http.Error(w, "Failed to retrieve sections", http.StatusInternalServerError)
-			return
-		}
+func fetchProjects(ctx context.Context) ([]projectWithSection, []projectWithSection, error) {
+	sections, err := projects.GetAllProjectSections(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
 
-		sectionMap := make(map[int]string)
-		for _, section := range sections {
-			sectionMap[section.ID] = section.Name
-		}
+	names := make(map[int]string, len(sections))
+	orders := make(map[int]int, len(sections))
+	for i, section := range sections {
+		names[section.ID] = section.Name
+		orders[section.ID] = i
+	}
 
-		sectionOrderMap := make(map[int]int)
-		for i, section := range sections {
-			sectionOrderMap[section.ID] = i
-		}
-
-		draftSummaries := make([]templates.ProjectSummary, len(drafts))
-		for i, project := range drafts {
-			draftSummaries[i] = templates.ProjectSummary{
-				ID:          project.ID,
-				Name:        project.Name,
-				Icon:        template.HTML(project.Icon),
-				Pinned:      project.Pinned,
-				Section:     sectionMap[project.Section],
-				Description: project.Description,
-				SectionSort: sectionOrderMap[project.Section],
+	annotate := func(list []projects.Project) []projectWithSection {
+		annotated := make([]projectWithSection, len(list))
+		for i, project := range list {
+			annotated[i] = projectWithSection{
+				Project:      project,
+				SectionName:  names[project.Section],
+				SectionOrder: orders[project.Section],
 			}
 		}
+		return annotated
+	}
 
-		projectSummaries := make([]templates.ProjectSummary, len(allProjects))
-		for i, project := range allProjects {
-			projectSummaries[i] = templates.ProjectSummary{
-				ID:          project.ID,
-				Name:        project.Name,
-				Icon:        template.HTML(project.Icon),
-				Pinned:      project.Pinned,
-				Section:     sectionMap[project.Section],
-				Description: project.Description,
-				SectionSort: sectionOrderMap[project.Section],
-			}
-		}
+	draftProjects, err := projects.GetDraftProjects(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
+	allProjects, err := projects.GetAllProjects(ctx)
+	if err != nil {
+		return nil, nil, err
+	}
 
-		data := templates.ListProjectsData{
-			Drafts:   draftSummaries,
-			Projects: projectSummaries,
-		}
+	return annotate(draftProjects), annotate(allProjects), nil
+}
 
-		if err := templates.RenderListProjects(w, data); err != nil {
-			http.Error(w, "Failed to render template", http.StatusInternalServerError)
-		}
+func toSummary(project projectWithSection) templates.ProjectSummary {
+	return templates.ProjectSummary{
+		ID:          project.ID,
+		Name:        project.Name,
+		Icon:        template.HTML(project.Icon),
+		Pinned:      project.Pinned,
+		Section:     project.SectionName,
+		Description: project.Description,
+		SectionSort: project.SectionOrder,
 	}
 }
 
-func CreateProjectHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		gen, err := aca.NewDefaultGenerator()
-		if err != nil {
-			http.Error(w, "Failed to generate name", http.StatusInternalServerError)
-			return
-		}
-		name := gen.Generate()
-
-		id, err := projects.CreateProject(r.Context(), name)
-		if err != nil {
-			http.Error(w, "Failed to create project", http.StatusInternalServerError)
-			return
-		}
-
-		http.Redirect(w, r, fmt.Sprintf("/projects/edit/%d", id), http.StatusSeeOther)
+func toEditData(ctx context.Context, project *projects.Project) (templates.EditProjectData, error) {
+	sections, err := projects.GetAllProjectSections(ctx)
+	if err != nil {
+		return templates.EditProjectData{}, err
 	}
+
+	sectionOptions := make([]templates.SectionOption, len(sections))
+	for i, section := range sections {
+		sectionOptions[i] = templates.SectionOption{
+			ID:   section.ID,
+			Name: section.Name,
+		}
+	}
+
+	return templates.EditProjectData{
+		ID:                project.ID,
+		Name:              project.Name,
+		Icon:              project.Icon,
+		Description:       project.Description,
+		Section:           project.Section,
+		Pinned:            project.Pinned,
+		Published:         project.Published,
+		AvailableSections: sectionOptions,
+	}, nil
 }
 
-func EditProjectHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			http.Error(w, "Invalid project ID", http.StatusBadRequest)
-			return
-		}
-
-		project, err := projects.GetProjectByID(r.Context(), id)
-		if err != nil {
-			http.Error(w, "Project not found", http.StatusNotFound)
-			return
-		}
-
-		sections, err := projects.GetAllProjectSections(r.Context())
-		if err != nil {
-			http.Error(w, "Failed to retrieve sections", http.StatusInternalServerError)
-			return
-		}
-
-		sectionOptions := make([]templates.SectionOption, len(sections))
-		for i, section := range sections {
-			sectionOptions[i] = templates.SectionOption{
-				ID:   section.ID,
-				Name: section.Name,
-			}
-		}
-
-		data := templates.EditProjectData{
-			ID:                project.ID,
-			Name:              project.Name,
-			Icon:              project.Icon,
-			Description:       project.Description,
-			Section:           project.Section,
-			Pinned:            project.Pinned,
-			Published:         project.Published,
-			AvailableSections: sectionOptions,
-		}
-
-		if err := templates.RenderEditProject(w, data); err != nil {
-			http.Error(w, "Failed to render template", http.StatusInternalServerError)
-		}
+func applyUpdate(ctx context.Context, id int, form url.Values) error {
+	section, err := strconv.Atoi(form.Get("section"))
+	if err != nil {
+		return err
 	}
-}
 
-func UpdateProjectHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			http.Error(w, "Invalid project ID", http.StatusBadRequest)
-			return
-		}
-
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Failed to parse form", http.StatusBadRequest)
-			return
-		}
-
-		name := r.FormValue("name")
-		icon := r.FormValue("icon")
-		description := r.FormValue("description")
-		sectionStr := r.FormValue("section")
-		section, err := strconv.Atoi(sectionStr)
-		if err != nil {
-			http.Error(w, "Invalid section ID", http.StatusBadRequest)
-			return
-		}
-		pinned := r.FormValue("pinned") == "true"
-		published := r.FormValue("published") == "true"
-
-		if err := projects.UpdateProject(r.Context(), id, name, icon, description, section, pinned, published); err != nil {
-			http.Error(w, "Failed to update project", http.StatusInternalServerError)
-			return
-		}
-
-		http.Redirect(w, r, fmt.Sprintf("/projects/edit/%d", id), http.StatusSeeOther)
-	}
+	return projects.UpdateProject(ctx, id,
+		form.Get("name"),
+		form.Get("icon"),
+		form.Get("description"),
+		section,
+		form.Get("pinned") == "true",
+		form.Get("published") == "true",
+	)
 }

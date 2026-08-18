@@ -7,25 +7,10 @@ import (
 	admintemplates "chameth.com/chameth.com/features/admin/templates"
 )
 
-var listProjectsTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(listProjectsGotpl))
-	return t
-}()
+var listProjectsTemplate = admintemplates.ParsePage(listProjectsGotpl)
+var editProjectTemplate = admintemplates.ParsePage(editProjectGotpl)
 
-var editProjectTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(editProjectGotpl))
-	return t
-}()
-
-type ListProjectsData struct {
-	admintemplates.PageData
-	Drafts   []ProjectSummary
-	Projects []ProjectSummary
-}
+type ListProjectsData = admintemplates.ListData[ProjectSummary]
 
 type ProjectSummary struct {
 	ID          int

@@ -1,31 +1,16 @@
 package templates
 
 import (
-	"html/template"
 	"net/http"
 
 	admintemplates "chameth.com/chameth.com/features/admin/templates"
+	"chameth.com/chameth.com/features/media"
 )
 
-var listPostsTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(listPostsGotpl))
-	return t
-}()
+var listPostsTemplate = admintemplates.ParsePage(listPostsGotpl)
+var editPostTemplate = admintemplates.ParsePage(editPostGotpl)
 
-var editPostTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(editPostGotpl))
-	return t
-}()
-
-type ListPostsData struct {
-	admintemplates.PageData
-	Drafts []PostSummary
-	Posts  []PostSummary
-}
+type ListPostsData = admintemplates.ListData[PostSummary]
 
 type PostSummary struct {
 	ID    int
@@ -43,26 +28,7 @@ type EditPostData struct {
 	Content   string
 	Format    string
 	Published bool
-	Media     []PostMediaItem
-}
-
-type PostMediaItem struct {
-	Path        string
-	Title       string
-	AltText     string
-	Width       *int
-	Height      *int
-	Role        string
-	ContentType string
-	MediaID     int
-	Variants    []PostMediaVariant
-}
-
-type PostMediaVariant struct {
-	MediaID     int
-	ContentType string
-	Width       *int
-	Height      *int
+	Media     []media.GroupedMedia
 }
 
 func RenderListPosts(w http.ResponseWriter, data ListPostsData) error {

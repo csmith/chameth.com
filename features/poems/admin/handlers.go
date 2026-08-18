@@ -1,137 +1,52 @@
 package admin
 
 import (
-	"fmt"
-	"net/http"
-	"strconv"
+	"context"
+	"net/url"
 
+	"chameth.com/chameth.com/features/admin/crud"
 	"chameth.com/chameth.com/features/poems"
 	"chameth.com/chameth.com/features/poems/admin/templates"
-	"github.com/csmith/aca"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func ListPoemsHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := poems.GetDraftPoems(r.Context())
-		if err != nil {
-			http.Error(w, "Failed to retrieve draft poems", http.StatusInternalServerError)
-			return
-		}
+func RegisterRoutes(rm *routing.Manager) {
+	crud.Register(rm.Admin, "/poems", crud.Routes{
+		List:   crud.List("poem", crud.DraftsAndAll(poems.GetDraftPoems, poems.GetAllPoems), toSummary, templates.RenderListPoems),
+		Create: crud.Create("poem", "/poems", crud.GeneratePath("/%s/", poems.CreatePoem)),
+		Edit:   crud.Edit("poem", poems.GetPoemByID, toEditData, templates.RenderEditPoem),
+		Update: crud.Update("poem", "/poems", applyUpdate),
+	})
+}
 
-		allPoems, err := poems.GetAllPoems(r.Context())
-		if err != nil {
-			http.Error(w, "Failed to retrieve poems", http.StatusInternalServerError)
-			return
-		}
-
-		draftSummaries := make([]templates.PoemSummary, len(drafts))
-		for i, poem := range drafts {
-			draftSummaries[i] = templates.PoemSummary{
-				ID:    poem.ID,
-				Path:  poem.Path,
-				Title: poem.Title,
-				Date:  poem.Date.Format("2006-01-02"),
-			}
-		}
-
-		poemSummaries := make([]templates.PoemSummary, len(allPoems))
-		for i, poem := range allPoems {
-			poemSummaries[i] = templates.PoemSummary{
-				ID:    poem.ID,
-				Path:  poem.Path,
-				Title: poem.Title,
-				Date:  poem.Date.Format("2006-01-02"),
-			}
-		}
-
-		data := templates.ListPoemsData{
-			Drafts: draftSummaries,
-			Poems:  poemSummaries,
-		}
-
-		if err := templates.RenderListPoems(w, data); err != nil {
-			http.Error(w, "Failed to render template", http.StatusInternalServerError)
-		}
+func toSummary(poem poems.PoemMetadata) templates.PoemSummary {
+	return templates.PoemSummary{
+		ID:    poem.ID,
+		Path:  poem.Path,
+		Title: poem.Title,
+		Date:  poem.Date.Format("2006-01-02"),
 	}
 }
 
-func EditPoemHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			http.Error(w, "Invalid poem ID", http.StatusBadRequest)
-			return
-		}
-
-		poem, err := poems.GetPoemByID(r.Context(), id)
-		if err != nil {
-			http.Error(w, "Poem not found", http.StatusNotFound)
-			return
-		}
-
-		data := templates.EditPoemData{
-			ID:        poem.ID,
-			Path:      poem.Path,
-			Title:     poem.Title,
-			Poem:      poem.Poem,
-			Notes:     poem.Notes,
-			Date:      poem.Date.Format("2006-01-02"),
-			Published: poem.Published,
-		}
-
-		if err := templates.RenderEditPoem(w, data); err != nil {
-			http.Error(w, "Failed to render template", http.StatusInternalServerError)
-		}
-	}
+func toEditData(_ context.Context, poem *poems.Poem) (templates.EditPoemData, error) {
+	return templates.EditPoemData{
+		ID:        poem.ID,
+		Path:      poem.Path,
+		Title:     poem.Title,
+		Poem:      poem.Poem,
+		Notes:     poem.Notes,
+		Date:      poem.Date.Format("2006-01-02"),
+		Published: poem.Published,
+	}, nil
 }
 
-func CreatePoemHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		gen, err := aca.NewDefaultGenerator()
-		if err != nil {
-			http.Error(w, "Failed to generate name", http.StatusInternalServerError)
-			return
-		}
-		name := gen.Generate()
-		path := fmt.Sprintf("/%s/", name)
-
-		id, err := poems.CreatePoem(r.Context(), path, name)
-		if err != nil {
-			http.Error(w, "Failed to create poem", http.StatusInternalServerError)
-			return
-		}
-
-		http.Redirect(w, r, fmt.Sprintf("/poems/edit/%d", id), http.StatusSeeOther)
-	}
-}
-
-func UpdatePoemHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			http.Error(w, "Invalid poem ID", http.StatusBadRequest)
-			return
-		}
-
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Failed to parse form", http.StatusBadRequest)
-			return
-		}
-
-		path := r.FormValue("path")
-		title := r.FormValue("title")
-		poemContent := r.FormValue("poem")
-		notes := r.FormValue("notes")
-		date := r.FormValue("date")
-		published := r.FormValue("published") == "true"
-
-		if err := poems.UpdatePoem(r.Context(), id, path, title, poemContent, notes, date, published); err != nil {
-			http.Error(w, "Failed to update poem", http.StatusInternalServerError)
-			return
-		}
-
-		http.Redirect(w, r, fmt.Sprintf("/poems/edit/%d", id), http.StatusSeeOther)
-	}
+func applyUpdate(ctx context.Context, id int, form url.Values) error {
+	return poems.UpdatePoem(ctx, id,
+		form.Get("path"),
+		form.Get("title"),
+		form.Get("poem"),
+		form.Get("notes"),
+		form.Get("date"),
+		form.Get("published") == "true",
+	)
 }

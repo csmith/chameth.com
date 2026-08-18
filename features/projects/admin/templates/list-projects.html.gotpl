@@ -48,7 +48,7 @@
             </tr>
         </thead>
         <tbody>
-            {{range .Projects}}
+            {{range .Items}}
             <tr>
                 <td>{{.ID}}</td>
                 <td>{{.Icon}}</td>

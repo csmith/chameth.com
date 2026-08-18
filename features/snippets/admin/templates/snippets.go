@@ -1,31 +1,15 @@
 package templates
 
 import (
-	"html/template"
 	"net/http"
 
 	admintemplates "chameth.com/chameth.com/features/admin/templates"
 )
 
-var listSnippetsTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(listSnippetsGotpl))
-	return t
-}()
+var listSnippetsTemplate = admintemplates.ParsePage(listSnippetsGotpl)
+var editSnippetTemplate = admintemplates.ParsePage(editSnippetGotpl)
 
-var editSnippetTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(editSnippetGotpl))
-	return t
-}()
-
-type ListSnippetsData struct {
-	admintemplates.PageData
-	Drafts   []SnippetSummary
-	Snippets []SnippetSummary
-}
+type ListSnippetsData = admintemplates.ListData[SnippetSummary]
 
 type SnippetSummary struct {
 	ID    int

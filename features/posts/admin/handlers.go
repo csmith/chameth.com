@@ -5,213 +5,82 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
+	"chameth.com/chameth.com/features/admin/crud"
 	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/posts/admin/templates"
 	"chameth.com/chameth.com/features/posts/admin/wordclouds"
+	"chameth.com/chameth.com/features/routing"
 	"chameth.com/chameth.com/features/syndications"
-	"github.com/csmith/aca"
 )
 
-func ListPostsHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := posts.GetDraftPosts(r.Context())
-		if err != nil {
-			http.Error(w, "Failed to retrieve draft posts", http.StatusInternalServerError)
-			return
-		}
+func RegisterRoutes(rm *routing.Manager) {
+	crud.Register(rm.Admin, "/posts", crud.Routes{
+		List:   crud.List("post", crud.DraftsAndAll(posts.GetDraftPosts, posts.GetAllPosts), toSummary, templates.RenderListPosts),
+		Create: crud.Create("post", "/posts", crud.GeneratePath("/%s/", posts.CreatePost)),
+		Edit:   crud.Edit("post", posts.GetPostByID, toEditData, templates.RenderEditPost),
+		Update: crud.Update("post", "/posts", applyUpdate),
+	})
+	rm.Admin.HandleFunc("POST /posts/generate-wordcloud/{id}", GenerateWordcloudHandler())
+}
 
-		allPosts, err := posts.GetAllPosts(r.Context())
-		if err != nil {
-			http.Error(w, "Failed to retrieve posts", http.StatusInternalServerError)
-			return
-		}
-
-		draftSummaries := make([]templates.PostSummary, len(drafts))
-		for i, post := range drafts {
-			draftSummaries[i] = templates.PostSummary{
-				ID:    post.ID,
-				Title: post.Title,
-				Path:  post.Path,
-				Date:  post.Date.Format("2006-01-02"),
-			}
-		}
-
-		postSummaries := make([]templates.PostSummary, len(allPosts))
-		for i, post := range allPosts {
-			postSummaries[i] = templates.PostSummary{
-				ID:    post.ID,
-				Title: post.Title,
-				Path:  post.Path,
-				Date:  post.Date.Format("2006-01-02"),
-			}
-		}
-
-		data := templates.ListPostsData{
-			Drafts: draftSummaries,
-			Posts:  postSummaries,
-		}
-
-		if err := templates.RenderListPosts(w, data); err != nil {
-			http.Error(w, "Failed to render template", http.StatusInternalServerError)
-		}
+func toSummary(post posts.PostMetadata) templates.PostSummary {
+	return templates.PostSummary{
+		ID:    post.ID,
+		Title: post.Title,
+		Path:  post.Path,
+		Date:  post.Date.Format("2006-01-02"),
 	}
 }
 
-func EditPostHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			http.Error(w, "Invalid post ID", http.StatusBadRequest)
-			return
-		}
-
-		post, err := posts.GetPostByID(r.Context(), id)
-		if err != nil {
-			http.Error(w, "Post not found", http.StatusNotFound)
-			return
-		}
-
-		mediaRelations, err := media.GetMediaRelationsForEntity(r.Context(), "post", id)
-		if err != nil {
-			http.Error(w, "Failed to retrieve media", http.StatusInternalServerError)
-			return
-		}
-
-		mediaMap := make(map[int]*templates.PostMediaItem)
-		var primaryMediaIDs []int
-
-		for _, rel := range mediaRelations {
-			if rel.ParentMediaID == nil {
-				if _, exists := mediaMap[rel.MediaID]; !exists {
-					primaryMediaIDs = append(primaryMediaIDs, rel.MediaID)
-
-					caption := ""
-					if rel.Caption != nil {
-						caption = *rel.Caption
-					}
-					description := ""
-					if rel.Description != nil {
-						description = *rel.Description
-					}
-					role := ""
-					if rel.Role != nil {
-						role = *rel.Role
-					}
-
-					mediaMap[rel.MediaID] = &templates.PostMediaItem{
-						Path:        rel.Path,
-						Title:       caption,
-						AltText:     description,
-						Width:       rel.Width,
-						Height:      rel.Height,
-						Role:        role,
-						ContentType: rel.ContentType,
-						MediaID:     rel.MediaID,
-						Variants:    []templates.PostMediaVariant{},
-					}
-				}
-			}
-		}
-
-		for _, rel := range mediaRelations {
-			if rel.ParentMediaID != nil {
-				parentID := *rel.ParentMediaID
-				if parent, exists := mediaMap[parentID]; exists {
-					parent.Variants = append(parent.Variants, templates.PostMediaVariant{
-						MediaID:     rel.MediaID,
-						ContentType: rel.ContentType,
-						Width:       rel.Width,
-						Height:      rel.Height,
-					})
-				}
-			}
-		}
-
-		mediaItems := make([]templates.PostMediaItem, 0, len(primaryMediaIDs))
-		for _, mediaID := range primaryMediaIDs {
-			mediaItems = append(mediaItems, *mediaMap[mediaID])
-		}
-
-		data := templates.EditPostData{
-			ID:        post.ID,
-			Title:     post.Title,
-			Path:      post.Path,
-			Date:      post.Date.Format("2006-01-02"),
-			Content:   post.Content,
-			Format:    post.Format,
-			Published: post.Published,
-			Media:     mediaItems,
-		}
-
-		if err := templates.RenderEditPost(w, data); err != nil {
-			http.Error(w, "Failed to render template", http.StatusInternalServerError)
-		}
+func toEditData(ctx context.Context, post *posts.Post) (templates.EditPostData, error) {
+	mediaRelations, err := media.GetMediaRelationsForEntity(ctx, "post", post.ID)
+	if err != nil {
+		return templates.EditPostData{}, err
 	}
+
+	return templates.EditPostData{
+		ID:        post.ID,
+		Title:     post.Title,
+		Path:      post.Path,
+		Date:      post.Date.Format("2006-01-02"),
+		Content:   post.Content,
+		Format:    post.Format,
+		Published: post.Published,
+		Media:     media.GroupByPrimary(mediaRelations),
+	}, nil
 }
 
-func CreatePostHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		gen, err := aca.NewDefaultGenerator()
-		if err != nil {
-			http.Error(w, "Failed to generate name", http.StatusInternalServerError)
-			return
-		}
-		name := gen.Generate()
-		path := fmt.Sprintf("/%s/", name)
+func applyUpdate(ctx context.Context, id int, form url.Values) error {
+	path := form.Get("path")
+	published := form.Get("published") == "true"
 
-		id, err := posts.CreatePost(r.Context(), path, name)
-		if err != nil {
-			http.Error(w, "Failed to create post", http.StatusInternalServerError)
-			return
-		}
-
-		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
+	if err := posts.UpdatePost(ctx, id,
+		path,
+		form.Get("title"),
+		form.Get("content"),
+		form.Get("date"),
+		form.Get("format"),
+		published,
+	); err != nil {
+		return err
 	}
-}
 
-func UpdatePostHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			http.Error(w, "Invalid post ID", http.StatusBadRequest)
-			return
-		}
+	if published {
+		go func() {
+			if err := posts.GenerateAndStore(context.Background(), path); err != nil {
+				slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
+			}
+		}()
 
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Failed to parse form", http.StatusBadRequest)
-			return
-		}
-
-		path := r.FormValue("path")
-		title := r.FormValue("title")
-		postContent := r.FormValue("content")
-		date := r.FormValue("date")
-		format := r.FormValue("format")
-		published := r.FormValue("published") == "true"
-
-		if err := posts.UpdatePost(r.Context(), id, path, title, postContent, date, format, published); err != nil {
-			http.Error(w, "Failed to update post", http.StatusInternalServerError)
-			return
-		}
-
-		if published {
-			go func() {
-				if err := posts.GenerateAndStore(context.Background(), path); err != nil {
-					slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
-				}
-			}()
-
-			go syndications.SyndicateAllPosts(context.Background())
-		}
-
-		http.Redirect(w, r, fmt.Sprintf("/posts/edit/%d", id), http.StatusSeeOther)
+		go syndications.SyndicateAllPosts(context.Background())
 	}
+
+	return nil
 }
 
 func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {

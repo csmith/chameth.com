@@ -2,7 +2,6 @@ package templates
 
 import (
 	_ "embed"
-	"html/template"
 	"net/http"
 
 	admintemplates "chameth.com/chameth.com/features/admin/templates"
@@ -11,12 +10,7 @@ import (
 //go:embed list-films.html.gotpl
 var listFilmsGotpl string
 
-var listFilmsTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(listFilmsGotpl))
-	return t
-}()
+var listFilmsTemplate = admintemplates.ParsePage(listFilmsGotpl)
 
 type ListFilmsData struct {
 	admintemplates.PageData

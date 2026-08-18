@@ -1,139 +1,63 @@
 package admin
 
 import (
-	"fmt"
+	"context"
+	"errors"
 	"net/http"
-	"strconv"
+	"net/url"
 
+	"chameth.com/chameth.com/features/admin/crud"
 	"chameth.com/chameth.com/features/goimports"
 	"chameth.com/chameth.com/features/goimports/admin/templates"
+	"chameth.com/chameth.com/features/routing"
 )
 
-func ListGoImportsHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		drafts, err := goimports.GetDraftGoImports(r.Context())
-		if err != nil {
-			http.Error(w, "Failed to retrieve draft goimports", http.StatusInternalServerError)
-			return
-		}
+func RegisterRoutes(rm *routing.Manager) {
+	crud.Register(rm.Admin, "/goimports", crud.Routes{
+		List:   crud.List("goimport", crud.DraftsAndAll(goimports.GetDraftGoImports, goimports.GetAllGoImports), toSummary, templates.RenderListGoImports),
+		Create: crud.Create("goimport", "/goimports", createGoImport),
+		Edit:   crud.Edit("goimport", goimports.GetGoImportByID, toEditData, templates.RenderEditGoImport),
+		Update: crud.Update("goimport", "/goimports", applyUpdate),
+	})
+}
 
-		allGoImports, err := goimports.GetAllGoImports(r.Context())
-		if err != nil {
-			http.Error(w, "Failed to retrieve goimports", http.StatusInternalServerError)
-			return
-		}
-
-		draftSummaries := make([]templates.GoImportSummary, len(drafts))
-		for i, gi := range drafts {
-			draftSummaries[i] = templates.GoImportSummary{
-				ID:      gi.ID,
-				Path:    gi.Path,
-				VCS:     gi.VCS,
-				RepoURL: gi.RepoURL,
-			}
-		}
-
-		goimportSummaries := make([]templates.GoImportSummary, len(allGoImports))
-		for i, gi := range allGoImports {
-			goimportSummaries[i] = templates.GoImportSummary{
-				ID:      gi.ID,
-				Path:    gi.Path,
-				VCS:     gi.VCS,
-				RepoURL: gi.RepoURL,
-			}
-		}
-
-		data := templates.ListGoImportsData{
-			Drafts:    draftSummaries,
-			GoImports: goimportSummaries,
-		}
-
-		if err := templates.RenderListGoImports(w, data); err != nil {
-			http.Error(w, "Failed to render template", http.StatusInternalServerError)
-		}
+func toSummary(goimport goimports.GoImport) templates.GoImportSummary {
+	return templates.GoImportSummary{
+		ID:      goimport.ID,
+		Path:    goimport.Path,
+		VCS:     goimport.VCS,
+		RepoURL: goimport.RepoURL,
 	}
 }
 
-func EditGoImportHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			http.Error(w, "Invalid goimport ID", http.StatusBadRequest)
-			return
-		}
-
-		goimport, err := goimports.GetGoImportByID(r.Context(), id)
-		if err != nil {
-			http.Error(w, "Go import not found", http.StatusNotFound)
-			return
-		}
-
-		data := templates.EditGoImportData{
-			ID:        goimport.ID,
-			Path:      goimport.Path,
-			VCS:       goimport.VCS,
-			RepoURL:   goimport.RepoURL,
-			Published: goimport.Published,
-		}
-
-		if err := templates.RenderEditGoImport(w, data); err != nil {
-			http.Error(w, "Failed to render template", http.StatusInternalServerError)
-		}
-	}
+func toEditData(_ context.Context, goimport *goimports.GoImport) (templates.EditGoImportData, error) {
+	return templates.EditGoImportData{
+		ID:        goimport.ID,
+		Path:      goimport.Path,
+		VCS:       goimport.VCS,
+		RepoURL:   goimport.RepoURL,
+		Published: goimport.Published,
+	}, nil
 }
 
-func CreateGoImportHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Failed to parse form", http.StatusBadRequest)
-			return
-		}
-
-		project := r.FormValue("project")
-		if project == "" {
-			http.Error(w, "Project name is required", http.StatusBadRequest)
-			return
-		}
-
-		path := "/" + project + "/"
-		vcs := "git"
-		repoUrl := "https://github.com/csmith/" + project
-
-		id, err := goimports.CreateGoImport(r.Context(), path, vcs, repoUrl)
-		if err != nil {
-			http.Error(w, "Failed to create goimport", http.StatusInternalServerError)
-			return
-		}
-
-		http.Redirect(w, r, fmt.Sprintf("/goimports/edit/%d", id), http.StatusSeeOther)
+func createGoImport(r *http.Request) (int, error) {
+	if err := r.ParseForm(); err != nil {
+		return 0, err
 	}
+
+	project := r.FormValue("project")
+	if project == "" {
+		return 0, errors.New("project name is required")
+	}
+
+	return goimports.CreateGoImport(r.Context(), "/"+project+"/", "git", "https://github.com/csmith/"+project)
 }
 
-func UpdateGoImportHandler() func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
-		if err != nil {
-			http.Error(w, "Invalid goimport ID", http.StatusBadRequest)
-			return
-		}
-
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Failed to parse form", http.StatusBadRequest)
-			return
-		}
-
-		path := r.FormValue("path")
-		vcs := r.FormValue("vcs")
-		repoUrl := r.FormValue("repo_url")
-		published := r.FormValue("published") == "true"
-
-		if err := goimports.UpdateGoImport(r.Context(), id, path, vcs, repoUrl, published); err != nil {
-			http.Error(w, "Failed to update goimport", http.StatusInternalServerError)
-			return
-		}
-
-		http.Redirect(w, r, fmt.Sprintf("/goimports/edit/%d", id), http.StatusSeeOther)
-	}
+func applyUpdate(ctx context.Context, id int, form url.Values) error {
+	return goimports.UpdateGoImport(ctx, id,
+		form.Get("path"),
+		form.Get("vcs"),
+		form.Get("repo_url"),
+		form.Get("published") == "true",
+	)
 }

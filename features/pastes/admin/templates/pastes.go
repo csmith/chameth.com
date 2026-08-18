@@ -1,31 +1,15 @@
 package templates
 
 import (
-	"html/template"
 	"net/http"
 
 	admintemplates "chameth.com/chameth.com/features/admin/templates"
 )
 
-var listPastesTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(listPastesGotpl))
-	return t
-}()
+var listPastesTemplate = admintemplates.ParsePage(listPastesGotpl)
+var editPasteTemplate = admintemplates.ParsePage(editPasteGotpl)
 
-var editPasteTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(editPasteGotpl))
-	return t
-}()
-
-type ListPastesData struct {
-	admintemplates.PageData
-	Drafts []PasteSummary
-	Pastes []PasteSummary
-}
+type ListPastesData = admintemplates.ListData[PasteSummary]
 
 type PasteSummary struct {
 	ID       int

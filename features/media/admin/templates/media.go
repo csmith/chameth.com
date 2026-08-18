@@ -1,32 +1,16 @@
 package templates
 
 import (
-	"html/template"
 	"net/http"
 
 	admintemplates "chameth.com/chameth.com/features/admin/templates"
 )
 
-var mediaTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(mediaGotpl))
-	return t
-}()
+var mediaTemplate = admintemplates.ParsePage(mediaGotpl)
 
-var editMediaTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(editMediaGotpl))
-	return t
-}()
+var editMediaTemplate = admintemplates.ParsePage(editMediaGotpl)
 
-var editMediaRelationsTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(editMediaRelationsGotpl))
-	return t
-}()
+var editMediaRelationsTemplate = admintemplates.ParsePage(editMediaRelationsGotpl)
 
 type MediaItem struct {
 	ID               int

@@ -1,31 +1,15 @@
 package templates
 
 import (
-	"html/template"
 	"net/http"
 
 	admintemplates "chameth.com/chameth.com/features/admin/templates"
 )
 
-var listPoemsTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(listPoemsGotpl))
-	return t
-}()
+var listPoemsTemplate = admintemplates.ParsePage(listPoemsGotpl)
+var editPoemTemplate = admintemplates.ParsePage(editPoemGotpl)
 
-var editPoemTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(editPoemGotpl))
-	return t
-}()
-
-type ListPoemsData struct {
-	admintemplates.PageData
-	Drafts []PoemSummary
-	Poems  []PoemSummary
-}
+type ListPoemsData = admintemplates.ListData[PoemSummary]
 
 type PoemSummary struct {
 	ID    int

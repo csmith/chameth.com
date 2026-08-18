@@ -1,19 +1,14 @@
 package templates
 
 import (
-	"html/template"
+	_ "embed"
 	"net/http"
 )
 
-var indexTemplate = template.Must(
-	template.
-		New("page.html.gotpl").
-		ParseFS(
-			Templates,
-			"page.html.gotpl",
-			"index.html.gotpl",
-		),
-)
+//go:embed index.html.gotpl
+var indexGotpl string
+
+var indexTemplate = ParsePage(indexGotpl)
 
 type IndexData struct {
 	PageData

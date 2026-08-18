@@ -1,25 +1,14 @@
 package templates
 
 import (
-	"html/template"
 	"net/http"
 
 	admintemplates "chameth.com/chameth.com/features/admin/templates"
 )
 
-var listSyndicationsTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(listSyndicationsGotpl))
-	return t
-}()
+var listSyndicationsTemplate = admintemplates.ParsePage(listSyndicationsGotpl)
 
-var editSyndicationTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(editSyndicationGotpl))
-	return t
-}()
+var editSyndicationTemplate = admintemplates.ParsePage(editSyndicationGotpl)
 
 type ListSyndicationsData struct {
 	admintemplates.PageData

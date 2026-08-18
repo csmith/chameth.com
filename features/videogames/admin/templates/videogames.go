@@ -1,33 +1,17 @@
 package templates
 
 import (
-	"html/template"
 	"net/http"
 
 	admintemplates "chameth.com/chameth.com/features/admin/templates"
 	mediatemplates "chameth.com/chameth.com/features/media/admin/templates"
 )
 
-var listVideoGamesTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(listVideoGamesGotpl))
-	return t
-}()
+var listVideoGamesTemplate = admintemplates.ParsePage(listVideoGamesGotpl)
 
-var editVideoGameTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(editVideoGameGotpl))
-	return t
-}()
+var editVideoGameTemplate = admintemplates.ParsePage(editVideoGameGotpl)
 
-var editVideoGameReviewTemplate = func() *template.Template {
-	page, _ := admintemplates.Templates.ReadFile("page.html.gotpl")
-	t := template.Must(template.New("page.html.gotpl").Parse(string(page)))
-	template.Must(t.Parse(editVideoGameReviewGotpl))
-	return t
-}()
+var editVideoGameReviewTemplate = admintemplates.ParsePage(editVideoGameReviewGotpl)
 
 type ListVideoGamesData struct {
 	admintemplates.PageData

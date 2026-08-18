@@ -42,7 +42,7 @@
             </tr>
         </thead>
         <tbody>
-            {{range .Snippets}}
+            {{range .Items}}
             <tr>
                 <td>{{.ID}}</td>
                 <td>{{.Path}}</td>
