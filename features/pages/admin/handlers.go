@@ -140,6 +140,29 @@ func EditPageHandler() func(http.ResponseWriter, *http.Request) {
 			sitemapPriority = fmt.Sprintf("%.1f", *page.SitemapPriority)
 		}
 
+		allPages, err := pages.ListStaticPagesMetadata(r.Context())
+		if err != nil {
+			http.Error(w, "Failed to retrieve pages", http.StatusInternalServerError)
+			return
+		}
+
+		var availableParents []templates.PageSummary
+		for _, candidate := range allPages {
+			if candidate.ID == page.ID {
+				continue
+			}
+			availableParents = append(availableParents, templates.PageSummary{
+				ID:    candidate.ID,
+				Title: candidate.Title,
+				Path:  candidate.Path,
+			})
+		}
+
+		parentID := 0
+		if page.ParentID != nil {
+			parentID = *page.ParentID
+		}
+
 		data := templates.EditPageData{
 			ID:               page.ID,
 			Title:            page.Title,
@@ -147,6 +170,8 @@ func EditPageHandler() func(http.ResponseWriter, *http.Request) {
 			Content:          page.Content,
 			Published:        page.Published,
 			Raw:              page.Raw,
+			ParentID:         parentID,
+			AvailableParents: availableParents,
 			SitemapFrequency: sitemapFrequency,
 			SitemapPriority:  sitemapPriority,
 			Media:            mediaItems,
@@ -198,6 +223,13 @@ func UpdatePageHandler() func(http.ResponseWriter, *http.Request) {
 		published := r.FormValue("published") == "true"
 		raw := r.FormValue("raw") == "true"
 
+		var parentID *int
+		if v := strings.TrimSpace(r.FormValue("parent_id")); v != "" {
+			if p, err := strconv.Atoi(v); err == nil && p != id {
+				parentID = &p
+			}
+		}
+
 		var sitemapFrequency *string
 		if v := strings.TrimSpace(r.FormValue("sitemap_frequency")); v != "" {
 			sitemapFrequency = &v
@@ -209,7 +241,7 @@ func UpdatePageHandler() func(http.ResponseWriter, *http.Request) {
 			}
 		}
 
-		if err := pages.UpdateStaticPage(r.Context(), id, path, title, pageContent, published, raw, sitemapFrequency, sitemapPriority); err != nil {
+		if err := pages.UpdateStaticPage(r.Context(), id, path, title, pageContent, published, raw, parentID, sitemapFrequency, sitemapPriority); err != nil {
 			http.Error(w, "Failed to update page", http.StatusInternalServerError)
 			return
 		}

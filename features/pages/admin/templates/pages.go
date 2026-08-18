@@ -41,6 +41,8 @@ type EditPageData struct {
 	Content          string
 	Published        bool
 	Raw              bool
+	ParentID         int
+	AvailableParents []PageSummary
 	SitemapFrequency string
 	SitemapPriority  string
 	Media            []PageMediaItem

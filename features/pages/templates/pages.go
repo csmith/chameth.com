@@ -32,6 +32,8 @@ type StaticPageData struct {
 	parenttemplates.PageData
 	StaticTitle   string
 	StaticContent template.HTML
+	ParentTitle   string
+	ParentPath    string
 }
 
 type RawPageData struct {

@@ -53,11 +53,17 @@ func StaticPageHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 
-	err = pagetemplates.RenderStaticPage(w, pagetemplates.StaticPageData{
+	pageData := pagetemplates.StaticPageData{
 		StaticTitle:   page.Title,
 		StaticContent: renderedContent,
 		PageData:      content.CreatePageData(r.Context(), page.Title, page.Path, parenttemplates.OpenGraphHeaders{}),
-	})
+	}
+	if page.ParentPath != nil && page.ParentTitle != nil {
+		pageData.ParentPath = *page.ParentPath
+		pageData.ParentTitle = *page.ParentTitle
+	}
+
+	err = pagetemplates.RenderStaticPage(w, pageData)
 	if err != nil {
 		slog.Error("Failed to render static page template", "error", err, "path", r.URL.Path)
 	}

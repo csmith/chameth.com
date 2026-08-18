@@ -1,4 +1,16 @@
 {{/* gotype: chameth.com/chameth.com/features/sitemap.SiteMapData*/}}
+{{define "sitemapPageNode"}}
+    <li>
+        <a href="{{ .Path }}">{{ .Title }}</a>{{ if .CurrentPage }} &larr; you are here{{ end }}
+        {{- if .Children }}
+        <ul class="sitemap">
+            {{- range .Children }}
+                {{ template "sitemapPageNode" . }}
+            {{ end -}}
+        </ul>
+        {{- end }}
+    </li>
+{{end}}
 {{define "content"}}
     <h2>Sitemap</h2>
 
@@ -7,8 +19,8 @@
     <h3>Primary pages</h3>
 
     <ul class="sitemap">
-        {{- range .Pages }}
-            <li><a href="{{ .Path }}">{{ .Title }}</a>{{ if .CurrentPage }} &larr; you are here{{ end }}</li>
+        {{- range .PageTree }}
+            {{ template "sitemapPageNode" . }}
         {{ end -}}
     </ul>
 

@@ -14,6 +14,14 @@
             <input type="checkbox" name="raw" value="true" {{if .Raw}}checked{{end}} />
             Raw
         </label>
+        <label>Parent page:
+            <select name="parent_id">
+                <option value="">— None —</option>
+                {{range .AvailableParents}}
+                <option value="{{.ID}}" {{if eq $.ParentID .ID}}selected{{end}}>{{.Title}} ({{.Path}})</option>
+                {{end}}
+            </select>
+        </label>
         <label>Sitemap Frequency:
             <select name="sitemap_frequency">
                 <option value="">—</option>

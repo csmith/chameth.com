@@ -111,6 +111,11 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 		return 0
 	})
 
+	pageTree, err := buildPageTree(ctx)
+	if err != nil {
+		return SiteMapData{}, err
+	}
+
 	return SiteMapData{
 		Posts:     postDetails,
 		Poems:     poemDetails,
@@ -118,8 +123,73 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 		Films:     filmDetails,
 		FilmLists: filmListDetails,
 		Pages:     pageDetails,
+		PageTree:  pageTree,
 		PageData:  pageData,
 	}, nil
+}
+
+// buildPageTree builds the hierarchy of published pages for the HTML sitemap,
+// nesting any page with a parent underneath it. A top-level page is included if
+// it opts into the sitemap (frequency + priority) or has children to show.
+func buildPageTree(ctx context.Context) ([]*SiteMapPageDetails, error) {
+	allPages, err := pages.GetAllStaticPages(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get pages for tree: %w", err)
+	}
+
+	detailsByID := make(map[int]*SiteMapPageDetails, len(allPages))
+	for _, p := range allPages {
+		detail := &SiteMapPageDetails{Title: p.Title, Path: p.Path}
+		if p.SitemapFrequency != nil {
+			detail.Frequency = *p.SitemapFrequency
+		}
+		if p.SitemapPriority != nil {
+			detail.Priority = fmt.Sprintf("%.1f", *p.SitemapPriority)
+		}
+		detailsByID[p.ID] = detail
+	}
+
+	for _, p := range allPages {
+		if p.ParentID == nil {
+			continue
+		}
+		if parent, ok := detailsByID[*p.ParentID]; ok {
+			parent.Children = append(parent.Children, detailsByID[p.ID])
+		}
+	}
+
+	var tree []*SiteMapPageDetails
+	for _, p := range allPages {
+		if p.ParentID != nil {
+			if _, ok := detailsByID[*p.ParentID]; ok {
+				continue
+			}
+		}
+		detail := detailsByID[p.ID]
+		if (p.SitemapFrequency != nil && p.SitemapPriority != nil) || len(detail.Children) > 0 {
+			tree = append(tree, detail)
+		}
+	}
+
+	tree = append(tree,
+		&SiteMapPageDetails{Title: "Posts", Path: "/posts/"},
+		&SiteMapPageDetails{Title: "3D Prints", Path: "/prints/"},
+		&SiteMapPageDetails{Title: "Projects", Path: "/projects/"},
+		&SiteMapPageDetails{Title: "Sitemap", Path: "/sitemap/", CurrentPage: true},
+		&SiteMapPageDetails{Title: "Snippets", Path: "/snippets/"},
+	)
+
+	sortPageTree(tree)
+	return tree, nil
+}
+
+func sortPageTree(nodes []*SiteMapPageDetails) {
+	slices.SortFunc(nodes, func(a, b *SiteMapPageDetails) int {
+		return strings.Compare(a.Path, b.Path)
+	})
+	for _, node := range nodes {
+		sortPageTree(node.Children)
+	}
 }
 
 func handleHtml(w http.ResponseWriter, r *http.Request) {

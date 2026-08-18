@@ -44,6 +44,7 @@ type SiteMapData struct {
 	Films     []parenttemplates.ContentDetails
 	FilmLists []parenttemplates.ContentDetails
 	Pages     []SiteMapPageDetails
+	PageTree  []*SiteMapPageDetails
 }
 
 type SiteMapPageDetails struct {
@@ -52,6 +53,7 @@ type SiteMapPageDetails struct {
 	Frequency   string
 	Priority    string
 	CurrentPage bool
+	Children    []*SiteMapPageDetails
 }
 
 func renderHtmlSiteMap(w io.Writer, data SiteMapData) error {
