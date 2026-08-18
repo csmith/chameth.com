@@ -129,7 +129,7 @@ func bestWords(analysis postAnalysis, frequencies map[string]float64) []string {
 		if _, ok := scores[stem]; ok {
 			scores[stem] = ScoredWord{
 				word:  w,
-				count: analysis.WordCounts[w] + scores[w].count,
+				count: analysis.WordCounts[w] + scores[stem].count,
 				freq:  scores[stem].freq,
 			}
 		} else {
