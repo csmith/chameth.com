@@ -22,9 +22,10 @@ const (
 	width         = 600
 	height        = 210
 	leftPadding   = 30
+	rightPadding  = 10
 	topPadding    = 10
 	bottomPadding = 15
-	contentWidth  = width - leftPadding - topPadding
+	contentWidth  = width - leftPadding - rightPadding
 	contentHeight = height - topPadding - bottomPadding
 )
 
@@ -34,6 +35,11 @@ func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("failed to get monthly walking speeds: %w", err)
 	}
 
+	if len(speeds) == 0 {
+		empty := fmt.Sprintf(`<svg width="%d" height="%d" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Quickest walk speed line graph"/>`, width, height, width, height)
+		return renderTemplate(Data{SVG: template.HTML(empty)})
+	}
+
 	speedMin := math.MaxFloat64
 	speedMax := 0.0
 	for _, s := range speeds {
@@ -41,8 +47,14 @@ func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 		speedMax = math.Max(speedMax, math.Ceil(s.AvgSpeedKmh))
 	}
 	speedRange := speedMax - speedMin
+	if speedRange == 0 {
+		speedRange = 1
+	}
 
-	monthWidth := float64(contentWidth) / float64(len(speeds)-1)
+	monthWidth := 0.0
+	if len(speeds) > 1 {
+		monthWidth = float64(contentWidth) / float64(len(speeds)-1)
+	}
 	points := createPoints(speeds, monthWidth, speedMin, speedRange)
 
 	var svgBuilder strings.Builder
