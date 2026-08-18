@@ -1,5 +1,5 @@
 aside.countdown {
-    clear: both;
+    margin: var(--smedium-space) 0;
     padding: var(--smedium-space);
     padding-top: var(--raised-box-title-padding);
 

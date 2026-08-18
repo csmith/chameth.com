@@ -1,5 +1,5 @@
 .wow-achievements {
-    margin-bottom: var(--medium-space);
+    margin: var(--smedium-space) 0;
     padding: var(--raised-box-title-padding) var(--smedium-space)
         var(--smedium-space);
 
