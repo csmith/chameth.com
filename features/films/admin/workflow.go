@@ -337,6 +337,11 @@ func FilmReviewWorkflowStep5Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
+		if film.TMDBID == nil {
+			http.Error(w, "Film has no TMDB ID", http.StatusBadRequest)
+			return
+		}
+
 		review, err := films.GetFilmReviewByID(r.Context(), reviewID)
 		if err != nil {
 			http.Error(w, "Review not found", http.StatusNotFound)
