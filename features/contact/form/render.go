@@ -7,6 +7,7 @@ import (
 
 	"chameth.com/chameth.com/features/contact"
 	"chameth.com/chameth.com/features/shortcodes"
+	parenttemplates "chameth.com/chameth.com/templates"
 )
 
 //go:embed *.gotpl
@@ -21,7 +22,7 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	}
 
 	return renderTemplate(Data{
-		Page:      ctx.URL,
+		Page:      parenttemplates.SiteURL() + ctx.URL,
 		Preamble:  preamble,
 		Timestamp: contact.SignedTimestamp(),
 	})

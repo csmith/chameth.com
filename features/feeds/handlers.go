@@ -12,18 +12,19 @@ import (
 	"chameth.com/chameth.com/features/poems"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/snippets"
+	"chameth.com/chameth.com/templates"
 )
 
 func handleAllPosts(w http.ResponseWriter, r *http.Request) {
-	renderPostsFeed(w, r, "Chameth.com", "all", 5, "https://chameth.com/index.xml")
+	renderPostsFeed(w, r, "Chameth.com", "all", 5, templates.SiteURL()+"/index.xml")
 }
 
 func handleLongPosts(w http.ResponseWriter, r *http.Request) {
-	renderPostsFeed(w, r, "Chameth.com - long posts", "long", 5, "https://chameth.com/long.xml")
+	renderPostsFeed(w, r, "Chameth.com - long posts", "long", 5, templates.SiteURL()+"/long.xml")
 }
 
 func handleShortPosts(w http.ResponseWriter, r *http.Request) {
-	renderPostsFeed(w, r, "Chameth.com - short posts", "short", 5, "https://chameth.com/short.xml")
+	renderPostsFeed(w, r, "Chameth.com - short posts", "short", 5, templates.SiteURL()+"/short.xml")
 }
 
 func handlePoems(w http.ResponseWriter, r *http.Request) {
@@ -46,7 +47,7 @@ func handlePoems(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		absoluteContent, err := makeURLsAbsolute(string(renderedContent), "https://chameth.com")
+		absoluteContent, err := makeURLsAbsolute(string(renderedContent), templates.SiteURL())
 		if err != nil {
 			slog.Error("Failed to make URLs absolute for feed", "poem", poem.Title, "error", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -55,7 +56,7 @@ func handlePoems(w http.ResponseWriter, r *http.Request) {
 
 		feedItems = append(feedItems, FeedItem{
 			Title:   poem.Title,
-			Link:    fmt.Sprintf("https://chameth.com%s", poem.Path),
+			Link:    templates.SiteURL() + poem.Path,
 			Updated: poem.Date.Format("2006-01-02T15:04:05Z"),
 			Content: absoluteContent,
 		})
@@ -70,7 +71,7 @@ func handlePoems(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err = renderAtom(w, AtomData{
 		FeedTitle:       "Chameth.com - poems",
-		FeedSelfLink:    "https://chameth.com/poems/feed.xml",
+		FeedSelfLink:    templates.SiteURL() + "/poems/feed.xml",
 		FeedLastUpdated: lastUpdated,
 		FeedItems:       feedItems,
 	})
@@ -99,7 +100,7 @@ func handleSnippets(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		absoluteContent, err := makeURLsAbsolute(string(renderedContent), "https://chameth.com")
+		absoluteContent, err := makeURLsAbsolute(string(renderedContent), templates.SiteURL())
 		if err != nil {
 			slog.Error("Failed to make URLs absolute for feed", "snippet", snippet.Title, "error", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -108,7 +109,7 @@ func handleSnippets(w http.ResponseWriter, r *http.Request) {
 
 		feedItems = append(feedItems, FeedItem{
 			Title:   snippet.Title,
-			Link:    fmt.Sprintf("https://chameth.com%s", snippet.Path),
+			Link:    templates.SiteURL() + snippet.Path,
 			Updated: "1970-01-01T00:00:00Z",
 			Content: absoluteContent,
 		})
@@ -118,7 +119,7 @@ func handleSnippets(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	err = renderAtom(w, AtomData{
 		FeedTitle:       "Chameth.com - snippets",
-		FeedSelfLink:    "https://chameth.com/snippets/feed.xml",
+		FeedSelfLink:    templates.SiteURL() + "/snippets/feed.xml",
 		FeedLastUpdated: "1970-01-01T00:00:00Z",
 		FeedItems:       feedItems,
 	})
@@ -128,7 +129,7 @@ func handleSnippets(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleFilmReviews(w http.ResponseWriter, r *http.Request) {
-	renderFilmReviewsFeed(w, r, "Chameth.com - film reviews", 5, "https://chameth.com/films/reviews/feed.xml")
+	renderFilmReviewsFeed(w, r, "Chameth.com - film reviews", 5, templates.SiteURL()+"/films/reviews/feed.xml")
 }
 
 func renderPostsFeed(w http.ResponseWriter, r *http.Request, title, format string, limit int, selfLink string) {
@@ -159,7 +160,7 @@ func renderPostsFeed(w http.ResponseWriter, r *http.Request, title, format strin
 			return
 		}
 
-		absoluteContent, err := makeURLsAbsolute(string(renderedContent), "https://chameth.com")
+		absoluteContent, err := makeURLsAbsolute(string(renderedContent), templates.SiteURL())
 		if err != nil {
 			slog.Error("Failed to make URLs absolute for feed", "post", post.Title, "error", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -168,7 +169,7 @@ func renderPostsFeed(w http.ResponseWriter, r *http.Request, title, format strin
 
 		feedItems = append(feedItems, FeedItem{
 			Title:   post.Title,
-			Link:    fmt.Sprintf("https://chameth.com%s", post.Path),
+			Link:    templates.SiteURL() + post.Path,
 			Updated: post.Date.Format("2006-01-02T15:04:05Z"),
 			Content: absoluteContent,
 		})
@@ -217,7 +218,7 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 			fmt.Fprintf(&content, "<p>%s</p>", review.FilmReview.ReviewText)
 		}
 
-		reviewURL := fmt.Sprintf("https://chameth.com%s", review.Film.Path)
+		reviewURL := templates.SiteURL() + review.Film.Path
 
 		feedItems = append(feedItems, FeedItem{
 			Title:   review.Film.Title,

@@ -1,13 +1,13 @@
 {{/* gotype: chameth.com/chameth.com/features/feeds.AtomData*/}}<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet href="/feeds.xsl" type="text/xsl"?>
-<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://chameth.com/">
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="{{siteURL}}/">
     <title>{{ .FeedTitle }}</title>
     <subtitle>Personal homepage of Chris Smith</subtitle>
     <link href="{{ .FeedSelfLink | escape }}" rel="self"/>
-    <link href="https://chameth.com/"/>
-    <icon>https://chameth.com/favicon.png</icon>
+    <link href="{{siteURL}}/"/>
+    <icon>{{siteURL}}/favicon.png</icon>
     <updated>{{ .FeedLastUpdated }}</updated>
-    <id>https://chameth.com/</id>
+    <id>{{siteURL}}/</id>
     <author>
         <name>Chris Smith</name>
     </author>

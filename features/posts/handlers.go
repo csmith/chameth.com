@@ -43,7 +43,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	var ogImage string
 	ogPath, err := media.GetOpenGraphImageForEntity(r.Context(), "post", post.ID)
 	if err == nil && ogPath != "" {
-		ogImage = fmt.Sprintf("https://chameth.com%s", ogPath)
+		ogImage = parenttemplates.SiteURL() + ogPath
 	}
 
 	relatedPosts, err := RelatedPosts(r.Context(), post.ID)
@@ -67,7 +67,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 				YearsOld:    yearsOld,
 			},
 			RelatedPosts: relatedPosts,
-			EditLink:     fmt.Sprintf("https://website-admin.yak-wall.ts.net/posts/edit/%d", post.ID),
+			EditLink:     fmt.Sprintf("%s/posts/edit/%d", parenttemplates.AdminURL(), post.ID),
 			PageData: content.CreatePageData(r.Context(), post.Title, post.Path, parenttemplates.OpenGraphHeaders{
 				Image: ogImage,
 				Type:  "article",

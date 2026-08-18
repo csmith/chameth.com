@@ -209,7 +209,7 @@ func handleHtml(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleXml(w http.ResponseWriter, r *http.Request) {
-	siteMapData, err := buildSiteMapData(r.Context(), templates.PageData{})
+	siteMapData, err := buildSiteMapData(r.Context(), templates.PageData{SiteURL: templates.SiteURL()})
 	if err != nil {
 		slog.Error("Failed to build site map data", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

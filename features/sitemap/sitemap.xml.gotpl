@@ -2,75 +2,75 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     {{ range .Pages -}}
         <url>
-            <loc>https://chameth.com{{ .Path }}</loc>
+            <loc>{{ $.SiteURL }}{{ .Path }}</loc>
             <changefreq>{{ .Frequency }}</changefreq>
             <priority>{{ .Priority }}</priority>
         </url>
     {{- end }}
 
     <url>
-        <loc>https://chameth.com/posts/</loc>
+        <loc>{{ .SiteURL }}/posts/</loc>
         <changefreq>daily</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://chameth.com/sitemap/</loc>
+        <loc>{{ .SiteURL }}/sitemap/</loc>
         <changefreq>daily</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://chameth.com/snippets/</loc>
+        <loc>{{ .SiteURL }}/snippets/</loc>
         <changefreq>weekly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://chameth.com/prints/</loc>
+        <loc>{{ .SiteURL }}/prints/</loc>
         <changefreq>monthly</changefreq>
         <priority>0.2</priority>
     </url>
 
     <url>
-        <loc>https://chameth.com/index.xml</loc>
+        <loc>{{ .SiteURL }}/index.xml</loc>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>
     </url>
 
     <url>
-        <loc>https://chameth.com/short.xml</loc>
+        <loc>{{ .SiteURL }}/short.xml</loc>
         <changefreq>weekly</changefreq>
         <priority>0.25</priority>
     </url>
 
     <url>
-        <loc>https://chameth.com/long.xml</loc>
+        <loc>{{ .SiteURL }}/long.xml</loc>
         <changefreq>weekly</changefreq>
         <priority>0.25</priority>
     </url>
 
     <url>
-        <loc>https://chameth.com/snippets/feed.xml</loc>
+        <loc>{{ .SiteURL }}/snippets/feed.xml</loc>
         <changefreq>weekly</changefreq>
         <priority>0.25</priority>
     </url>
 
     <url>
-        <loc>https://chameth.com/poems/feed.xml</loc>
+        <loc>{{ .SiteURL }}/poems/feed.xml</loc>
         <changefreq>weekly</changefreq>
         <priority>0.25</priority>
     </url>
 
     <url>
-        <loc>https://chameth.com/films/reviews/feed.xml</loc>
+        <loc>{{ .SiteURL }}/films/reviews/feed.xml</loc>
         <changefreq>weekly</changefreq>
         <priority>0.25</priority>
     </url>
 
     {{ range .Posts -}}
         <url>
-            <loc>https://chameth.com{{ .Path }}</loc>
+            <loc>{{ $.SiteURL }}{{ .Path }}</loc>
             <changefreq>never</changefreq>
             <priority>0.9</priority>
             <lastmod>{{ .Date.Iso }}</lastmod>
@@ -79,7 +79,7 @@
 
     {{ range .Snippets -}}
         <url>
-            <loc>https://chameth.com{{ .Path }}</loc>
+            <loc>{{ $.SiteURL }}{{ .Path }}</loc>
             <changefreq>yearly</changefreq>
             <priority>0.4</priority>
         </url>
@@ -87,7 +87,7 @@
 
     {{ range .Poems -}}
         <url>
-            <loc>https://chameth.com{{ .Path }}</loc>
+            <loc>{{ $.SiteURL }}{{ .Path }}</loc>
             <changefreq>never</changefreq>
             <priority>0.4</priority>
             <lastmod>{{ .Date.Iso }}</lastmod>
@@ -96,7 +96,7 @@
 
     {{ range .Films -}}
         <url>
-            <loc>https://chameth.com{{ .Path }}</loc>
+            <loc>{{ $.SiteURL }}{{ .Path }}</loc>
             <changefreq>yearly</changefreq>
             <priority>0.2</priority>
             <lastmod>{{ .Date.Iso }}</lastmod>
@@ -105,7 +105,7 @@
 
     {{ range .FilmLists -}}
         <url>
-            <loc>https://chameth.com{{ .Path }}</loc>
+            <loc>{{ $.SiteURL }}{{ .Path }}</loc>
             <changefreq>monthly</changefreq>
             <priority>0.1</priority>
         </url>

@@ -45,7 +45,7 @@ func PoemHandler(w http.ResponseWriter, r *http.Request) {
 				Friendly:    poem.Date.Format("Jan 2, 2006"),
 				ShowWarning: false,
 			},
-			EditLink: fmt.Sprintf("https://website-admin.yak-wall.ts.net/poems/edit/%d", poem.ID),
+			EditLink: fmt.Sprintf("%s/poems/edit/%d", parenttemplates.AdminURL(), poem.ID),
 			PageData: content.CreatePageData(r.Context(), poem.Title, poem.Path, parenttemplates.OpenGraphHeaders{}),
 		},
 	})

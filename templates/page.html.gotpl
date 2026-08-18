@@ -48,7 +48,7 @@
         <a href="/snippets/">Snippets</a>
         <a href="/uses/">Uses</a>
         <a href="/sitemap/">Sitemap</a>
-        {{if .Admin}}<a href="https://website-admin.yak-wall.ts.net/">Admin</a>{{end}}
+        {{if .Admin}}<a href="{{.AdminURL}}">Admin</a>{{end}}
     </nav>
 </header>
 <main>
@@ -188,8 +188,8 @@
         <span class="stats-rollover" tabindex="0">π</span>
     </section>
     <section class="h-card" hidden="hidden">
-        <a class="p-name u-url" href="https://chameth.com/">Chris Smith</a>
-        <img class="u-photo" src="https://chameth.com/avatar.webp" alt="Photo of Chris Smith">
+        <a class="p-name u-url" href="{{.SiteURL}}/">Chris Smith</a>
+        <img class="u-photo" src="{{.SiteURL}}/avatar.webp" alt="Photo of Chris Smith">
         <span class="p-nickname">MD87</span>
         #nobridge
     </section>

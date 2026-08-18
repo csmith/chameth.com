@@ -1,7 +1,7 @@
 {{/* gotype: chameth.com/chameth.com/features/videogames/admin/templates.EditVideoGameData */}}
 {{define "content"}}
     <h2>Edit video game: {{.Title}}</h2>
-    <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
+    <a href="{{siteURL}}{{.Path}}">View on chameth.com</a>
     <form action="/videogames/edit/{{.ID}}" method="post">
         <label>Title: <input type="text" name="title" value="{{.Title}}" /></label>
         <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>

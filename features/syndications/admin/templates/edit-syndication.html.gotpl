@@ -1,7 +1,7 @@
 {{/* gotype: chameth.com/chameth.com/features/syndications/admin/templates.EditSyndicationData */}}
 {{define "content"}}
     <h2>Edit syndication: {{.Name}}</h2>
-    <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
+    <a href="{{siteURL}}{{.Path}}">View on chameth.com</a>
     <form action="/syndications/edit/{{.ID}}" method="post">
         <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>
         <label>External URL: <input type="text" name="external_url" value="{{.ExternalURL}}" /></label>

@@ -6,6 +6,7 @@ import (
 	"html/template"
 
 	"chameth.com/chameth.com/features/shortcodes"
+	parenttemplates "chameth.com/chameth.com/templates"
 )
 
 //go:embed *.gotpl
@@ -15,7 +16,7 @@ var tmpl = template.Must(template.New("nod.html.gotpl").ParseFS(templates, "nod.
 
 func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 	return renderTemplate(Data{
-		Page: ctx.URL,
+		Page: parenttemplates.SiteURL() + ctx.URL,
 	})
 }
 

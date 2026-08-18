@@ -19,7 +19,7 @@ var ShortcodesManager *shortcodes.Manager
 func CreatePageData(ctx context.Context, title, path string, ogHeaders templates.OpenGraphHeaders) templates.PageData {
 	canonicalUrl := ""
 	if path != "" {
-		canonicalUrl = fmt.Sprintf("https://chameth.com%s", path)
+		canonicalUrl = templates.SiteURL() + path
 	}
 
 	links, err := LinksProvider(ctx, path)
@@ -29,6 +29,8 @@ func CreatePageData(ctx context.Context, title, path string, ogHeaders templates
 
 	return templates.PageData{
 		Title:        fmt.Sprintf("%s · Chameth.com", title),
+		SiteURL:      templates.SiteURL(),
+		AdminURL:     templates.AdminURL(),
 		CanonicalUrl: canonicalUrl,
 		OpenGraph:    ogHeaders,
 		Scripts:      scriptPath(),

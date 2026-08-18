@@ -1,7 +1,7 @@
 {{/* gotype: chameth.com/chameth.com/features/posts/admin/templates.EditPostData */}}
 {{define "content"}}
     <h2>Edit post: {{.Title}}</h2>
-    <a href="https://chameth.com{{.Path}}">View on chameth.com</a>
+    <a href="{{siteURL}}{{.Path}}">View on chameth.com</a>
 
     <form action="/posts/edit/{{.ID}}" method="post">
         <label>Path: <input type="text" name="path" value="{{.Path}}" /></label>

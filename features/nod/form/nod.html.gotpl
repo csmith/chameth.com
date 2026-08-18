@@ -1,7 +1,7 @@
 {{/* gotype: chameth.com/chameth.com/features/nod/form.Data*/}}
 <aside class="nod-container submittable">
     <form class="nod raised-box raised-box-interactive" data-title="Send a nod" method="POST" action="/api/form/nod" role="button" tabindex="0">
-        <input type="hidden" name="page" value="https://chameth.com{{.Page}}" />
+        <input type="hidden" name="page" value="{{.Page}}" />
         <button type="submit" class="submit">nod</button>
         <div>
             <p>Liked this page? Just want to declare that you reached the end? Like pressing buttons?</p>

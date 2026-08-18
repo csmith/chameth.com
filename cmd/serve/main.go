@@ -22,6 +22,7 @@ import (
 	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/sudo"
 	"chameth.com/chameth.com/features/syndications"
+	"chameth.com/chameth.com/templates"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
 	"github.com/csmith/slogflags"
@@ -106,7 +107,7 @@ func main() {
 				middleware.Compress(),
 				middleware.Headers(
 					middleware.WithHeader("X-Content-Type-Options", "nosniff"),
-					middleware.WithHeader("Content-Security-Policy", "default-src 'self' https://chameth.com/ https://u.c5h.io/ 'nonce-littlefoot-ae805b14'; style-src 'self';"),
+					middleware.WithHeader("Content-Security-Policy", fmt.Sprintf("default-src 'self' %s/ https://u.c5h.io/ 'nonce-littlefoot-ae805b14'; style-src 'self';", templates.SiteURL())),
 					middleware.WithHeader("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload"),
 					middleware.WithHeader("Referrer-Policy", "no-referrer-when-downgrade"),
 				),

@@ -5,6 +5,8 @@ import (
 	"html"
 	"io"
 	"text/template"
+
+	"chameth.com/chameth.com/templates"
 )
 
 //go:embed atom.xml.gotpl
@@ -14,7 +16,8 @@ var atomTemplate = template.Must(
 	template.
 		New("atom.xml.gotpl").
 		Funcs(template.FuncMap{
-			"escape": html.EscapeString,
+			"escape":  html.EscapeString,
+			"siteURL": func() string { return templates.SiteURL() },
 		}).
 		ParseFS(
 			atomTemplateFS,

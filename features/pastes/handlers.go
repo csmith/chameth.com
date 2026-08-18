@@ -70,7 +70,7 @@ func PasteHandler(w http.ResponseWriter, r *http.Request) {
 				Friendly:    paste.Date.Format("Jan 2, 2006"),
 				ShowWarning: false,
 			},
-			EditLink: fmt.Sprintf("https://website-admin.yak-wall.ts.net/pastes/edit/%d", paste.ID),
+			EditLink: fmt.Sprintf("%s/pastes/edit/%d", parenttemplates.AdminURL(), paste.ID),
 			PageData: content.CreatePageData(r.Context(), paste.Title, paste.Path, parenttemplates.OpenGraphHeaders{}),
 		},
 	})

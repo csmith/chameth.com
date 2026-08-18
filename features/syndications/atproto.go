@@ -11,6 +11,7 @@ import (
 	"chameth.com/chameth.com/external/atproto"
 	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/posts"
+	"chameth.com/chameth.com/templates"
 )
 
 var (
@@ -171,7 +172,7 @@ func syndicatePost(ctx context.Context, client *atproto.Client, publicationRef a
 	}
 
 	embed := atproto.NewBlueskyExternalEmbed(
-		"https://chameth.com"+post.Path,
+		templates.SiteURL()+post.Path,
 		post.Title,
 		description,
 		blob,
