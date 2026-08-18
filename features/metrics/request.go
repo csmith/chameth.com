@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"bytes"
 	"context"
 	"net/http"
 	"strconv"
@@ -71,7 +72,7 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 
 			go recordRequestMetric(r.URL.Path, requestId, duration, queries)
 
-			writer.Flush(duration, queries)
+			writer.Finish(duration, queries)
 			pruneRequest(requestId)
 		})
 	}
@@ -107,17 +108,38 @@ func LogQuery(ctx context.Context) {
 	details.queries.Add(1)
 }
 
+var statsPlaceholder = []byte("[[STATS_GO_HERE]]")
+
 type StatsResponseWriter struct {
 	http.ResponseWriter
 	buffer      []byte
+	passthrough bool
 	wroteHeader bool
 	code        int
 	requestID   string
 }
 
 func (w *StatsResponseWriter) Write(b []byte) (int, error) {
+	// Only HTML pages can contain the stats placeholder, so only they need
+	// buffering; everything else (assets, media, feeds) is written straight
+	// through. The decision is made on the first non-empty write.
+	if !w.passthrough && len(w.buffer) == 0 && len(b) > 0 {
+		w.passthrough = !isHTML(w.Header().Get("Content-Type"), b)
+	}
+
+	if w.passthrough {
+		return w.ResponseWriter.Write(b)
+	}
+
 	w.buffer = append(w.buffer, b...)
 	return len(b), nil
+}
+
+func isHTML(contentType string, firstChunk []byte) bool {
+	if contentType == "" {
+		contentType = http.DetectContentType(firstChunk)
+	}
+	return strings.HasPrefix(contentType, "text/html")
 }
 
 func (w *StatsResponseWriter) WriteHeader(statusCode int) {
@@ -133,17 +155,34 @@ func (w *StatsResponseWriter) statusCode() string {
 	return strconv.Itoa(w.code)
 }
 
-func (w *StatsResponseWriter) Flush(duration time.Duration, queries int32) {
-	content := injectStats(w.requestID, string(w.buffer), duration, queries)
+// Flush implements http.Flusher so that non-buffered responses can stream.
+// For buffered pages only the headers can be flushed early; the body follows
+// when the request completes.
+func (w *StatsResponseWriter) Flush() {
+	w.wroteHeader = true
+	if f, ok := w.ResponseWriter.(http.Flusher); ok {
+		f.Flush()
+	}
+}
+
+// Finish completes the response: buffered HTML pages have the request stats
+// injected before being written out; anything else is already done.
+func (w *StatsResponseWriter) Finish(duration time.Duration, queries int32) {
+	if w.passthrough || len(w.buffer) == 0 {
+		return
+	}
+
+	w.buffer = bytes.Replace(w.buffer, statsPlaceholder, statsHTML(w.requestID, duration, queries), 1)
+
 	if !w.wroteHeader {
 		w.ResponseWriter.WriteHeader(http.StatusOK)
 	}
-	w.ResponseWriter.Write([]byte(content))
+	_, _ = w.ResponseWriter.Write(w.buffer)
 }
 
-func injectStats(requestID string, content string, duration time.Duration, queries int32) string {
+func statsHTML(requestID string, duration time.Duration, queries int32) []byte {
 	if duration == 0 {
-		return strings.Replace(content, "[[STATS_GO_HERE]]", "There would be request stats here, but I seem to have misplaced them...", 1)
+		return []byte("There would be request stats here, but I seem to have misplaced them...")
 	}
 
 	shortCommit := buildVersion
@@ -154,16 +193,11 @@ func injectStats(requestID string, content string, duration time.Duration, queri
 	}
 
 	p := message.NewPrinter(language.English)
-	return strings.Replace(
-		content,
-		"[[STATS_GO_HERE]]",
-		p.Sprintf(
-			`Request ID <code>%s</code> served by chameth.com <code>%s</code> in %dμs using %d db queries`,
-			requestID,
-			shortCommit,
-			duration.Microseconds(),
-			queries,
-		),
-		1,
-	)
+	return []byte(p.Sprintf(
+		`Request ID <code>%s</code> served by chameth.com <code>%s</code> in %dμs using %d db queries`,
+		requestID,
+		shortCommit,
+		duration.Microseconds(),
+		queries,
+	))
 }
