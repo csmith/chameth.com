@@ -4,6 +4,7 @@
    right-aligned numeric columns are styled here. Cell padding is zeroed
    so the table lines up with the box padding. */
 .workout-pbs {
+    margin: var(--smedium-space) 0;
     padding: var(--smedium-space);
     padding-top: var(--raised-box-title-padding);
 
