@@ -1,0 +1,5 @@
+{{/* gotype: chameth.com/chameth.com/features/shortcodes/countdown.Data*/}}
+<aside class="countdown raised-box" data-title="Countdown">
+  <p class="countdown-event">{{ .Event }} <span class="countdown-leadin">{{ .LeadIn }}</span></p>
+  <p class="countdown-remaining">{{ .Value }}</p>
+</aside>

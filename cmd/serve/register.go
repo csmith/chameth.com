@@ -53,6 +53,7 @@ import (
 	featuresQuotes "chameth.com/chameth.com/features/quotes"
 	featuresQuotesAdmin "chameth.com/chameth.com/features/quotes/admin"
 	featuresRouting "chameth.com/chameth.com/features/routing"
+	featuresShortcodesCountdown "chameth.com/chameth.com/features/shortcodes/countdown"
 	featuresShortcodesLink "chameth.com/chameth.com/features/shortcodes/link"
 	featuresShortcodesRating "chameth.com/chameth.com/features/shortcodes/rating"
 	featuresShortcodesSidenote "chameth.com/chameth.com/features/shortcodes/sidenote"
@@ -110,6 +111,7 @@ func (s *site) registerShortcodes() {
 	featuresPostsLink.RegisterShortcodes(s.Shortcodes)
 	featuresPostsRecent.RegisterShortcodes(s.Shortcodes)
 	featuresQuotes.RegisterShortcodes(s.Shortcodes)
+	featuresShortcodesCountdown.RegisterShortcodes(s.Shortcodes)
 	featuresShortcodesLink.RegisterShortcodes(s.Shortcodes)
 	featuresShortcodesRating.RegisterShortcodes(s.Shortcodes)
 	featuresShortcodesSidenote.RegisterShortcodes(s.Shortcodes)

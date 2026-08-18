@@ -1,0 +1,21 @@
+aside.countdown {
+    clear: both;
+    padding: var(--smedium-space);
+    padding-top: var(--raised-box-title-padding);
+    margin: var(--large-space) 0;
+
+    .countdown-event {
+        margin: 0;
+        font-size: var(--font-size-regular);
+
+        .countdown-leadin {
+            color: var(--text-alt-colour);
+        }
+    }
+
+    .countdown-remaining {
+        margin: var(--small-space) 0 0;
+        font-size: var(--font-size-xlarge);
+        color: var(--text-highlight-colour);
+    }
+}
