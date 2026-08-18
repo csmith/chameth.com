@@ -12,6 +12,7 @@
    "other" bucket (gym, rowing, dance, ...) doesn't scale by distance, so
    it has a single full-tint class. */
 .workout-calendar {
+    display: inline-block;
     margin: var(--smedium-space) 0;
     padding: var(--smedium-space);
     padding-top: var(--raised-box-title-padding);

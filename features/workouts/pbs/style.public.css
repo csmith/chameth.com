@@ -29,7 +29,10 @@
         border-bottom: 1px solid var(--background-alt-colour);
     }
 
+    /* The last row drops its cell bottom padding along with its border so
+       it doesn't stack on top of the box's own bottom padding. */
     tbody tr:last-child td {
         border-bottom: 0;
+        padding-bottom: 0;
     }
 }
