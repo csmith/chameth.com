@@ -2,60 +2,69 @@ package cache
 
 import (
 	"sync"
-	"sync/atomic"
 	"time"
 )
 
+// Cache lazily maintains a value of type T, refreshing it via update when it
+// is older than maxAge. A failed refresh is not cached: the previous value is
+// served and the refresh retried on the next call to Get. Until the first
+// successful refresh, Get returns the zero value of T.
 type Cache[T any] struct {
-	value      atomic.Pointer[T]
-	update     func() T
-	maxAge     time.Duration
+	mutex      sync.Mutex
+	value      T
+	loaded     bool
+	update     func() (T, error)
 	lastUpdate time.Time
+	maxAge     time.Duration
 }
 
-func New[T any](maxAge time.Duration, update func() T) *Cache[T] {
+func New[T any](maxAge time.Duration, update func() (T, error)) *Cache[T] {
 	return &Cache[T]{
 		maxAge: maxAge,
 		update: update,
 	}
 }
 
-func (c *Cache[T]) Get() *T {
-	if c.lastUpdate.Add(c.maxAge).Before(time.Now()) {
-		newValue := c.update()
-		c.value.Store(&newValue)
+func (c *Cache[T]) Get() T {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+	if c.loaded && time.Since(c.lastUpdate) < c.maxAge {
+		return c.value
+	}
+	if value, err := c.update(); err == nil {
+		c.value = value
+		c.loaded = true
 		c.lastUpdate = time.Now()
 	}
-	return c.value.Load()
+	return c.value
 }
 
+// KeyedCache maintains one Cache per key, created on first use.
 type KeyedCache[T any] struct {
-	mutex  sync.RWMutex
-	values map[string]*Cache[*T]
+	mutex  sync.Mutex
+	values map[string]*Cache[T]
 
-	update func(key string) *T
+	update func(key string) (T, error)
 	maxAge time.Duration
 }
 
-func NewKeyed[T any](maxAge time.Duration, update func(key string) *T) *KeyedCache[T] {
+func NewKeyed[T any](maxAge time.Duration, update func(key string) (T, error)) *KeyedCache[T] {
 	return &KeyedCache[T]{
-		values: make(map[string]*Cache[*T]),
+		values: make(map[string]*Cache[T]),
 		update: update,
 		maxAge: maxAge,
 	}
 }
 
-func (c *KeyedCache[T]) Get(key string) *T {
-	c.mutex.RLock()
-	cache, ok := c.values[key]
-	c.mutex.RUnlock()
+func (c *KeyedCache[T]) Get(key string) T {
+	c.mutex.Lock()
+	entry, ok := c.values[key]
 	if !ok {
-		cache = New(c.maxAge, func() *T {
+		entry = New(c.maxAge, func() (T, error) {
 			return c.update(key)
 		})
-		c.mutex.Lock()
-		c.values[key] = cache
-		c.mutex.Unlock()
+		c.values[key] = entry
 	}
-	return *cache.Get()
+	c.mutex.Unlock()
+	return entry.Get()
 }

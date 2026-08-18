@@ -21,13 +21,13 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("postlink.html.gotpl").ParseFS(templates, "postlink.html.gotpl"))
 
-var postlinkCache = cache.NewKeyed(24*time.Hour, func(path string) *string {
+var postlinkCache = cache.NewKeyed(24*time.Hour, func(path string) (string, error) {
 	result, err := renderForPath(path)
 	if err != nil {
 		slog.Error("Failed to render postlink", "path", path, "error", err)
-		return nil
+		return "", err
 	}
-	return &result
+	return result, nil
 })
 
 func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
@@ -36,10 +36,10 @@ func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	}
 
 	result := postlinkCache.Get(args[0])
-	if result == nil {
+	if result == "" {
 		return "", fmt.Errorf("failed to render postlink for path %s", args[0])
 	}
-	return *result, nil
+	return result, nil
 }
 
 func renderForPath(path string) (string, error) {

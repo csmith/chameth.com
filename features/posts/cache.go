@@ -9,11 +9,11 @@ import (
 	parenttemplates "chameth.com/chameth.com/templates"
 )
 
-var recentPostsCache = cache.New(time.Minute*10, func() []parenttemplates.RecentPost {
+var recentPostsCache = cache.New(time.Minute*10, func() ([]parenttemplates.RecentPost, error) {
 	posts, err := GetRecentPosts(context.Background(), 4)
 	if err != nil {
 		slog.Error("Failed to update recent posts", "err", err)
-		return nil
+		return nil, err
 	}
 
 	var recentPostsList []parenttemplates.RecentPost
@@ -25,9 +25,9 @@ var recentPostsCache = cache.New(time.Minute*10, func() []parenttemplates.Recent
 		})
 	}
 
-	return recentPostsList
+	return recentPostsList, nil
 })
 
 func Recent() []parenttemplates.RecentPost {
-	return *recentPostsCache.Get()
+	return recentPostsCache.Get()
 }
