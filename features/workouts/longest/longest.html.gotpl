@@ -1,0 +1,11 @@
+{{/* gotype: chameth.com/chameth.com/features/workouts/longest.Data*/}}
+<div class="longest-workout raised-box" data-title="{{ .Title }}">
+    <div class="longest-stats-row">
+        <p class="distance">{{ .Distance }}</p>
+        <p class="workout-date">on {{ .Date }}</p>
+        <p class="next-milestone"><span class="label">Next milestone:</span> {{ .NextMilestone }}</p>
+    </div>
+    <svg class="progress-bar" viewBox="0 0 100 1" preserveAspectRatio="none">
+        <rect class="progress-fill" x="0" y="0" height="1" width="{{ .ProgressPercent }}"></rect>
+    </svg>
+</div>

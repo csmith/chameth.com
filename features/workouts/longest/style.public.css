@@ -1,0 +1,43 @@
+.longest-workout {
+    padding: var(--smedium-space);
+    padding-top: var(--raised-box-title-padding);
+
+    .longest-stats-row {
+        display: flex;
+        align-items: baseline;
+        column-gap: var(--small-space);
+        margin-bottom: var(--small-space);
+
+        .distance {
+            margin: 0;
+            font-size: var(--font-size-xlarge);
+        }
+
+        .workout-date {
+            margin: 0;
+            font-size: var(--font-size-small);
+            color: var(--text-alt-colour);
+        }
+
+        .next-milestone {
+            margin: 0 0 0 auto;
+            font-size: var(--font-size-large);
+
+            .label {
+                font-size: var(--font-size-small);
+                color: var(--text-alt-colour);
+            }
+        }
+    }
+
+    .progress-bar {
+        border-radius: 5px;
+        height: 0.5em;
+        width: 100%;
+        background-color: var(--background-alt-colour);
+
+        .progress-fill {
+            fill: var(--accent-colour);
+        }
+    }
+}

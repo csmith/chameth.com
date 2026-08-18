@@ -80,6 +80,46 @@ func FurthestRunInRange(ctx context.Context, start, end time.Time) (*FurthestWor
 	return &w, nil
 }
 
+// FurthestCycle returns the longest cycle workout ever recorded, or nil if
+// there were none.
+func FurthestCycle(ctx context.Context) (*FurthestWorkout, error) {
+	w, err := db.Get[FurthestWorkout](ctx, `
+		SELECT activity, distance_m, start_time
+		FROM workouts
+		WHERE activity_group = 'cycle'
+		ORDER BY distance_m DESC
+		LIMIT 1
+	`)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to get furthest cycle: %w", err)
+	}
+	return &w, nil
+}
+
+// FurthestRun returns the longest running interval ever recorded, or nil if
+// there were none. Like FurthestRunInRange this is deliberately not filtered
+// to activity_group = 'run', since running intervals can occur inside
+// 'walk'-grouped workouts too.
+func FurthestRun(ctx context.Context) (*FurthestWorkout, error) {
+	w, err := db.Get[FurthestWorkout](ctx, `
+		SELECT activity, run_distance_m AS distance_m, start_time
+		FROM workouts
+		WHERE run_distance_m IS NOT NULL
+		ORDER BY run_distance_m DESC
+		LIMIT 1
+	`)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to get furthest run: %w", err)
+	}
+	return &w, nil
+}
+
 // RecentPBsInRange returns, for each cycle/run segment-distance
 // combination, the fastest (and therefore most recent) PB set within
 // [start, end]. Other activity groups (e.g. walking) are excluded.
