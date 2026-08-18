@@ -686,14 +686,7 @@ func GetFilmReviewWithFilmAndPoster(ctx context.Context, reviewID int) (*FilmRev
 }
 
 func GetFilmListWithCount(ctx context.Context, listID int) (*FilmList, int, []FilmListEntryWithPoster, error) {
-	list, err := db.Get[struct {
-		ID          int    `db:"id"`
-		Title       string `db:"title"`
-		Description string `db:"description"`
-		Published   bool   `db:"published"`
-		Path        string `db:"path"`
-		Count       int    `db:"count"`
-	}](ctx, `
+	list, err := db.Get[FilmListWithCount](ctx, `
 		SELECT
 			fl.id, fl.title, fl.description, fl.published, fl.path,
 			COUNT(fle.id) as count

@@ -255,14 +255,6 @@ func syncProfessions(ctx context.Context, characterID int, profs *blizzard.Chara
 	return nil
 }
 
-type RecentAchievement struct {
-	AchievementID   int       `db:"achievement_id"`
-	AchievementName string    `db:"achievement_name"`
-	CompletedAt     time.Time `db:"completed_at"`
-	CharacterName   string    `db:"character_name"`
-	IsAccountWide   bool      `db:"is_account_wide"`
-}
-
 func GetRecentAchievements(ctx context.Context, limit int) ([]RecentAchievement, error) {
 	achievements, err := db.Select[RecentAchievement](ctx, `
 		WITH ordered AS (

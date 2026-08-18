@@ -71,6 +71,15 @@ type FilmList struct {
 	Path        string `db:"path"`
 }
 
+type FilmListWithCount struct {
+	ID          int    `db:"id"`
+	Title       string `db:"title"`
+	Description string `db:"description"`
+	Published   bool   `db:"published"`
+	Path        string `db:"path"`
+	Count       int    `db:"count"`
+}
+
 type FilmListEntry struct {
 	ID         int `db:"id"`
 	FilmListID int `db:"film_list_id"`

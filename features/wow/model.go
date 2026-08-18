@@ -50,3 +50,11 @@ type Achievement struct {
 	CompletedAt     time.Time `db:"completed_at"`
 	CharacterID     int       `db:"character_id"`
 }
+
+type RecentAchievement struct {
+	AchievementID   int       `db:"achievement_id"`
+	AchievementName string    `db:"achievement_name"`
+	CompletedAt     time.Time `db:"completed_at"`
+	CharacterName   string    `db:"character_name"`
+	IsAccountWide   bool      `db:"is_account_wide"`
+}

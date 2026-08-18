@@ -109,7 +109,7 @@ etc.
 
 - ID fields in database tables should always be
   `INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY`.
-- Return type structs should be defined in the `models.go`
+- Return type structs should be defined in the `model.go`
   file not inline in other database files.
 - Do not create "down" migrations, we only roll forwards.
 

@@ -7,14 +7,6 @@ import (
 	"chameth.com/chameth.com/db"
 )
 
-type topArtist struct {
-	Name       string  `db:"name"`
-	TrackCount int     `db:"track_count"`
-	AlbumCount int     `db:"album_count"`
-	PlayCount  int     `db:"play_count"`
-	ImagePath  *string `db:"image_path"`
-}
-
 func query(ctx context.Context, limit int) ([]topArtist, error) {
 	query := `
 		SELECT a.name,
