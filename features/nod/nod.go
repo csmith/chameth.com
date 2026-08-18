@@ -5,15 +5,19 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 var (
 	ircCatAddress    = flag.String("irc-cat-address", "", "URL to post IRC notifications")
 	ircCatApiKey     = flag.String("irc-cat-key", "", "API key for IRC notifications")
 	ircCatNodChannel = flag.String("irc-cat-nod-channel", "", "Channel to post nod messages to")
+
+	httpClient = &http.Client{Timeout: 10 * time.Second}
 )
 
 func processNod(page string) error {
@@ -51,7 +55,17 @@ func announceToIrc(message string) error {
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Api-Key", *ircCatApiKey)
-	r, err := http.DefaultClient.Do(req)
-	_ = r.Body.Close()
-	return err
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to send to irc-cat: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= http.StatusBadRequest {
+		body, _ := io.ReadAll(io.LimitReader(resp.Body, 1024))
+		return fmt.Errorf("irc-cat returned status %d: %s", resp.StatusCode, strings.TrimSpace(string(body)))
+	}
+
+	return nil
 }
