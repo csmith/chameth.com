@@ -40,6 +40,18 @@ func TotalsInRange(ctx context.Context, start, end time.Time) (PeriodTotals, err
 	`, start, end)
 }
 
+// WorkoutDayEntries returns the start time, activity group, distance and
+// running distance of every workout starting within [start, end), for
+// bucketing into per-day, per-type totals by the workout calendar.
+func WorkoutDayEntries(ctx context.Context, start, end time.Time) ([]WorkoutDayEntry, error) {
+	return db.Select[WorkoutDayEntry](ctx, `
+		SELECT start_time, activity_group, distance_m, run_distance_m
+		FROM workouts
+		WHERE start_time >= $1 AND start_time < $2
+		ORDER BY start_time ASC, id ASC
+	`, start, end)
+}
+
 // FurthestCycleInRange returns the longest cycle workout starting within
 // [start, end], or nil if there were none.
 func FurthestCycleInRange(ctx context.Context, start, end time.Time) (*FurthestWorkout, error) {

@@ -1,0 +1,145 @@
+/* Workout calendar: a GitHub-style heatmap grid with one row per weekday
+   and one column per week (oldest left, most recent right). Filled cells
+   carry one or more horizontal stripes — one per activity type present
+   that day — each coloured by the type's palette below and shaded by the
+   type's quantised intensity step (s0 dimmest → s3 full tint).
+
+   Colours live here as fixed type × step classes rather than inline
+   styles: the site's CSP blocks style attributes. Each scaling type's
+   ramp is floored above black so the dimmest shade stays recognisably its
+   colour; walk's ramp starts lighter still because its muted grey-brown
+   would otherwise fade into the empty-cell background. The catch-all
+   "other" bucket (gym, rowing, dance, ...) doesn't scale by distance, so
+   it has a single full-tint class. */
+.workout-calendar {
+    padding: var(--smedium-space);
+    padding-top: var(--raised-box-title-padding);
+
+    .run.s0 { background-color: rgb(0, 34, 52); }
+    .run.s1 { background-color: rgb(1, 61, 92); }
+    .run.s2 { background-color: rgb(1, 87, 133); }
+    .run.s3 { background-color: rgb(1, 114, 173); }
+
+    .cycle.s0 { background-color: rgb(57, 18, 6); }
+    .cycle.s1 { background-color: rgb(101, 32, 10); }
+    .cycle.s2 { background-color: rgb(145, 46, 15); }
+    .cycle.s3 { background-color: rgb(189, 60, 19); }
+
+    .walk.s0 { background-color: rgb(59, 57, 51); }
+    .walk.s1 { background-color: rgb(76, 73, 66); }
+    .walk.s2 { background-color: rgb(93, 90, 81); }
+    .walk.s3 { background-color: rgb(110, 106, 96); }
+
+    .other { background-color: rgb(0, 122, 80); }
+}
+
+/* Rows are flexboxes rather than grids so no per-render column count —
+   and therefore no inline custom property — is needed: every cell is a
+   fixed square and simply flows. Cell dimensions are pinned to a 1:1
+   aspect ratio via the --cell-size custom property so the grid renders
+   as squares. */
+.calendar-grid {
+    --cell-size: 1rem;
+    --cell-gap: 0.2rem;
+    width: fit-content;
+    margin: 0 auto;
+    border-collapse: separate;
+
+    tbody tr {
+        display: flex;
+        align-items: center;
+        column-gap: var(--cell-gap);
+        margin-bottom: var(--cell-gap);
+    }
+
+    th[scope="row"] {
+        font-size: var(--font-size-tiny);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: var(--text-alt-colour);
+        background: transparent;
+        border: 0;
+        padding: 0 0.4rem 0 0;
+        line-height: var(--cell-size);
+        text-align: right;
+    }
+
+    td {
+        padding: 0;
+        border: 0;
+        flex: 0 0 auto;
+        width: var(--cell-size);
+        height: var(--cell-size);
+        border-radius: 0.2rem;
+        line-height: 0;
+    }
+
+    td.empty {
+        background-color: var(--background-alt-colour);
+    }
+
+    td.inactive {
+        background-color: transparent;
+    }
+
+    td.filled {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+
+        .stripe {
+            flex: 1 1 0;
+            width: 100%;
+            min-height: 0;
+        }
+    }
+
+    /* Days inside a requested date range are ringed so the range reads as
+       a block, covering both filled and empty (rest) days. */
+    td.in-range {
+        box-shadow: 0 0 0 1px var(--accent-colour);
+    }
+}
+
+/* Legend below the calendar: one inline row of (label + four swatches)
+   entries, one per activity type that appears in the visible window.
+   Wraps onto further lines on narrow viewports rather than overflowing
+   the box. */
+.calendar-legend {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    column-gap: var(--smedium-space);
+    row-gap: var(--small-space);
+    margin: var(--smedium-space) auto 0;
+    font-size: var(--font-size-tiny);
+    color: var(--text-alt-colour);
+
+    div {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    dt {
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    dd {
+        display: flex;
+        gap: 0.15rem;
+        margin: 0;
+
+        span {
+            display: block;
+            width: 0.8rem;
+            height: 0.8rem;
+            border-radius: 0.15rem;
+        }
+    }
+}

@@ -1,0 +1,27 @@
+{{/* gotype: chameth.com/chameth.com/features/workouts/calendar.Data*/}}
+<div class="workout-calendar raised-box" data-title="{{ .Title }}">
+    <table class="plain-table calendar-grid">
+        <tbody>
+        {{- range .Rows }}
+            <tr>
+                <th scope="row">{{ .DayName }}</th>
+                {{- range .Cells }}
+                    {{- if .Inactive}}<td class="inactive"></td>
+                    {{- else if .Stripes}}<td class="filled{{ if .InRange }} in-range{{ end }}" title="{{ .Title }}">{{range .Stripes}}<span class="stripe {{ .Class }}"></span>{{end}}</td>
+                    {{- else}}<td class="empty{{ if .InRange }} in-range{{ end }}" title="{{ .Title }}"></td>{{end}}
+                {{- end}}
+            </tr>
+        {{- end}}
+        </tbody>
+    </table>
+    {{- if .Legend }}
+    <dl class="calendar-legend">
+        {{- range .Legend }}
+        <div>
+            <dt>{{ .Label }}</dt>
+            <dd>{{range .Swatches}}<span class="{{ . }}"></span>{{end}}</dd>
+        </div>
+        {{- end}}
+    </dl>
+    {{- end}}
+</div>

@@ -69,6 +69,16 @@ type PeriodTotals struct {
 	RunDurationS   float64 `db:"run_duration_s"`
 }
 
+// WorkoutDayEntry is one workout's contribution to a calendar day: when
+// it started, its activity group, the distance covered, and the running
+// portion of that distance (nil for workouts with no running intervals).
+type WorkoutDayEntry struct {
+	StartTime     time.Time `db:"start_time"`
+	ActivityGroup string    `db:"activity_group"`
+	DistanceM     float64   `db:"distance_m"`
+	RunDistanceM  *float64  `db:"run_distance_m"`
+}
+
 // FurthestWorkout describes the single longest workout (or run/walk
 // interval within a workout) for a date range.
 type FurthestWorkout struct {
