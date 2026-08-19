@@ -30,12 +30,7 @@ func GetAllPrintLinks(ctx context.Context) (map[int][]PrintLink, error) {
 }
 
 func GetAllPrintMediaRelations(ctx context.Context) (map[int][]media.MediaRelation, error) {
-	relations, err := db.Select[media.MediaRelation](ctx, `
-		SELECT mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id
-		FROM media_relations mr
-		JOIN prints p ON mr.entity_id = p.id
-		WHERE mr.entity_type = 'print' AND p.published = true
-	`)
+	relations, err := media.GetAllMediaRelationsForEntityType(ctx, "print")
 	if err != nil {
 		return nil, err
 	}

@@ -32,6 +32,14 @@ func GetMediaRelationsForEntity(ctx context.Context, entityType string, entityID
 	`, entityType, entityID)
 }
 
+func GetAllMediaRelationsForEntityType(ctx context.Context, entityType string) ([]MediaRelation, error) {
+	return db.Select[MediaRelation](ctx, `
+		SELECT path, media_id, description, caption, role, entity_type, entity_id
+		FROM media_relations
+		WHERE entity_type = $1
+	`, entityType)
+}
+
 func HasMediaRelationForEntity(ctx context.Context, entityType string, entityID int, role string) (bool, error) {
 	query := `SELECT EXISTS(SELECT 1 FROM media_relations WHERE entity_type = $1 AND entity_id = $2`
 	args := []any{entityType, entityID}
