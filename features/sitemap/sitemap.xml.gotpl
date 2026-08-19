@@ -9,30 +9,6 @@
     {{- end }}
 
     <url>
-        <loc>{{ .SiteURL }}/posts/</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>{{ .SiteURL }}/sitemap/</loc>
-        <changefreq>daily</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>{{ .SiteURL }}/snippets/</loc>
-        <changefreq>weekly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
-        <loc>{{ .SiteURL }}/prints/</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.2</priority>
-    </url>
-
-    <url>
         <loc>{{ .SiteURL }}/index.xml</loc>
         <changefreq>weekly</changefreq>
         <priority>0.5</priority>

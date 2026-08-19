@@ -94,11 +94,11 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 	}
 
 	pageDetails = append(pageDetails,
-		SiteMapPageDetails{Title: "Posts", Path: "/posts/"},
-		SiteMapPageDetails{Title: "3D Prints", Path: "/prints/"},
-		SiteMapPageDetails{Title: "Projects", Path: "/projects/"},
-		SiteMapPageDetails{Title: "Sitemap", Path: "/sitemap/", CurrentPage: true},
-		SiteMapPageDetails{Title: "Snippets", Path: "/snippets/"},
+		SiteMapPageDetails{Title: "Posts", Path: "/posts/", Frequency: "daily", Priority: "0.2"},
+		SiteMapPageDetails{Title: "3D Prints", Path: "/prints/", Frequency: "monthly", Priority: "0.2"},
+		SiteMapPageDetails{Title: "Projects", Path: "/projects/", Frequency: "monthly", Priority: "0.5"},
+		SiteMapPageDetails{Title: "Sitemap", Path: "/sitemap/", Frequency: "daily", Priority: "0.2", CurrentPage: true},
+		SiteMapPageDetails{Title: "Snippets", Path: "/snippets/", Frequency: "weekly", Priority: "0.2"},
 	)
 
 	slices.SortFunc(pageDetails, func(a, b SiteMapPageDetails) int {
