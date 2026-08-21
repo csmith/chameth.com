@@ -1,0 +1,16 @@
+{{/* gotype: chameth.com/chameth.com/features/music/newalbums.Data*/}}
+<ul class="new-albums">
+{{- range .Albums }}
+  <li class="raised-box">
+    {{- if .ImagePath }}
+    <div class="image-container" title="{{ .Name }}">
+      <img src="{{ .ImagePath }}" alt="Cover art for {{ .Name }}" loading="lazy">
+    </div>
+    {{- else }}
+    <div class="image-placeholder" title="{{ .Name }}"></div>
+    {{- end }}
+    <p class="name">{{ .Name }}</p>
+    <p class="artist">{{ .ArtistName }}</p>
+  </li>
+{{- end }}
+</ul>

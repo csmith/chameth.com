@@ -32,6 +32,7 @@ import (
 	featuresMediaVideo "chameth.com/chameth.com/features/media/video"
 	featuresMetrics "chameth.com/chameth.com/features/metrics"
 	featuresMusic "chameth.com/chameth.com/features/music"
+	featuresMusicNewalbums "chameth.com/chameth.com/features/music/newalbums"
 	featuresMusicNowplaying "chameth.com/chameth.com/features/music/nowplaying"
 	featuresMusicPlayedalbums "chameth.com/chameth.com/features/music/playedalbums"
 	featuresMusicTopalbums "chameth.com/chameth.com/features/music/topalbums"
@@ -106,6 +107,7 @@ func (s *site) registerShortcodes() {
 	featuresMediaFigure.RegisterShortcodes(s.Shortcodes)
 	featuresMediaLabelledfigure.RegisterShortcodes(s.Shortcodes)
 	featuresMediaVideo.RegisterShortcodes(s.Shortcodes)
+	featuresMusicNewalbums.RegisterShortcodes(s.Shortcodes)
 	featuresMusicNowplaying.RegisterShortcodes(s.Shortcodes)
 	featuresMusicPlayedalbums.RegisterShortcodes(s.Shortcodes)
 	featuresMusicTopalbums.RegisterShortcodes(s.Shortcodes)
