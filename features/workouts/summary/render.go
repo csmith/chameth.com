@@ -52,10 +52,12 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("failed to get recent PBs: %w", err)
 	}
 
-	return renderTemplate(buildData(totals, furthestCycle, furthestRun, pbs))
+	dateRange := fmt.Sprintf("%s – %s", startDate.Format("2 Jan"), endDate.Format("2 Jan 2006"))
+
+	return renderTemplate(buildData(dateRange, totals, furthestCycle, furthestRun, pbs))
 }
 
-func buildData(totals workouts.PeriodTotals, furthestCycle, furthestRun *workouts.FurthestWorkout, pbs []workouts.PersonalBest) Data {
+func buildData(dateRange string, totals workouts.PeriodTotals, furthestCycle, furthestRun *workouts.FurthestWorkout, pbs []workouts.PersonalBest) Data {
 	var data Data
 
 	if totals.CycleCount > 0 {
@@ -68,7 +70,7 @@ func buildData(totals workouts.PeriodTotals, furthestCycle, furthestRun *workout
 			sectionStats = append(sectionStats, Stat{Value: formatKm(furthestCycle.DistanceM), Label: "longest distance"})
 		}
 		data.Sections = append(data.Sections, Section{
-			Title: "Cycling",
+			Title: "Cycling · " + dateRange,
 			Stats: sectionStats,
 			PBs:   pbsForGroup(pbs, "cycle"),
 		})
@@ -84,7 +86,7 @@ func buildData(totals workouts.PeriodTotals, furthestCycle, furthestRun *workout
 			sectionStats = append(sectionStats, Stat{Value: formatKm(furthestRun.DistanceM), Label: "longest distance"})
 		}
 		data.Sections = append(data.Sections, Section{
-			Title: "Running",
+			Title: "Running · " + dateRange,
 			Stats: sectionStats,
 			PBs:   pbsForGroup(pbs, "run"),
 		})
