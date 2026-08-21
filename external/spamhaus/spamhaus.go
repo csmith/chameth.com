@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"slices"
 	"strings"
 	"time"
 )
@@ -132,9 +133,9 @@ func reverseIPv6(ip net.IP) string {
 
 	var parts []string
 	// Convert each byte to two hex digits, then split them
-	for i := len(ip) - 1; i >= 0; i-- {
-		parts = append(parts, fmt.Sprintf("%x", ip[i]&0x0f))
-		parts = append(parts, fmt.Sprintf("%x", ip[i]>>4))
+	for _, i := range slices.Backward(ip) {
+		parts = append(parts, fmt.Sprintf("%x", i&0x0f))
+		parts = append(parts, fmt.Sprintf("%x", i>>4))
 	}
 
 	return strings.Join(parts, ".")
