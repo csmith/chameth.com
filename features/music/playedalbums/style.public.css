@@ -1,0 +1,93 @@
+/* Most played albums: a ranked table of albums for a date range inside a
+   raised box. plain-table skips the site's default boxed table styling (the
+   raised box already provides the box); row separators and column alignment
+   are styled here. Cell side padding is zeroed so the table lines up with the
+   box padding. */
+.played-albums {
+    margin: var(--smedium-space) 0;
+    padding: var(--smedium-space);
+    padding-top: var(--raised-box-title-padding);
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    td {
+        padding: var(--small-space) 0;
+        border-bottom: 1px solid var(--background-alt-colour);
+        vertical-align: middle;
+    }
+
+    /* The last row drops its cell bottom padding along with its border so it
+       doesn't stack on top of the box's own bottom padding. */
+    tbody tr:last-child td {
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .numeric {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .position {
+        width: 1%;
+        white-space: nowrap;
+        padding-right: var(--small-space);
+        color: var(--text-alt-colour);
+    }
+
+    .movement {
+        width: 1%;
+        white-space: nowrap;
+        padding-right: var(--small-space);
+
+        svg {
+            display: block;
+        }
+    }
+
+    .movement-up,
+    .movement-new {
+        color: var(--link-colour);
+    }
+
+    .movement-down,
+    .movement-same {
+        color: var(--text-alt-colour);
+    }
+
+    .new-entry {
+        display: block;
+        font-size: var(--font-size-large);
+        line-height: 16px;
+        text-align: center;
+    }
+
+    .art {
+        width: 1%;
+        padding-right: var(--small-space);
+
+        img,
+        .art-placeholder {
+            display: block;
+            height: 40px;
+            box-shadow: 2px 2px 4px black;
+        }
+
+        .art-placeholder {
+            width: 40px;
+            background-color: var(--background-alt-colour);
+        }
+    }
+
+    .artist {
+        color: var(--text-alt-colour);
+    }
+}

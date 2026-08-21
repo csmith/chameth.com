@@ -1,0 +1,45 @@
+{{/* gotype: chameth.com/chameth.com/features/music/playedalbums.Data*/}}
+<div class="played-albums raised-box" data-title="{{ .Title }}">
+    <table class="plain-table">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col">Album</th>
+            <th scope="col">Artist</th>
+            <th scope="col" class="numeric">Tracks played</th>
+            <th scope="col" class="numeric">Total plays</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{- range .Albums }}
+        <tr>
+            <td class="position">{{ .Position }}</td>
+            <td class="movement movement-{{ .Movement }}" title="{{ .MovementTitle }}">
+            {{- if eq .Movement "up" }}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-up" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M18 11l-6 -6" /><path d="M6 11l6 -6" /></svg>
+            {{- else if eq .Movement "down" }}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-down" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M18 13l-6 6" /><path d="M6 13l6 6" /></svg>
+            {{- else if eq .Movement "new" }}
+                <span class="new-entry" aria-hidden="true">*</span>
+            {{- else }}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-minus" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /></svg>
+            {{- end }}
+            </td>
+            <td class="art">
+            {{- if .ImagePath }}
+                <img src="{{ .ImagePath }}" alt="Cover art for {{ .Name }}" loading="lazy">
+            {{- else }}
+                <div class="art-placeholder"></div>
+            {{- end }}
+            </td>
+            <td>{{ .Name }}</td>
+            <td class="artist">{{ .ArtistName }}</td>
+            <td class="numeric">{{ .TrackCount }}</td>
+            <td class="numeric">{{ .PlayCount }}</td>
+        </tr>
+        {{- end }}
+        </tbody>
+    </table>
+</div>
