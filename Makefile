@@ -1,10 +1,15 @@
-.PHONY: db dev build verify
+.PHONY: db db-down dev build verify
 
 db:
-	docker-compose up -d
+	docker compose up -d --wait
+
+db-down:
+	docker compose down
 
 dev:	build db
 ifndef AGENT
+	trap 'docker compose down' EXIT; \
+	trap 'exit 130' INT TERM; \
 	bash -c "export $$(grep -v '^#' .env | xargs -d '\n'); /tmp/chamethdotcom"
 else
 	$(error The dev target should not be run by agents)

@@ -8,3 +8,8 @@ services:
       POSTGRES_PASSWORD: "devDB123123"
     volumes:
       - .postgres:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
