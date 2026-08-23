@@ -74,28 +74,9 @@ a.film-list {
             border-radius: var(--border-radius);
             position: absolute;
             top: 0;
-
-            /* There must be a nicer way to do this... Please tell me how. */
-            &:nth-child(1) {
-                z-index: 5;
-                left: 0;
-            }
-            &:nth-child(2) {
-                z-index: 4;
-                left: calc(133px * var(--overlap) * 1);
-            }
-            &:nth-child(3) {
-                z-index: 3;
-                left: calc(133px * var(--overlap) * 2);
-            }
-            &:nth-child(4) {
-                z-index: 2;
-                left: calc(133px * var(--overlap) * 3);
-            }
-            &:nth-child(5) {
-                z-index: 1;
-                left: calc(133px * var(--overlap) * 4);
-            }
+            left: calc(133px * var(--overlap) * (sibling-index() - 1));
+            /* earlier posters sit on top of later ones */
+            z-index: calc(sibling-count() - sibling-index() + 1);
         }
     }
 }
