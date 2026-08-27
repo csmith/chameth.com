@@ -8,8 +8,8 @@
             <th scope="col"></th>
             <th scope="col">Album</th>
             <th scope="col">Artist</th>
-            <th scope="col" class="numeric">Tracks played</th>
-            <th scope="col" class="numeric">Total plays</th>
+            <th scope="col" class="numeric">Unique tracks played</th>
+            <th scope="col" class="numeric">Total tracks played</th>
         </tr>
         </thead>
         <tbody>
