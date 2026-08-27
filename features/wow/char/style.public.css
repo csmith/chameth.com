@@ -3,7 +3,6 @@
     align-items: stretch;
     width: 600px;
     padding-right: var(--smedium-space);
-    margin: var(--smedium-space) 0;
     gap: var(--smedium-space);
 
     .overview {
@@ -174,12 +173,10 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
     gap: var(--smedium-space);
-    margin: var(--small-space) 0;
 
     .wow-char {
         width: unset;
         padding-right: unset;
-        margin-bottom: unset;
     }
 
     @media (width <= 750px) {
