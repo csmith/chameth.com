@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -58,32 +59,36 @@ type Segment struct {
 // Activity deliberately omits heart_rate_zones and hr_zone_basis, which are
 // not being ingested; json.Unmarshal silently ignores unrecognized fields.
 type Activity struct {
-	ID            string     `json:"id"`
-	Activity      string     `json:"activity"`
-	ActivityGroup string     `json:"activity_group"`
-	StartTime     time.Time  `json:"start_time"`
-	EndTime       time.Time  `json:"end_time"`
-	DurationS     float64    `json:"duration_s"`
-	DistanceM     float64    `json:"distance_m"`
-	ActiveS       float64    `json:"active_s"`
-	ElapsedS      float64    `json:"elapsed_s"`
-	PausedS       float64    `json:"paused_s"`
-	Calories      *float64   `json:"calories,omitempty"`
-	RunDistanceM  *float64   `json:"run_distance_m,omitempty"`
-	WalkDistanceM *float64   `json:"walk_distance_m,omitempty"`
-	Elevation     *Elevation `json:"elevation,omitempty"`
-	Gait          *Gait      `json:"gait,omitempty"`
-	Segments      []Segment  `json:"segments"`
-	Weather       *Weather   `json:"weather,omitempty"`
+	ID               string     `json:"id"`
+	Activity         string     `json:"activity"`
+	ActivityGroup    string     `json:"activity_group"`
+	StartTime        time.Time  `json:"start_time"`
+	EndTime          time.Time  `json:"end_time"`
+	DurationS        float64    `json:"duration_s"`
+	DistanceM        float64    `json:"distance_m"`
+	ActiveS          float64    `json:"active_s"`
+	ElapsedS         float64    `json:"elapsed_s"`
+	PausedS          float64    `json:"paused_s"`
+	ProcessorVersion int        `json:"processor_version"`
+	Calories         *float64   `json:"calories,omitempty"`
+	RunDistanceM     *float64   `json:"run_distance_m,omitempty"`
+	WalkDistanceM    *float64   `json:"walk_distance_m,omitempty"`
+	Elevation        *Elevation `json:"elevation,omitempty"`
+	Gait             *Gait      `json:"gait,omitempty"`
+	Segments         []Segment  `json:"segments"`
+	Weather          *Weather   `json:"weather,omitempty"`
 }
 
-// GetActivities fetches activities with start_time strictly after since.
-// Pass since == "" to fetch full history.
-func (c *Client) GetActivities(ctx context.Context, since string) ([]Activity, error) {
+// GetActivities fetches activities with start_time strictly after since,
+// as well as any activity (re)processed by a processor newer than
+// sinceVersion. Pass since == "" to fetch full history; sinceVersion is
+// only sent alongside a since value.
+func (c *Client) GetActivities(ctx context.Context, since string, sinceVersion int) ([]Activity, error) {
 	u := strings.TrimRight(c.baseURL, "/") + "/api/activities"
 	if since != "" {
 		q := url.Values{}
 		q.Set("since", since)
+		q.Set("since_version", strconv.Itoa(sinceVersion))
 		u += "?" + q.Encode()
 	}
 

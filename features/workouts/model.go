@@ -5,6 +5,7 @@ import "time"
 type workout struct {
 	ID                    int       `db:"id"`
 	ExternalID            string    `db:"external_id"`
+	ProcessorVersion      int       `db:"processor_version"`
 	Activity              string    `db:"activity"`
 	ActivityGroup         string    `db:"activity_group"`
 	StartTime             time.Time `db:"start_time"`

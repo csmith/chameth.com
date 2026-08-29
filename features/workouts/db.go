@@ -24,6 +24,22 @@ func cursorSince(ctx context.Context) (string, error) {
 	return t.Format(time.RFC3339), nil
 }
 
+// cursorMinProcessorVersion returns the lowest processor_version stored for
+// any synced workout, for the API's `since_version` query param: the API
+// re-returns anything processed by a newer processor even if it predates
+// the `since` timestamp. Returns 0 if no workouts have been synced, or if
+// they all predate processor version tracking.
+func cursorMinProcessorVersion(ctx context.Context) (int, error) {
+	v, err := db.Get[*int](ctx, `SELECT MIN(processor_version) FROM workouts`)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get workout sync cursor version: %w", err)
+	}
+	if v == nil {
+		return 0, nil
+	}
+	return *v, nil
+}
+
 // TotalsInRange returns per-activity workout counts, durations and
 // distances for workouts starting within [start, end].
 func TotalsInRange(ctx context.Context, start, end time.Time) (PeriodTotals, error) {
@@ -168,9 +184,10 @@ func PBsForGroup(ctx context.Context, group string) ([]ActivityRecord, error) {
 	`, group)
 }
 
-// insertWorkoutWithSegments inserts a workout and its segments in a single
-// transaction. If a workout with the same external_id already exists, this
-// is a no-op rather than an error.
+// insertWorkoutWithSegments upserts a workout and its segments in a single
+// transaction. A workout with the same external_id is updated in full and
+// its segments replaced, since the activity tracker occasionally reprocesses
+// activities and returns revised data.
 func insertWorkoutWithSegments(ctx context.Context, w workout, segments []workoutSegment) error {
 	tx, err := db.BeginTxx(ctx, nil)
 	if err != nil {
@@ -192,7 +209,8 @@ func insertWorkoutWithSegments(ctx context.Context, w workout, segments []workou
 			gait_run_distance_m, gait_walk_distance_m, gait_overall_pace_s_per_km, gait_overall_cadence_spm,
 			gait_run_pace_s_per_km, gait_run_cadence_spm, gait_walk_pace_s_per_km, gait_walk_cadence_spm,
 			weather_temp_c, weather_apparent_temp_c, weather_humidity_pct, weather_code, weather_label,
-			weather_precip_mm, weather_snowfall_cm, weather_cloud_cover_pct, weather_visibility_m
+			weather_precip_mm, weather_snowfall_cm, weather_cloud_cover_pct, weather_visibility_m,
+			processor_version
 		) VALUES (
 			$1, $2, $3, $4, $5,
 			$6, $7, $8, $9, $10,
@@ -201,9 +219,42 @@ func insertWorkoutWithSegments(ctx context.Context, w workout, segments []workou
 			$16, $17, $18, $19,
 			$20, $21, $22, $23,
 			$24, $25, $26, $27, $28,
-			$29, $30, $31, $32
+			$29, $30, $31, $32,
+			$33
 		)
-		ON CONFLICT (external_id) DO NOTHING
+		ON CONFLICT (external_id) DO UPDATE SET
+			activity = EXCLUDED.activity,
+			activity_group = EXCLUDED.activity_group,
+			start_time = EXCLUDED.start_time,
+			end_time = EXCLUDED.end_time,
+			duration_s = EXCLUDED.duration_s,
+			distance_m = EXCLUDED.distance_m,
+			active_s = EXCLUDED.active_s,
+			elapsed_s = EXCLUDED.elapsed_s,
+			paused_s = EXCLUDED.paused_s,
+			calories = EXCLUDED.calories,
+			run_distance_m = EXCLUDED.run_distance_m,
+			walk_distance_m = EXCLUDED.walk_distance_m,
+			elevation_gain_m = EXCLUDED.elevation_gain_m,
+			elevation_loss_m = EXCLUDED.elevation_loss_m,
+			gait_run_distance_m = EXCLUDED.gait_run_distance_m,
+			gait_walk_distance_m = EXCLUDED.gait_walk_distance_m,
+			gait_overall_pace_s_per_km = EXCLUDED.gait_overall_pace_s_per_km,
+			gait_overall_cadence_spm = EXCLUDED.gait_overall_cadence_spm,
+			gait_run_pace_s_per_km = EXCLUDED.gait_run_pace_s_per_km,
+			gait_run_cadence_spm = EXCLUDED.gait_run_cadence_spm,
+			gait_walk_pace_s_per_km = EXCLUDED.gait_walk_pace_s_per_km,
+			gait_walk_cadence_spm = EXCLUDED.gait_walk_cadence_spm,
+			weather_temp_c = EXCLUDED.weather_temp_c,
+			weather_apparent_temp_c = EXCLUDED.weather_apparent_temp_c,
+			weather_humidity_pct = EXCLUDED.weather_humidity_pct,
+			weather_code = EXCLUDED.weather_code,
+			weather_label = EXCLUDED.weather_label,
+			weather_precip_mm = EXCLUDED.weather_precip_mm,
+			weather_snowfall_cm = EXCLUDED.weather_snowfall_cm,
+			weather_cloud_cover_pct = EXCLUDED.weather_cloud_cover_pct,
+			weather_visibility_m = EXCLUDED.weather_visibility_m,
+			processor_version = EXCLUDED.processor_version
 		RETURNING id
 	`,
 		w.ExternalID, w.Activity, w.ActivityGroup, w.StartTime, w.EndTime,
@@ -214,32 +265,36 @@ func insertWorkoutWithSegments(ctx context.Context, w workout, segments []workou
 		w.GaitRunPaceSPerKm, w.GaitRunCadenceSpm, w.GaitWalkPaceSPerKm, w.GaitWalkCadenceSpm,
 		w.WeatherTempC, w.WeatherApparentTempC, w.WeatherHumidityPct, w.WeatherCode, w.WeatherLabel,
 		w.WeatherPrecipMm, w.WeatherSnowfallCm, w.WeatherCloudCoverPct, w.WeatherVisibilityM,
+		w.ProcessorVersion,
 	).Scan(&workoutID)
 
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return fmt.Errorf("failed to insert workout: %w", err)
+	if err != nil {
+		return fmt.Errorf("failed to upsert workout: %w", err)
 	}
 
-	if err == nil {
-		for _, seg := range segments {
-			_, err = tx.Exec(`
-				INSERT INTO workout_segments (
-					workout_id, segment_index, distance_m, start_time, end_time,
-					elapsed_s, pace_s_per_km, speed_kmh, gap_elapsed_s, gap_pace_s_per_km,
-					is_pb, previous_best_s, best_s, rank
-				) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-			`,
-				workoutID, seg.SegmentIndex, seg.DistanceM, seg.StartTime, seg.EndTime,
-				seg.ElapsedS, seg.PaceSPerKm, seg.SpeedKmh, seg.GapElapsedS, seg.GapPaceSPerKm,
-				seg.IsPb, seg.PreviousBestS, seg.BestS, seg.Rank,
-			)
-			if err != nil {
-				return fmt.Errorf("failed to insert workout segment %d: %w", seg.SegmentIndex, err)
-			}
+	// A reprocessed activity can change any segment value and even the
+	// number of segments, so replace the stored set wholesale rather than
+	// trying to merge.
+	_, err = tx.Exec(`DELETE FROM workout_segments WHERE workout_id = $1`, workoutID)
+	if err != nil {
+		return fmt.Errorf("failed to delete existing segments: %w", err)
+	}
+
+	for _, seg := range segments {
+		_, err = tx.Exec(`
+			INSERT INTO workout_segments (
+				workout_id, segment_index, distance_m, start_time, end_time,
+				elapsed_s, pace_s_per_km, speed_kmh, gap_elapsed_s, gap_pace_s_per_km,
+				is_pb, previous_best_s, best_s, rank
+			) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+		`,
+			workoutID, seg.SegmentIndex, seg.DistanceM, seg.StartTime, seg.EndTime,
+			seg.ElapsedS, seg.PaceSPerKm, seg.SpeedKmh, seg.GapElapsedS, seg.GapPaceSPerKm,
+			seg.IsPb, seg.PreviousBestS, seg.BestS, seg.Rank,
+		)
+		if err != nil {
+			return fmt.Errorf("failed to insert workout segment %d: %w", seg.SegmentIndex, err)
 		}
-	} else {
-		// Workout already existed (ON CONFLICT DO NOTHING); nothing to insert.
-		err = nil
 	}
 
 	if err = tx.Commit(); err != nil {

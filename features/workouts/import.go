@@ -47,8 +47,14 @@ func syncWorkouts(ctx context.Context, client *http.Client) {
 		return
 	}
 
+	sinceVersion, err := cursorMinProcessorVersion(ctx)
+	if err != nil {
+		slog.Error("Failed to get workout sync cursor version", "error", err)
+		return
+	}
+
 	c := pompeiband.NewClient(client, *pompeibandBaseUrl)
-	activities, err := c.GetActivities(ctx, since)
+	activities, err := c.GetActivities(ctx, since, sinceVersion)
 	if err != nil {
 		slog.Error("Failed to fetch activities", "error", err)
 		return
@@ -68,19 +74,20 @@ func syncWorkouts(ctx context.Context, client *http.Client) {
 
 func importActivity(ctx context.Context, a pompeiband.Activity) error {
 	w := workout{
-		ExternalID:    a.ID,
-		Activity:      a.Activity,
-		ActivityGroup: a.ActivityGroup,
-		StartTime:     a.StartTime,
-		EndTime:       a.EndTime,
-		DurationS:     a.DurationS,
-		DistanceM:     a.DistanceM,
-		ActiveS:       a.ActiveS,
-		ElapsedS:      a.ElapsedS,
-		PausedS:       a.PausedS,
-		Calories:      a.Calories,
-		RunDistanceM:  a.RunDistanceM,
-		WalkDistanceM: a.WalkDistanceM,
+		ExternalID:       a.ID,
+		ProcessorVersion: a.ProcessorVersion,
+		Activity:         a.Activity,
+		ActivityGroup:    a.ActivityGroup,
+		StartTime:        a.StartTime,
+		EndTime:          a.EndTime,
+		DurationS:        a.DurationS,
+		DistanceM:        a.DistanceM,
+		ActiveS:          a.ActiveS,
+		ElapsedS:         a.ElapsedS,
+		PausedS:          a.PausedS,
+		Calories:         a.Calories,
+		RunDistanceM:     a.RunDistanceM,
+		WalkDistanceM:    a.WalkDistanceM,
 	}
 
 	if a.Elevation != nil {

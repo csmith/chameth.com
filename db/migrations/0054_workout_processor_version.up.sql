@@ -1,0 +1,1 @@
+ALTER TABLE workouts ADD COLUMN processor_version INTEGER NOT NULL DEFAULT 0;
