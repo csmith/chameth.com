@@ -4,7 +4,7 @@ go 1.26.5
 
 require (
 	github.com/alecthomas/chroma/v2 v2.27.0
-	github.com/anthonynsimon/bild v0.16.1
+	github.com/anthonynsimon/bild v0.17.0
 	github.com/csmith/aca v1.2.0
 	github.com/csmith/envflag/v2 v2.0.0
 	github.com/csmith/middleware v1.3.0
