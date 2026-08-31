@@ -1,0 +1,72 @@
+{{/* gotype: chameth.com/chameth.com/features/feeds.BuilderData*/}}
+{{define "feed-builder-post"}}
+    <li>
+        <span class="feed-builder-post">
+            {{ if .Pinned }}
+                <svg class="feed-builder-pin" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M15 4.5l-4 4l-4 1.5l-1.5 1.5l7 7l1.5 -1.5l1.5 -4l4 -4" />
+                    <path d="M9 15l-4.5 4.5" />
+                    <path d="M14.5 4l5.5 5.5" />
+                </svg>
+            {{ end }}
+            <a href="{{.Url}}">{{.Title}}</a>
+            <span class="feed-builder-date">{{.Date}}</span>
+        </span>
+        <span class="feed-builder-actions">
+            {{ range .Actions }}
+                <a rel="nofollow" href="{{.Url}}">{{.Label}}</a>
+            {{ end }}
+        </span>
+    </li>
+{{end}}
+
+{{define "content"}}
+    <h2><a href="/feeds/">Feeds</a> &raquo; Post feed builder</h2>
+
+    <p>
+        This page lets you build a custom feed containing certain types
+        of <a href="/posts/">my posts</a>. It works by selecting posts
+        based on how similar their content is to other posts. You can
+        include or exclude existing posts using the controls below.
+    </p>
+
+    <p>Here are some examples that seem to work quite well:</p>
+
+    <ul>
+        <li><a href="/feeds/posts/build/unlike/coming-around-on-llms,the-ethics-of-llms/">Exclude posts about coding with LLMs</a></li>
+        <li><a href="/feeds/posts/build/like/monthly-meanderings-2026-06,monthly-meanderings-2026-07/unlike/building-a-family-of-single-user-services,tracking-pbs-without-the-dark-patterns/">Posts like the Monthly Meanderings series</a></li>
+        <li><a href="/feeds/posts/build/like/just-a-nod,making-a-font-of-my-handwriting,modern-css-is-fun,moving-back-to-a-dynamic-website/unlike/an-app-can-be-a-ready-meal/">Posts talking about website updates</a></li>
+    </ul>
+
+    <p>
+        The system is inherently fuzzy, but I think that makes it fun.
+        Plus, it means I don't have to decide on a taxonomy of tags, and
+        apply them consistently!
+    </p>
+
+    {{ with .FeedUrl }}
+        <p>
+            <a class="feed-builder-button" rel="nofollow" href="{{.}}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    aria-hidden="true">
+                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                    <circle cx="5" cy="19" r="1"></circle>
+                </svg>
+                View the feed
+            </a>
+        </p>
+    {{ end }}
+
+    {{ range .Sections }}
+        <section class="feed-builder-section">
+            <h3>{{.Title}}</h3>
+            <ul class="feed-builder-posts">
+                {{ range .Posts }}{{ template "feed-builder-post" . }}{{ end }}
+            </ul>
+        </section>
+    {{ end }}
+{{end}}

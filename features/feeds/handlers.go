@@ -320,9 +320,22 @@ func parseRelatedFeedSlugs(path string) (likes, unlikes []string, ok bool) {
 	if rest == path || rest == "" {
 		return nil, nil, false
 	}
-	rest = strings.TrimSuffix(rest, "/")
+	return parseRelatedFeedParams(rest)
+}
 
-	segments := strings.Split(rest, "/")
+// parseRelatedFeedParams parses "like/a,b/unlike/c/" style parameters, as
+// used by the related posts feed and the feed builder page. An empty string
+// is valid and yields empty slug lists. It returns ok=false for anything
+// invalid: unknown or repeated categories, odd path elements, or malformed
+// slugs.
+func parseRelatedFeedParams(params string) (likes, unlikes []string, ok bool) {
+	if params == "" {
+		return nil, nil, true
+	}
+
+	params = strings.TrimSuffix(params, "/")
+
+	segments := strings.Split(params, "/")
 	if len(segments)%2 != 0 {
 		return nil, nil, false
 	}
@@ -352,7 +365,22 @@ func parseRelatedFeedSlugs(path string) (likes, unlikes []string, ok bool) {
 		}
 	}
 
-	return sortAndDedupe(likes), sortAndDedupe(unlikes), true
+	likes, unlikes = sortAndDedupe(likes), sortAndDedupe(unlikes)
+
+	// A slug in both lists is contradictory: drop it from both so the
+	// canonical path is always free of overlaps.
+	overlapping := make(map[string]bool, len(likes))
+	for _, slug := range likes {
+		if slices.Contains(unlikes, slug) {
+			overlapping[slug] = true
+		}
+	}
+	if len(overlapping) > 0 {
+		likes = slices.DeleteFunc(likes, func(slug string) bool { return overlapping[slug] })
+		unlikes = slices.DeleteFunc(unlikes, func(slug string) bool { return overlapping[slug] })
+	}
+
+	return likes, unlikes, true
 }
 
 // sortAndDedupe orders slugs lexicographically and removes duplicates so the
@@ -365,8 +393,14 @@ func sortAndDedupe(slugs []string) []string {
 // relatedFeedPath builds the canonical path: likes first, then unlikes,
 // each slug list sorted.
 func relatedFeedPath(likes, unlikes []string) string {
+	return relatedFeedPrefix + relatedFeedParams(likes, unlikes)
+}
+
+// relatedFeedParams builds the "like/a,b/unlike/c/" portion of a path for
+// the given slug lists: likes first, each list sorted. It returns an empty
+// string when both lists are empty.
+func relatedFeedParams(likes, unlikes []string) string {
 	var b strings.Builder
-	b.WriteString(relatedFeedPrefix)
 	if len(likes) > 0 {
 		b.WriteString("like/")
 		b.WriteString(strings.Join(likes, ","))

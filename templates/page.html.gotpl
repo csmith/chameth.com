@@ -15,6 +15,9 @@
     {{ if .CanonicalUrl -}}
         <link rel="canonical" href="{{.CanonicalUrl}}"/>
     {{end -}}
+    {{ if .Robots -}}
+        <meta name="robots" content="{{.Robots}}"/>
+    {{end -}}
     {{ range .Links -}}
         <link rel="{{.Rel}}" href="{{.Href}}"/>
     {{ end -}}

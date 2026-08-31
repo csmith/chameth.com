@@ -23,6 +23,7 @@ type PageData struct {
 	Stylesheet   string
 	Scripts      string
 	CanonicalUrl string
+	Robots       string
 	OpenGraph    OpenGraphHeaders
 	RecentPosts  []RecentPost
 	Component    func(string, ...any) template.HTML
