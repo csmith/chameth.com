@@ -43,19 +43,21 @@ func GenerateAndStore(ctx context.Context, postPath string) error {
 	content := markdown.StripHTMLTags(codeRemovalRegex.ReplaceAllString(string(renderedHTML), ""))
 
 	jsonData, err := json.Marshal(struct {
-		Model      string `json:"model"`
-		Prompt     string `json:"prompt"`
-		Dimensions int    `json:"dimensions"`
+		Model      string         `json:"model"`
+		Input      string         `json:"input"`
+		Dimensions int            `json:"dimensions"`
+		Options    map[string]int `json:"options"`
 	}{
 		Model:      *ollamaModel,
-		Prompt:     fmt.Sprintf("%s\n\n%s", post.Title, content),
+		Input:      fmt.Sprintf("%s\n\n%s", post.Title, content),
 		Dimensions: 4096,
+		Options:    map[string]int{"num_ctx": 8192},
 	})
 	if err != nil {
 		return fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	req, err := http.NewRequest("POST", *ollamaEndpoint+"/api/embeddings", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", *ollamaEndpoint+"/api/embed", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -73,17 +75,22 @@ func GenerateAndStore(ctx context.Context, postPath string) error {
 	}
 
 	var ollamaResp = struct {
-		Embedding []float32 `json:"embedding"`
+		Embeddings [][]float32 `json:"embeddings"`
 	}{}
 	if err := json.NewDecoder(resp.Body).Decode(&ollamaResp); err != nil {
 		return fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	if err := updatePostEmbedding(ctx, postPath, pgvector.NewVector(ollamaResp.Embedding)); err != nil {
+	if len(ollamaResp.Embeddings) != 1 {
+		return fmt.Errorf("expected 1 embedding, got %d", len(ollamaResp.Embeddings))
+	}
+	embedding := ollamaResp.Embeddings[0]
+
+	if err := updatePostEmbedding(ctx, postPath, pgvector.NewVector(embedding)); err != nil {
 		return err
 	}
 
-	slog.Info("Generated embedding for post", "path", postPath, "dimension", len(ollamaResp.Embedding))
+	slog.Info("Generated embedding for post", "path", postPath, "dimension", len(embedding))
 	return nil
 }
 
