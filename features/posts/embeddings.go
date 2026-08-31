@@ -149,3 +149,39 @@ func RelatedPosts(ctx context.Context, postID int) ([]string, error) {
 
 	return relatedPosts, nil
 }
+
+const (
+	// unlikeCoefficient scales the unlike similarity penalty in the score.
+	unlikeCoefficient = 1.0
+	// minLikeSimilarity is the minimum similarity to the nearest liked post
+	// for a post to be considered. Embedding similarity between posts tops
+	// out around 0.8, so floors above ~0.65 leave feeds empty.
+	minLikeSimilarity = 0.55
+	// maxUnlikeSimilarity is the maximum similarity to the nearest unliked
+	// post allowed for a post to be considered when a feed has no liked posts.
+	maxUnlikeSimilarity = 0.55
+	// minScore is the minimum score for a post to match, where score is
+	// likeSimilarity - unlikeCoefficient * unlikeSimilarity.
+	minScore = 0.0
+)
+
+// GetRecentPostsBySimilarity returns the most recent published posts that are
+// similar to the liked posts while not being similar to the unliked posts.
+// When there are no liked posts it returns posts that do not resemble the
+// unliked posts.
+func GetRecentPostsBySimilarity(ctx context.Context, likeSlugs, unlikeSlugs []string, limit int) ([]Post, error) {
+	// Distance forms are bound directly rather than computing 1 - $n in SQL,
+	// where an untyped parameter would be inferred as an integer and truncated.
+	maxLikeDist := 1 - minLikeSimilarity
+	minUnlikeDist := 1 - maxUnlikeSimilarity
+	return recentPostsBySimilarityScore(ctx, slugsToPaths(likeSlugs), slugsToPaths(unlikeSlugs), unlikeCoefficient, maxLikeDist, minScore, minUnlikeDist, limit)
+}
+
+// slugsToPaths expands slugs into the post path forms they could match.
+func slugsToPaths(slugs []string) []string {
+	paths := make([]string, 0, len(slugs)*2)
+	for _, slug := range slugs {
+		paths = append(paths, "/"+slug, "/"+slug+"/")
+	}
+	return paths
+}

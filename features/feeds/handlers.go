@@ -1,9 +1,12 @@
 package feeds
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
+	"regexp"
+	"slices"
 	"strings"
 
 	"chameth.com/chameth.com/content"
@@ -151,28 +154,10 @@ func renderPostsFeed(w http.ResponseWriter, r *http.Request, title, format strin
 		return
 	}
 
-	var feedItems []FeedItem
-	for _, post := range postList {
-		renderedContent, err := content.RenderContent(r.Context(), "post", post.ID, post.Content, post.Path)
-		if err != nil {
-			slog.Error("Failed to render post content for feed", "post", post.Title, "error", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-
-		absoluteContent, err := makeURLsAbsolute(string(renderedContent), templates.SiteURL())
-		if err != nil {
-			slog.Error("Failed to make URLs absolute for feed", "post", post.Title, "error", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-
-		feedItems = append(feedItems, FeedItem{
-			Title:   post.Title,
-			Link:    templates.SiteURL() + post.Path,
-			Updated: post.Date.Format("2006-01-02T15:04:05Z"),
-			Content: absoluteContent,
-		})
+	feedItems, err := renderPostItems(r.Context(), postList)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
 
 	var lastUpdated string
@@ -244,4 +229,167 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 	if err != nil {
 		slog.Error("Failed to render atom feed", "error", err)
 	}
+}
+
+func renderPostItems(ctx context.Context, postList []posts.Post) ([]FeedItem, error) {
+	var feedItems []FeedItem
+	for _, post := range postList {
+		renderedContent, err := content.RenderContent(ctx, "post", post.ID, post.Content, post.Path)
+		if err != nil {
+			slog.Error("Failed to render post content for feed", "post", post.Title, "error", err)
+			return nil, err
+		}
+
+		absoluteContent, err := makeURLsAbsolute(string(renderedContent), templates.SiteURL())
+		if err != nil {
+			slog.Error("Failed to make URLs absolute for feed", "post", post.Title, "error", err)
+			return nil, err
+		}
+
+		feedItems = append(feedItems, FeedItem{
+			Title:   post.Title,
+			Link:    templates.SiteURL() + post.Path,
+			Updated: post.Date.Format("2006-01-02T15:04:05Z"),
+			Content: absoluteContent,
+		})
+	}
+
+	return feedItems, nil
+}
+
+const relatedFeedPrefix = "/feeds/posts/"
+
+// maxFeedSlugs bounds the slug list per category on the public endpoint.
+const maxFeedSlugs = 20
+
+var relatedFeedSlugRegex = regexp.MustCompile(`^[a-z0-9-]+$`)
+
+func handleRelatedPostsFeed(w http.ResponseWriter, r *http.Request) {
+	likes, unlikes, ok := parseRelatedFeedSlugs(r.URL.Path)
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	canonicalPath := relatedFeedPath(likes, unlikes)
+	if r.URL.Path != canonicalPath {
+		w.Header().Set("Location", canonicalPath)
+		w.WriteHeader(http.StatusMovedPermanently)
+		return
+	}
+
+	slog.Debug("Serving feed", "type", "posts-related", "useragent", r.UserAgent())
+	metrics.RecordFeedRequest("posts-related", r.UserAgent())
+
+	postList, err := posts.GetRecentPostsBySimilarity(r.Context(), likes, unlikes, 5)
+	if err != nil {
+		slog.Error("Failed to get related posts for feed", "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	feedItems, err := renderPostItems(r.Context(), postList)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	var lastUpdated string
+	if len(postList) > 0 {
+		lastUpdated = postList[0].Date.Format("2006-01-02T15:04:05Z")
+	}
+
+	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	err = renderAtom(w, AtomData{
+		FeedTitle:       relatedFeedTitle(likes, unlikes),
+		FeedSelfLink:    templates.SiteURL() + canonicalPath,
+		FeedLastUpdated: lastUpdated,
+		FeedItems:       feedItems,
+	})
+	if err != nil {
+		slog.Error("Failed to render atom feed", "error", err)
+	}
+}
+
+// parseRelatedFeedSlugs parses the like/unlike slug lists out of a
+// /feeds/posts/... path. It returns ok=false for anything invalid: unknown or
+// repeated categories, odd path elements, or malformed slugs.
+func parseRelatedFeedSlugs(path string) (likes, unlikes []string, ok bool) {
+	rest := strings.TrimPrefix(path, relatedFeedPrefix)
+	if rest == path || rest == "" {
+		return nil, nil, false
+	}
+	rest = strings.TrimSuffix(rest, "/")
+
+	segments := strings.Split(rest, "/")
+	if len(segments)%2 != 0 {
+		return nil, nil, false
+	}
+
+	seen := make(map[string]bool)
+	for i := 0; i < len(segments); i += 2 {
+		category, list := segments[i], segments[i+1]
+		if (category != "like" && category != "unlike") || seen[category] {
+			return nil, nil, false
+		}
+		seen[category] = true
+
+		slugs := strings.Split(list, ",")
+		if len(slugs) > maxFeedSlugs {
+			return nil, nil, false
+		}
+		for _, slug := range slugs {
+			if !relatedFeedSlugRegex.MatchString(slug) {
+				return nil, nil, false
+			}
+		}
+
+		if category == "like" {
+			likes = slugs
+		} else {
+			unlikes = slugs
+		}
+	}
+
+	return sortAndDedupe(likes), sortAndDedupe(unlikes), true
+}
+
+// sortAndDedupe orders slugs lexicographically and removes duplicates so the
+// canonical path is stable regardless of the order slugs were supplied in.
+func sortAndDedupe(slugs []string) []string {
+	slices.Sort(slugs)
+	return slices.Compact(slugs)
+}
+
+// relatedFeedPath builds the canonical path: likes first, then unlikes,
+// each slug list sorted.
+func relatedFeedPath(likes, unlikes []string) string {
+	var b strings.Builder
+	b.WriteString(relatedFeedPrefix)
+	if len(likes) > 0 {
+		b.WriteString("like/")
+		b.WriteString(strings.Join(likes, ","))
+		b.WriteString("/")
+	}
+	if len(unlikes) > 0 {
+		b.WriteString("unlike/")
+		b.WriteString(strings.Join(unlikes, ","))
+		b.WriteString("/")
+	}
+	return b.String()
+}
+
+func relatedFeedTitle(likes, unlikes []string) string {
+	title := "Chameth.com - posts"
+	if len(likes) > 0 {
+		title += " like " + strings.Join(likes, ", ")
+	}
+	if len(unlikes) > 0 {
+		if len(likes) > 0 {
+			title += " but"
+		}
+		title += " not " + strings.Join(unlikes, ", ")
+	}
+	return title
 }
