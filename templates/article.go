@@ -6,6 +6,7 @@ type ArticleData struct {
 	ArticleSummary string
 	ArticleDate    ArticleDate
 	RelatedPosts   []string
+	FeedBuilderURL string
 	EditLink       string
 }
 

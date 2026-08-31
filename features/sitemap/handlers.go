@@ -128,6 +128,14 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 	}, nil
 }
 
+// codeDefinedChildren maps the path of a database-defined page to hard-coded
+// child pages for the HTML sitemap tree. The children are served by code
+// routes rather than staticpages rows, so the nesting cannot be expressed in
+// the database. Children of pages that do not exist are dropped.
+var codeDefinedChildren = map[string][]SiteMapPageDetails{
+	"/feeds": {{Title: "Post feed builder", Path: "/feeds/posts/build/"}},
+}
+
 // buildPageTree builds the hierarchy of published pages for the HTML sitemap,
 // nesting any page with a parent underneath it. A top-level page is included if
 // it opts into the sitemap (frequency + priority) or has children to show.
@@ -155,6 +163,17 @@ func buildPageTree(ctx context.Context) ([]*SiteMapPageDetails, error) {
 		}
 		if parent, ok := detailsByID[*p.ParentID]; ok {
 			parent.Children = append(parent.Children, detailsByID[p.ID])
+		}
+	}
+
+	for _, p := range allPages {
+		children, ok := codeDefinedChildren[strings.TrimSuffix(p.Path, "/")]
+		if !ok {
+			continue
+		}
+		parent := detailsByID[p.ID]
+		for i := range children {
+			parent.Children = append(parent.Children, &children[i])
 		}
 	}
 

@@ -33,6 +33,13 @@
         {{ if .RelatedPosts -}}
             <section class="post-links-parent">
                 <h3>Related posts</h3>
+                {{ if .FeedBuilderURL -}}
+                    <p>
+                        Here are some semantically similar posts. Want to subscribe using a feed reader?
+                        You can <a href="{{ .FeedBuilderURL }}">build a feed</a> with just posts similar to this one.
+                        <a href="/feeds/">Standard feeds</a> are also available, but are approximately 42% less fun.
+                    </p>
+                {{- end }}
                 <div class="post-links">
                 {{ range .RelatedPosts -}}
                     {{call $.Component "postlink" .}}

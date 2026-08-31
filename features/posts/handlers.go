@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"regexp"
+	"strings"
 	"time"
 
 	"chameth.com/chameth.com/content"
@@ -66,8 +68,9 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 				ShowWarning: showWarning,
 				YearsOld:    yearsOld,
 			},
-			RelatedPosts: relatedPosts,
-			EditLink:     fmt.Sprintf("%s/posts/edit/%d", parenttemplates.AdminURL(), post.ID),
+			RelatedPosts:   relatedPosts,
+			FeedBuilderURL: feedBuilderURL(post.Path),
+			EditLink:       fmt.Sprintf("%s/posts/edit/%d", parenttemplates.AdminURL(), post.ID),
 			PageData: content.CreatePageData(r.Context(), post.Title, post.Path, parenttemplates.OpenGraphHeaders{
 				Image: ogImage,
 				Type:  "article",
@@ -78,6 +81,18 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 		slog.Error("Failed to render post template", "error", err, "path", r.URL.Path)
 	}
 }
+
+// feedBuilderURL returns the URL for a feed of posts similar to this one, or
+// an empty string when the post path cannot be expressed as a feed slug.
+func feedBuilderURL(path string) string {
+	slug := strings.Trim(path, "/")
+	if !feedSlugRegex.MatchString(slug) {
+		return ""
+	}
+	return fmt.Sprintf("/feeds/posts/build/like/%s/", slug)
+}
+
+var feedSlugRegex = regexp.MustCompile(`^[a-z0-9-]+$`)
 
 func handleList(w http.ResponseWriter, r *http.Request) {
 	allPosts, err := GetAllPosts(r.Context())
