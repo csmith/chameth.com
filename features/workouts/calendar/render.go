@@ -10,9 +10,6 @@ import (
 	"strings"
 	"time"
 	"unicode"
-
-	"chameth.com/chameth.com/features/shortcodes"
-	"chameth.com/chameth.com/features/workouts"
 )
 
 //go:embed calendar.html.gotpl
@@ -53,50 +50,6 @@ var scalingTypes = map[string]bool{
 // the cell grid dominates the visual.
 var dayNames = [7]string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}
 
-// RenderFromText renders the workoutcalendar shortcode. With no arguments
-// it shows the last 16 weeks of activity. With a start and end date
-// (YYYY-MM-DD) it shows a window ending at the end date and extended
-// back to the earlier of the start date or 16 weeks, with the requested
-// date range highlighted within it.
-func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
-	var title string
-	var start, end, rangeStart, rangeEnd time.Time
-
-	switch len(args) {
-	case 0:
-		now := time.Now().UTC()
-		end = truncateToDay(now)
-		start = startOfWeek(now).AddDate(0, 0, -(weeks-1)*7)
-		title = "Activity calendar"
-	case 2:
-		var err error
-		rangeStart, err = time.Parse("2006-01-02", args[0])
-		if err != nil {
-			return "", fmt.Errorf("invalid start date: %s (expected YYYY-MM-DD)", args[0])
-		}
-		rangeEnd, err = time.Parse("2006-01-02", args[1])
-		if err != nil {
-			return "", fmt.Errorf("invalid end date: %s (expected YYYY-MM-DD)", args[1])
-		}
-		end = rangeEnd
-		start = rangeEnd.AddDate(0, 0, -7*weeks)
-		if rangeStart.Before(start) {
-			start = rangeStart
-		}
-		title = fmt.Sprintf("Activity calendar %s - %s",
-			rangeStart.Format("2006-01-02"), rangeEnd.Format("2006-01-02"))
-	default:
-		return "", fmt.Errorf("workoutcalendar requires 0 or 2 arguments (start_date, end_date) in YYYY-MM-DD format")
-	}
-
-	entries, err := workouts.WorkoutDayEntries(ctx.Context, start, end.AddDate(0, 0, 1))
-	if err != nil {
-		return "", fmt.Errorf("failed to get workout days: %w", err)
-	}
-
-	return renderTemplate(buildData(title, start, end, rangeStart, rangeEnd, entries))
-}
-
 // dayBucket is one day's rolled-up workout data: per-activity-group
 // distance totals (driving both the cell's stripes and the per-type
 // intensity scale) and the workout count (driving the tooltip).
@@ -105,29 +58,13 @@ type dayBucket struct {
 	count  int
 }
 
-// indexWorkoutDays buckets entries by YYYY-MM-DD, summing distances per
-// activity group within each day. Run-grouped workouts count only their
-// running distance (run_distance_m), so the walking warmup/cooldown
-// intervals of a run don't inflate the run shade; running intervals
-// inside other groups (e.g. a couch-to-5k walk) stay attributed to that
-// group's bucket. Unknown activity groups are normalised to "other" via
-// calendarGroup so they aggregate into a single catch-all stripe + legend
-// entry rather than one per ad-hoc name.
-func indexWorkoutDays(entries []workouts.WorkoutDayEntry) map[string]*dayBucket {
-	byDay := map[string]*dayBucket{}
+// indexDays buckets the cached day entries by their YYYY-MM-DD date.
+// The entries arrive pre-folded into the calendar's group buckets, so
+// this is a straight index rather than a roll-up.
+func indexDays(entries []dayEntry) map[string]*dayBucket {
+	byDay := make(map[string]*dayBucket, len(entries))
 	for _, e := range entries {
-		key := e.StartTime.Format("2006-01-02")
-		bucket, ok := byDay[key]
-		if !ok {
-			bucket = &dayBucket{groups: map[string]float64{}}
-			byDay[key] = bucket
-		}
-		dist := e.DistanceM
-		if e.ActivityGroup == "run" && e.RunDistanceM != nil {
-			dist = *e.RunDistanceM
-		}
-		bucket.groups[calendarGroup(e.ActivityGroup)] += dist
-		bucket.count++
+		byDay[e.Date] = &dayBucket{groups: e.Distances, count: e.Count}
 	}
 	return byDay
 }
@@ -162,8 +99,8 @@ func perTypeMaxDay(byDay map[string]*dayBucket) map[string]float64 {
 // start so every column is a clean Mon–Sun span; days padded outside
 // [start, end] by that anchoring render as inactive cells. When a date
 // range was requested, cells within it are flagged for highlighting.
-func buildData(title string, start, end, rangeStart, rangeEnd time.Time, entries []workouts.WorkoutDayEntry) Data {
-	byDay := indexWorkoutDays(entries)
+func buildData(title string, start, end, rangeStart, rangeEnd time.Time, entries []dayEntry) Data {
+	byDay := indexDays(entries)
 	maxByType := perTypeMaxDay(byDay)
 
 	gridStart := startOfWeek(start)

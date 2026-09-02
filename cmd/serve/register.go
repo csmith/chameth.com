@@ -74,7 +74,6 @@ import (
 	featuresWalksDistance "chameth.com/chameth.com/features/walks/distance"
 	featuresWalksList "chameth.com/chameth.com/features/walks/list"
 	featuresWalksSpeed "chameth.com/chameth.com/features/walks/speed"
-	featuresWorkouts "chameth.com/chameth.com/features/workouts"
 	featuresWorkoutsCalendar "chameth.com/chameth.com/features/workouts/calendar"
 	featuresWorkoutsLongest "chameth.com/chameth.com/features/workouts/longest"
 	featuresWorkoutsPbs "chameth.com/chameth.com/features/workouts/pbs"
@@ -127,10 +126,10 @@ func (s *site) registerShortcodes() {
 	featuresWalksDistance.RegisterShortcodes(s.Shortcodes)
 	featuresWalksList.RegisterShortcodes(s.Shortcodes)
 	featuresWalksSpeed.RegisterShortcodes(s.Shortcodes)
-	featuresWorkoutsCalendar.RegisterShortcodes(s.Shortcodes)
-	featuresWorkoutsLongest.RegisterShortcodes(s.Shortcodes)
-	featuresWorkoutsPbs.RegisterShortcodes(s.Shortcodes)
-	featuresWorkoutsSummary.RegisterShortcodes(s.Shortcodes)
+	featuresWorkoutsCalendar.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresWorkoutsLongest.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresWorkoutsPbs.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresWorkoutsSummary.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresWowAchievements.RegisterShortcodes(s.Shortcodes)
 	featuresWowChar.RegisterShortcodes(s.Shortcodes)
 }
@@ -173,7 +172,6 @@ func (s *site) launchGoroutines() {
 	go featuresPosts.RegisterGoroutine(s.Context)()
 	go featuresShortcodes.RegisterGoroutine(s.Shortcodes, s.Context)()
 	go featuresSyndications.RegisterGoroutine(s.Context)()
-	go featuresWorkouts.RegisterGoroutine(s.Context, s.Tailscale)()
 	go featuresWow.RegisterGoroutine(s.Context)()
 }
 

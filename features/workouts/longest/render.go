@@ -3,14 +3,10 @@ package longest
 import (
 	"bytes"
 	"embed"
-	"fmt"
 	"html/template"
 	"math"
 	"strconv"
 	"strings"
-
-	"chameth.com/chameth.com/features/shortcodes"
-	"chameth.com/chameth.com/features/workouts"
 )
 
 //go:embed longest.html.gotpl
@@ -39,40 +35,14 @@ var cycleMilestones = []milestone{
 	{Label: "double century", DistanceM: 200000},
 }
 
-// RenderRunFromText renders the longestrun shortcode: the longest run ever
-// recorded, with progress towards the next running milestone.
-func RenderRunFromText(_ []string, ctx *shortcodes.Context) (string, error) {
-	w, err := workouts.FurthestRun(ctx.Context)
-	if err != nil {
-		return "", fmt.Errorf("failed to get furthest run: %w", err)
-	}
-	if w == nil {
-		return "", nil
-	}
-	return renderTemplate(buildData("Longest run", w, runMilestones))
-}
-
-// RenderCycleFromText renders the longestcycle shortcode: the longest bike
-// ride ever recorded, with progress towards the next cycling milestone.
-func RenderCycleFromText(_ []string, ctx *shortcodes.Context) (string, error) {
-	w, err := workouts.FurthestCycle(ctx.Context)
-	if err != nil {
-		return "", fmt.Errorf("failed to get furthest cycle: %w", err)
-	}
-	if w == nil {
-		return "", nil
-	}
-	return renderTemplate(buildData("Longest bike ride", w, cycleMilestones))
-}
-
-func buildData(title string, w *workouts.FurthestWorkout, milestones []milestone) Data {
-	next := nextMilestone(milestones, w.DistanceM)
+func buildData(title string, r *record, milestones []milestone) Data {
+	next := nextMilestone(milestones, r.DistanceM)
 	return Data{
 		Title:           title,
-		Distance:        formatKm(w.DistanceM),
-		Date:            w.StartTime.Format("2 Jan 2006"),
+		Distance:        formatKm(r.DistanceM),
+		Date:            r.StartTime.Format("2 Jan 2006"),
 		NextMilestone:   next.Label,
-		ProgressPercent: int(math.Min(w.DistanceM/next.DistanceM*100, 100)),
+		ProgressPercent: int(math.Min(r.DistanceM/next.DistanceM*100, 100)),
 	}
 }
 

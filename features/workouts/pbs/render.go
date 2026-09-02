@@ -8,9 +8,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
-
-	"chameth.com/chameth.com/features/shortcodes"
-	"chameth.com/chameth.com/features/workouts"
+	"time"
 )
 
 //go:embed pbs.html.gotpl
@@ -18,52 +16,27 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("pbs.html.gotpl").ParseFS(templates, "pbs.html.gotpl"))
 
-// activities maps the shortcode's activity argument (and its activity_group
-// slug) to the group stored on workouts, plus a display label for the box
-// title. Only groups that track segment PBs are listed.
-var activities = map[string]struct{ group, label string }{
-	"running": {"run", "Running"},
-	"run":     {"run", "Running"},
-	"cycling": {"cycle", "Cycling"},
-	"cycle":   {"cycle", "Cycling"},
-	"walking": {"walk", "Walking"},
-	"walk":    {"walk", "Walking"},
-}
-
-// RenderFromText renders the workoutpbs shortcode: a table of the current
-// all-time PB for each segment distance within an activity, e.g.
-// {%workoutpbs "running"%}.
-func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
-	if len(args) != 1 {
-		return "", fmt.Errorf("workoutpbs requires 1 argument (activity), e.g. \"running\"")
-	}
-	a, ok := activities[strings.ToLower(args[0])]
-	if !ok {
-		return "", fmt.Errorf("unknown activity: %s", args[0])
-	}
-
-	records, err := workouts.PBsForGroup(ctx.Context, a.group)
-	if err != nil {
-		return "", fmt.Errorf("failed to get PBs: %w", err)
-	}
-	if len(records) == 0 {
-		return "", nil
-	}
-
-	return renderTemplate(buildData(a.label+" PBs", records))
-}
-
-func buildData(title string, records []workouts.ActivityRecord) Data {
+func buildData(title string, records []record) Data {
 	rows := make([]Row, len(records))
 	for i, r := range records {
 		rows[i] = Row{
 			Distance: formatDistanceLabel(r.DistanceM),
 			Time:     formatDuration(r.ElapsedS),
 			Pace:     formatPace(r.PaceSPerKm),
-			Date:     r.StartTime.Format("2 Jan 2006"),
+			Date:     formatDate(r.Date),
 		}
 	}
 	return Data{Title: title, Rows: rows}
+}
+
+// formatDate rewrites an API date (YYYY-MM-DD, the UTC day the record was
+// achieved) into the table's display format.
+func formatDate(date string) string {
+	d, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		return date
+	}
+	return d.Format("2 Jan 2006")
 }
 
 func formatDuration(seconds float64) string {
