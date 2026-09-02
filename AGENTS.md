@@ -39,6 +39,49 @@ can be passed directly.
 Any CSS file in a shortcode package will be included in the compiled
 stylesheet served by the site.
 
+#### Cached data shortcodes
+
+Shortcodes that derive their output from data fetched from an external
+source (e.g. a personal service or a social network) should implement
+`DataShortcode[T]` (in `features/shortcodes/data.go`) and register via
+`shortcodes.RegisterData(mgr, name, version, impl)`. The framework
+caches the retrieved response in the `shortcode_data` table, keyed by
+`(shortcode, version, sha256(json.Marshal(args)))`, so the site stores
+just the service's answer rather than the upstream data model. Usage in
+content is identical to a regular shortcode.
+
+```go
+type DataShortcode[T any] interface {
+    Retrieve(ctx context.Context, args []string) (Retrieved[T], error)
+    RefreshPolicy(args []string) RefreshPolicy
+    Render(args []string, data T, ctx *Context) (string, error)
+}
+```
+
+After a successful retrieval, the next refresh is computed from the
+policy:
+
+- `Frequency <= 0`: never refreshed again (fetch once, keep forever).
+- A retrieval at/after `Cutoff`: frozen (`next_refresh_at` is NULL).
+- Otherwise: `Retrieved.RefreshAt` if the result supplies one (and it is
+  in the future), else `retrieved_at + Frequency`. A future `Cutoff`
+  clamps the schedule, acting as a final refresh boundary.
+
+`RefreshAt` overrides `Frequency` — `Frequency` is a default, not a cap,
+so an upstream "valid for 24h" is never shortened by a smaller
+`Frequency`. Rendering never blocks on refresh: with data present the
+shortcode renders from cache, due rows are refreshed by a background
+goroutine every 5 minutes, and only the first-ever render of a key
+retrieves synchronously. A failed retrieval is negative-cached: the row
+stores no data, further renders fail fast with the standard shortcode
+error (no network calls), and the refresher retries it every 5 minutes.
+Existing data is never overwritten by a failed fetch.
+
+`next_refresh_at` is runtime cache state; the policy lives in code. If
+the data shape or policy semantics change, bump `version` so existing
+rows are ignored. Rows for old/unregistered `(name, version)` pairs are
+intentionally left in place.
+
 ### CSS
 
 Global frontend styles are in `assets/stylesheet`. CSS must NEVER be

@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"regexp"
 	"strings"
+	"sync"
 
 	"chameth.com/chameth.com/features/media"
 )
@@ -16,12 +17,17 @@ const shortcodesError = "\n\n<div class=\"shortcode-error\">[Shortcode rendering
 type Renderer func([]string, *Context) (string, error)
 
 type Manager struct {
-	renderers map[string]Renderer
+	renderers  map[string]Renderer
+	data       map[string]dataRegistration
+	keyLocksMu sync.Mutex
+	keyLocks   map[string]*sync.Mutex
 }
 
 func NewManager() *Manager {
 	return &Manager{
 		renderers: map[string]Renderer{},
+		data:      map[string]dataRegistration{},
+		keyLocks:  map[string]*sync.Mutex{},
 	}
 }
 

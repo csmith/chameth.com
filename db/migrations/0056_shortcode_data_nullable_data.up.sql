@@ -1,0 +1,1 @@
+ALTER TABLE shortcode_data ALTER COLUMN data DROP NOT NULL;

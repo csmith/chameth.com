@@ -2,4 +2,6 @@
 /.zed
 /.postgres
 /tsdata
+/.zcode
+/.claude
 *~

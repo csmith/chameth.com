@@ -55,6 +55,7 @@ import (
 	featuresQuotes "chameth.com/chameth.com/features/quotes"
 	featuresQuotesAdmin "chameth.com/chameth.com/features/quotes/admin"
 	featuresRouting "chameth.com/chameth.com/features/routing"
+	featuresShortcodes "chameth.com/chameth.com/features/shortcodes"
 	featuresShortcodesCountdown "chameth.com/chameth.com/features/shortcodes/countdown"
 	featuresShortcodesLink "chameth.com/chameth.com/features/shortcodes/link"
 	featuresShortcodesRating "chameth.com/chameth.com/features/shortcodes/rating"
@@ -170,6 +171,7 @@ func (s *site) launchGoroutines() {
 	go featuresMetrics.RegisterGoroutine()()
 	go featuresMusic.RegisterGoroutine(s.Context, s.Tailscale)()
 	go featuresPosts.RegisterGoroutine(s.Context)()
+	go featuresShortcodes.RegisterGoroutine(s.Shortcodes, s.Context)()
 	go featuresSyndications.RegisterGoroutine(s.Context)()
 	go featuresWorkouts.RegisterGoroutine(s.Context, s.Tailscale)()
 	go featuresWow.RegisterGoroutine(s.Context)()
