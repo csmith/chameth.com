@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/url"
 
+	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/features/admin/crud"
 	"chameth.com/chameth.com/features/routing"
 	"chameth.com/chameth.com/features/snippets"
@@ -51,11 +52,17 @@ func applyUpdate(ctx context.Context, id int, form url.Values) error {
 		topic = form.Get("topic")
 	}
 
-	return snippets.UpdateSnippet(ctx, id,
+	if err := snippets.UpdateSnippet(ctx, id,
 		form.Get("path"),
 		form.Get("title"),
 		topic,
 		form.Get("content"),
 		form.Get("published") == "true",
-	)
+	); err != nil {
+		return err
+	}
+
+	content.PreWarm("snippet", id, form.Get("content"), form.Get("path"))
+
+	return nil
 }

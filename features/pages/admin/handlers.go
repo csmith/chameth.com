@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/features/admin/crud"
 	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/pages"
@@ -102,7 +103,7 @@ func applyUpdate(ctx context.Context, id int, form url.Values) error {
 		}
 	}
 
-	return pages.UpdateStaticPage(ctx, id,
+	if err := pages.UpdateStaticPage(ctx, id,
 		form.Get("path"),
 		form.Get("title"),
 		form.Get("content"),
@@ -111,5 +112,15 @@ func applyUpdate(ctx context.Context, id int, form url.Values) error {
 		parentID,
 		sitemapFrequency,
 		sitemapPriority,
-	)
+	); err != nil {
+		return err
+	}
+
+	entityType := "staticpage"
+	if form.Get("raw") == "true" {
+		entityType = "rawpage"
+	}
+	content.PreWarm(entityType, id, form.Get("content"), form.Get("path"))
+
+	return nil
 }

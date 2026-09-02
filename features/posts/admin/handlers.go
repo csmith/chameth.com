@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/features/admin/crud"
 	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/posts"
@@ -69,6 +70,8 @@ func applyUpdate(ctx context.Context, id int, form url.Values) error {
 	); err != nil {
 		return err
 	}
+
+	content.PreWarm("post", id, form.Get("content"), path)
 
 	if published {
 		go func() {

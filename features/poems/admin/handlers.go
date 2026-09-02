@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/url"
 
+	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/features/admin/crud"
 	"chameth.com/chameth.com/features/poems"
 	"chameth.com/chameth.com/features/poems/admin/templates"
@@ -41,12 +42,18 @@ func toEditData(_ context.Context, poem *poems.Poem) (templates.EditPoemData, er
 }
 
 func applyUpdate(ctx context.Context, id int, form url.Values) error {
-	return poems.UpdatePoem(ctx, id,
+	if err := poems.UpdatePoem(ctx, id,
 		form.Get("path"),
 		form.Get("title"),
 		form.Get("poem"),
 		form.Get("notes"),
 		form.Get("date"),
 		form.Get("published") == "true",
-	)
+	); err != nil {
+		return err
+	}
+
+	content.PreWarm("poem", id, form.Get("poem"), form.Get("path"))
+
+	return nil
 }
