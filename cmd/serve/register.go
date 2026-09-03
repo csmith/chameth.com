@@ -7,7 +7,6 @@ import (
 	assets "chameth.com/chameth.com/assets"
 	features "chameth.com/chameth.com/features"
 	featuresAdmin "chameth.com/chameth.com/features/admin"
-	featuresBoardgamesAdmin "chameth.com/chameth.com/features/boardgames/admin"
 	featuresBoardgamesList "chameth.com/chameth.com/features/boardgames/list"
 	featuresBoardgamesPlayed "chameth.com/chameth.com/features/boardgames/played"
 	featuresContact "chameth.com/chameth.com/features/contact"
@@ -93,8 +92,8 @@ func (s *site) registerAssets() {
 }
 
 func (s *site) registerShortcodes() {
-	featuresBoardgamesList.RegisterShortcodes(s.Shortcodes)
-	featuresBoardgamesPlayed.RegisterShortcodes(s.Shortcodes)
+	featuresBoardgamesList.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresBoardgamesPlayed.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresContactForm.RegisterShortcodes(s.Shortcodes)
 	featuresFilmsList.RegisterShortcodes(s.Shortcodes)
 	featuresFilmsRatingdistribution.RegisterShortcodes(s.Shortcodes)
@@ -137,7 +136,6 @@ func (s *site) registerShortcodes() {
 func (s *site) registerRoutes() {
 	assets.RegisterRoutes(s.Routes, s.Assets)
 	featuresAdmin.RegisterRoutes(s.Routes, s.Assets)
-	featuresBoardgamesAdmin.RegisterRoutes(s.Routes)
 	featuresContact.RegisterRoutes(s.Routes)
 	featuresFeeds.RegisterRoutes(s.Routes)
 	featuresFilms.RegisterRoutes(s.Routes)

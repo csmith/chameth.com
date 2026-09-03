@@ -3,7 +3,7 @@
 {{- range .Games }}
   <li class="raised-box">
     {{- if .ImagePath }}
-    <div class="image-container" title="{{ .Name }} ({{ .Year }})">
+    <div class="image-container" title="{{ .Name }}{{ if .Year }} ({{ .Year }}){{ end }}">
       <img class="background" src="{{ .ImagePath }}" aria-hidden="true" loading="lazy">
       <img class="foreground" src="{{ .ImagePath }}" alt="Box art of {{ .Name }}" loading="lazy">
     </div>
