@@ -33,6 +33,7 @@ var (
 	port          = flag.Int("port", 8080, "Port to listen on")
 	tailscaleHost = flag.String("tailscale-host", "website-admin", "Tailscale host")
 	tailscaleDir  = flag.String("tailscale-dir", "tsdata", "Tailscale directory")
+	tailscaleWait = flag.Duration("tailscale-wait", 30*time.Second, "How long to wait for the tailnet before starting background jobs")
 )
 
 func main() {
@@ -75,7 +76,6 @@ func main() {
 	s.registerShortcodes()
 	s.registerContentTypes()
 	s.registerRoutes()
-	s.launchGoroutines()
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", *port),
@@ -125,6 +125,17 @@ func main() {
 			panic(err)
 		}
 	}()
+
+	// Let the public site serve before waiting for the tailnet, but block
+	// background jobs so their first outbound requests don't race tsnet's
+	// backend startup (Dial fails fast while the state is still NoState).
+	tsCtx, tsCancel := context.WithTimeout(ctx, *tailscaleWait)
+	if _, err := s.Tailscale.Up(tsCtx); err != nil {
+		slog.Warn("Tailnet did not come up, starting background jobs anyway", "error", err)
+	}
+	tsCancel()
+
+	s.launchGoroutines()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
