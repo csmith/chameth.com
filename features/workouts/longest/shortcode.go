@@ -48,7 +48,7 @@ func retrieveRun(ctx context.Context, client *http.Client, _ []string) (shortcod
 		return shortcodes.Result[*record]{}, fmt.Errorf("failed to fetch distance record: %w", err)
 	}
 
-	refreshAt := shortcodes.NextRefresh(refreshFrequency, time.Time{})
+	refreshAt := shortcodes.RefreshIn(refreshFrequency)
 	if longest == nil {
 		return shortcodes.Result[*record]{RefreshAt: refreshAt}, nil
 	}
@@ -76,7 +76,7 @@ func retrieveCycle(ctx context.Context, client *http.Client, _ []string) (shortc
 		return shortcodes.Result[*record]{}, fmt.Errorf("failed to fetch distance record: %w", err)
 	}
 
-	refreshAt := shortcodes.NextRefresh(refreshFrequency, time.Time{})
+	refreshAt := shortcodes.RefreshIn(refreshFrequency)
 	if longest == nil {
 		return shortcodes.Result[*record]{RefreshAt: refreshAt}, nil
 	}

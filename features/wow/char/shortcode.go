@@ -69,7 +69,7 @@ func retrieve(ctx context.Context, client *http.Client, args []string) (shortcod
 
 	return shortcodes.Result[Data]{
 		Data:      buildData(c, imagePath),
-		RefreshAt: shortcodes.NextRefresh(refreshFrequency, at),
+		RefreshAt: shortcodes.RefreshUntil(refreshFrequency, at),
 	}, nil
 }
 

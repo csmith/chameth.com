@@ -150,9 +150,17 @@ func (m *Manager) fetchData(ctx context.Context, name string, reg dataRegistrati
 	return dataJSON, nil
 }
 
-// NextRefresh returns the next refresh time after interval, optionally
-// clamped to cutoff. It returns zero once cutoff has been reached.
-func NextRefresh(interval time.Duration, cutoff time.Time) time.Time {
+// RefreshIn returns the next refresh time after interval.
+func RefreshIn(interval time.Duration) time.Time {
+	if interval <= 0 {
+		return time.Time{}
+	}
+	return time.Now().Add(interval)
+}
+
+// RefreshUntil returns the next refresh time after interval, clamped to
+// cutoff. A zero cutoff is treated as unbounded.
+func RefreshUntil(interval time.Duration, cutoff time.Time) time.Time {
 	now := time.Now()
 	if interval <= 0 || (!cutoff.IsZero() && !now.Before(cutoff)) {
 		return time.Time{}

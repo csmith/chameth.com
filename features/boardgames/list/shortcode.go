@@ -64,7 +64,7 @@ func retrieve(ctx context.Context, client *http.Client, _ []string) (shortcodes.
 
 	return shortcodes.Result[[]entry]{
 		Data:      entries,
-		RefreshAt: shortcodes.NextRefresh(refreshFrequency, time.Time{}),
+		RefreshAt: shortcodes.RefreshIn(refreshFrequency),
 	}, nil
 }
 

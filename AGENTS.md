@@ -54,9 +54,9 @@ The retrieve function returns `Result[T]`; the render function receives the
 cached `T`. The data type must round-trip through JSON.
 
 `Result.RefreshAt` is the exact time the data should next be refreshed;
-a zero value freezes it (`next_refresh_at` is NULL). `NextRefresh` helps
-compute a time from a refresh interval and optional cutoff, clamping the
-last scheduled refresh to the cutoff and returning zero once it has passed.
+a zero value freezes it (`next_refresh_at` is NULL). `RefreshIn` schedules
+open-ended data from a refresh interval. `RefreshUntil` additionally clamps
+the last scheduled refresh to a cutoff and returns zero once it has passed.
 
 Rendering never blocks on refresh: with data present the shortcode renders
 from cache, due rows are refreshed by a background goroutine every 5 minutes,
