@@ -5,10 +5,11 @@ import (
 	_ "embed"
 	"fmt"
 	"html/template"
+	"sort"
+	"strconv"
 	"strings"
 
-	"chameth.com/chameth.com/features/shortcodes"
-	"chameth.com/chameth.com/features/wow"
+	"chameth.com/chameth.com/external/ogrestream"
 )
 
 //go:embed *.gotpl
@@ -16,61 +17,111 @@ var templates string
 
 var tmpl = template.Must(template.New("char.html.gotpl").Parse(templates))
 
-func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
-	if len(args) < 2 {
-		return "", fmt.Errorf("wowchar requires 2 arguments (realm character)")
+// fishingProfessionID is Blizzard's id for Fishing, whose tiers don't fit
+// the skill-points model the professions table renders, so it is skipped
+// (as the old sync did).
+const fishingProfessionID = 794
+
+// buildData maps the API response onto the cached render model.
+func buildData(c *ogrestream.Character, imagePath string) Data {
+	p := c.Profile
+
+	data := Data{
+		Name:       p.Name,
+		Realm:      p.Realm,
+		Level:      p.Level,
+		Class:      p.Class,
+		Race:       p.Race,
+		Gender:     p.Gender,
+		ImagePath:  imagePath,
+		CSSClass:   "wow-class-" + strings.ToLower(strings.ReplaceAll(p.Class, " ", "-")),
+		RealmLower: strings.ToLower(p.Realm),
+		NameLower:  strings.ToLower(p.Name),
+	}
+	if p.Spec != nil {
+		data.Spec = *p.Spec
+	}
+	if p.EquippedItemLevel > 0 {
+		data.EquippedItemLevel = strconv.Itoa(p.EquippedItemLevel)
+	}
+	if c.Professions != nil {
+		data.Professions = buildProfessions(c.Professions.Professions)
+	}
+	if c.MythicPlus != nil {
+		data.MythicPlus = buildMythicPlus(c.MythicPlus)
 	}
 
-	c, err := wow.GetCharacter(ctx, args[0], args[1])
-	if err != nil {
-		return "", fmt.Errorf("failed to get character: %w", err)
-	}
+	return data
+}
 
-	itemLevel := ""
-	if c.EquippedItemLevel != nil {
-		itemLevel = fmt.Sprintf("%d", *c.EquippedItemLevel)
-	}
+// buildProfessions collapses the tiers to each profession's current one,
+// primaries before secondaries, each alphabetically.
+func buildProfessions(professions []ogrestream.Profession) []Profession {
+	var built []Profession
+	indexes := make(map[int]int)
 
-	professions, err := wow.GetCharacterProfessions(ctx, c.ID)
-	if err != nil {
-		return "", fmt.Errorf("failed to get character professions: %w", err)
-	}
-
-	var dataProfessions []Profession
-	profMap := make(map[int]*Profession)
 	for _, p := range professions {
-		prof, ok := profMap[p.ProfessionID]
+		if p.ProfessionID == fishingProfessionID {
+			continue
+		}
+
+		i, ok := indexes[p.ProfessionID]
 		if !ok {
-			dataProfessions = append(dataProfessions, Profession{Name: p.ProfessionName})
-			prof = &dataProfessions[len(dataProfessions)-1]
-			profMap[p.ProfessionID] = prof
+			i = len(built)
+			indexes[p.ProfessionID] = i
+			built = append(built, Profession{Name: p.ProfessionName, Kind: p.Kind})
 		}
-		tier := ProfessionTier{
-			TierID:         p.TierID,
-			Name:           p.TierName,
-			SkillPoints:    p.SkillPoints,
-			MaxSkillPoints: p.MaxSkillPoints,
-		}
-		if tier.TierID > prof.LatestTier.TierID {
-			prof.LatestTier = tier
+		if p.TierID > built[i].LatestTier.TierID {
+			built[i].LatestTier = ProfessionTier{
+				TierID:         p.TierID,
+				Name:           p.TierName,
+				SkillPoints:    p.SkillPoints,
+				MaxSkillPoints: p.MaxSkillPoints,
+			}
 		}
 	}
 
-	return renderTemplate(Data{
-		Name:              c.CharacterName,
-		Realm:             c.RealmName,
-		Level:             c.Level,
-		Spec:              c.Spec,
-		Class:             c.Class,
-		Race:              c.Race,
-		Gender:            c.Gender,
-		EquippedItemLevel: itemLevel,
-		CSSClass:          "wow-class-" + strings.ToLower(strings.ReplaceAll(c.Class, " ", "-")),
-		RealmLower:        strings.ToLower(c.RealmName),
-		NameLower:         strings.ToLower(c.CharacterName),
-		Professions:       dataProfessions,
-		MythicPlus:        buildMythicPlusData(ctx, c.ID),
+	sort.SliceStable(built, func(i, j int) bool {
+		if built[i].Kind != built[j].Kind {
+			return built[i].Kind < built[j].Kind
+		}
+		return built[i].Name < built[j].Name
 	})
+
+	return built
+}
+
+// buildMythicPlus maps the season's runs to the render model. A dungeon
+// can appear twice — its best timed and best untimed attempt — and only
+// the highest-rated one is displayed, ordered by dungeon name as the
+// local table used to serve them.
+func buildMythicPlus(mp *ogrestream.MythicPlus) *MythicPlusData {
+	best := make(map[int]ogrestream.MythicRun, len(mp.Runs))
+	for _, r := range mp.Runs {
+		current, ok := best[r.DungeonID]
+		if !ok || r.Rating > current.Rating || (r.Rating == current.Rating && r.InTime && !current.InTime) {
+			best[r.DungeonID] = r
+		}
+	}
+
+	runs := make([]MythicPlusRun, 0, len(best))
+	for _, r := range best {
+		runs = append(runs, MythicPlusRun{
+			DungeonName:   r.DungeonName,
+			KeystoneLevel: r.KeystoneLevel,
+			Duration:      formatDuration(r.DurationMS),
+			Overtime:      !r.InTime,
+			Rating:        fmt.Sprintf("%.0f", r.Rating),
+		})
+	}
+	sort.SliceStable(runs, func(i, j int) bool {
+		return runs[i].DungeonName < runs[j].DungeonName
+	})
+
+	return &MythicPlusData{
+		Runs:        runs,
+		TotalRating: fmt.Sprintf("%.0f", mp.TotalRating),
+	}
 }
 
 func renderTemplate(data Data) (string, error) {
@@ -79,7 +130,7 @@ func renderTemplate(data Data) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return buf.String(), nil
+	return buf.String(), err
 }
 
 func formatDuration(ms int64) string {
@@ -87,34 +138,4 @@ func formatDuration(ms int64) string {
 	minutes := totalSeconds / 60
 	seconds := totalSeconds % 60
 	return fmt.Sprintf("%d:%02d", minutes, seconds)
-}
-
-func buildMythicPlusData(ctx *shortcodes.Context, characterID int) *MythicPlusData {
-	seasonID, err := wow.GetCurrentSeasonID(ctx)
-	if err != nil || seasonID == 0 {
-		return nil
-	}
-
-	runs, err := wow.GetCharacterMythicPlusRuns(ctx, characterID, seasonID)
-	if err != nil || len(runs) == 0 {
-		return nil
-	}
-
-	var totalRating float64
-	dataRuns := make([]MythicPlusRun, len(runs))
-	for i, r := range runs {
-		totalRating += r.MythicRating
-		dataRuns[i] = MythicPlusRun{
-			DungeonName:   r.DungeonName,
-			KeystoneLevel: r.KeystoneLevel,
-			Duration:      formatDuration(r.Duration),
-			Overtime:      !r.IsCompletedWithinTime,
-			Rating:        fmt.Sprintf("%.0f", r.MythicRating),
-		}
-	}
-
-	return &MythicPlusData{
-		Runs:        dataRuns,
-		TotalRating: fmt.Sprintf("%.0f", totalRating),
-	}
 }

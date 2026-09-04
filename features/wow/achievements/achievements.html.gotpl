@@ -4,7 +4,6 @@
 {{- range .Achievements }}
 <tr>
 <td class="achievement-name">{{.Name}}</td>
-<td class="achievement-earned">{{if .IsAccountWide}}Account-wide{{else}}{{.CharacterName}}{{end}}</td>
 <td class="achievement-date">{{formatDate .CompletedAt}}</td>
 <td class="achievement-link"><a href="https://www.wowhead.com/achievement={{.ID}}" rel="noopener">wowhead</a></td>
 </tr>

@@ -1,7 +1,7 @@
 {{/* gotype: chameth.com/chameth.com/features/wow/char.Data*/}}
 <div class="wow-char raised-box" data-title="World of Warcraft Character Data">
 <div class="overview">
-<img src="/wow/characters/{{.Name}}.png" alt="{{.Name}}" loading="lazy">
+<img src="{{.ImagePath}}" alt="{{.Name}}" loading="lazy">
 <p class="detail">Level {{.Level}}</p>
 <p class="detail">{{.Gender}} {{.Race}}</p>
 <p class="detail"><span class="{{.CSSClass}}">{{.Spec}} {{.Class}}</span></p>

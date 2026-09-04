@@ -16,12 +16,6 @@
             color: var(--text-colour);
         }
 
-        .achievement-earned {
-            color: var(--text-alt-colour);
-            font-size: var(--font-size-tiny);
-            padding-left: var(--small-space);
-        }
-
         .achievement-date {
             color: var(--text-alt-colour);
             font-size: var(--font-size-tiny);

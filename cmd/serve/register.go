@@ -77,9 +77,7 @@ import (
 	featuresWorkoutsLongest "chameth.com/chameth.com/features/workouts/longest"
 	featuresWorkoutsPbs "chameth.com/chameth.com/features/workouts/pbs"
 	featuresWorkoutsSummary "chameth.com/chameth.com/features/workouts/summary"
-	featuresWow "chameth.com/chameth.com/features/wow"
 	featuresWowAchievements "chameth.com/chameth.com/features/wow/achievements"
-	featuresWowAdmin "chameth.com/chameth.com/features/wow/admin"
 	featuresWowChar "chameth.com/chameth.com/features/wow/char"
 )
 
@@ -129,8 +127,8 @@ func (s *site) registerShortcodes() {
 	featuresWorkoutsLongest.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresWorkoutsPbs.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresWorkoutsSummary.RegisterShortcodes(s.Shortcodes, s.Tailscale)
-	featuresWowAchievements.RegisterShortcodes(s.Shortcodes)
-	featuresWowChar.RegisterShortcodes(s.Shortcodes)
+	featuresWowAchievements.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresWowChar.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 }
 
 func (s *site) registerRoutes() {
@@ -160,7 +158,6 @@ func (s *site) registerRoutes() {
 	featuresSyndicationsAdmin.RegisterRoutes(s.Routes)
 	featuresVideogamesAdmin.RegisterRoutes(s.Routes)
 	featuresWalksAdmin.RegisterRoutes(s.Routes)
-	featuresWowAdmin.RegisterRoutes(s.Routes)
 }
 
 func (s *site) launchGoroutines() {
@@ -170,7 +167,6 @@ func (s *site) launchGoroutines() {
 	go featuresPosts.RegisterGoroutine(s.Context)()
 	go featuresShortcodes.RegisterGoroutine(s.Shortcodes, s.Context)()
 	go featuresSyndications.RegisterGoroutine(s.Context)()
-	go featuresWow.RegisterGoroutine(s.Context)()
 }
 
 func (s *site) registerContentTypes() {

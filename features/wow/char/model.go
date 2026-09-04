@@ -1,43 +1,47 @@
 package char
 
+// Data is the cached character snapshot as rendered by the shortcode.
 type Data struct {
-	Name              string
-	Realm             string
-	Level             int
-	Spec              string
-	Class             string
-	Race              string
-	Gender            string
-	EquippedItemLevel string
-	ImagePath         string
-	CSSClass          string
-	RealmLower        string
-	NameLower         string
-	Professions       []Profession
-	MythicPlus        *MythicPlusData
+	Name              string          `json:"name"`
+	Realm             string          `json:"realm"`
+	Level             int             `json:"level"`
+	Spec              string          `json:"spec"`
+	Class             string          `json:"class"`
+	Race              string          `json:"race"`
+	Gender            string          `json:"gender"`
+	EquippedItemLevel string          `json:"equipped_item_level"`
+	ImagePath         string          `json:"image_path"`
+	CSSClass          string          `json:"css_class"`
+	RealmLower        string          `json:"realm_lower"`
+	NameLower         string          `json:"name_lower"`
+	Professions       []Profession    `json:"professions"`
+	MythicPlus        *MythicPlusData `json:"mythic_plus"`
 }
 
+// Profession is one profession collapsed to its current tier. Kind
+// ("primary"/"secondary") only drives the render order.
 type Profession struct {
-	Name       string
-	LatestTier ProfessionTier
+	Name       string         `json:"name"`
+	Kind       string         `json:"kind"`
+	LatestTier ProfessionTier `json:"latest_tier"`
 }
 
 type ProfessionTier struct {
-	TierID         int
-	Name           string
-	SkillPoints    int
-	MaxSkillPoints int
+	TierID         int    `json:"tier_id"`
+	Name           string `json:"name"`
+	SkillPoints    int    `json:"skill_points"`
+	MaxSkillPoints int    `json:"max_skill_points"`
 }
 
 type MythicPlusRun struct {
-	DungeonName   string
-	KeystoneLevel int
-	Duration      string
-	Overtime      bool
-	Rating        string
+	DungeonName   string `json:"dungeon_name"`
+	KeystoneLevel int    `json:"keystone_level"`
+	Duration      string `json:"duration"`
+	Overtime      bool   `json:"overtime"`
+	Rating        string `json:"rating"`
 }
 
 type MythicPlusData struct {
-	Runs        []MythicPlusRun
-	TotalRating string
+	Runs        []MythicPlusRun `json:"runs"`
+	TotalRating string          `json:"total_rating"`
 }
