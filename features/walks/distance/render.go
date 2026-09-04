@@ -8,8 +8,6 @@ import (
 	"strconv"
 
 	"chameth.com/chameth.com/features/shortcodes"
-
-	"chameth.com/chameth.com/features/walks"
 )
 
 //go:embed *.gotpl
@@ -17,7 +15,7 @@ var templates string
 
 var tmpl = template.Must(template.New("walkingdistance.html.gotpl").Parse(templates))
 
-func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
+func render(args []string, totalDistance float64, _ *shortcodes.Context) (string, error) {
 	if len(args) < 3 {
 		return "", fmt.Errorf("walkingdistance shortcode requires three arguments: name, distance, svg")
 	}
@@ -28,11 +26,6 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("invalid distance: %w", err)
 	}
 	svg := args[2]
-
-	totalDistance, err := walks.TotalDistance(ctx.Context)
-	if err != nil {
-		return "", fmt.Errorf("failed to get total distance: %w", err)
-	}
 
 	timesCompleted := totalDistance / distanceKm
 	completedPortion := int(timesCompleted)

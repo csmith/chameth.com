@@ -68,7 +68,6 @@ import (
 	featuresSyndicationsAdmin "chameth.com/chameth.com/features/syndications/admin"
 	featuresSyndicationsDisplay "chameth.com/chameth.com/features/syndications/display"
 	featuresVideogamesAdmin "chameth.com/chameth.com/features/videogames/admin"
-	featuresWalksAdmin "chameth.com/chameth.com/features/walks/admin"
 	featuresWalksDistance "chameth.com/chameth.com/features/walks/distance"
 	featuresWalksList "chameth.com/chameth.com/features/walks/list"
 	featuresWalksSpeed "chameth.com/chameth.com/features/walks/speed"
@@ -119,9 +118,9 @@ func (s *site) registerShortcodes() {
 	featuresShortcodesUpdate.RegisterShortcodes(s.Shortcodes)
 	featuresShortcodesWarning.RegisterShortcodes(s.Shortcodes)
 	featuresSyndicationsDisplay.RegisterShortcodes(s.Shortcodes)
-	featuresWalksDistance.RegisterShortcodes(s.Shortcodes)
-	featuresWalksList.RegisterShortcodes(s.Shortcodes)
-	featuresWalksSpeed.RegisterShortcodes(s.Shortcodes)
+	featuresWalksDistance.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresWalksList.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresWalksSpeed.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresWorkoutsCalendar.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresWorkoutsLongest.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresWorkoutsPbs.RegisterShortcodes(s.Shortcodes, s.Tailscale)
@@ -156,7 +155,6 @@ func (s *site) registerRoutes() {
 	featuresSudo.RegisterRoutes(s.Routes)
 	featuresSyndicationsAdmin.RegisterRoutes(s.Routes)
 	featuresVideogamesAdmin.RegisterRoutes(s.Routes)
-	featuresWalksAdmin.RegisterRoutes(s.Routes)
 }
 
 func (s *site) launchGoroutines() {

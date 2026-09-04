@@ -9,8 +9,6 @@ import (
 	"strings"
 
 	"chameth.com/chameth.com/features/shortcodes"
-
-	"chameth.com/chameth.com/features/walks"
 )
 
 //go:embed *.gotpl
@@ -29,12 +27,7 @@ const (
 	contentHeight = height - topPadding - bottomPadding
 )
 
-func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
-	speeds, err := walks.MonthlySpeeds(ctx.Context)
-	if err != nil {
-		return "", fmt.Errorf("failed to get monthly walking speeds: %w", err)
-	}
-
+func render(_ []string, speeds []monthSpeed, _ *shortcodes.Context) (string, error) {
 	if len(speeds) == 0 {
 		empty := fmt.Sprintf(`<svg width="%d" height="%d" viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Quickest walk speed line graph"/>`, width, height, width, height)
 		return renderTemplate(Data{SVG: template.HTML(empty)})
@@ -43,8 +36,8 @@ func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 	speedMin := math.MaxFloat64
 	speedMax := 0.0
 	for _, s := range speeds {
-		speedMin = math.Min(speedMin, math.Floor(s.AvgSpeedKmh))
-		speedMax = math.Max(speedMax, math.Ceil(s.AvgSpeedKmh))
+		speedMin = math.Min(speedMin, math.Floor(s.SpeedKmh))
+		speedMax = math.Max(speedMax, math.Ceil(s.SpeedKmh))
 	}
 	speedRange := speedMax - speedMin
 	if speedRange == 0 {
@@ -69,15 +62,15 @@ func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 	})
 }
 
-func createPoints(speeds []walks.MonthlyWalkingSpeed, monthWidth, speedMin, speedRange float64) []point {
+func createPoints(speeds []monthSpeed, monthWidth, speedMin, speedRange float64) []point {
 	points := make([]point, 0, len(speeds))
 	for i, s := range speeds {
 		x := leftPadding + int(float64(i)*monthWidth)
-		normalizedSpeed := (s.AvgSpeedKmh - speedMin) / speedRange
+		normalizedSpeed := (s.SpeedKmh - speedMin) / speedRange
 		y := topPadding + contentHeight - int(normalizedSpeed*float64(contentHeight))
 
 		monthLabel := s.Month.Format("Jan 2006")
-		title := fmt.Sprintf("%s: %.1f km/h", monthLabel, s.AvgSpeedKmh)
+		title := fmt.Sprintf("%s: %.1f km/h", monthLabel, s.SpeedKmh)
 
 		points = append(points, point{
 			X:     x,
@@ -88,7 +81,7 @@ func createPoints(speeds []walks.MonthlyWalkingSpeed, monthWidth, speedMin, spee
 	return points
 }
 
-func renderXAxis(svgBuilder *strings.Builder, speeds []walks.MonthlyWalkingSpeed, monthWidth float64) {
+func renderXAxis(svgBuilder *strings.Builder, speeds []monthSpeed, monthWidth float64) {
 	fmt.Fprintf(svgBuilder, `<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="var(--background-alt-colour)" stroke-width="1"/>`, leftPadding, topPadding+contentHeight, leftPadding+contentWidth+5, topPadding+contentHeight)
 	currentYear := speeds[0].Month.Year()
 	yearStartIndex := 0

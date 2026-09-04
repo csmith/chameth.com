@@ -3,14 +3,11 @@ package list
 import (
 	"bytes"
 	_ "embed"
-	"fmt"
 	"html/template"
 	"strconv"
 	"strings"
 
 	"chameth.com/chameth.com/features/shortcodes"
-
-	"chameth.com/chameth.com/features/walks"
 )
 
 //go:embed *.gotpl
@@ -18,12 +15,7 @@ var templates string
 
 var tmpl = template.Must(template.New("walks.html.gotpl").Parse(templates))
 
-func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
-	allWalks, err := walks.AllWalks(ctx.Context)
-	if err != nil {
-		return "", fmt.Errorf("failed to get walks: %w", err)
-	}
-
+func render(_ []string, allWalks []walk, _ *shortcodes.Context) (string, error) {
 	var maxDistance float64
 	for _, w := range allWalks {
 		if w.DistanceKm > maxDistance {
@@ -33,7 +25,7 @@ func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 
 	entries := make([]WalkEntry, len(allWalks))
 	for i, walk := range allWalks {
-		durationMinutes := int(walk.DurationSeconds / 60)
+		durationMinutes := int(walk.DurationS / 60)
 		barWidth := 0.0
 		if maxDistance > 0 {
 			barWidth = (walk.DistanceKm / maxDistance) * 100
@@ -58,10 +50,10 @@ func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 		}
 
 		entries[i] = WalkEntry{
-			Date:             walk.StartDate.Format("2006-01-02"),
+			Date:             walk.Date.Format("2006-01-02"),
 			DistanceBarWidth: barWidth,
 			DistanceKm:       walk.DistanceKm,
-			ElevationGainM:   walk.ElevationGainMeters,
+			ElevationGainM:   walk.ElevationM,
 			Duration:         strings.TrimSpace(duration.String()),
 		}
 	}

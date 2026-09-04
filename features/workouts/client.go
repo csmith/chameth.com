@@ -172,6 +172,65 @@ func PBEvents(ctx context.Context, client *http.Client, start, end string) ([]PB
 	return res.Events, nil
 }
 
+type ActivityElevation struct {
+	GainM float64 `json:"gain_m"`
+	LossM float64 `json:"loss_m"`
+}
+
+type Activity struct {
+	ID            string             `json:"id"`
+	StartTime     time.Time          `json:"start_time"`
+	DurationS     float64            `json:"duration_s"`
+	DistanceM     float64            `json:"distance_m"`
+	WalkDistanceM *float64           `json:"walk_distance_m"`
+	Elevation     *ActivityElevation `json:"elevation"`
+}
+
+func (a *Activity) WalkingDistanceM() float64 {
+	if a.WalkDistanceM != nil {
+		return *a.WalkDistanceM
+	}
+	return a.DistanceM
+}
+
+func Activities(ctx context.Context, client *http.Client, group string) ([]Activity, error) {
+	body, err := pompeiBandGet(ctx, client, "/api/activities", windowValues("", "", group))
+	if err != nil {
+		return nil, err
+	}
+
+	var activities []Activity
+	if err := json.Unmarshal(body, &activities); err != nil {
+		return nil, fmt.Errorf("failed to decode activities response: %w", err)
+	}
+	return activities, nil
+}
+
+type MonthSummary struct {
+	Month              string   `json:"month"`
+	Count              int      `json:"count"`
+	DistanceM          float64  `json:"distance_m"`
+	DurationS          float64  `json:"duration_s"`
+	MaxAverageSpeedMps *float64 `json:"max_average_speed_mps"`
+	RunDistanceM       *float64 `json:"run_distance_m"`
+	WalkDistanceM      *float64 `json:"walk_distance_m"`
+}
+
+func ActivityMonths(ctx context.Context, client *http.Client, group string) ([]MonthSummary, error) {
+	body, err := pompeiBandGet(ctx, client, "/api/insights/activity-months", windowValues("", "", group))
+	if err != nil {
+		return nil, err
+	}
+
+	var res struct {
+		Months []MonthSummary `json:"months"`
+	}
+	if err := json.Unmarshal(body, &res); err != nil {
+		return nil, fmt.Errorf("failed to decode activity-months response: %w", err)
+	}
+	return res.Months, nil
+}
+
 func pompeiBandGet(ctx context.Context, client *http.Client, path string, query url.Values) ([]byte, error) {
 	u := strings.TrimRight(pompeiBandBaseURL, "/") + path
 	if len(query) > 0 {
