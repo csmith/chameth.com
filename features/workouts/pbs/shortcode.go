@@ -11,22 +11,16 @@ import (
 	"tailscale.com/tsnet"
 )
 
-// refreshFrequency is how often the PB table is refreshed from the
-// Pompei Band API. It shows all-time records, so there is no cutoff.
 const refreshFrequency = 6 * time.Hour
 
 func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
 	shortcodes.RegisterData(mgr, "workoutpbs", 1, &dataShortcode{ts: ts})
 }
 
-// dataShortcode fetches the PB table from the Pompei Band API, via the
-// shortcodes data cache.
 type dataShortcode struct {
 	ts *tsnet.Server
 }
 
-// record is one cached PB: the current all-time record for a single
-// segment distance within the shortcode's activity group.
 type record struct {
 	DistanceM  float64 `json:"distance_m"`
 	ElapsedS   float64 `json:"elapsed_s"`
@@ -34,7 +28,6 @@ type record struct {
 	Date       string  `json:"date"`
 }
 
-// Retrieve fetches the current PBs for the shortcode's activity group.
 func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[[]record], error) {
 	group, _, err := parseActivity(args)
 	if err != nil {
@@ -61,7 +54,6 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 	}, nil
 }
 
-// Render builds the PB table from the cached records.
 func (s *dataShortcode) Render(args []string, records []record, _ *shortcodes.Context) (string, error) {
 	_, label, err := parseActivity(args)
 	if err != nil {
@@ -73,9 +65,6 @@ func (s *dataShortcode) Render(args []string, records []record, _ *shortcodes.Co
 	return renderTemplate(buildData(label+" PBs", records))
 }
 
-// activities maps the shortcode's activity argument to the activity_group
-// slug used by the API, plus a display label for the box title. Only
-// groups that track segment PBs are listed.
 var activities = map[string]struct{ group, label string }{
 	"running": {"run", "Running"},
 	"run":     {"run", "Running"},
@@ -85,8 +74,6 @@ var activities = map[string]struct{ group, label string }{
 	"walk":    {"walk", "Walking"},
 }
 
-// parseActivity validates the shortcode's single activity argument,
-// returning its API group slug and display label.
 func parseActivity(args []string) (group, label string, err error) {
 	if len(args) != 1 {
 		return "", "", fmt.Errorf("workoutpbs requires 1 argument (activity), e.g. \"running\"")

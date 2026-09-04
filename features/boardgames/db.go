@@ -8,16 +8,11 @@ import (
 	"chameth.com/chameth.com/db"
 )
 
-// imagePath returns the path a game's box art is rehosted at. It is
-// deterministic — the game's BGG id plus a fixed .jpg extension, matching
-// the images imported before Magic Meters took over serving them — so it
-// can be computed rather than looked up.
+// Preserve the paths used by the old board game importer.
 func imagePath(bggID int) string {
 	return fmt.Sprintf("/boardgames/%d/image.jpg", bggID)
 }
 
-// rehostedImagePaths returns the set of boardgame media paths that
-// currently have rehosted art.
 func rehostedImagePaths(ctx context.Context) (map[string]bool, error) {
 	paths, err := db.Select[string](ctx, `
 		SELECT path
@@ -35,11 +30,6 @@ func rehostedImagePaths(ctx context.Context) (map[string]bool, error) {
 	return set, nil
 }
 
-// createBoardgameImage stores an unmodified copy of a game's downloaded
-// box art at the game's image path. The path is unique per game, so a
-// render that loses a race against a concurrent render storing the same
-// art discards its duplicate copy; both converge on the same path either
-// way.
 func createBoardgameImage(ctx context.Context, bggID int, name, contentType string, data []byte) error {
 	mediaPath := imagePath(bggID)
 	_, subtype, _ := strings.Cut(contentType, "/")

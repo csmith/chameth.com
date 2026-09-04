@@ -11,29 +11,21 @@ import (
 	"tailscale.com/tsnet"
 )
 
-// refreshFrequency is how often the summary's cached data is refreshed
-// from the Pompei Band API.
 const refreshFrequency = 6 * time.Hour
 
 func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
 	shortcodes.RegisterData(mgr, "workoutsummary", 1, &dataShortcode{ts: ts})
 }
 
-// dataShortcode fetches the summary's data from the Pompei Band API, via
-// the shortcodes data cache.
 type dataShortcode struct {
 	ts *tsnet.Server
 }
 
-// record is the longest single activity (or running interval) within the
-// period.
 type record struct {
 	DistanceM float64   `json:"distance_m"`
 	StartTime time.Time `json:"start_time"`
 }
 
-// pb is the fastest record-breaking effort for one segment distance
-// within the period, along with the record it displaced.
 type pb struct {
 	Group            string   `json:"group"`
 	DistanceM        float64  `json:"distance_m"`
@@ -41,8 +33,6 @@ type pb struct {
 	PreviousElapsedS *float64 `json:"previous_elapsed_s"`
 }
 
-// data is everything the summary renders, derived from the API's
-// activity-summary, distance-records, activities and pb-events endpoints.
 type data struct {
 	CycleCount     int     `json:"cycle_count"`
 	CycleDistanceM float64 `json:"cycle_distance_m"`
@@ -55,9 +45,6 @@ type data struct {
 	PBs            []pb    `json:"pbs"`
 }
 
-// parseArgs interprets the shortcode's two YYYY-MM-DD arguments. The
-// window sent to the API is half-open: endExclusive extends the range
-// through the whole of the end date.
 func parseArgs(args []string) (start, end time.Time, err error) {
 	if len(args) < 2 {
 		return time.Time{}, time.Time{}, fmt.Errorf("workoutsummary requires 2 arguments (start_date, end_date) in YYYY-MM-DD format")
@@ -76,9 +63,6 @@ func parseArgs(args []string) (start, end time.Time, err error) {
 	return start, end, nil
 }
 
-// Retrieve assembles the period's data from four API calls: per-group
-// totals, the longest ride, the longest running interval and the record-
-// breaking efforts.
 func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[data], error) {
 	startDate, endDate, err := parseArgs(args)
 	if err != nil {
@@ -127,9 +111,6 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 		return shortcodes.Result[data]{}, fmt.Errorf("failed to fetch longest run: %w", err)
 	}
 	if longestRun != nil {
-		// Run records rank on the gait-classified running distance
-		// (falling back to the recorded total), matching how the period's
-		// longest run has always been measured.
 		d.LongestRun = &record{DistanceM: longestRun.RankingDistanceM(), StartTime: longestRun.StartTime}
 	}
 
@@ -145,12 +126,8 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 	}, nil
 }
 
-// fastestPBs condenses the window's record-breaking efforts into one entry
-// per (group, distance): the fastest time achieved, with the previous
-// record taken from the earliest improvement in the window (so it reflects
-// the record that stood before the period began, even if the record was
-// beaten several times since). Events arrive chronological; only the
-// cycle and run groups are reported, as before.
+// Keep the fastest result per distance while retaining the record that
+// stood before the window's first improvement.
 func fastestPBs(events []workouts.PBEvent) []pb {
 	byKey := map[string]map[float64]*pb{}
 	for _, e := range events {
@@ -191,7 +168,6 @@ func fastestPBs(events []workouts.PBEvent) []pb {
 	return result
 }
 
-// Render builds the summary sections from the cached data.
 func (s *dataShortcode) Render(args []string, d data, _ *shortcodes.Context) (string, error) {
 	startDate, endDate, err := parseArgs(args)
 	if err != nil {

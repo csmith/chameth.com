@@ -2,7 +2,6 @@ package shortcodes
 
 import "time"
 
-// shortcodeData is one cached row of externally-retrieved shortcode data.
 type shortcodeData struct {
 	ID            int        `db:"id"`
 	Shortcode     string     `db:"shortcode"`

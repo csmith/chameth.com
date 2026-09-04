@@ -1,6 +1,5 @@
 package char
 
-// Data is the cached character snapshot as rendered by the shortcode.
 type Data struct {
 	Name              string          `json:"name"`
 	Realm             string          `json:"realm"`
@@ -18,8 +17,6 @@ type Data struct {
 	MythicPlus        *MythicPlusData `json:"mythic_plus"`
 }
 
-// Profession is one profession collapsed to its current tier. Kind
-// ("primary"/"secondary") only drives the render order.
 type Profession struct {
 	Name       string         `json:"name"`
 	Kind       string         `json:"kind"`

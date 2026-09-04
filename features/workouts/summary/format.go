@@ -25,9 +25,6 @@ func formatDuration(seconds float64) string {
 	return fmt.Sprintf("%d:%02d", m, s)
 }
 
-// formatDurationLong formats a cumulative duration as e.g. "12h 34m" or
-// "34m", for display as a section total (as opposed to formatDuration,
-// which formats a single PB time as mm:ss or h:mm:ss).
 func formatDurationLong(seconds float64) string {
 	total := int(math.Round(seconds))
 	h := total / 3600
@@ -38,8 +35,6 @@ func formatDurationLong(seconds float64) string {
 	return fmt.Sprintf("%dm", m)
 }
 
-// formatPreviousBest formats the time a PB replaced, or "no previous" if
-// this was the first time the segment distance had been recorded.
 func formatPreviousBest(seconds *float64) string {
 	if seconds == nil {
 		return "no previous"
@@ -47,8 +42,6 @@ func formatPreviousBest(seconds *float64) string {
 	return formatDuration(*seconds)
 }
 
-// formatDistanceLabel turns a segment distance in metres into a short,
-// human-friendly label, e.g. "5km", "800m", "1 mile".
 func formatDistanceLabel(m float64) string {
 	if m == 1609 {
 		return "1 mile"

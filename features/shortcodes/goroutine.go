@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-// RegisterGoroutine launches the background refresher for cached shortcode
-// data. Wired automatically by cmd/generate.
 func RegisterGoroutine(mgr *Manager, ctx context.Context) func() {
 	return func() {
 		refreshDueData(mgr, ctx)

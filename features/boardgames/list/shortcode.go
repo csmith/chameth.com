@@ -10,23 +10,16 @@ import (
 	"tailscale.com/tsnet"
 )
 
-// refreshFrequency is how often the list is refreshed from the Magic
-// Meters API. It covers all time, so there is no cutoff.
 const refreshFrequency = 6 * time.Hour
 
 func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
 	shortcodes.RegisterData(mgr, "bglist", 1, &dataShortcode{ts: ts})
 }
 
-// dataShortcode fetches the play-count list from the Magic Meters API,
-// via the shortcodes data cache.
 type dataShortcode struct {
 	ts *tsnet.Server
 }
 
-// entry is one cached game: its all-time play count, when it was last
-// played, and the local path of its rehosted box art (empty when the
-// game has none).
 type entry struct {
 	Name       string `json:"name"`
 	Year       int    `json:"year"`
@@ -35,9 +28,6 @@ type entry struct {
 	LastPlayed string `json:"last_played"`
 }
 
-// Retrieve fetches the all-time play counts. The API orders games by play
-// count descending, then name, which becomes the list's position
-// numbering.
 func (s *dataShortcode) Retrieve(ctx context.Context, _ []string) (shortcodes.Result[[]entry], error) {
 	client := s.ts.HTTPClient()
 	games, err := boardgames.PlayCounts(ctx, client, "", "")
@@ -72,7 +62,6 @@ func (s *dataShortcode) Retrieve(ctx context.Context, _ []string) (shortcodes.Re
 	}, nil
 }
 
-// Render builds the positioned list from the cached entries.
 func (s *dataShortcode) Render(_ []string, entries []entry, _ *shortcodes.Context) (string, error) {
 	games := make([]Game, len(entries))
 	for i, e := range entries {

@@ -14,8 +14,6 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("longest.html.gotpl").ParseFS(templates, "longest.html.gotpl"))
 
-// milestone is a notable round distance that the longest run or ride is
-// measured against.
 type milestone struct {
 	Label     string
 	DistanceM float64
@@ -46,8 +44,6 @@ func buildData(title string, r *record, milestones []milestone) Data {
 	}
 }
 
-// nextMilestone returns the first milestone beyond the given distance, or
-// the final milestone if the distance has already reached them all.
 func nextMilestone(milestones []milestone, distanceM float64) milestone {
 	for _, m := range milestones {
 		if distanceM < m.DistanceM {

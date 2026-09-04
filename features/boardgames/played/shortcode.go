@@ -10,22 +10,16 @@ import (
 	"tailscale.com/tsnet"
 )
 
-// refreshFrequency is how often a window's play counts are refreshed from
-// the Magic Meters API.
 const refreshFrequency = 6 * time.Hour
 
 func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
 	shortcodes.RegisterData(mgr, "playedbgs", 1, &dataShortcode{ts: ts})
 }
 
-// dataShortcode fetches a window's play counts from the Magic Meters API,
-// via the shortcodes data cache.
 type dataShortcode struct {
 	ts *tsnet.Server
 }
 
-// entry is one cached game's play count within the window, plus the local
-// path of its rehosted box art (empty when the game has none).
 type entry struct {
 	Name      string `json:"name"`
 	Year      int    `json:"year"`
@@ -33,9 +27,6 @@ type entry struct {
 	PlayCount int    `json:"play_count"`
 }
 
-// parseArgs interprets the shortcode's two YYYY-MM-DD arguments. The
-// window sent to the API is half-open: endExclusive extends the range
-// through the whole of the end date.
 func parseArgs(args []string) (start, end time.Time, err error) {
 	if len(args) < 2 {
 		return time.Time{}, time.Time{}, fmt.Errorf("playedbgs requires 2 arguments (start_date, end_date) in YYYY-MM-DD format")
@@ -54,8 +45,6 @@ func parseArgs(args []string) (start, end time.Time, err error) {
 	return start, end, nil
 }
 
-// Retrieve fetches the window's play counts. The API orders games by play
-// count descending, then name.
 func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[[]entry], error) {
 	startDate, endDate, err := parseArgs(args)
 	if err != nil {
@@ -95,7 +84,6 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 	}, nil
 }
 
-// Render builds the grid from the cached entries.
 func (s *dataShortcode) Render(_ []string, entries []entry, _ *shortcodes.Context) (string, error) {
 	games := make([]Game, len(entries))
 	for i, e := range entries {

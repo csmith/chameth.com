@@ -11,22 +11,16 @@ import (
 	"tailscale.com/tsnet"
 )
 
-// refreshFrequency is how often recent achievements are refreshed from
-// the Ogre Stream API.
 const refreshFrequency = 4 * time.Hour
 
 func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
 	shortcodes.RegisterData(mgr, "wowachievements", 1, &dataShortcode{ts: ts})
 }
 
-// dataShortcode fetches the account's recent achievements from the Ogre
-// Stream API, via the shortcodes data cache.
 type dataShortcode struct {
 	ts *tsnet.Server
 }
 
-// parseArgs interprets the shortcode's single optional argument: the
-// maximum number of achievements to show (the service clamps it to 1-100).
 func parseArgs(args []string) (int, error) {
 	if len(args) == 0 {
 		return 10, nil
@@ -42,7 +36,6 @@ func parseArgs(args []string) (int, error) {
 	return limit, nil
 }
 
-// Retrieve fetches the account's recent achievements, newest first.
 func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[[]Achievement], error) {
 	limit, err := parseArgs(args)
 	if err != nil {
@@ -69,7 +62,6 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 	}, nil
 }
 
-// Render builds the achievement list from the cached achievements.
 func (s *dataShortcode) Render(_ []string, achievements []Achievement, _ *shortcodes.Context) (string, error) {
 	return renderTemplate(Data{Achievements: achievements})
 }

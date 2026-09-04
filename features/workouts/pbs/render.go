@@ -29,8 +29,6 @@ func buildData(title string, records []record) Data {
 	return Data{Title: title, Rows: rows}
 }
 
-// formatDate rewrites an API date (YYYY-MM-DD, the UTC day the record was
-// achieved) into the table's display format.
 func formatDate(date string) string {
 	d, err := time.Parse("2006-01-02", date)
 	if err != nil {
@@ -50,14 +48,11 @@ func formatDuration(seconds float64) string {
 	return fmt.Sprintf("%d:%02d", m, s)
 }
 
-// formatPace formats a pace in seconds per km as e.g. "4:52/km".
 func formatPace(sPerKm float64) string {
 	total := int(math.Round(sPerKm))
 	return fmt.Sprintf("%d:%02d/km", total/60, total%60)
 }
 
-// formatDistanceLabel turns a segment distance in metres into a short,
-// human-friendly label, e.g. "5km", "800m", "1 mile".
 func formatDistanceLabel(m float64) string {
 	if m == 1609 {
 		return "1 mile"

@@ -16,8 +16,6 @@ const magicMetersBaseURL = "https://mm.yak-wall.ts.net"
 
 var errNotFound = errors.New("not found")
 
-// Game is one game's rolled-up play data. Year and ImageURL are omitted by
-// the API when the year is unknown or the box art has not been fetched yet.
 type Game struct {
 	ID         string `json:"id"`
 	BggID      *int   `json:"bgg_id"`
@@ -28,9 +26,7 @@ type Game struct {
 	LastPlayed string `json:"last_played"`
 }
 
-// PlayCounts counts plays per game over a window. The window is half-open:
-// start is inclusive, end exclusive, both YYYY-MM-DD dates; both empty
-// means all time.
+// start and end define a half-open range; empty values mean all time.
 func PlayCounts(ctx context.Context, client *http.Client, start, end string) ([]Game, error) {
 	var query url.Values
 	if start != "" || end != "" {

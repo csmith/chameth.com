@@ -17,50 +17,24 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("calendar.html.gotpl").ParseFS(templates, "calendar.html.gotpl"))
 
-// weeks is how many weeks the calendar spans: the exact window when no
-// date range is given, and the minimum window (ending at the range's end)
-// when one is.
 const weeks = 16
 
-// intensitySteps is how many discrete shades each activity type's
-// intensity scale is quantised into, s0 (dimmest) through s3 (the type's
-// full tint) — the same steps the legend shows, so every cell shade
-// matches a legend swatch exactly. The colours themselves live in
-// style.public.css as fixed type × step classes; the site's CSP blocks
-// inline style attributes, so they can't be computed per render.
+// Shades are fixed CSS classes because the CSP prevents inline styles.
 const intensitySteps = 4
 
-// scalingTypes are the activity types whose stripes are shaded by
-// distance: the day's type total divided by the type's max single-day
-// total across the visible window, quantised into intensitySteps shades.
-// Every other activity group (gym, rowing, dance, ...) folds into the
-// catch-all "other" bucket, which renders at a single full tint —
-// distance is meaningless across the activity types it folds together.
-// The palette (defined in style.public.css) gives run/cycle/walk/other
-// distinct hues; walk's ramp starts lighter than the others because its
-// muted grey-brown would otherwise fade into the empty-cell background.
 var scalingTypes = map[string]bool{
 	"run":   true,
 	"cycle": true,
 	"walk":  true,
 }
 
-// dayNames is the row labels for the calendar, Monday-first to match the
-// column anchoring. The abbreviated form keeps the row header narrow so
-// the cell grid dominates the visual.
 var dayNames = [7]string{"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"}
 
-// dayBucket is one day's rolled-up workout data: per-activity-group
-// distance totals (driving both the cell's stripes and the per-type
-// intensity scale) and the workout count (driving the tooltip).
 type dayBucket struct {
 	groups map[string]float64
 	count  int
 }
 
-// indexDays buckets the cached day entries by their YYYY-MM-DD date.
-// The entries arrive pre-folded into the calendar's group buckets, so
-// this is a straight index rather than a roll-up.
 func indexDays(entries []dayEntry) map[string]*dayBucket {
 	byDay := make(map[string]*dayBucket, len(entries))
 	for _, e := range entries {
@@ -69,18 +43,7 @@ func indexDays(entries []dayEntry) map[string]*dayBucket {
 	return byDay
 }
 
-// perTypeMaxDay returns, for each activity type, the largest single-day
-// distance total across the indexed days. The result is the denominator
-// of the per-type intensity scale: each stripe's shade is its day-total
-// divided by this max, so the longest day for each type hits the fullest
-// shade regardless of how the surrounding window is scoped.
-//
-// A type appears in the result iff any bucket has the type key, even when
-// the distance is zero (e.g. gym) — without this, the legend would drop
-// zero-distance types entirely even though their cells render at full
-// tint. Tracking presence explicitly (rather than relying on
-// `dist > max[t]`, which fails for dist=0 since the zero value of an
-// absent key also compares equal) keeps the legend in sync with the grid.
+// Keep zero-distance types in the map so they still appear in the legend.
 func perTypeMaxDay(byDay map[string]*dayBucket) map[string]float64 {
 	max := map[string]float64{}
 	for _, b := range byDay {
@@ -93,12 +56,6 @@ func perTypeMaxDay(byDay map[string]*dayBucket) map[string]float64 {
 	return max
 }
 
-// buildData assembles the calendar as 7 weekday rows × N week columns,
-// oldest week first so the most recent week lands in the rightmost
-// column. The grid is anchored on the Monday on or before the window
-// start so every column is a clean Mon–Sun span; days padded outside
-// [start, end] by that anchoring render as inactive cells. When a date
-// range was requested, cells within it are flagged for highlighting.
 func buildData(title string, start, end, rangeStart, rangeEnd time.Time, entries []dayEntry) Data {
 	byDay := indexDays(entries)
 	maxByType := perTypeMaxDay(byDay)
@@ -124,9 +81,6 @@ func buildData(title string, start, end, rangeStart, rangeEnd time.Time, entries
 	}
 }
 
-// buildCell assembles one calendar cell for the given date: an inactive
-// cell outside the window, an empty cell with the zero-count tooltip if
-// no workouts landed on it, or a filled cell with stripes otherwise.
 func buildCell(date, start, end, rangeStart, rangeEnd time.Time, byDay map[string]*dayBucket, maxByType map[string]float64) Cell {
 	if date.Before(start) || date.After(end) {
 		return Cell{Inactive: true}
@@ -144,11 +98,6 @@ func buildCell(date, start, end, rangeStart, rangeEnd time.Time, byDay map[strin
 	return cell
 }
 
-// buildStripes assembles one stripe per activity type present that day,
-// alphabetically so multi-type days render consistently. Each stripe
-// carries the type's class plus the quantised intensity step for the
-// day's type total against the type's max single-day total across the
-// visible window.
 func buildStripes(groups map[string]float64, maxByType map[string]float64) []Stripe {
 	keys := make([]string, 0, len(groups))
 	for k := range groups {
@@ -167,8 +116,6 @@ func buildStripes(groups map[string]float64, maxByType map[string]float64) []Str
 	return stripes
 }
 
-// stripeClass returns the CSS classes for one stripe: the activity type,
-// plus an intensity step class for types that are shaded by distance.
 func stripeClass(group string, ratio float64) string {
 	if !scalingTypes[group] {
 		return group
@@ -176,17 +123,11 @@ func stripeClass(group string, ratio float64) string {
 	return fmt.Sprintf("%s s%d", group, intensityStep(ratio))
 }
 
-// intensityStep buckets a 0–1 intensity ratio into one of intensitySteps
-// discrete steps (0 = dimmest, intensitySteps-1 = full tint).
 func intensityStep(ratio float64) int {
 	step := int(math.Round(ratio * (intensitySteps - 1)))
 	return min(step, intensitySteps-1)
 }
 
-// buildLegend produces one row per activity type present in the visible
-// window, named sports alphabetically with "other" last. Scaling types
-// list one swatch class per intensity step; the catch-all lists its
-// single full-tint swatch.
 func buildLegend(maxByType map[string]float64) []LegendRow {
 	var hasOther bool
 	named := make([]string, 0, len(maxByType))
@@ -218,8 +159,6 @@ func buildLegend(maxByType map[string]float64) []LegendRow {
 	return rows
 }
 
-// dayTitle formats a cell's tooltip: the workout count, the long-form
-// date, and a per-type distance breakdown for days with activities.
 func dayTitle(n int, groups map[string]float64, date time.Time) string {
 	noun := "activities"
 	if n == 1 {
@@ -241,12 +180,7 @@ func dayTitle(n int, groups map[string]float64, date time.Time) string {
 	return s + " \u00b7 " + strings.Join(parts, ", ")
 }
 
-// calendarGroup normalises an activity_group for the calendar's per-type
-// bucketing. Run/cycle/walk pass through unchanged; everything else (gym,
-// rowing, dance, ...) folds into "other" so the catch-all bucket
-// aggregates every unrecognised group into a single stripe + legend
-// entry. Without this, a gym session and a dance class on the same day
-// would render as two separate dark stripes rather than one.
+// Distances are not comparable across the activities folded into "other".
 func calendarGroup(group string) string {
 	if scalingTypes[group] {
 		return group
@@ -254,21 +188,17 @@ func calendarGroup(group string) string {
 	return "other"
 }
 
-// truncateToDay returns midnight UTC on the given day.
 func truncateToDay(t time.Time) time.Time {
 	y, m, d := t.UTC().Date()
 	return time.Date(y, m, d, 0, 0, 0, 0, time.UTC)
 }
 
-// startOfWeek returns the midnight UTC Monday on or before the given
-// day, so every grid column is a clean Mon–Sun span.
 func startOfWeek(t time.Time) time.Time {
 	t = truncateToDay(t)
 	daysFromMonday := (int(t.Weekday()) - int(time.Monday) + 7) % 7
 	return t.AddDate(0, 0, -daysFromMonday)
 }
 
-// formatSport turns an activity type slug into its legend/tooltip label.
 func formatSport(group string) string {
 	if group == "" {
 		return "Other"
@@ -278,9 +208,6 @@ func formatSport(group string) string {
 	return string(r)
 }
 
-// formatDistanceKm formats a distance for a cell tooltip: metres below a
-// kilometre, two-decimal kilometres above, and an em dash for workouts
-// with no distance at all (e.g. gym).
 func formatDistanceKm(m float64) string {
 	switch {
 	case m <= 0:

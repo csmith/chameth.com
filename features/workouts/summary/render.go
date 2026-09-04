@@ -12,9 +12,6 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("workoutsummary.html.gotpl").ParseFS(templates, "workoutsummary.html.gotpl"))
 
-// buildData assembles the summary's view model: one section per activity
-// group that has activities in the period, each with its headline stats
-// and the PBs set within it.
 func buildData(dateRange string, d data) Data {
 	var view Data
 

@@ -18,11 +18,8 @@ import (
 	"chameth.com/chameth.com/features/wow"
 )
 
-// ensurePortrait rehosts the character's portrait and returns the local
-// path to serve it from. The live portrait (no past date requested) keeps
-// the path it has always been served from and is updated in place; a
-// historical portrait is stored once at a path derived from its content
-// hash, so dated renders never disturb the live image.
+// Historical portraits use content-addressed paths so they cannot replace
+// the live portrait, which retains its existing stable URL.
 func ensurePortrait(ctx context.Context, client *http.Client, c *wow.Character, at time.Time) (string, error) {
 	if c.Portrait == nil || c.Portrait.Path == "" {
 		return "", fmt.Errorf("character has no portrait")
@@ -37,20 +34,14 @@ func ensurePortrait(ctx context.Context, client *http.Client, c *wow.Character, 
 	return ensureLivePortrait(ctx, client, c)
 }
 
-// livePortraitPath is the path a character's up-to-date portrait is
-// served from — the same URL it has always used.
 func livePortraitPath(name string) string {
 	return fmt.Sprintf("/wow/characters/%s.png", name)
 }
 
-// historicalPortraitPath is the write-once path for a historical
-// portrait, keyed by the portrait's SHA-256.
 func historicalPortraitPath(sha256 string) string {
 	return fmt.Sprintf("/wow/characters/%s.png", sha256)
 }
 
-// ensureLivePortrait updates the character's live portrait in place,
-// storing it first if it doesn't exist yet.
 func ensureLivePortrait(ctx context.Context, client *http.Client, c *wow.Character) (string, error) {
 	path := livePortraitPath(c.Profile.Name)
 	filename := fmt.Sprintf("%s.png", c.Profile.Name)
@@ -78,8 +69,6 @@ func ensureLivePortrait(ctx context.Context, client *http.Client, c *wow.Charact
 	return path, nil
 }
 
-// ensureHistoricalPortrait stores a historical portrait once at its
-// content-addressed path; an existing copy is left alone.
 func ensureHistoricalPortrait(ctx context.Context, client *http.Client, c *wow.Character) (string, error) {
 	path := historicalPortraitPath(c.Portrait.Sha256)
 
@@ -102,8 +91,6 @@ func ensureHistoricalPortrait(ctx context.Context, client *http.Client, c *wow.C
 	return path, nil
 }
 
-// mediaIDAtPath returns the id of the media stored at path, or
-// sql.ErrNoRows when nothing is stored there yet.
 func mediaIDAtPath(ctx context.Context, path string) (int, error) {
 	return db.Get[int](ctx, `
 		SELECT m.id
@@ -113,8 +100,6 @@ func mediaIDAtPath(ctx context.Context, path string) (int, error) {
 	`, path)
 }
 
-// imageDimensions returns the downloaded image's width and height, or
-// nils when its format can't be decoded.
 func imageDimensions(data []byte) (width, height *int) {
 	cfg, _, err := image.DecodeConfig(bytes.NewReader(data))
 	if err != nil {
@@ -123,10 +108,6 @@ func imageDimensions(data []byte) (width, height *int) {
 	return &cfg.Width, &cfg.Height
 }
 
-// storePortrait stores an unmodified copy of a downloaded portrait at
-// path. The path is unique per portrait, so a render that loses a race
-// against a concurrent render storing the same image discards its
-// duplicate copy; both converge on the same path either way.
 func storePortrait(ctx context.Context, blizzardID int, path, filename, caption, role, contentType string, data []byte) error {
 	width, height := imageDimensions(data)
 

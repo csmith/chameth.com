@@ -26,30 +26,18 @@ type DataShortcode[T any] interface {
 	Render(args []string, data T, ctx *Context) (string, error)
 }
 
-// dataRegistration is the type-erased form of a registered DataShortcode.
-// Result data crosses the erasure boundary as JSON.
 type dataRegistration struct {
 	version  int
 	retrieve func(ctx context.Context, args []string) (dataJSON []byte, refreshAt time.Time, err error)
 	render   func(args []string, dataJSON []byte, ctx *Context) (string, error)
 }
 
-// errFetchInProgress is returned by fetchData when another goroutine is
-// already retrieving data for the same cache key.
 var errFetchInProgress = errors.New("fetch already in progress")
 
-// errNoCachedData is returned when a row exists but holds no data because
-// the last retrieval failed.
 var errNoCachedData = errors.New("no cached data available")
 
 const (
-	// fetchRetryDelay is how long a failed retrieval is remembered, so
-	// renders fail fast against the stored row instead of re-hitting
-	// the upstream on every page load.
 	fetchRetryDelay = 5 * time.Minute
-
-	// retrieveTimeout bounds a single Retrieve call so a hanging
-	// upstream cannot stall a page render or the refresh loop.
 	retrieveTimeout = time.Minute
 )
 
@@ -182,7 +170,6 @@ func NextRefresh(interval time.Duration, cutoff time.Time) time.Time {
 	return next
 }
 
-// hashArgs produces the cache key hash for a set of shortcode arguments.
 func hashArgs(args []string) string {
 	encoded, _ := json.Marshal(args)
 	sum := sha256.Sum256(encoded)

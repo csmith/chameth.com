@@ -17,12 +17,9 @@ var templates string
 
 var tmpl = template.Must(template.New("char.html.gotpl").Parse(templates))
 
-// fishingProfessionID is Blizzard's id for Fishing, whose tiers don't fit
-// the skill-points model the professions table renders, so it is skipped
-// (as the old sync did).
+// Fishing tiers do not fit the skill-points model used by the table.
 const fishingProfessionID = 794
 
-// buildData maps the API response onto the cached render model.
 func buildData(c *wow.Character, imagePath string) Data {
 	p := c.Profile
 
@@ -54,8 +51,6 @@ func buildData(c *wow.Character, imagePath string) Data {
 	return data
 }
 
-// buildProfessions collapses the tiers to each profession's current one,
-// primaries before secondaries, each alphabetically.
 func buildProfessions(professions []wow.Profession) []Profession {
 	var built []Profession
 	indexes := make(map[int]int)
@@ -91,10 +86,7 @@ func buildProfessions(professions []wow.Profession) []Profession {
 	return built
 }
 
-// buildMythicPlus maps the season's runs to the render model. A dungeon
-// can appear twice — its best timed and best untimed attempt — and only
-// the highest-rated one is displayed, ordered by dungeon name as the
-// local table used to serve them.
+// The service may return both timed and untimed runs for a dungeon.
 func buildMythicPlus(mp *wow.MythicPlus) *MythicPlusData {
 	best := make(map[int]wow.MythicRun, len(mp.Runs))
 	for _, r := range mp.Runs {
