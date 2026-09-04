@@ -38,24 +38,25 @@ type runShortcode struct {
 // gait-classified running distance (falling back to the recorded total
 // when an activity carries no split), so walking breaks inside a run
 // don't win the record.
-func (s *runShortcode) Retrieve(ctx context.Context, _ []string) (shortcodes.Retrieved[*record], error) {
+func (s *runShortcode) Retrieve(ctx context.Context, _ []string) (shortcodes.Result[*record], error) {
 	longest, err := workouts.GetDistanceRecord(ctx, s.ts.HTTPClient(), "run", "", "")
 	if err != nil {
-		return shortcodes.Retrieved[*record]{}, fmt.Errorf("failed to fetch distance record: %w", err)
+		return shortcodes.Result[*record]{}, fmt.Errorf("failed to fetch distance record: %w", err)
 	}
+
+	refreshAt := shortcodes.NextRefresh(refreshFrequency, time.Time{})
 	if longest == nil {
-		return shortcodes.Retrieved[*record]{}, nil
+		return shortcodes.Result[*record]{RefreshAt: refreshAt}, nil
 	}
 
-	return shortcodes.Retrieved[*record]{Data: &record{
-		Activity:  longest.Name,
-		DistanceM: longest.RankingDistanceM(),
-		StartTime: longest.StartTime,
-	}}, nil
-}
-
-func (s *runShortcode) RefreshPolicy([]string) shortcodes.RefreshPolicy {
-	return shortcodes.RefreshPolicy{Frequency: refreshFrequency}
+	return shortcodes.Result[*record]{
+		Data: &record{
+			Activity:  longest.Name,
+			DistanceM: longest.RankingDistanceM(),
+			StartTime: longest.StartTime,
+		},
+		RefreshAt: refreshAt,
+	}, nil
 }
 
 func (s *runShortcode) Render(_ []string, r *record, _ *shortcodes.Context) (string, error) {
@@ -71,24 +72,25 @@ type cycleShortcode struct {
 	ts *tsnet.Server
 }
 
-func (s *cycleShortcode) Retrieve(ctx context.Context, _ []string) (shortcodes.Retrieved[*record], error) {
+func (s *cycleShortcode) Retrieve(ctx context.Context, _ []string) (shortcodes.Result[*record], error) {
 	longest, err := workouts.GetDistanceRecord(ctx, s.ts.HTTPClient(), "cycle", "", "")
 	if err != nil {
-		return shortcodes.Retrieved[*record]{}, fmt.Errorf("failed to fetch distance record: %w", err)
+		return shortcodes.Result[*record]{}, fmt.Errorf("failed to fetch distance record: %w", err)
 	}
+
+	refreshAt := shortcodes.NextRefresh(refreshFrequency, time.Time{})
 	if longest == nil {
-		return shortcodes.Retrieved[*record]{Data: nil}, nil
+		return shortcodes.Result[*record]{RefreshAt: refreshAt}, nil
 	}
 
-	return shortcodes.Retrieved[*record]{Data: &record{
-		Activity:  longest.Name,
-		DistanceM: longest.DistanceM,
-		StartTime: longest.StartTime,
-	}}, nil
-}
-
-func (s *cycleShortcode) RefreshPolicy([]string) shortcodes.RefreshPolicy {
-	return shortcodes.RefreshPolicy{Frequency: refreshFrequency}
+	return shortcodes.Result[*record]{
+		Data: &record{
+			Activity:  longest.Name,
+			DistanceM: longest.DistanceM,
+			StartTime: longest.StartTime,
+		},
+		RefreshAt: refreshAt,
+	}, nil
 }
 
 func (s *cycleShortcode) Render(_ []string, r *record, _ *shortcodes.Context) (string, error) {

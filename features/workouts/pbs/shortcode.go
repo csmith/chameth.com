@@ -35,15 +35,15 @@ type record struct {
 }
 
 // Retrieve fetches the current PBs for the shortcode's activity group.
-func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Retrieved[[]record], error) {
+func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[[]record], error) {
 	group, _, err := parseActivity(args)
 	if err != nil {
-		return shortcodes.Retrieved[[]record]{}, err
+		return shortcodes.Result[[]record]{}, err
 	}
 
 	pbs, err := workouts.PBs(ctx, s.ts.HTTPClient(), group)
 	if err != nil {
-		return shortcodes.Retrieved[[]record]{}, fmt.Errorf("failed to fetch PBs: %w", err)
+		return shortcodes.Result[[]record]{}, fmt.Errorf("failed to fetch PBs: %w", err)
 	}
 
 	records := make([]record, 0, len(pbs))
@@ -55,12 +55,10 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 			Date:       pb.Date,
 		})
 	}
-	return shortcodes.Retrieved[[]record]{Data: records}, nil
-}
-
-// RefreshPolicy refreshes every refreshFrequency.
-func (s *dataShortcode) RefreshPolicy([]string) shortcodes.RefreshPolicy {
-	return shortcodes.RefreshPolicy{Frequency: refreshFrequency}
+	return shortcodes.Result[[]record]{
+		Data:      records,
+		RefreshAt: shortcodes.NextRefresh(refreshFrequency, time.Time{}),
+	}, nil
 }
 
 // Render builds the PB table from the cached records.

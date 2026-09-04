@@ -81,16 +81,16 @@ func parseWindow(args []string) (window, error) {
 // Retrieve fetches the per-day activity roll-ups for the window from the
 // Pompei Band API, folding each day's groups into the calendar's distance
 // buckets.
-func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Retrieved[[]dayEntry], error) {
+func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[[]dayEntry], error) {
 	w, err := parseWindow(args)
 	if err != nil {
-		return shortcodes.Retrieved[[]dayEntry]{}, err
+		return shortcodes.Result[[]dayEntry]{}, err
 	}
 
 	days, err := workouts.ActivityDays(ctx, s.ts.HTTPClient(),
 		w.start.Format("2006-01-02"), w.end.AddDate(0, 0, 1).Format("2006-01-02"), "")
 	if err != nil {
-		return shortcodes.Retrieved[[]dayEntry]{}, fmt.Errorf("failed to fetch activity days: %w", err)
+		return shortcodes.Result[[]dayEntry]{}, fmt.Errorf("failed to fetch activity days: %w", err)
 	}
 
 	entries := make([]dayEntry, 0, len(days))
@@ -110,20 +110,15 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 		entries = append(entries, entry)
 	}
 
-	return shortcodes.Retrieved[[]dayEntry]{Data: entries}, nil
-}
-
-// RefreshPolicy refreshes every refreshFrequency. A named date range stops
-// refreshing one day past its end (the end date plus the whole following
-// day), so late-reported activities still show up before the data freezes.
-func (s *dataShortcode) RefreshPolicy(args []string) shortcodes.RefreshPolicy {
-	policy := shortcodes.RefreshPolicy{Frequency: refreshFrequency}
-	if len(args) == 2 {
-		if end, err := time.Parse("2006-01-02", args[1]); err == nil {
-			policy.Cutoff = end.AddDate(0, 0, 2)
-		}
+	var cutoff time.Time
+	if !w.rangeEnd.IsZero() {
+		cutoff = w.rangeEnd.AddDate(0, 0, 2)
 	}
-	return policy
+
+	return shortcodes.Result[[]dayEntry]{
+		Data:      entries,
+		RefreshAt: shortcodes.NextRefresh(refreshFrequency, cutoff),
+	}, nil
 }
 
 // Render builds the calendar grid from the cached day entries.

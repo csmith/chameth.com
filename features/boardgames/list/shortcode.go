@@ -38,16 +38,16 @@ type entry struct {
 // Retrieve fetches the all-time play counts. The API orders games by play
 // count descending, then name, which becomes the list's position
 // numbering.
-func (s *dataShortcode) Retrieve(ctx context.Context, _ []string) (shortcodes.Retrieved[[]entry], error) {
+func (s *dataShortcode) Retrieve(ctx context.Context, _ []string) (shortcodes.Result[[]entry], error) {
 	client := s.ts.HTTPClient()
 	games, err := boardgames.PlayCounts(ctx, client, "", "")
 	if err != nil {
-		return shortcodes.Retrieved[[]entry]{}, fmt.Errorf("failed to fetch play counts: %w", err)
+		return shortcodes.Result[[]entry]{}, fmt.Errorf("failed to fetch play counts: %w", err)
 	}
 
 	images, err := boardgames.EnsureImages(ctx, client, games)
 	if err != nil {
-		return shortcodes.Retrieved[[]entry]{}, fmt.Errorf("failed to rehost box art: %w", err)
+		return shortcodes.Result[[]entry]{}, fmt.Errorf("failed to rehost box art: %w", err)
 	}
 
 	entries := make([]entry, 0, len(games))
@@ -66,12 +66,10 @@ func (s *dataShortcode) Retrieve(ctx context.Context, _ []string) (shortcodes.Re
 		entries = append(entries, e)
 	}
 
-	return shortcodes.Retrieved[[]entry]{Data: entries}, nil
-}
-
-// RefreshPolicy refreshes every refreshFrequency.
-func (s *dataShortcode) RefreshPolicy([]string) shortcodes.RefreshPolicy {
-	return shortcodes.RefreshPolicy{Frequency: refreshFrequency}
+	return shortcodes.Result[[]entry]{
+		Data:      entries,
+		RefreshAt: shortcodes.NextRefresh(refreshFrequency, time.Time{}),
+	}, nil
 }
 
 // Render builds the positioned list from the cached entries.

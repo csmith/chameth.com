@@ -79,10 +79,10 @@ func parseArgs(args []string) (start, end time.Time, err error) {
 // Retrieve assembles the period's data from four API calls: per-group
 // totals, the longest ride, the longest running interval and the record-
 // breaking efforts.
-func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Retrieved[data], error) {
+func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[data], error) {
 	startDate, endDate, err := parseArgs(args)
 	if err != nil {
-		return shortcodes.Retrieved[data]{}, err
+		return shortcodes.Result[data]{}, err
 	}
 
 	start := startDate.Format("2006-01-02")
@@ -93,7 +93,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 
 	groups, err := workouts.ActivitySummary(ctx, client, start, endExclusive, "")
 	if err != nil {
-		return shortcodes.Retrieved[data]{}, fmt.Errorf("failed to fetch activity summary: %w", err)
+		return shortcodes.Result[data]{}, fmt.Errorf("failed to fetch activity summary: %w", err)
 	}
 	if g, ok := groups["cycle"]; ok {
 		d.CycleCount = g.Count
@@ -116,7 +116,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 
 	longestCycle, err := workouts.GetDistanceRecord(ctx, client, "cycle", start, endExclusive)
 	if err != nil {
-		return shortcodes.Retrieved[data]{}, fmt.Errorf("failed to fetch longest ride: %w", err)
+		return shortcodes.Result[data]{}, fmt.Errorf("failed to fetch longest ride: %w", err)
 	}
 	if longestCycle != nil {
 		d.LongestCycle = &record{DistanceM: longestCycle.DistanceM, StartTime: longestCycle.StartTime}
@@ -124,7 +124,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 
 	longestRun, err := workouts.GetDistanceRecord(ctx, client, "run", start, endExclusive)
 	if err != nil {
-		return shortcodes.Retrieved[data]{}, fmt.Errorf("failed to fetch longest run: %w", err)
+		return shortcodes.Result[data]{}, fmt.Errorf("failed to fetch longest run: %w", err)
 	}
 	if longestRun != nil {
 		// Run records rank on the gait-classified running distance
@@ -135,11 +135,14 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 
 	events, err := workouts.PBEvents(ctx, client, start, endExclusive)
 	if err != nil {
-		return shortcodes.Retrieved[data]{}, fmt.Errorf("failed to fetch PB events: %w", err)
+		return shortcodes.Result[data]{}, fmt.Errorf("failed to fetch PB events: %w", err)
 	}
 	d.PBs = fastestPBs(events)
 
-	return shortcodes.Retrieved[data]{Data: d}, nil
+	return shortcodes.Result[data]{
+		Data:      d,
+		RefreshAt: shortcodes.NextRefresh(refreshFrequency, endDate.AddDate(0, 0, 2)),
+	}, nil
 }
 
 // fastestPBs condenses the window's record-breaking efforts into one entry
@@ -186,17 +189,6 @@ func fastestPBs(events []workouts.PBEvent) []pb {
 		return result[i].DistanceM < result[j].DistanceM
 	})
 	return result
-}
-
-// RefreshPolicy refreshes every refreshFrequency, stopping one day past
-// the end of the period (the end date plus the whole following day), so
-// late-reported activities still show up before the data freezes.
-func (s *dataShortcode) RefreshPolicy(args []string) shortcodes.RefreshPolicy {
-	policy := shortcodes.RefreshPolicy{Frequency: refreshFrequency}
-	if _, end, err := parseArgs(args); err == nil {
-		policy.Cutoff = end.AddDate(0, 0, 2)
-	}
-	return policy
 }
 
 // Render builds the summary sections from the cached data.

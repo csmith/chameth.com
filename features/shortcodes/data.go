@@ -11,38 +11,26 @@ import (
 	"time"
 )
 
-// RefreshPolicy describes when cached shortcode data should be refreshed.
-// Frequency is the default refresh interval, used when Retrieve doesn't
-// supply a result-specific RefreshAt; zero or less means fetch once and
-// keep forever. Cutoff is a constraint, not a default: no refresh is ever
-// scheduled past it, and a retrieval at or after it freezes the data.
-type RefreshPolicy struct {
-	Frequency time.Duration
-	Cutoff    time.Time
-}
-
-// Retrieved couples retrieved data with an optional upstream-provided
-// refresh time. A zero RefreshAt means "not supplied".
-type Retrieved[T any] struct {
+// Result couples retrieved data with its next refresh time. A zero
+// RefreshAt means the data should never be refreshed again.
+type Result[T any] struct {
 	Data      T
 	RefreshAt time.Time
 }
 
 // DataShortcode is a shortcode whose output is derived from data retrieved
-// from an external source. Retrieved data is cached in the shortcode_data
+// from an external source. Result data is cached in the shortcode_data
 // table; T must round-trip through JSON.
 type DataShortcode[T any] interface {
-	Retrieve(ctx context.Context, args []string) (Retrieved[T], error)
-	RefreshPolicy(args []string) RefreshPolicy
+	Retrieve(ctx context.Context, args []string) (Result[T], error)
 	Render(args []string, data T, ctx *Context) (string, error)
 }
 
 // dataRegistration is the type-erased form of a registered DataShortcode.
-// Retrieved data crosses the erasure boundary as JSON.
+// Result data crosses the erasure boundary as JSON.
 type dataRegistration struct {
 	version  int
 	retrieve func(ctx context.Context, args []string) (dataJSON []byte, refreshAt time.Time, err error)
-	policy   func(args []string) RefreshPolicy
 	render   func(args []string, dataJSON []byte, ctx *Context) (string, error)
 }
 
@@ -71,7 +59,6 @@ const (
 func RegisterData[T any](m *Manager, name string, version int, impl DataShortcode[T]) {
 	reg := dataRegistration{
 		version: version,
-		policy:  impl.RefreshPolicy,
 		retrieve: func(ctx context.Context, args []string) ([]byte, time.Time, error) {
 			retrieved, err := impl.Retrieve(ctx, args)
 			if err != nil {
@@ -160,8 +147,8 @@ func (m *Manager) fetchData(ctx context.Context, name string, reg dataRegistrati
 		// Negative-cache the failure: repeated renders fail fast against
 		// the stored row instead of re-hitting the upstream, and the
 		// refresher retries after fetchRetryDelay. Existing data is left
-		// untouched. The retry delay deliberately ignores the policy
-		// cutoff: with no data there is nothing to freeze.
+		// untouched. Failed retrieves never supply a final refresh time:
+		// with no data there is nothing to freeze.
 		next := retrievedAt.Add(fetchRetryDelay)
 		if upsertErr := upsertShortcodeDataFailure(ctx, name, reg.version, argsHash, argsJSON, retrievedAt, &next); upsertErr != nil {
 			return nil, errors.Join(err, upsertErr)
@@ -169,7 +156,10 @@ func (m *Manager) fetchData(ctx context.Context, name string, reg dataRegistrati
 		return nil, err
 	}
 
-	next := nextRefresh(retrievedAt, refreshAt, reg.policy(args))
+	var next *time.Time
+	if !refreshAt.IsZero() {
+		next = &refreshAt
+	}
 	if err := upsertShortcodeData(ctx, name, reg.version, argsHash, argsJSON, dataJSON, retrievedAt, next); err != nil {
 		return nil, err
 	}
@@ -177,28 +167,19 @@ func (m *Manager) fetchData(ctx context.Context, name string, reg dataRegistrati
 	return dataJSON, nil
 }
 
-// nextRefresh computes when data retrieved at retrievedAt should next be
-// refreshed, or nil for "never". A result-specific refreshAt overrides the
-// policy's default frequency outright; a future cutoff clamps the schedule
-// and acts as a final refresh boundary.
-func nextRefresh(retrievedAt time.Time, refreshAt time.Time, policy RefreshPolicy) *time.Time {
-	if policy.Frequency <= 0 {
-		return nil
-	}
-	if !policy.Cutoff.IsZero() && !retrievedAt.Before(policy.Cutoff) {
-		return nil
+// NextRefresh returns the next refresh time after interval, optionally
+// clamped to cutoff. It returns zero once cutoff has been reached.
+func NextRefresh(interval time.Duration, cutoff time.Time) time.Time {
+	now := time.Now()
+	if interval <= 0 || (!cutoff.IsZero() && !now.Before(cutoff)) {
+		return time.Time{}
 	}
 
-	var next time.Time
-	if !refreshAt.IsZero() && refreshAt.After(retrievedAt) {
-		next = refreshAt
-	} else {
-		next = retrievedAt.Add(policy.Frequency)
+	next := now.Add(interval)
+	if !cutoff.IsZero() && next.After(cutoff) {
+		return cutoff
 	}
-	if !policy.Cutoff.IsZero() && next.After(policy.Cutoff) {
-		next = policy.Cutoff
-	}
-	return &next
+	return next
 }
 
 // hashArgs produces the cache key hash for a set of shortcode arguments.

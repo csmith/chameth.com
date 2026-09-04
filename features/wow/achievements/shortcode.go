@@ -43,15 +43,15 @@ func parseArgs(args []string) (int, error) {
 }
 
 // Retrieve fetches the account's recent achievements, newest first.
-func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Retrieved[[]Achievement], error) {
+func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[[]Achievement], error) {
 	limit, err := parseArgs(args)
 	if err != nil {
-		return shortcodes.Retrieved[[]Achievement]{}, err
+		return shortcodes.Result[[]Achievement]{}, err
 	}
 
 	recent, err := wow.RecentAchievements(ctx, s.ts.HTTPClient(), limit)
 	if err != nil {
-		return shortcodes.Retrieved[[]Achievement]{}, fmt.Errorf("failed to fetch achievements: %w", err)
+		return shortcodes.Result[[]Achievement]{}, fmt.Errorf("failed to fetch achievements: %w", err)
 	}
 
 	achievements := make([]Achievement, len(recent))
@@ -63,13 +63,10 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 		}
 	}
 
-	return shortcodes.Retrieved[[]Achievement]{Data: achievements}, nil
-}
-
-// RefreshPolicy refreshes every refreshFrequency, forever: the list always
-// has the potential to change.
-func (s *dataShortcode) RefreshPolicy([]string) shortcodes.RefreshPolicy {
-	return shortcodes.RefreshPolicy{Frequency: refreshFrequency}
+	return shortcodes.Result[[]Achievement]{
+		Data:      achievements,
+		RefreshAt: shortcodes.NextRefresh(refreshFrequency, time.Time{}),
+	}, nil
 }
 
 // Render builds the achievement list from the cached achievements.

@@ -52,33 +52,25 @@ content is identical to a regular shortcode.
 
 ```go
 type DataShortcode[T any] interface {
-    Retrieve(ctx context.Context, args []string) (Retrieved[T], error)
-    RefreshPolicy(args []string) RefreshPolicy
+    Retrieve(ctx context.Context, args []string) (Result[T], error)
     Render(args []string, data T, ctx *Context) (string, error)
 }
 ```
 
-After a successful retrieval, the next refresh is computed from the
-policy:
+`Result.RefreshAt` is the exact time the data should next be refreshed;
+a zero value freezes it (`next_refresh_at` is NULL). `NextRefresh` helps
+compute a time from a refresh interval and optional cutoff, clamping the
+last scheduled refresh to the cutoff and returning zero once it has passed.
 
-- `Frequency <= 0`: never refreshed again (fetch once, keep forever).
-- A retrieval at/after `Cutoff`: frozen (`next_refresh_at` is NULL).
-- Otherwise: `Retrieved.RefreshAt` if the result supplies one (and it is
-  in the future), else `retrieved_at + Frequency`. A future `Cutoff`
-  clamps the schedule, acting as a final refresh boundary.
+Rendering never blocks on refresh: with data present the shortcode renders
+from cache, due rows are refreshed by a background goroutine every 5 minutes,
+and only the first-ever render of a key retrieves synchronously. A failed
+retrieval is negative-cached: the row stores no data, further renders fail
+fast with the standard shortcode error (no network calls), and the refresher
+retries it every 5 minutes. Existing data is never overwritten by a failed
+fetch.
 
-`RefreshAt` overrides `Frequency` — `Frequency` is a default, not a cap,
-so an upstream "valid for 24h" is never shortened by a smaller
-`Frequency`. Rendering never blocks on refresh: with data present the
-shortcode renders from cache, due rows are refreshed by a background
-goroutine every 5 minutes, and only the first-ever render of a key
-retrieves synchronously. A failed retrieval is negative-cached: the row
-stores no data, further renders fail fast with the standard shortcode
-error (no network calls), and the refresher retries it every 5 minutes.
-Existing data is never overwritten by a failed fetch.
-
-`next_refresh_at` is runtime cache state; the policy lives in code. If
-the data shape or policy semantics change, bump `version` so existing
+If the data shape or refresh semantics change, bump `version` so existing
 rows are ignored. Rows for old/unregistered `(name, version)` pairs are
 intentionally left in place.
 

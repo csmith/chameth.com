@@ -56,22 +56,22 @@ func parseArgs(args []string) (start, end time.Time, err error) {
 
 // Retrieve fetches the window's play counts. The API orders games by play
 // count descending, then name.
-func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Retrieved[[]entry], error) {
+func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[[]entry], error) {
 	startDate, endDate, err := parseArgs(args)
 	if err != nil {
-		return shortcodes.Retrieved[[]entry]{}, err
+		return shortcodes.Result[[]entry]{}, err
 	}
 
 	client := s.ts.HTTPClient()
 	games, err := boardgames.PlayCounts(ctx, client,
 		startDate.Format("2006-01-02"), endDate.AddDate(0, 0, 1).Format("2006-01-02"))
 	if err != nil {
-		return shortcodes.Retrieved[[]entry]{}, fmt.Errorf("failed to fetch play counts: %w", err)
+		return shortcodes.Result[[]entry]{}, fmt.Errorf("failed to fetch play counts: %w", err)
 	}
 
 	images, err := boardgames.EnsureImages(ctx, client, games)
 	if err != nil {
-		return shortcodes.Retrieved[[]entry]{}, fmt.Errorf("failed to rehost box art: %w", err)
+		return shortcodes.Result[[]entry]{}, fmt.Errorf("failed to rehost box art: %w", err)
 	}
 
 	entries := make([]entry, 0, len(games))
@@ -89,18 +89,10 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 		entries = append(entries, e)
 	}
 
-	return shortcodes.Retrieved[[]entry]{Data: entries}, nil
-}
-
-// RefreshPolicy refreshes every refreshFrequency, stopping one day past
-// the end of the window (the end date plus the whole following day), so
-// late-logged plays still show up before the data freezes.
-func (s *dataShortcode) RefreshPolicy(args []string) shortcodes.RefreshPolicy {
-	policy := shortcodes.RefreshPolicy{Frequency: refreshFrequency}
-	if _, end, err := parseArgs(args); err == nil {
-		policy.Cutoff = end.AddDate(0, 0, 2)
-	}
-	return policy
+	return shortcodes.Result[[]entry]{
+		Data:      entries,
+		RefreshAt: shortcodes.NextRefresh(refreshFrequency, endDate.AddDate(0, 0, 2)),
+	}, nil
 }
 
 // Render builds the grid from the cached entries.

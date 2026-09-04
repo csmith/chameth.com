@@ -44,10 +44,10 @@ func parseArgs(args []string) (realm, name string, at time.Time, err error) {
 
 // Retrieve fetches the character's data as of the requested moment,
 // rehosting the portrait alongside it.
-func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Retrieved[Data], error) {
+func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[Data], error) {
 	realm, name, at, err := parseArgs(args)
 	if err != nil {
-		return shortcodes.Retrieved[Data]{}, err
+		return shortcodes.Result[Data]{}, err
 	}
 
 	client := s.ts.HTTPClient()
@@ -59,29 +59,21 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 
 	c, err := wow.GetCharacter(ctx, client, realm, name, atParam)
 	if err != nil {
-		return shortcodes.Retrieved[Data]{}, fmt.Errorf("failed to fetch character: %w", err)
+		return shortcodes.Result[Data]{}, fmt.Errorf("failed to fetch character: %w", err)
 	}
 	if c.Profile == nil {
-		return shortcodes.Retrieved[Data]{}, fmt.Errorf("character %s-%s has no profile data", name, realm)
+		return shortcodes.Result[Data]{}, fmt.Errorf("character %s-%s has no profile data", name, realm)
 	}
 
 	imagePath, err := ensurePortrait(ctx, client, c, at)
 	if err != nil {
-		return shortcodes.Retrieved[Data]{}, fmt.Errorf("failed to rehost portrait: %w", err)
+		return shortcodes.Result[Data]{}, fmt.Errorf("failed to rehost portrait: %w", err)
 	}
 
-	return shortcodes.Retrieved[Data]{Data: buildData(c, imagePath)}, nil
-}
-
-// RefreshPolicy refreshes every refreshFrequency. A dated request stops
-// refreshing once its moment has passed: the service's answer for a past
-// date can no longer change.
-func (s *dataShortcode) RefreshPolicy(args []string) shortcodes.RefreshPolicy {
-	policy := shortcodes.RefreshPolicy{Frequency: refreshFrequency}
-	if _, _, at, err := parseArgs(args); err == nil && !at.IsZero() {
-		policy.Cutoff = at
-	}
-	return policy
+	return shortcodes.Result[Data]{
+		Data:      buildData(c, imagePath),
+		RefreshAt: shortcodes.NextRefresh(refreshFrequency, at),
+	}, nil
 }
 
 // Render builds the character card from the cached data.
