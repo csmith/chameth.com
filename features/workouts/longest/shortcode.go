@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"chameth.com/chameth.com/external/pompeiband"
 	"chameth.com/chameth.com/features/shortcodes"
+	"chameth.com/chameth.com/features/workouts"
 	"tailscale.com/tsnet"
 )
 
@@ -39,7 +39,7 @@ type runShortcode struct {
 // when an activity carries no split), so walking breaks inside a run
 // don't win the record.
 func (s *runShortcode) Retrieve(ctx context.Context, _ []string) (shortcodes.Retrieved[*record], error) {
-	longest, err := pompeiband.NewClient(s.ts.HTTPClient()).DistanceRecord(ctx, "run", "", "")
+	longest, err := workouts.GetDistanceRecord(ctx, s.ts.HTTPClient(), "run", "", "")
 	if err != nil {
 		return shortcodes.Retrieved[*record]{}, fmt.Errorf("failed to fetch distance record: %w", err)
 	}
@@ -72,7 +72,7 @@ type cycleShortcode struct {
 }
 
 func (s *cycleShortcode) Retrieve(ctx context.Context, _ []string) (shortcodes.Retrieved[*record], error) {
-	longest, err := pompeiband.NewClient(s.ts.HTTPClient()).DistanceRecord(ctx, "cycle", "", "")
+	longest, err := workouts.GetDistanceRecord(ctx, s.ts.HTTPClient(), "cycle", "", "")
 	if err != nil {
 		return shortcodes.Retrieved[*record]{}, fmt.Errorf("failed to fetch distance record: %w", err)
 	}

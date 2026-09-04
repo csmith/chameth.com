@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"chameth.com/chameth.com/external/pompeiband"
 	"chameth.com/chameth.com/features/shortcodes"
+	"chameth.com/chameth.com/features/workouts"
 	"tailscale.com/tsnet"
 )
 
@@ -41,7 +41,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 		return shortcodes.Retrieved[[]record]{}, err
 	}
 
-	pbs, err := pompeiband.NewClient(s.ts.HTTPClient()).PBs(ctx, group)
+	pbs, err := workouts.PBs(ctx, s.ts.HTTPClient(), group)
 	if err != nil {
 		return shortcodes.Retrieved[[]record]{}, fmt.Errorf("failed to fetch PBs: %w", err)
 	}

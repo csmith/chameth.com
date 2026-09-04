@@ -10,11 +10,12 @@ import (
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
+	"net/http"
 	"time"
 
 	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/external/ogrestream"
 	"chameth.com/chameth.com/features/media"
+	"chameth.com/chameth.com/features/wow"
 )
 
 // ensurePortrait rehosts the character's portrait and returns the local
@@ -22,7 +23,7 @@ import (
 // the path it has always been served from and is updated in place; a
 // historical portrait is stored once at a path derived from its content
 // hash, so dated renders never disturb the live image.
-func ensurePortrait(ctx context.Context, client *ogrestream.Client, c *ogrestream.Character, at time.Time) (string, error) {
+func ensurePortrait(ctx context.Context, client *http.Client, c *wow.Character, at time.Time) (string, error) {
 	if c.Portrait == nil || c.Portrait.Path == "" {
 		return "", fmt.Errorf("character has no portrait")
 	}
@@ -50,11 +51,11 @@ func historicalPortraitPath(sha256 string) string {
 
 // ensureLivePortrait updates the character's live portrait in place,
 // storing it first if it doesn't exist yet.
-func ensureLivePortrait(ctx context.Context, client *ogrestream.Client, c *ogrestream.Character) (string, error) {
+func ensureLivePortrait(ctx context.Context, client *http.Client, c *wow.Character) (string, error) {
 	path := livePortraitPath(c.Profile.Name)
 	filename := fmt.Sprintf("%s.png", c.Profile.Name)
 
-	data, contentType, err := client.Image(ctx, c.Portrait.Path)
+	data, contentType, err := wow.FetchImage(ctx, client, c.Portrait.Path)
 	if err != nil {
 		return "", fmt.Errorf("failed to download portrait: %w", err)
 	}
@@ -79,7 +80,7 @@ func ensureLivePortrait(ctx context.Context, client *ogrestream.Client, c *ogres
 
 // ensureHistoricalPortrait stores a historical portrait once at its
 // content-addressed path; an existing copy is left alone.
-func ensureHistoricalPortrait(ctx context.Context, client *ogrestream.Client, c *ogrestream.Character) (string, error) {
+func ensureHistoricalPortrait(ctx context.Context, client *http.Client, c *wow.Character) (string, error) {
 	path := historicalPortraitPath(c.Portrait.Sha256)
 
 	_, err := mediaIDAtPath(ctx, path)
@@ -90,7 +91,7 @@ func ensureHistoricalPortrait(ctx context.Context, client *ogrestream.Client, c 
 		return "", fmt.Errorf("failed to look up portrait: %w", err)
 	}
 
-	data, contentType, err := client.Image(ctx, c.Portrait.Path)
+	data, contentType, err := wow.FetchImage(ctx, client, c.Portrait.Path)
 	if err != nil {
 		return "", fmt.Errorf("failed to download portrait: %w", err)
 	}

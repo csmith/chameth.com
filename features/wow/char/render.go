@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"chameth.com/chameth.com/external/ogrestream"
+	"chameth.com/chameth.com/features/wow"
 )
 
 //go:embed *.gotpl
@@ -23,7 +23,7 @@ var tmpl = template.Must(template.New("char.html.gotpl").Parse(templates))
 const fishingProfessionID = 794
 
 // buildData maps the API response onto the cached render model.
-func buildData(c *ogrestream.Character, imagePath string) Data {
+func buildData(c *wow.Character, imagePath string) Data {
 	p := c.Profile
 
 	data := Data{
@@ -56,7 +56,7 @@ func buildData(c *ogrestream.Character, imagePath string) Data {
 
 // buildProfessions collapses the tiers to each profession's current one,
 // primaries before secondaries, each alphabetically.
-func buildProfessions(professions []ogrestream.Profession) []Profession {
+func buildProfessions(professions []wow.Profession) []Profession {
 	var built []Profession
 	indexes := make(map[int]int)
 
@@ -95,8 +95,8 @@ func buildProfessions(professions []ogrestream.Profession) []Profession {
 // can appear twice — its best timed and best untimed attempt — and only
 // the highest-rated one is displayed, ordered by dungeon name as the
 // local table used to serve them.
-func buildMythicPlus(mp *ogrestream.MythicPlus) *MythicPlusData {
-	best := make(map[int]ogrestream.MythicRun, len(mp.Runs))
+func buildMythicPlus(mp *wow.MythicPlus) *MythicPlusData {
+	best := make(map[int]wow.MythicRun, len(mp.Runs))
 	for _, r := range mp.Runs {
 		current, ok := best[r.DungeonID]
 		if !ok || r.Rating > current.Rating || (r.Rating == current.Rating && r.InTime && !current.InTime) {

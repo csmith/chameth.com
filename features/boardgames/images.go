@@ -3,8 +3,7 @@ package boardgames
 import (
 	"context"
 	"log/slog"
-
-	"chameth.com/chameth.com/external/magicmeters"
+	"net/http"
 )
 
 // EnsureImages makes sure every game with remote art has a local rehosted
@@ -16,7 +15,7 @@ import (
 // art until the next refresh. Concurrent retrieves of the same missing art
 // may both download it — storing is idempotent, so they converge on one
 // copy.
-func EnsureImages(ctx context.Context, client *magicmeters.Client, games []magicmeters.Game) (map[int]string, error) {
+func EnsureImages(ctx context.Context, client *http.Client, games []Game) (map[int]string, error) {
 	existing, err := rehostedImagePaths(ctx)
 	if err != nil {
 		return nil, err
@@ -46,8 +45,8 @@ func EnsureImages(ctx context.Context, client *magicmeters.Client, games []magic
 
 // rehostImage downloads a game's box art from Magic Meters and stores an
 // unmodified copy in the media table.
-func rehostImage(ctx context.Context, client *magicmeters.Client, g magicmeters.Game) error {
-	data, contentType, err := client.Image(ctx, g.ID)
+func rehostImage(ctx context.Context, client *http.Client, g Game) error {
+	data, contentType, err := fetchImage(ctx, client, g.ID)
 	if err != nil {
 		slog.Error("Failed to fetch boardgame image", "game", g.Name, "id", g.ID, "error", err)
 		return err

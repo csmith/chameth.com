@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"chameth.com/chameth.com/external/ogrestream"
 	"chameth.com/chameth.com/features/shortcodes"
+	"chameth.com/chameth.com/features/wow"
 	"tailscale.com/tsnet"
 )
 
@@ -49,9 +49,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 		return shortcodes.Retrieved[[]Achievement]{}, err
 	}
 
-	client := ogrestream.NewClient(s.ts.HTTPClient())
-
-	recent, err := client.Achievements(ctx, limit)
+	recent, err := wow.RecentAchievements(ctx, s.ts.HTTPClient(), limit)
 	if err != nil {
 		return shortcodes.Retrieved[[]Achievement]{}, fmt.Errorf("failed to fetch achievements: %w", err)
 	}

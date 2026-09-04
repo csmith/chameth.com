@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"chameth.com/chameth.com/external/ogrestream"
 	"chameth.com/chameth.com/features/shortcodes"
+	"chameth.com/chameth.com/features/wow"
 	"tailscale.com/tsnet"
 )
 
@@ -50,14 +50,14 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 		return shortcodes.Retrieved[Data]{}, err
 	}
 
-	client := ogrestream.NewClient(s.ts.HTTPClient())
+	client := s.ts.HTTPClient()
 
 	atParam := ""
 	if !at.IsZero() {
 		atParam = at.Format("2006-01-02")
 	}
 
-	c, err := client.Character(ctx, realm, name, atParam)
+	c, err := wow.GetCharacter(ctx, client, realm, name, atParam)
 	if err != nil {
 		return shortcodes.Retrieved[Data]{}, fmt.Errorf("failed to fetch character: %w", err)
 	}

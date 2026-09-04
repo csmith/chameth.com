@@ -1,17 +1,23 @@
-package ogrestream
+package wow
 
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
+	"log/slog"
+	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 )
 
-// Character is a tracked WoW character with the newest snapshot of each
-// dataset as of the requested moment. A section is omitted from the
-// response when there is no data of that kind yet.
+const ogreStreamBaseURL = "https://os.yak-wall.ts.net"
+
+var errNotFound = errors.New("not found")
+
 type Character struct {
 	Game        string       `json:"game"`
 	Realm       string       `json:"realm"`
@@ -71,52 +77,43 @@ type MythicRun struct {
 	Rating        float64   `json:"rating"`
 }
 
-// Portrait is the character's render. Portraits are immutable and
-// cacheable forever, identified by the SHA-256 of their bytes; Path is
-// where the image can be fetched from.
 type Portrait struct {
 	Sha256 string `json:"sha256"`
 	Path   string `json:"path"`
 }
 
-// Achievement is one achievement completion for the account. A completion
-// shared by several characters appears once, at its earliest completion.
 type Achievement struct {
 	ID          int       `json:"id"`
 	Name        string    `json:"name"`
 	CompletedAt time.Time `json:"completed_at"`
 }
 
-// Character fetches a tracked character, optionally as of a past moment:
-// at is an RFC3339 timestamp or a bare YYYY-MM-DD (empty means now).
-func (c *Client) Character(ctx context.Context, realm, name, at string) (*Character, error) {
+func GetCharacter(ctx context.Context, client *http.Client, realm, name, at string) (*Character, error) {
 	query := url.Values{}
 	if at != "" {
 		query.Set("at", at)
 	}
 
 	path := "/api/wow/characters/" + url.PathEscape(realm) + "/" + url.PathEscape(name)
-	b, _, err := c.get(ctx, path, query)
+	body, _, err := ogreStreamGet(ctx, client, path, query)
 	if err != nil {
 		return nil, err
 	}
 
 	var character Character
-	if err := json.Unmarshal(b, &character); err != nil {
+	if err := json.Unmarshal(body, &character); err != nil {
 		return nil, fmt.Errorf("failed to decode character: %w", err)
 	}
 	return &character, nil
 }
 
-// Achievements fetches the account's recent achievement completions,
-// newest first, across every tracked character.
-func (c *Client) Achievements(ctx context.Context, limit int) ([]Achievement, error) {
+func RecentAchievements(ctx context.Context, client *http.Client, limit int) ([]Achievement, error) {
 	query := url.Values{}
 	if limit > 0 {
 		query.Set("limit", strconv.Itoa(limit))
 	}
 
-	b, _, err := c.get(ctx, "/api/wow/achievements", query)
+	body, _, err := ogreStreamGet(ctx, client, "/api/wow/achievements", query)
 	if err != nil {
 		return nil, err
 	}
@@ -124,17 +121,48 @@ func (c *Client) Achievements(ctx context.Context, limit int) ([]Achievement, er
 	var res struct {
 		Achievements []Achievement `json:"achievements"`
 	}
-	if err := json.Unmarshal(b, &res); err != nil {
+	if err := json.Unmarshal(body, &res); err != nil {
 		return nil, fmt.Errorf("failed to decode achievements: %w", err)
 	}
 	return res.Achievements, nil
 }
 
-// Image fetches an asset served by the API — e.g. a portrait's path — as-is.
-func (c *Client) Image(ctx context.Context, path string) ([]byte, string, error) {
-	b, headers, err := c.get(ctx, path, nil)
+func FetchImage(ctx context.Context, client *http.Client, path string) ([]byte, string, error) {
+	body, headers, err := ogreStreamGet(ctx, client, path, nil)
 	if err != nil {
 		return nil, "", err
 	}
-	return b, headers.Get("Content-Type"), nil
+	return body, headers.Get("Content-Type"), nil
+}
+
+func ogreStreamGet(ctx context.Context, client *http.Client, path string, query url.Values) ([]byte, http.Header, error) {
+	u := strings.TrimRight(ogreStreamBaseURL, "/") + path
+	if len(query) > 0 {
+		u += "?" + query.Encode()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to build request: %w", err)
+	}
+
+	res, err := client.Do(req)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to fetch %s: %w", path, err)
+	}
+	defer res.Body.Close()
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to read %s response: %w", path, err)
+	}
+
+	if res.StatusCode == http.StatusNotFound {
+		return nil, nil, errNotFound
+	}
+	if res.StatusCode >= 400 {
+		slog.Warn("Ogre Stream request failed", "path", path, "status", res.StatusCode, "response", string(body))
+		return nil, nil, fmt.Errorf("bad status code: %d", res.StatusCode)
+	}
+	return body, res.Header, nil
 }

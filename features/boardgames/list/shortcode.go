@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"chameth.com/chameth.com/external/magicmeters"
 	"chameth.com/chameth.com/features/boardgames"
 	"chameth.com/chameth.com/features/shortcodes"
 	"tailscale.com/tsnet"
@@ -40,9 +39,8 @@ type entry struct {
 // count descending, then name, which becomes the list's position
 // numbering.
 func (s *dataShortcode) Retrieve(ctx context.Context, _ []string) (shortcodes.Retrieved[[]entry], error) {
-	client := magicmeters.NewClient(s.ts.HTTPClient())
-
-	games, err := client.PlayCounts(ctx, "", "")
+	client := s.ts.HTTPClient()
+	games, err := boardgames.PlayCounts(ctx, client, "", "")
 	if err != nil {
 		return shortcodes.Retrieved[[]entry]{}, fmt.Errorf("failed to fetch play counts: %w", err)
 	}

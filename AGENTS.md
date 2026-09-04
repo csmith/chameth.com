@@ -91,7 +91,7 @@ must use the `.public.css` and `.public.js` extensions respectively.
 
 ### Configuration and secrets
 
-External URLs, usernames, passwords, etc should be defined as flags.
+Usernames, passwords, and other secrets should be defined as flags.
 Flags should be defined close to where they're used, but hoisted to
 keep packages reusable where it makes sense. e.g. the
 `external/atproto` package takes configuration, and the flags are

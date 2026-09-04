@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"chameth.com/chameth.com/external/pompeiband"
 	"chameth.com/chameth.com/features/shortcodes"
+	"chameth.com/chameth.com/features/workouts"
 	"tailscale.com/tsnet"
 )
 
@@ -87,8 +87,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 		return shortcodes.Retrieved[[]dayEntry]{}, err
 	}
 
-	client := pompeiband.NewClient(s.ts.HTTPClient())
-	days, err := client.ActivityDays(ctx,
+	days, err := workouts.ActivityDays(ctx, s.ts.HTTPClient(),
 		w.start.Format("2006-01-02"), w.end.AddDate(0, 0, 1).Format("2006-01-02"), "")
 	if err != nil {
 		return shortcodes.Retrieved[[]dayEntry]{}, fmt.Errorf("failed to fetch activity days: %w", err)

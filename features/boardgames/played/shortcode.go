@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"chameth.com/chameth.com/external/magicmeters"
 	"chameth.com/chameth.com/features/boardgames"
 	"chameth.com/chameth.com/features/shortcodes"
 	"tailscale.com/tsnet"
@@ -63,9 +62,8 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 		return shortcodes.Retrieved[[]entry]{}, err
 	}
 
-	client := magicmeters.NewClient(s.ts.HTTPClient())
-
-	games, err := client.PlayCounts(ctx,
+	client := s.ts.HTTPClient()
+	games, err := boardgames.PlayCounts(ctx, client,
 		startDate.Format("2006-01-02"), endDate.AddDate(0, 0, 1).Format("2006-01-02"))
 	if err != nil {
 		return shortcodes.Retrieved[[]entry]{}, fmt.Errorf("failed to fetch play counts: %w", err)

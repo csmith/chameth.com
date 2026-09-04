@@ -6,8 +6,8 @@ import (
 	"sort"
 	"time"
 
-	"chameth.com/chameth.com/external/pompeiband"
 	"chameth.com/chameth.com/features/shortcodes"
+	"chameth.com/chameth.com/features/workouts"
 	"tailscale.com/tsnet"
 )
 
@@ -87,11 +87,11 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 
 	start := startDate.Format("2006-01-02")
 	endExclusive := endDate.AddDate(0, 0, 1).Format("2006-01-02")
-	client := pompeiband.NewClient(s.ts.HTTPClient())
+	client := s.ts.HTTPClient()
 
 	var d data
 
-	groups, err := client.ActivitySummary(ctx, start, endExclusive, "")
+	groups, err := workouts.ActivitySummary(ctx, client, start, endExclusive, "")
 	if err != nil {
 		return shortcodes.Retrieved[data]{}, fmt.Errorf("failed to fetch activity summary: %w", err)
 	}
@@ -114,7 +114,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 		}
 	}
 
-	longestCycle, err := client.DistanceRecord(ctx, "cycle", start, endExclusive)
+	longestCycle, err := workouts.GetDistanceRecord(ctx, client, "cycle", start, endExclusive)
 	if err != nil {
 		return shortcodes.Retrieved[data]{}, fmt.Errorf("failed to fetch longest ride: %w", err)
 	}
@@ -122,7 +122,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 		d.LongestCycle = &record{DistanceM: longestCycle.DistanceM, StartTime: longestCycle.StartTime}
 	}
 
-	longestRun, err := client.DistanceRecord(ctx, "run", start, endExclusive)
+	longestRun, err := workouts.GetDistanceRecord(ctx, client, "run", start, endExclusive)
 	if err != nil {
 		return shortcodes.Retrieved[data]{}, fmt.Errorf("failed to fetch longest run: %w", err)
 	}
@@ -133,7 +133,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 		d.LongestRun = &record{DistanceM: longestRun.RankingDistanceM(), StartTime: longestRun.StartTime}
 	}
 
-	events, err := client.PBEvents(ctx, start, endExclusive)
+	events, err := workouts.PBEvents(ctx, client, start, endExclusive)
 	if err != nil {
 		return shortcodes.Retrieved[data]{}, fmt.Errorf("failed to fetch PB events: %w", err)
 	}
@@ -148,7 +148,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 // the record that stood before the period began, even if the record was
 // beaten several times since). Events arrive chronological; only the
 // cycle and run groups are reported, as before.
-func fastestPBs(events []pompeiband.PBEvent) []pb {
+func fastestPBs(events []workouts.PBEvent) []pb {
 	byKey := map[string]map[float64]*pb{}
 	for _, e := range events {
 		if e.Group != "cycle" && e.Group != "run" {
