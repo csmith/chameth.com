@@ -3,6 +3,7 @@ package calendar
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"time"
 
 	"chameth.com/chameth.com/features/shortcodes"
@@ -10,14 +11,20 @@ import (
 	"tailscale.com/tsnet"
 )
 
-const refreshFrequency = 6 * time.Hour
+const (
+	shortcodeVersion = 1
+	refreshFrequency = 6 * time.Hour
+)
 
 func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
-	shortcodes.RegisterData(mgr, "workoutcalendar", 1, &dataShortcode{ts: ts})
-}
-
-type dataShortcode struct {
-	ts *tsnet.Server
+	mgr.RegisterData(
+		"workoutcalendar",
+		shortcodeVersion,
+		func(ctx context.Context, args []string) (shortcodes.Result[[]dayEntry], error) {
+			return retrieve(ctx, ts.HTTPClient(), args)
+		},
+		render,
+	)
 }
 
 type dayEntry struct {
@@ -66,13 +73,13 @@ func parseWindow(args []string) (window, error) {
 	return w, nil
 }
 
-func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[[]dayEntry], error) {
+func retrieve(ctx context.Context, client *http.Client, args []string) (shortcodes.Result[[]dayEntry], error) {
 	w, err := parseWindow(args)
 	if err != nil {
 		return shortcodes.Result[[]dayEntry]{}, err
 	}
 
-	days, err := workouts.ActivityDays(ctx, s.ts.HTTPClient(),
+	days, err := workouts.ActivityDays(ctx, client,
 		w.start.Format("2006-01-02"), w.end.AddDate(0, 0, 1).Format("2006-01-02"), "")
 	if err != nil {
 		return shortcodes.Result[[]dayEntry]{}, fmt.Errorf("failed to fetch activity days: %w", err)
@@ -106,7 +113,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 	}, nil
 }
 
-func (s *dataShortcode) Render(args []string, entries []dayEntry, _ *shortcodes.Context) (string, error) {
+func render(args []string, entries []dayEntry, _ *shortcodes.Context) (string, error) {
 	w, err := parseWindow(args)
 	if err != nil {
 		return "", err

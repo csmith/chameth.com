@@ -3,6 +3,7 @@ package summary
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"sort"
 	"time"
 
@@ -11,14 +12,20 @@ import (
 	"tailscale.com/tsnet"
 )
 
-const refreshFrequency = 6 * time.Hour
+const (
+	shortcodeVersion = 1
+	refreshFrequency = 6 * time.Hour
+)
 
 func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
-	shortcodes.RegisterData(mgr, "workoutsummary", 1, &dataShortcode{ts: ts})
-}
-
-type dataShortcode struct {
-	ts *tsnet.Server
+	mgr.RegisterData(
+		"workoutsummary",
+		shortcodeVersion,
+		func(ctx context.Context, args []string) (shortcodes.Result[data], error) {
+			return retrieve(ctx, ts.HTTPClient(), args)
+		},
+		render,
+	)
 }
 
 type record struct {
@@ -63,7 +70,7 @@ func parseArgs(args []string) (start, end time.Time, err error) {
 	return start, end, nil
 }
 
-func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[data], error) {
+func retrieve(ctx context.Context, client *http.Client, args []string) (shortcodes.Result[data], error) {
 	startDate, endDate, err := parseArgs(args)
 	if err != nil {
 		return shortcodes.Result[data]{}, err
@@ -71,8 +78,6 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 
 	start := startDate.Format("2006-01-02")
 	endExclusive := endDate.AddDate(0, 0, 1).Format("2006-01-02")
-	client := s.ts.HTTPClient()
-
 	var d data
 
 	groups, err := workouts.ActivitySummary(ctx, client, start, endExclusive, "")
@@ -168,7 +173,7 @@ func fastestPBs(events []workouts.PBEvent) []pb {
 	return result
 }
 
-func (s *dataShortcode) Render(args []string, d data, _ *shortcodes.Context) (string, error) {
+func render(args []string, d data, _ *shortcodes.Context) (string, error) {
 	startDate, endDate, err := parseArgs(args)
 	if err != nil {
 		return "", err

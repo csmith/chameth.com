@@ -3,6 +3,7 @@ package achievements
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -11,14 +12,20 @@ import (
 	"tailscale.com/tsnet"
 )
 
-const refreshFrequency = 4 * time.Hour
+const (
+	shortcodeVersion = 1
+	refreshFrequency = 4 * time.Hour
+)
 
 func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
-	shortcodes.RegisterData(mgr, "wowachievements", 1, &dataShortcode{ts: ts})
-}
-
-type dataShortcode struct {
-	ts *tsnet.Server
+	mgr.RegisterData(
+		"wowachievements",
+		shortcodeVersion,
+		func(ctx context.Context, args []string) (shortcodes.Result[[]Achievement], error) {
+			return retrieve(ctx, ts.HTTPClient(), args)
+		},
+		render,
+	)
 }
 
 func parseArgs(args []string) (int, error) {
@@ -36,13 +43,13 @@ func parseArgs(args []string) (int, error) {
 	return limit, nil
 }
 
-func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[[]Achievement], error) {
+func retrieve(ctx context.Context, client *http.Client, args []string) (shortcodes.Result[[]Achievement], error) {
 	limit, err := parseArgs(args)
 	if err != nil {
 		return shortcodes.Result[[]Achievement]{}, err
 	}
 
-	recent, err := wow.RecentAchievements(ctx, s.ts.HTTPClient(), limit)
+	recent, err := wow.RecentAchievements(ctx, client, limit)
 	if err != nil {
 		return shortcodes.Result[[]Achievement]{}, fmt.Errorf("failed to fetch achievements: %w", err)
 	}
@@ -62,6 +69,6 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 	}, nil
 }
 
-func (s *dataShortcode) Render(_ []string, achievements []Achievement, _ *shortcodes.Context) (string, error) {
+func render(_ []string, achievements []Achievement, _ *shortcodes.Context) (string, error) {
 	return renderTemplate(Data{Achievements: achievements})
 }

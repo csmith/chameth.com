@@ -3,6 +3,7 @@ package char
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"time"
 
 	"chameth.com/chameth.com/features/shortcodes"
@@ -10,14 +11,20 @@ import (
 	"tailscale.com/tsnet"
 )
 
-const refreshFrequency = 4 * time.Hour
+const (
+	shortcodeVersion = 1
+	refreshFrequency = 4 * time.Hour
+)
 
 func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
-	shortcodes.RegisterData(mgr, "wowchar", 1, &dataShortcode{ts: ts})
-}
-
-type dataShortcode struct {
-	ts *tsnet.Server
+	mgr.RegisterData(
+		"wowchar",
+		shortcodeVersion,
+		func(ctx context.Context, args []string) (shortcodes.Result[Data], error) {
+			return retrieve(ctx, ts.HTTPClient(), args)
+		},
+		render,
+	)
 }
 
 func parseArgs(args []string) (realm, name string, at time.Time, err error) {
@@ -36,13 +43,11 @@ func parseArgs(args []string) (realm, name string, at time.Time, err error) {
 	return realm, name, at, nil
 }
 
-func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[Data], error) {
+func retrieve(ctx context.Context, client *http.Client, args []string) (shortcodes.Result[Data], error) {
 	realm, name, at, err := parseArgs(args)
 	if err != nil {
 		return shortcodes.Result[Data]{}, err
 	}
-
-	client := s.ts.HTTPClient()
 
 	atParam := ""
 	if !at.IsZero() {
@@ -68,6 +73,6 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 	}, nil
 }
 
-func (s *dataShortcode) Render(_ []string, data Data, _ *shortcodes.Context) (string, error) {
+func render(_ []string, data Data, _ *shortcodes.Context) (string, error) {
 	return renderTemplate(data)
 }

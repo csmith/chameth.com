@@ -59,20 +59,18 @@ func PasteHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderPaste(w, templates.PasteData{
-		Content:  renderedContent,
-		Language: paste.Language,
-		Size:     len(paste.Content),
-		ArticleData: parenttemplates.ArticleData{
-			ArticleTitle:   paste.Title,
-			ArticleSummary: paste.Content,
-			ArticleDate: parenttemplates.ArticleDate{
-				Iso:         paste.Date.Format("2006-01-02"),
-				Friendly:    paste.Date.Format("Jan 2, 2006"),
-				ShowWarning: false,
-			},
-			EditLink: fmt.Sprintf("%s/pastes/edit/%d", parenttemplates.AdminURL(), paste.ID),
-			PageData: content.CreatePageData(r.Context(), paste.Title, paste.Path, parenttemplates.OpenGraphHeaders{}),
+		Content:        renderedContent,
+		Language:       paste.Language,
+		Size:           len(paste.Content),
+		ArticleTitle:   paste.Title,
+		ArticleSummary: paste.Content,
+		ArticleDate: parenttemplates.ArticleDate{
+			Iso:         paste.Date.Format("2006-01-02"),
+			Friendly:    paste.Date.Format("Jan 2, 2006"),
+			ShowWarning: false,
 		},
+		EditLink: fmt.Sprintf("%s/pastes/edit/%d", parenttemplates.AdminURL(), paste.ID),
+		PageData: content.CreatePageData(r.Context(), paste.Title, paste.Path, parenttemplates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render paste template", "error", err, "path", r.URL.Path)

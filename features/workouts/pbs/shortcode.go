@@ -3,6 +3,7 @@ package pbs
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
@@ -11,14 +12,20 @@ import (
 	"tailscale.com/tsnet"
 )
 
-const refreshFrequency = 6 * time.Hour
+const (
+	shortcodeVersion = 1
+	refreshFrequency = 6 * time.Hour
+)
 
 func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
-	shortcodes.RegisterData(mgr, "workoutpbs", 1, &dataShortcode{ts: ts})
-}
-
-type dataShortcode struct {
-	ts *tsnet.Server
+	mgr.RegisterData(
+		"workoutpbs",
+		shortcodeVersion,
+		func(ctx context.Context, args []string) (shortcodes.Result[[]record], error) {
+			return retrieve(ctx, ts.HTTPClient(), args)
+		},
+		render,
+	)
 }
 
 type record struct {
@@ -28,13 +35,13 @@ type record struct {
 	Date       string  `json:"date"`
 }
 
-func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[[]record], error) {
+func retrieve(ctx context.Context, client *http.Client, args []string) (shortcodes.Result[[]record], error) {
 	group, _, err := parseActivity(args)
 	if err != nil {
 		return shortcodes.Result[[]record]{}, err
 	}
 
-	pbs, err := workouts.PBs(ctx, s.ts.HTTPClient(), group)
+	pbs, err := workouts.PBs(ctx, client, group)
 	if err != nil {
 		return shortcodes.Result[[]record]{}, fmt.Errorf("failed to fetch PBs: %w", err)
 	}
@@ -54,7 +61,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 	}, nil
 }
 
-func (s *dataShortcode) Render(args []string, records []record, _ *shortcodes.Context) (string, error) {
+func render(args []string, records []record, _ *shortcodes.Context) (string, error) {
 	_, label, err := parseActivity(args)
 	if err != nil {
 		return "", err

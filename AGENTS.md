@@ -42,20 +42,16 @@ stylesheet served by the site.
 #### Cached data shortcodes
 
 Shortcodes that derive their output from data fetched from an external
-source (e.g. a personal service or a social network) should implement
-`DataShortcode[T]` (in `features/shortcodes/data.go`) and register via
-`shortcodes.RegisterData(mgr, name, version, impl)`. The framework
+source (e.g. a personal service or a social network) should register their
+retrieve and render functions via `mgr.RegisterData(name, version, retrieve,
+render)`. The framework
 caches the retrieved response in the `shortcode_data` table, keyed by
 `(shortcode, version, sha256(json.Marshal(args)))`, so the site stores
 just the service's answer rather than the upstream data model. Usage in
 content is identical to a regular shortcode.
 
-```go
-type DataShortcode[T any] interface {
-    Retrieve(ctx context.Context, args []string) (Result[T], error)
-    Render(args []string, data T, ctx *Context) (string, error)
-}
-```
+The retrieve function returns `Result[T]`; the render function receives the
+cached `T`. The data type must round-trip through JSON.
 
 `Result.RefreshAt` is the exact time the data should next be refreshed;
 a zero value freezes it (`next_refresh_at` is NULL). `NextRefresh` helps
@@ -70,9 +66,10 @@ fast with the standard shortcode error (no network calls), and the refresher
 retries it every 5 minutes. Existing data is never overwritten by a failed
 fetch.
 
-If the data shape or refresh semantics change, bump `version` so existing
-rows are ignored. Rows for old/unregistered `(name, version)` pairs are
-intentionally left in place.
+Define the version as a named constant in the shortcode's `shortcode.go` file.
+If the data shape or refresh semantics change, bump it so existing rows are
+ignored. Rows for old/unregistered `(name, version)` pairs are intentionally
+left in place.
 
 ### CSS
 

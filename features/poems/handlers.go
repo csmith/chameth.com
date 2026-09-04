@@ -35,19 +35,17 @@ func PoemHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
 	err = templates.RenderPoem(w, templates.PoemData{
-		Poem:     strings.Split(poem.Poem, "\n"),
-		Comments: renderedComments,
-		ArticleData: parenttemplates.ArticleData{
-			ArticleTitle:   poem.Title,
-			ArticleSummary: poem.Poem,
-			ArticleDate: parenttemplates.ArticleDate{
-				Iso:         poem.Date.Format("2006-01-02"),
-				Friendly:    poem.Date.Format("Jan 2, 2006"),
-				ShowWarning: false,
-			},
-			EditLink: fmt.Sprintf("%s/poems/edit/%d", parenttemplates.AdminURL(), poem.ID),
-			PageData: content.CreatePageData(r.Context(), poem.Title, poem.Path, parenttemplates.OpenGraphHeaders{}),
+		Poem:           strings.Split(poem.Poem, "\n"),
+		Comments:       renderedComments,
+		ArticleTitle:   poem.Title,
+		ArticleSummary: poem.Poem,
+		ArticleDate: parenttemplates.ArticleDate{
+			Iso:         poem.Date.Format("2006-01-02"),
+			Friendly:    poem.Date.Format("Jan 2, 2006"),
+			ShowWarning: false,
 		},
+		EditLink: fmt.Sprintf("%s/poems/edit/%d", parenttemplates.AdminURL(), poem.ID),
+		PageData: content.CreatePageData(r.Context(), poem.Title, poem.Path, parenttemplates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render poem template", "error", err, "path", r.URL.Path)

@@ -18,14 +18,6 @@ type Result[T any] struct {
 	RefreshAt time.Time
 }
 
-// DataShortcode is a shortcode whose output is derived from data retrieved
-// from an external source. Result data is cached in the shortcode_data
-// table; T must round-trip through JSON.
-type DataShortcode[T any] interface {
-	Retrieve(ctx context.Context, args []string) (Result[T], error)
-	Render(args []string, data T, ctx *Context) (string, error)
-}
-
 type dataRegistration struct {
 	version  int
 	retrieve func(ctx context.Context, args []string) (dataJSON []byte, refreshAt time.Time, err error)
@@ -41,14 +33,17 @@ const (
 	retrieveTimeout = time.Minute
 )
 
-// RegisterData registers impl as a cached data shortcode. Usage in content
-// is identical to a regular shortcode; the framework retrieves and caches
-// the data behind the render.
-func RegisterData[T any](m *Manager, name string, version int, impl DataShortcode[T]) {
+// RegisterData registers a shortcode backed by cached retrieved data.
+func (m *Manager) RegisterData[T any](
+	name string,
+	version int,
+	retrieve func(context.Context, []string) (Result[T], error),
+	render func([]string, T, *Context) (string, error),
+) {
 	reg := dataRegistration{
 		version: version,
 		retrieve: func(ctx context.Context, args []string) ([]byte, time.Time, error) {
-			retrieved, err := impl.Retrieve(ctx, args)
+			retrieved, err := retrieve(ctx, args)
 			if err != nil {
 				return nil, time.Time{}, err
 			}
@@ -63,7 +58,7 @@ func RegisterData[T any](m *Manager, name string, version int, impl DataShortcod
 			if err := json.Unmarshal(dataJSON, &data); err != nil {
 				return "", err
 			}
-			return impl.Render(args, data, ctx)
+			return render(args, data, ctx)
 		},
 	}
 

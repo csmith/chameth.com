@@ -3,6 +3,7 @@ package played
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"time"
 
 	"chameth.com/chameth.com/features/boardgames"
@@ -10,14 +11,20 @@ import (
 	"tailscale.com/tsnet"
 )
 
-const refreshFrequency = 6 * time.Hour
+const (
+	shortcodeVersion = 1
+	refreshFrequency = 6 * time.Hour
+)
 
 func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
-	shortcodes.RegisterData(mgr, "playedbgs", 1, &dataShortcode{ts: ts})
-}
-
-type dataShortcode struct {
-	ts *tsnet.Server
+	mgr.RegisterData(
+		"playedbgs",
+		shortcodeVersion,
+		func(ctx context.Context, args []string) (shortcodes.Result[[]entry], error) {
+			return retrieve(ctx, ts.HTTPClient(), args)
+		},
+		render,
+	)
 }
 
 type entry struct {
@@ -45,13 +52,12 @@ func parseArgs(args []string) (start, end time.Time, err error) {
 	return start, end, nil
 }
 
-func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes.Result[[]entry], error) {
+func retrieve(ctx context.Context, client *http.Client, args []string) (shortcodes.Result[[]entry], error) {
 	startDate, endDate, err := parseArgs(args)
 	if err != nil {
 		return shortcodes.Result[[]entry]{}, err
 	}
 
-	client := s.ts.HTTPClient()
 	games, err := boardgames.PlayCounts(ctx, client,
 		startDate.Format("2006-01-02"), endDate.AddDate(0, 0, 1).Format("2006-01-02"))
 	if err != nil {
@@ -84,7 +90,7 @@ func (s *dataShortcode) Retrieve(ctx context.Context, args []string) (shortcodes
 	}, nil
 }
 
-func (s *dataShortcode) Render(_ []string, entries []entry, _ *shortcodes.Context) (string, error) {
+func render(_ []string, entries []entry, _ *shortcodes.Context) (string, error) {
 	games := make([]Game, len(entries))
 	for i, e := range entries {
 		games[i] = Game(e)
