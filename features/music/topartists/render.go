@@ -3,9 +3,7 @@ package topartists
 import (
 	"bytes"
 	"embed"
-	"fmt"
 	"html/template"
-	"strconv"
 
 	"chameth.com/chameth.com/features/shortcodes"
 )
@@ -15,39 +13,8 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("topartists.html.gotpl").ParseFS(templates, "topartists.html.gotpl"))
 
-func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
-	limit := 0
-	if len(args) >= 1 {
-		n, err := strconv.Atoi(args[0])
-		if err != nil {
-			return "", fmt.Errorf("invalid topartists limit: %s", args[0])
-		}
-		limit = n
-	}
-
-	artists, err := query(ctx, limit)
-	if err != nil {
-		return "", fmt.Errorf("failed to get top artists: %w", err)
-	}
-
-	items := make([]Artist, len(artists))
-	for i, a := range artists {
-		imagePath := ""
-		if a.ImagePath != nil {
-			imagePath = *a.ImagePath
-		}
-
-		items[i] = Artist{
-			Position:   i + 1,
-			Name:       a.Name,
-			TrackCount: a.TrackCount,
-			AlbumCount: a.AlbumCount,
-			PlayCount:  a.PlayCount,
-			ImagePath:  imagePath,
-		}
-	}
-
-	return renderTemplate(Data{Artists: items})
+func render(_ []string, artists []Artist, _ *shortcodes.Context) (string, error) {
+	return renderTemplate(Data{Artists: artists})
 }
 
 func renderTemplate(data Data) (string, error) {

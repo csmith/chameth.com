@@ -30,7 +30,6 @@ import (
 	featuresMediaLabelledfigure "chameth.com/chameth.com/features/media/labelledfigure"
 	featuresMediaVideo "chameth.com/chameth.com/features/media/video"
 	featuresMetrics "chameth.com/chameth.com/features/metrics"
-	featuresMusic "chameth.com/chameth.com/features/music"
 	featuresMusicNewalbums "chameth.com/chameth.com/features/music/newalbums"
 	featuresMusicNowplaying "chameth.com/chameth.com/features/music/nowplaying"
 	featuresMusicPlayedalbums "chameth.com/chameth.com/features/music/playedalbums"
@@ -104,11 +103,11 @@ func (s *site) registerShortcodes() {
 	featuresMediaFigure.RegisterShortcodes(s.Shortcodes)
 	featuresMediaLabelledfigure.RegisterShortcodes(s.Shortcodes)
 	featuresMediaVideo.RegisterShortcodes(s.Shortcodes)
-	featuresMusicNewalbums.RegisterShortcodes(s.Shortcodes)
-	featuresMusicNowplaying.RegisterShortcodes(s.Shortcodes)
-	featuresMusicPlayedalbums.RegisterShortcodes(s.Shortcodes)
-	featuresMusicTopalbums.RegisterShortcodes(s.Shortcodes)
-	featuresMusicTopartists.RegisterShortcodes(s.Shortcodes)
+	featuresMusicNewalbums.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresMusicNowplaying.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresMusicPlayedalbums.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresMusicTopalbums.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresMusicTopartists.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresNodForm.RegisterShortcodes(s.Shortcodes)
 	featuresPostsLink.RegisterShortcodes(s.Shortcodes)
 	featuresPostsRecent.RegisterShortcodes(s.Shortcodes)
@@ -163,7 +162,6 @@ func (s *site) registerRoutes() {
 func (s *site) launchGoroutines() {
 	go featuresAdmin.RegisterGoroutine(s.Tailscale, s.Routes)()
 	go featuresMetrics.RegisterGoroutine()()
-	go featuresMusic.RegisterGoroutine(s.Context, s.Tailscale)()
 	go featuresPosts.RegisterGoroutine(s.Context)()
 	go featuresShortcodes.RegisterGoroutine(s.Shortcodes, s.Context)()
 	go featuresSyndications.RegisterGoroutine(s.Context)()

@@ -15,32 +15,24 @@ var templates string
 
 var tmpl = template.Must(template.New("nowplaying.html.gotpl").Parse(templates))
 
-func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
-	np, err := query(ctx)
-	if err != nil {
-		return "", fmt.Errorf("failed to get now playing: %w", err)
+func render(_ []string, c *cached, _ *shortcodes.Context) (string, error) {
+	if c == nil {
+		// Nothing has been played yet.
+		return "", nil
 	}
-
-	imagePath := ""
-	if np.ImagePath != nil {
-		imagePath = *np.ImagePath
-	}
-
-	status := fmt.Sprintf("Scrobbled %s ago", formatDuration(time.Since(np.PlayedAt)))
 
 	return renderTemplate(Data{
-		ArtistName: np.ArtistName,
-		TrackName:  np.TrackName,
-		AlbumName:  np.AlbumName,
-		ImagePath:  imagePath,
-		Status:     status,
+		ArtistName: c.ArtistName,
+		TrackName:  c.TrackName,
+		AlbumName:  c.AlbumName,
+		ImagePath:  c.ImagePath,
+		Status:     fmt.Sprintf("Scrobbled %s ago", formatDuration(time.Since(c.PlayedAt))),
 	})
 }
 
 func renderTemplate(data Data) (string, error) {
 	buf := &bytes.Buffer{}
-	err := tmpl.Execute(buf, data)
-	if err != nil {
+	if err := tmpl.Execute(buf, data); err != nil {
 		return "", err
 	}
 	return buf.String(), nil

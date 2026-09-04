@@ -1,22 +1,16 @@
 package topartists
 
-type topArtist struct {
-	Name       string  `db:"name"`
-	TrackCount int     `db:"track_count"`
-	AlbumCount int     `db:"album_count"`
-	PlayCount  int     `db:"play_count"`
-	ImagePath  *string `db:"image_path"`
-}
-
+// Artist is one cached row of the all-time artist ranking.
 type Artist struct {
-	Position   int
-	Name       string
-	TrackCount int
-	AlbumCount int
-	PlayCount  int
-	ImagePath  string
+	Position   int    `json:"position"`
+	Name       string `json:"name"`
+	TrackCount int    `json:"track_count"`
+	AlbumCount int    `json:"album_count"`
+	PlayCount  int    `json:"play_count"`
+	ImagePath  string `json:"image_path"`
 }
 
+// Data is the view model for the topartists shortcode.
 type Data struct {
 	Artists []Artist
 }
