@@ -5,6 +5,7 @@ package main
 
 import (
 	assets "chameth.com/chameth.com/assets"
+	externalMaxmind "chameth.com/chameth.com/external/maxmind"
 	features "chameth.com/chameth.com/features"
 	featuresAdmin "chameth.com/chameth.com/features/admin"
 	featuresBoardgamesList "chameth.com/chameth.com/features/boardgames/list"
@@ -158,8 +159,9 @@ func (s *site) registerRoutes() {
 }
 
 func (s *site) launchGoroutines() {
+	go externalMaxmind.RegisterGoroutine(s.Context)()
 	go featuresAdmin.RegisterGoroutine(s.Tailscale, s.Routes)()
-	go featuresMetrics.RegisterGoroutine()()
+	go featuresMetrics.RegisterGoroutine(s.Context)()
 	go featuresPosts.RegisterGoroutine(s.Context)()
 	go featuresShortcodes.RegisterGoroutine(s.Shortcodes, s.Context)()
 	go featuresSyndications.RegisterGoroutine(s.Context)()

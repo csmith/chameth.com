@@ -85,6 +85,7 @@ func main() {
 		Handler: middleware.Chain(
 			middleware.WithMiddleware(
 				middleware.RealAddress(),
+				metrics.LogRequests(),
 				middleware.CrossOriginProtection(),
 				middleware.ErrorHandler(
 					middleware.WithErrorHandler(http.StatusNotFound, http.HandlerFunc(errorpages.NotFound)),

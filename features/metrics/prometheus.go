@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -13,8 +14,10 @@ var (
 	metricsPort = flag.Int("metrics-port", 9090, "Port to serve Prometheus metrics on (0 to disable)")
 )
 
-func RegisterGoroutine() func() {
+func RegisterGoroutine(ctx context.Context) func() {
 	return func() {
+		startRequestLogPersister(ctx)
+
 		if *metricsPort == 0 {
 			slog.Info("Metrics server disabled")
 			return

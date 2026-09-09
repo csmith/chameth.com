@@ -46,7 +46,8 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			requestId := generator.Generate()
-			startRequest(requestId)
+			start := time.Now()
+			startRequestAt(requestId, start)
 
 			writer := &StatsResponseWriter{
 				ResponseWriter: w,
@@ -78,11 +79,11 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 	}
 }
 
-func startRequest(requestId string) {
+func startRequestAt(requestId string, start time.Time) {
 	inFlightRequestsMu.Lock()
 	defer inFlightRequestsMu.Unlock()
 	inFlightRequests[requestId] = &request{
-		start: time.Now(),
+		start: start,
 	}
 }
 
@@ -148,11 +149,15 @@ func (w *StatsResponseWriter) WriteHeader(statusCode int) {
 	w.ResponseWriter.WriteHeader(statusCode)
 }
 
-func (w *StatsResponseWriter) statusCode() string {
+func (w *StatsResponseWriter) status() int {
 	if w.code == 0 {
-		return "200"
+		return http.StatusOK
 	}
-	return strconv.Itoa(w.code)
+	return w.code
+}
+
+func (w *StatsResponseWriter) statusCode() string {
+	return strconv.Itoa(w.status())
 }
 
 // Flush implements http.Flusher so that non-buffered responses can stream.
