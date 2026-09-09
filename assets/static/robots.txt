@@ -2,4 +2,6 @@ Sitemap: https://chameth.com/sitemap.xml
 
 User-agent: *
 Disallow: /*.stl
+Disallow: /*.step
 Disallow: /paste/
+Disallow: /feeds/posts/build/
