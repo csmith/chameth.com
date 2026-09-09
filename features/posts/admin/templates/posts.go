@@ -17,6 +17,7 @@ type PostSummary struct {
 	Title string
 	Path  string
 	Date  string
+	Words int
 }
 
 type EditPostData struct {

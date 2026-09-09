@@ -26,7 +26,37 @@ func RegisterRoutes(rm *routing.Manager) {
 		Edit:   crud.Edit("post", posts.GetPostByID, toEditData, templates.RenderEditPost),
 		Update: crud.Update("post", "/posts", applyUpdate),
 	})
+	rm.Admin.HandleFunc("POST /posts/delete/{id}", DeletePostHandler())
 	rm.Admin.HandleFunc("POST /posts/generate-wordcloud/{id}", GenerateWordcloudHandler())
+}
+
+func DeletePostHandler() func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.Atoi(r.PathValue("id"))
+		if err != nil {
+			http.Error(w, "Invalid post ID", http.StatusBadRequest)
+			return
+		}
+
+		post, err := posts.GetPostByID(r.Context(), id)
+		if err != nil {
+			http.Error(w, "Post not found", http.StatusNotFound)
+			return
+		}
+
+		if post.Published {
+			http.Error(w, "Cannot delete published post", http.StatusBadRequest)
+			return
+		}
+
+		if err := posts.DeletePost(r.Context(), id); err != nil {
+			slog.Error("Failed to delete post", "error", err, "id", id)
+			http.Error(w, "Failed to delete post", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/posts", http.StatusSeeOther)
+	}
 }
 
 func toSummary(post posts.PostMetadata) templates.PostSummary {
@@ -35,6 +65,7 @@ func toSummary(post posts.PostMetadata) templates.PostSummary {
 		Title: post.Title,
 		Path:  post.Path,
 		Date:  post.Date.Format("2006-01-02"),
+		Words: post.Words,
 	}
 }
 

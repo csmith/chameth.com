@@ -13,6 +13,7 @@
                 <th>Title</th>
                 <th>Path</th>
                 <th>Date</th>
+                <th>Words</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -23,7 +24,13 @@
                 <td>{{.Title}}</td>
                 <td>{{.Path}}</td>
                 <td>{{.Date}}</td>
-                <td><a href="/posts/edit/{{.ID}}">Edit</a></td>
+                <td>{{.Words}}</td>
+                <td>
+                    <a href="/posts/edit/{{.ID}}">Edit</a>
+                    <form method="POST" action="/posts/delete/{{.ID}}" style="display:inline" onsubmit="return confirm('Delete this draft?')">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
             </tr>
             {{end}}
         </tbody>
@@ -38,6 +45,7 @@
                 <th>Title</th>
                 <th>Path</th>
                 <th>Date</th>
+                <th>Words</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -48,6 +56,7 @@
                 <td>{{.Title}}</td>
                 <td>{{.Path}}</td>
                 <td>{{.Date}}</td>
+                <td>{{.Words}}</td>
                 <td><a href="/posts/edit/{{.ID}}">Edit</a></td>
             </tr>
             {{end}}

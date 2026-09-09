@@ -7,12 +7,16 @@ import (
 	"chameth.com/chameth.com/db"
 )
 
+// roughWordCount is an approximate count of whitespace-separated words,
+// good enough for display in the admin list of posts.
+const roughWordCount = "(SELECT count(*) FROM regexp_matches(content, '\\S+', 'g'))"
+
 func GetAllPosts(ctx context.Context) ([]PostMetadata, error) {
-	return db.Select[PostMetadata](ctx, "SELECT id, path, title, date, format, published FROM posts WHERE published = true ORDER BY date DESC")
+	return db.Select[PostMetadata](ctx, "SELECT id, path, title, date, format, published, "+roughWordCount+" AS words FROM posts WHERE published = true ORDER BY date DESC")
 }
 
 func GetDraftPosts(ctx context.Context) ([]PostMetadata, error) {
-	return db.Select[PostMetadata](ctx, "SELECT id, path, title, date, format, published FROM posts WHERE published = false ORDER BY date DESC")
+	return db.Select[PostMetadata](ctx, "SELECT id, path, title, date, format, published, "+roughWordCount+" AS words FROM posts WHERE published = false ORDER BY date DESC")
 }
 
 func GetPostByID(ctx context.Context, id int) (*Post, error) {
@@ -49,6 +53,14 @@ func UpdatePost(ctx context.Context, id int, path, title, content, date, format 
 	`, path, title, content, date, format, published, id)
 	if err != nil {
 		return fmt.Errorf("failed to update post: %w", err)
+	}
+	return nil
+}
+
+func DeletePost(ctx context.Context, id int) error {
+	_, err := db.Exec(ctx, "DELETE FROM posts WHERE id = $1 AND published = false", id)
+	if err != nil {
+		return fmt.Errorf("failed to delete post: %w", err)
 	}
 	return nil
 }

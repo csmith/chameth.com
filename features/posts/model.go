@@ -9,6 +9,7 @@ type PostMetadata struct {
 	Date      time.Time `db:"date"`
 	Format    string    `db:"format"`
 	Published bool      `db:"published"`
+	Words     int       `db:"words"`
 }
 
 type Post struct {
