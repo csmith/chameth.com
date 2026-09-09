@@ -3,24 +3,6 @@ module chameth.com/chameth.com
 go 1.27
 
 require (
-	github.com/alecthomas/chroma/v2 v2.27.0
-	github.com/anthonynsimon/bild v0.17.0
-	github.com/csmith/aca v1.2.0
-	github.com/csmith/envflag/v2 v2.0.0
-	github.com/csmith/middleware v1.3.0
-	github.com/csmith/slogflags v1.2.0
-	github.com/golang-migrate/migrate/v4 v4.19.1
-	github.com/jmoiron/sqlx v1.4.0
-	github.com/lib/pq v1.12.3 // indirect
-	github.com/pgvector/pgvector-go v0.4.1
-	github.com/yuin/goldmark v1.8.5
-	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
-	golang.org/x/image v0.45.0
-	golang.org/x/net v0.57.0
-	tailscale.com v1.102.2
-)
-
-require (
 	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/akutz/memconn v0.1.0 // indirect
 	github.com/alexbrainman/sspi v0.0.0-20231016080023-1a75b4708caa // indirect
@@ -45,6 +27,7 @@ require (
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jsimonetti/rtnetlink v1.4.1 // indirect
 	github.com/klauspost/compress v1.19.1 // indirect
+	github.com/lib/pq v1.12.3 // indirect
 	github.com/mdlayher/netlink v1.7.3-0.20250113171957-fbb4dce95f42 // indirect
 	github.com/mdlayher/socket v0.5.0 // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
@@ -63,7 +46,7 @@ require (
 	github.com/x448/float16 v0.8.4 // indirect
 	go4.org/mem v0.0.0-20240501181205-ae6ca9944745 // indirect
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba // indirect
-	golang.org/x/crypto v0.54.0 // indirect
+	golang.org/x/crypto v0.55.0 // indirect
 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
 	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sync v0.22.0 // indirect
@@ -77,8 +60,22 @@ require (
 )
 
 require (
+	github.com/alecthomas/chroma/v2 v2.27.0
+	github.com/anthonynsimon/bild v0.17.0
+	github.com/csmith/aca v1.2.0
+	github.com/csmith/envflag/v2 v2.0.0
+	github.com/csmith/middleware v1.3.0
+	github.com/csmith/slogflags v1.2.0
+	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/jackc/pgx/v5 v5.10.0
+	github.com/jmoiron/sqlx v1.4.0
 	github.com/kljensen/snowball v0.10.0
+	github.com/pgvector/pgvector-go v0.4.1
 	github.com/prometheus/client_golang v1.24.1
+	github.com/yuin/goldmark v1.8.5
+	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
+	golang.org/x/image v0.45.0
+	golang.org/x/net v0.58.0
 	golang.org/x/text v0.41.0
+	tailscale.com v1.102.2
 )
