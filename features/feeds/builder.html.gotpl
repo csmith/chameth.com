@@ -16,7 +16,11 @@
         </span>
         <span class="feed-builder-actions">
             {{ range .Actions }}
-                <a rel="nofollow" href="{{.Url}}">{{.Label}}</a>
+                <form method="post" action="">
+                    <input type="hidden" name="action" value="{{.Action}}">
+                    <input type="hidden" name="slug" value="{{.Slug}}">
+                    <button type="submit">{{.Label}}</button>
+                </form>
             {{ end }}
         </span>
     </li>

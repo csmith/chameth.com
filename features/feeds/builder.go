@@ -56,8 +56,9 @@ type builderPost struct {
 }
 
 type builderAction struct {
-	Label string
-	Url   string
+	Label  string
+	Action string
+	Slug   string
 }
 
 func handleRelatedPostsBuilder(w http.ResponseWriter, r *http.Request) {
@@ -106,6 +107,57 @@ func handleRelatedPostsBuilder(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("Failed to render feed builder template", "error", err)
 	}
+}
+
+// Actions accepted by handleRelatedPostsBuilderAction, matching the
+// "action" form field submitted by the builder page's controls.
+const (
+	builderActionInclude       = "include"
+	builderActionExclude       = "exclude"
+	builderActionRemoveInclude = "remove-include"
+	builderActionRemoveExclude = "remove-exclude"
+)
+
+// handleRelatedPostsBuilderAction applies an include/exclude action POSTed
+// from the builder page and redirects to the canonical URL for the resulting
+// selection, which is then rendered by the GET handler. The current selection
+// comes from the URL path, so no database access is needed here.
+func handleRelatedPostsBuilderAction(w http.ResponseWriter, r *http.Request) {
+	likes, unlikes, ok := parseRelatedFeedParams(strings.TrimPrefix(r.URL.Path, builderFeedPrefix))
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+
+	slug := r.PostFormValue("slug")
+	if !relatedFeedSlugRegex.MatchString(slug) {
+		http.Error(w, "Invalid slug", http.StatusBadRequest)
+		return
+	}
+
+	switch r.PostFormValue("action") {
+	case builderActionInclude:
+		if len(likes) >= maxFeedSlugs {
+			http.Error(w, "Slug limit reached", http.StatusBadRequest)
+			return
+		}
+		likes = withSlug(likes, slug)
+	case builderActionExclude:
+		if len(unlikes) >= maxFeedSlugs {
+			http.Error(w, "Slug limit reached", http.StatusBadRequest)
+			return
+		}
+		unlikes = withSlug(unlikes, slug)
+	case builderActionRemoveInclude:
+		likes = withoutSlug(likes, slug)
+	case builderActionRemoveExclude:
+		unlikes = withoutSlug(unlikes, slug)
+	default:
+		http.Error(w, "Invalid action", http.StatusBadRequest)
+		return
+	}
+
+	http.Redirect(w, r, builderPath(likes, unlikes), http.StatusSeeOther)
 }
 
 // builderSections splits every published post into the builder's two
@@ -167,10 +219,13 @@ func builderSections(allPosts []posts.PostMetadata, included []posts.Post, likes
 	return result
 }
 
-// builderActions returns the links that add/remove a post's slug to/from the
-// like and unlike lists. Seeded posts get only the link that removes them
-// from the list they are in; unseeded posts get links to add them to either
-// list. Posts whose path cannot be expressed as a feed slug get no actions.
+// builderActions returns the actions that add/remove a post's slug to/from
+// the like and unlike lists. Each action is a label plus the action/slug
+// pair POSTed back to the current builder URL; the POST handler redirects to
+// the canonical URL for the new selection. Seeded posts get only the action
+// that removes them from the list they are in; unseeded posts get actions to
+// add them to either list. Posts whose path cannot be expressed as a feed
+// slug get no actions.
 func builderActions(path string, likes, unlikes []string) []builderAction {
 	slug := strings.Trim(path, "/")
 	if !relatedFeedSlugRegex.MatchString(slug) {
@@ -180,28 +235,32 @@ func builderActions(path string, likes, unlikes []string) []builderAction {
 	// Normalisation guarantees a slug is never in both lists.
 	if slices.Contains(likes, slug) {
 		return []builderAction{{
-			Label: "Don't include posts like this",
-			Url:   builderPath(withoutSlug(likes, slug), unlikes),
+			Label:  "Don't include posts like this",
+			Action: builderActionRemoveInclude,
+			Slug:   slug,
 		}}
 	}
 	if slices.Contains(unlikes, slug) {
 		return []builderAction{{
-			Label: "Don't exclude posts like this",
-			Url:   builderPath(likes, withoutSlug(unlikes, slug)),
+			Label:  "Don't exclude posts like this",
+			Action: builderActionRemoveExclude,
+			Slug:   slug,
 		}}
 	}
 
 	var actions []builderAction
 	if len(likes) < maxFeedSlugs {
 		actions = append(actions, builderAction{
-			Label: "Include posts like this",
-			Url:   builderPath(withSlug(likes, slug), unlikes),
+			Label:  "Include posts like this",
+			Action: builderActionInclude,
+			Slug:   slug,
 		})
 	}
 	if len(unlikes) < maxFeedSlugs {
 		actions = append(actions, builderAction{
-			Label: "Exclude posts like this",
-			Url:   builderPath(likes, withSlug(unlikes, slug)),
+			Label:  "Exclude posts like this",
+			Action: builderActionExclude,
+			Slug:   slug,
 		})
 	}
 	return actions

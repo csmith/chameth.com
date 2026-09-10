@@ -12,5 +12,6 @@ func RegisterRoutes(rm *routing.Manager) {
 	rm.Public.HandleFunc("GET /snippets/feed.xml", handleSnippets)
 	rm.Public.HandleFunc("GET /films/reviews/feed.xml", handleFilmReviews)
 	rm.Public.HandleFunc("GET /feeds/posts/build/", handleRelatedPostsBuilder)
+	rm.Public.HandleFunc("POST /feeds/posts/build/", handleRelatedPostsBuilderAction)
 	rm.Public.HandleFunc("GET /feeds/posts/", handleRelatedPostsFeed)
 }
