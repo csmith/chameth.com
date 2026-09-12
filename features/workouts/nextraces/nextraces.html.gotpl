@@ -1,0 +1,2 @@
+{{/* gotype: chameth.com/chameth.com/features/workouts/nextraces.Data*/}}
+<div class="next-races">{{ range .Countdowns }}{{ . }}{{ end }}</div>

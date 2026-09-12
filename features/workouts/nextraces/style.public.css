@@ -1,0 +1,14 @@
+/* A row of countdown boxes, one per upcoming race distance. The boxes
+   are the shared countdown shortcode; the row only lays them out. */
+.next-races {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+    gap: var(--small-space);
+    margin: var(--smedium-space) 0;
+
+    aside.countdown {
+        margin: 0;
+    }
+}
