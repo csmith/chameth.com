@@ -20,8 +20,8 @@ const (
 	centralParkBaseURL = "https://cp.yak-wall.ts.net"
 	refreshFrequency   = 12 * time.Hour
 
-	parkrunstatsVersion = 1
-	parkrunsVersion     = 1
+	parkrunstatsVersion = 2
+	parkrunsVersion     = 2
 )
 
 func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
@@ -52,9 +52,11 @@ type bestRun struct {
 }
 
 type statsData struct {
-	Total  int      `json:"total"`
-	Venues int      `json:"venues"`
-	Best   *bestRun `json:"best"`
+	Total       int      `json:"total"`
+	Venues      int      `json:"venues"`
+	Best        *bestRun `json:"best"`
+	LatestDate  string   `json:"latest_date"`
+	LatestVenue string   `json:"latest_venue"`
 }
 
 func retrieveStats(ctx context.Context, client *http.Client, _ []string) (shortcodes.Result[statsData], error) {
@@ -64,6 +66,12 @@ func retrieveStats(ctx context.Context, client *http.Client, _ []string) (shortc
 	}
 
 	d := statsData{Total: res.Total, Venues: res.Venues}
+	for _, run := range res.Runs {
+		if run.Date >= d.LatestDate {
+			d.LatestDate = run.Date
+			d.LatestVenue = run.Location
+		}
+	}
 	if res.Best != nil {
 		d.Best = &bestRun{Time: res.Best.Time, Date: res.Best.Date, Location: res.Best.Location}
 	}
@@ -79,6 +87,7 @@ func retrieveStats(ctx context.Context, client *http.Client, _ []string) (shortc
 type runRecord struct {
 	Date       string `json:"date"`
 	Name       string `json:"name"`
+	Location   string `json:"location"`
 	GunTime    string `json:"gun_time"`
 	ChipTime   string `json:"chip_time"`
 	PosOverall *int   `json:"rank_overall"`

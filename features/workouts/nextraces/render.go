@@ -75,6 +75,13 @@ func nextPerDistance(races []race, now time.Time) []race {
 }
 
 func formatDistanceKm(km float64) string {
+	switch km {
+	case 21.1:
+		return "half-marathon"
+	case 42.2:
+		return "marathon"
+	}
+
 	s := strconv.FormatFloat(km, 'f', 1, 64)
 	return strings.TrimSuffix(s, ".0") + "k"
 }

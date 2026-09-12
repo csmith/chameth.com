@@ -29,6 +29,12 @@ func renderStats(_ []string, d statsData, _ *shortcodes.Context) (string, error)
 		Venues: Box{Title: "Total venues", Value: strconv.Itoa(d.Venues)},
 		Best:   best,
 	}
+	if d.LatestDate != "" {
+		data.Total.Detail = "Most recent: " + formatDate(d.LatestDate)
+	}
+	if d.LatestVenue != "" {
+		data.Venues.Detail = "Most recent: " + d.LatestVenue
+	}
 	return renderTemplate(statsTmpl, data)
 }
 
