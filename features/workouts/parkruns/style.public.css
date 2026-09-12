@@ -1,0 +1,63 @@
+/* Parkrun stats and table. The stats row lays its raised boxes out in a
+   line, wrapping to stack them on narrow screens. The table skips the
+   site's default boxed table styling (the raised box already provides
+   the box); row separators and right-aligned numeric columns are styled
+   here. Cell padding is zeroed so the table lines up with the box
+   padding. */
+.parkrun-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--smedium-space);
+    margin: var(--smedium-space) 0;
+
+    .parkrun-stat {
+        flex: 1 1 10em;
+        text-align: center;
+        padding: var(--smedium-space);
+        padding-top: var(--raised-box-title-padding);
+
+        .parkrun-stat-value {
+            margin: 0;
+            font-size: var(--font-size-large);
+        }
+
+        .parkrun-stat-detail {
+            margin: 0;
+            color: var(--text-alt-colour);
+        }
+    }
+}
+
+.parkruns-table {
+    margin: var(--smedium-space) 0;
+    padding: var(--smedium-space);
+    padding-top: var(--raised-box-title-padding);
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th:nth-child(n + 3),
+    td:nth-child(n + 3) {
+        text-align: right;
+    }
+
+    th {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    td {
+        padding-left: 0;
+        padding-right: 0;
+        border-bottom: 1px solid var(--background-alt-colour);
+    }
+
+    /* The last row drops its cell bottom padding along with its border so
+       it doesn't stack on top of the box's own bottom padding. */
+    tbody tr:last-child td {
+        border-bottom: 0;
+        padding-bottom: 0;
+    }
+}

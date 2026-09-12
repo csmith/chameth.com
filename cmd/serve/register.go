@@ -74,6 +74,8 @@ import (
 	featuresWalksSpeed "chameth.com/chameth.com/features/walks/speed"
 	featuresWorkoutsCalendar "chameth.com/chameth.com/features/workouts/calendar"
 	featuresWorkoutsLongest "chameth.com/chameth.com/features/workouts/longest"
+	featuresWorkoutsNextraces "chameth.com/chameth.com/features/workouts/nextraces"
+	featuresWorkoutsParkruns "chameth.com/chameth.com/features/workouts/parkruns"
 	featuresWorkoutsPbs "chameth.com/chameth.com/features/workouts/pbs"
 	featuresWorkoutsSummary "chameth.com/chameth.com/features/workouts/summary"
 	featuresWowAchievements "chameth.com/chameth.com/features/wow/achievements"
@@ -124,6 +126,8 @@ func (s *site) registerShortcodes() {
 	featuresWalksSpeed.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresWorkoutsCalendar.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresWorkoutsLongest.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresWorkoutsNextraces.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresWorkoutsParkruns.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresWorkoutsPbs.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresWorkoutsSummary.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresWowAchievements.RegisterShortcodes(s.Shortcodes, s.Tailscale)

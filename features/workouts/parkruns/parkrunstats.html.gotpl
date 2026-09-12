@@ -1,0 +1,21 @@
+{{/* gotype: chameth.com/chameth.com/features/workouts/parkruns.StatsData*/}}
+<div class="parkrun-stats">
+    <div class="parkrun-stat raised-box" data-title="{{ .Total.Title }}">
+        <p class="parkrun-stat-value">{{ .Total.Value }}</p>
+        {{- if .Total.Detail }}
+        <p class="parkrun-stat-detail">{{ .Total.Detail }}</p>
+        {{- end }}
+    </div>
+    <div class="parkrun-stat raised-box" data-title="{{ .Venues.Title }}">
+        <p class="parkrun-stat-value">{{ .Venues.Value }}</p>
+        {{- if .Venues.Detail }}
+        <p class="parkrun-stat-detail">{{ .Venues.Detail }}</p>
+        {{- end }}
+    </div>
+    <div class="parkrun-stat raised-box" data-title="{{ .Best.Title }}">
+        <p class="parkrun-stat-value">{{ .Best.Value }}</p>
+        {{- if .Best.Detail }}
+        <p class="parkrun-stat-detail">{{ .Best.Detail }}</p>
+        {{- end }}
+    </div>
+</div>

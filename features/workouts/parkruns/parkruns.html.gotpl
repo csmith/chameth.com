@@ -1,0 +1,25 @@
+{{/* gotype: chameth.com/chameth.com/features/workouts/parkruns.TableData*/}}
+<div class="parkruns-table raised-box" data-title="{{ .Title }}">
+    <table class="plain-table">
+        <thead>
+        <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Event</th>
+            <th scope="col">Time</th>
+            <th scope="col">Pos</th>
+            <th scope="col">Age pos</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{- range .Rows }}
+        <tr>
+            <td>{{ .Date }}</td>
+            <td>{{ .Event }}</td>
+            <td>{{ .Time }}</td>
+            <td>{{ .Pos }}</td>
+            <td>{{ .AgePos }}</td>
+        </tr>
+        {{- end }}
+        </tbody>
+    </table>
+</div>
