@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 ADD . .
 RUN CGO_ENABLED=0 go build -v -ldflags="-X 'chameth.com/chameth.com/features/metrics.buildVersion=$(git rev-parse HEAD)'" -o /serve ./cmd/serve && mkdir /tailscale
 
-FROM ghcr.io/greboid/dockerbase/nonroot:1.20250803.0
+FROM ghcr.io/greboid/dockerbase/nonroot:1.20260714.0
 COPY --from=go /serve /serve
 COPY --from=go --chown=65532:65532 /tailscale /tailscale
 VOLUME /tailscale
