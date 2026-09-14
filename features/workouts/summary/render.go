@@ -58,8 +58,8 @@ func pbsForGroup(pbs []pb, group string) []PB {
 		}
 		result = append(result, PB{
 			Label:    formatDistanceLabel(pb.DistanceM),
-			Time:     formatDuration(pb.ElapsedS),
-			Previous: formatPreviousBest(pb.PreviousElapsedS),
+			Time:     formatDuration(pb.GapElapsedS),
+			Previous: formatPreviousBest(pb.PreviousGapElapsedS),
 		})
 	}
 	return result

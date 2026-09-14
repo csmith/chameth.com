@@ -5,7 +5,7 @@
         <tr>
             <th scope="col">Distance</th>
             <th scope="col">Time</th>
-            <th scope="col">Pace</th>
+            <th scope="col">Grade-adjusted pace</th>
             <th scope="col">Date</th>
         </tr>
         </thead>

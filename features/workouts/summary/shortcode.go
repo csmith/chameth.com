@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	shortcodeVersion = 1
+	shortcodeVersion = 2
 	refreshFrequency = 6 * time.Hour
 )
 
@@ -34,10 +34,10 @@ type record struct {
 }
 
 type pb struct {
-	Group            string   `json:"group"`
-	DistanceM        float64  `json:"distance_m"`
-	ElapsedS         float64  `json:"elapsed_s"`
-	PreviousElapsedS *float64 `json:"previous_elapsed_s"`
+	Group               string   `json:"group"`
+	DistanceM           float64  `json:"distance_m"`
+	GapElapsedS         float64  `json:"gap_elapsed_s"`
+	PreviousGapElapsedS *float64 `json:"previous_gap_elapsed_s"`
 }
 
 type data struct {
@@ -145,15 +145,15 @@ func fastestPBs(events []workouts.PBEvent) []pb {
 			byKey[e.Group] = group
 		}
 		if existing, ok := group[e.DistanceM]; ok {
-			if e.ElapsedS < existing.ElapsedS {
-				existing.ElapsedS = e.ElapsedS
+			if e.GapElapsedS < existing.GapElapsedS {
+				existing.GapElapsedS = e.GapElapsedS
 			}
 		} else {
 			group[e.DistanceM] = &pb{
-				Group:            e.Group,
-				DistanceM:        e.DistanceM,
-				ElapsedS:         e.ElapsedS,
-				PreviousElapsedS: e.PreviousElapsedS,
+				Group:               e.Group,
+				DistanceM:           e.DistanceM,
+				GapElapsedS:         e.GapElapsedS,
+				PreviousGapElapsedS: e.PreviousGapElapsedS,
 			}
 		}
 	}
