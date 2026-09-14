@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	shortcodeVersion = 1
+	shortcodeVersion = 2
 	refreshFrequency = 6 * time.Hour
 )
 
@@ -51,7 +51,7 @@ func retrieve(ctx context.Context, client *http.Client, args []string) (shortcod
 		records = append(records, record{
 			DistanceM:  pb.DistanceM,
 			ElapsedS:   pb.ElapsedS,
-			PaceSPerKm: pb.PaceSPerKm,
+			PaceSPerKm: pb.GapPaceSPerKm,
 			Date:       pb.Date,
 		})
 	}
