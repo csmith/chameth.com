@@ -1,0 +1,37 @@
+/* Edit post section heading rows */
+.section-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1rem;
+    margin: 2rem 0 0;
+
+    h3 {
+        margin: 0;
+    }
+
+    .manage-link {
+        font-size: 0.875rem;
+    }
+
+    form {
+        flex-direction: row;
+        margin: 0;
+    }
+
+    .btn-secondary {
+        padding: 0.35rem 0.8rem;
+        background: var(--surface-3);
+        color: var(--text);
+        border: 1px solid var(--border-2);
+        border-radius: 4px;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover {
+            background: var(--border-2);
+            border-color: var(--text-3);
+        }
+    }
+}

@@ -23,7 +23,12 @@
         <input type="submit" />
     </form>
 
-    <h3>Attached Media <a href="/media-relations/edit?entity_type=post&entity_id={{.ID}}" style="font-size: 0.875rem; margin-left: 1rem;">(Manage)</a></h3>
+    <div class="section-heading">
+        <h3>Attached Media <a class="manage-link" href="/media-relations/edit?entity_type=post&entity_id={{.ID}}">(Manage)</a></h3>
+        <form action="/posts/generate-wordcloud/{{.ID}}" method="post">
+            <button type="submit" class="btn-secondary">Generate Word Cloud</button>
+        </form>
+    </div>
     {{if .Media}}
     <script>
     function copyToClipboard(button, text) {
@@ -143,7 +148,4 @@
     </table>
     {{end}}
 
-    <form action="/posts/generate-wordcloud/{{.ID}}" method="post">
-        <button type="submit">Generate Word Cloud</button>
-    </form>
 {{end}}
