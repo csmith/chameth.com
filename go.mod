@@ -77,5 +77,5 @@ require (
 	golang.org/x/image v0.45.0
 	golang.org/x/net v0.58.0
 	golang.org/x/text v0.41.0
-	tailscale.com v1.102.2
+	tailscale.com v1.102.3
 )
