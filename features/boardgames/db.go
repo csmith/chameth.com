@@ -3,6 +3,7 @@ package boardgames
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"chameth.com/chameth.com/db"
@@ -33,7 +34,7 @@ func rehostedImagePaths(ctx context.Context) (map[string]bool, error) {
 func createBoardgameImage(ctx context.Context, bggID int, name, contentType string, data []byte) error {
 	mediaPath := imagePath(bggID)
 	_, subtype, _ := strings.Cut(contentType, "/")
-	filename := "boardgame-" + fmt.Sprint(bggID) + "." + subtype
+	filename := "boardgame-" + strconv.Itoa(bggID) + "." + subtype
 
 	tx, err := db.BeginTxx(ctx, nil)
 	if err != nil {
@@ -46,7 +47,7 @@ func createBoardgameImage(ctx context.Context, bggID int, name, contentType stri
 	}()
 
 	var mediaID int
-	err = tx.QueryRow(`
+	err = tx.QueryRowContext(ctx, `
 		INSERT INTO media (content_type, original_filename, data)
 		VALUES ($1, $2, $3)
 		RETURNING id
@@ -55,10 +56,10 @@ func createBoardgameImage(ctx context.Context, bggID int, name, contentType stri
 		return fmt.Errorf("failed to create media: %w", err)
 	}
 
-	description := fmt.Sprintf("Box art of %s", name)
+	description := "Box art of " + name
 	caption := name
 	role := "image"
-	res, err := tx.Exec(`
+	res, err := tx.ExecContext(ctx, `
 		INSERT INTO media_relations (path, media_id, caption, description, role, entity_type, entity_id)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		ON CONFLICT (path) DO NOTHING

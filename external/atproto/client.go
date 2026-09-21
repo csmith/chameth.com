@@ -2,6 +2,7 @@ package atproto
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -19,7 +20,7 @@ type Client struct {
 	refreshToken string
 }
 
-func NewClient(pdsUrl, handle, password string) (*Client, error) {
+func NewClient(ctx context.Context, pdsUrl, handle, password string) (*Client, error) {
 	client := &Client{
 		h: &http.Client{
 			Timeout: 30 * time.Second,
@@ -28,44 +29,18 @@ func NewClient(pdsUrl, handle, password string) (*Client, error) {
 		handle: handle,
 	}
 
-	if err := client.authenticate(password); err != nil {
+	if err := client.authenticate(ctx, password); err != nil {
 		return nil, err
 	}
 
 	return client, nil
 }
 
-func (c *Client) authenticate(password string) error {
-	payload := struct {
-		Identifier string `json:"identifier"`
-		Password   string `json:"password"`
-	}{
-		Identifier: c.handle,
-		Password:   password,
-	}
-
-	result := struct {
-		AccessJWT  string `json:"accessJwt"`
-		RefreshJWT string `json:"refreshJwt"`
-		Handle     string `json:"handle"`
-		DID        string `json:"did"`
-	}{}
-
-	if err := c.postJson(createSessionEndpoint, payload, &result); err != nil {
-		return err
-	}
-
-	c.accessToken = result.AccessJWT
-	c.refreshToken = result.RefreshJWT
-	c.did = result.DID
-	return nil
-}
-
 func (c *Client) DID() string {
 	return c.did
 }
 
-func (c *Client) CreateRecord(collection Collection, record Record) (StrongRef, string, error) {
+func (c *Client) CreateRecord(ctx context.Context, collection Collection, record Record) (StrongRef, string, error) {
 	recordKey := generateTID()
 
 	payload := struct {
@@ -85,24 +60,24 @@ func (c *Client) CreateRecord(collection Collection, record Record) (StrongRef, 
 		CID string `json:"cid"`
 	}{}
 
-	if err := c.postJson(putRecordEndpoint, payload, &result); err != nil {
+	if err := c.postJson(ctx, putRecordEndpoint, payload, &result); err != nil {
 		return StrongRef{}, "", err
 	}
 
 	return StrongRef{CID: result.CID, URI: result.URI}, collection.publicURL(c.handle, recordKey), nil
 }
 
-func (c *Client) GetRecord(collection Collection, recordKey string) (StrongRef, error) {
+func (c *Client) GetRecord(ctx context.Context, collection Collection, recordKey string) (StrongRef, error) {
 	e := endpoint(fmt.Sprintf("%s?repo=%s&collection=%s&rkey=%s", getRecordEndpoint, c.did, collection, recordKey))
 
-	req, err := http.NewRequest(http.MethodGet, c.pds.url(e), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.pds.url(e), nil)
 	if err != nil {
 		return StrongRef{}, err
 	}
 
 	req.Header.Set("Accept", "application/json")
 	if c.accessToken != "" {
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.accessToken))
+		req.Header.Set("Authorization", "Bearer "+c.accessToken)
 	}
 
 	res, err := c.h.Do(req)
@@ -131,27 +106,53 @@ func (c *Client) GetRecord(collection Collection, recordKey string) (StrongRef, 
 	return StrongRef{CID: result.CID, URI: result.URI}, nil
 }
 
-func (c *Client) UploadBlob(mimeType string, data []byte) (*Blob, error) {
+func (c *Client) UploadBlob(ctx context.Context, mimeType string, data []byte) (*Blob, error) {
 	var result struct {
 		Blob Blob `json:"blob"`
 	}
-	if err := c.post(uploadBlobEndpoint, mimeType, bytes.NewReader(data), &result); err != nil {
+	if err := c.post(ctx, uploadBlobEndpoint, mimeType, bytes.NewReader(data), &result); err != nil {
 		return nil, err
 	}
 	return &result.Blob, nil
 }
 
-func (c *Client) postJson(endpoint endpoint, payload any, result any) error {
+func (c *Client) authenticate(ctx context.Context, password string) error {
+	payload := struct {
+		Identifier string `json:"identifier"`
+		Password   string `json:"password"`
+	}{
+		Identifier: c.handle,
+		Password:   password,
+	}
+
+	result := struct {
+		AccessJWT  string `json:"accessJwt"`
+		RefreshJWT string `json:"refreshJwt"`
+		Handle     string `json:"handle"`
+		DID        string `json:"did"`
+	}{}
+
+	if err := c.postJson(ctx, createSessionEndpoint, payload, &result); err != nil {
+		return err
+	}
+
+	c.accessToken = result.AccessJWT
+	c.refreshToken = result.RefreshJWT
+	c.did = result.DID
+	return nil
+}
+
+func (c *Client) postJson(ctx context.Context, endpoint endpoint, payload any, result any) error {
 	marshalled, err := json.Marshal(payload)
 	if err != nil {
 		return err
 	}
 
-	return c.post(endpoint, "application/json", bytes.NewReader(marshalled), &result)
+	return c.post(ctx, endpoint, "application/json", bytes.NewReader(marshalled), result)
 }
 
-func (c *Client) post(endpoint endpoint, contentType string, payload io.Reader, result any) error {
-	req, err := http.NewRequest(http.MethodPost, c.pds.url(endpoint), payload)
+func (c *Client) post(ctx context.Context, endpoint endpoint, contentType string, payload io.Reader, result any) error {
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.pds.url(endpoint), payload)
 	if err != nil {
 		return err
 	}
@@ -159,7 +160,7 @@ func (c *Client) post(endpoint endpoint, contentType string, payload io.Reader, 
 	req.Header.Set("Content-Type", contentType)
 	req.Header.Set("Accept", "application/json")
 	if c.accessToken != "" {
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.accessToken))
+		req.Header.Set("Authorization", "Bearer "+c.accessToken)
 	}
 
 	res, err := c.h.Do(req)

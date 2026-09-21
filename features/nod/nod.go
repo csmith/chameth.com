@@ -2,6 +2,7 @@ package nod
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -34,7 +35,7 @@ func processNod(page string) error {
 		return fmt.Errorf("invalid URL scheme: %s", parsedURL.Scheme)
 	}
 
-	return announceToIrc(fmt.Sprintf("\00311\002[CHAMETH.COM]\002\003 Someone nodded at %s", page))
+	return announceToIrc("\00311\002[CHAMETH.COM]\002\003 Someone nodded at " + page)
 }
 
 func announceToIrc(message string) error {
@@ -48,7 +49,9 @@ func announceToIrc(message string) error {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, *ircCatAddress, bytes.NewReader(b))
+	// The IRC announce is fire-and-forget: it must not be cancelled if the
+	// requesting client disconnects, so it uses a background context.
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, *ircCatAddress, bytes.NewReader(b))
 	if err != nil {
 		return err
 	}

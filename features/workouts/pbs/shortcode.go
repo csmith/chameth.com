@@ -2,6 +2,7 @@ package pbs
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -83,7 +84,7 @@ var activities = map[string]struct{ group, label string }{
 
 func parseActivity(args []string) (group, label string, err error) {
 	if len(args) != 1 {
-		return "", "", fmt.Errorf("workoutpbs requires 1 argument (activity), e.g. \"running\"")
+		return "", "", errors.New("workoutpbs requires 1 argument (activity), e.g. \"running\"")
 	}
 	a, ok := activities[strings.ToLower(args[0])]
 	if !ok {

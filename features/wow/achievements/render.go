@@ -24,7 +24,7 @@ func renderTemplate(data Data) (string, error) {
 
 func formatDate(t any) string {
 	switch v := t.(type) {
-	case interface{ Format(string) string }:
+	case interface{ Format(layout string) string }:
 		return v.Format("2 Jan 2006")
 	}
 	return ""

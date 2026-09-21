@@ -3,6 +3,7 @@ package labelledfigure
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"strconv"
@@ -20,7 +21,7 @@ var tmpl = template.Must(template.New("labelledfigure.html.gotpl").ParseFS(templ
 
 func Render(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 2 {
-		return "", fmt.Errorf("labelledfigure requires at least 2 arguments (description, regions)")
+		return "", errors.New("labelledfigure requires at least 2 arguments (description, regions)")
 	}
 
 	description := args[0]

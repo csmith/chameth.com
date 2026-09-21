@@ -58,7 +58,9 @@ func fetchImage(ctx context.Context, client *http.Client, gameID string) ([]byte
 	return body, header.Get("Content-Type"), nil
 }
 
-func magicMetersGet(ctx context.Context, client *http.Client, path string, query url.Values) ([]byte, http.Header, error) {
+func magicMetersGet(
+	ctx context.Context, client *http.Client, path string, query url.Values,
+) ([]byte, http.Header, error) {
 	u := strings.TrimRight(magicMetersBaseURL, "/") + path
 	if len(query) > 0 {
 		u += "?" + query.Encode()

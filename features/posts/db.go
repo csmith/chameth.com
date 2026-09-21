@@ -12,11 +12,23 @@ import (
 const roughWordCount = "(SELECT count(*) FROM regexp_matches(content, '\\S+', 'g'))"
 
 func GetAllPosts(ctx context.Context) ([]PostMetadata, error) {
-	return db.Select[PostMetadata](ctx, "SELECT id, path, title, date, format, published, "+roughWordCount+" AS words FROM posts WHERE published = true ORDER BY date DESC")
+	return db.Select[PostMetadata](ctx, `
+		SELECT id, path, title, date, format, published,
+		`+roughWordCount+` AS words
+		FROM posts
+		WHERE published = true
+		ORDER BY date DESC
+	`)
 }
 
 func GetDraftPosts(ctx context.Context) ([]PostMetadata, error) {
-	return db.Select[PostMetadata](ctx, "SELECT id, path, title, date, format, published, "+roughWordCount+" AS words FROM posts WHERE published = false ORDER BY date DESC")
+	return db.Select[PostMetadata](ctx, `
+		SELECT id, path, title, date, format, published,
+		`+roughWordCount+` AS words
+		FROM posts
+		WHERE published = false
+		ORDER BY date DESC
+	`)
 }
 
 func GetPostByID(ctx context.Context, id int) (*Post, error) {

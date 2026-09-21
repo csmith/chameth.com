@@ -2,6 +2,7 @@ package played
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -36,7 +37,8 @@ type entry struct {
 
 func parseArgs(args []string) (start, end time.Time, err error) {
 	if len(args) < 2 {
-		return time.Time{}, time.Time{}, fmt.Errorf("playedbgs requires 2 arguments (start_date, end_date) in YYYY-MM-DD format")
+		return time.Time{}, time.Time{},
+			errors.New("playedbgs requires 2 arguments (start_date, end_date) in YYYY-MM-DD format")
 	}
 
 	start, err = time.Parse("2006-01-02", args[0])

@@ -179,7 +179,8 @@ func parseASNCSV(r io.Reader) ([]asnNetwork, error) {
 	if err != nil {
 		return nil, fmt.Errorf("reading CSV header: %w", err)
 	}
-	if len(header) != 3 || header[0] != "network" || header[1] != "autonomous_system_number" || header[2] != "autonomous_system_organization" {
+	if len(header) != 3 || header[0] != "network" || header[1] != "autonomous_system_number" ||
+		header[2] != "autonomous_system_organization" {
 		return nil, errors.New("invalid ASN CSV header")
 	}
 

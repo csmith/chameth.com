@@ -94,7 +94,9 @@ type standardSiteDocument struct {
 	Contributors []standardSiteContributor `json:"contributors"`
 }
 
-func NewStandardSiteDocument(site, path, title, description string, coverImage *Blob, publishedAt time.Time, authorDid string) Record {
+func NewStandardSiteDocument(
+	site, path, title, description string, coverImage *Blob, publishedAt time.Time, authorDid string,
+) Record {
 	return &standardSiteDocument{
 		Type:        "site.standard.document",
 		Site:        site,

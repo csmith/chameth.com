@@ -2,6 +2,7 @@ package summary
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"sort"
@@ -54,7 +55,8 @@ type data struct {
 
 func parseArgs(args []string) (start, end time.Time, err error) {
 	if len(args) < 2 {
-		return time.Time{}, time.Time{}, fmt.Errorf("workoutsummary requires 2 arguments (start_date, end_date) in YYYY-MM-DD format")
+		return time.Time{}, time.Time{},
+			errors.New("workoutsummary requires 2 arguments (start_date, end_date) in YYYY-MM-DD format")
 	}
 
 	start, err = time.Parse("2006-01-02", args[0])

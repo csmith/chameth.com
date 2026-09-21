@@ -22,12 +22,12 @@ import (
 // the live portrait, which retains its existing stable URL.
 func ensurePortrait(ctx context.Context, client *http.Client, c *wow.Character, at time.Time) (string, error) {
 	if c.Portrait == nil || c.Portrait.Path == "" {
-		return "", fmt.Errorf("character has no portrait")
+		return "", errors.New("character has no portrait")
 	}
 
 	if !at.IsZero() && at.Before(time.Now()) {
 		if c.Portrait.Sha256 == "" {
-			return "", fmt.Errorf("portrait is missing its content hash")
+			return "", errors.New("portrait is missing its content hash")
 		}
 		return ensureHistoricalPortrait(ctx, client, c)
 	}
@@ -44,7 +44,7 @@ func historicalPortraitPath(sha256 string) string {
 
 func ensureLivePortrait(ctx context.Context, client *http.Client, c *wow.Character) (string, error) {
 	path := livePortraitPath(c.Profile.Name)
-	filename := fmt.Sprintf("%s.png", c.Profile.Name)
+	filename := c.Profile.Name + ".png"
 
 	data, contentType, err := wow.FetchImage(ctx, client, c.Portrait.Path)
 	if err != nil {
@@ -85,7 +85,9 @@ func ensureHistoricalPortrait(ctx context.Context, client *http.Client, c *wow.C
 		return "", fmt.Errorf("failed to download portrait: %w", err)
 	}
 
-	if err := storePortrait(ctx, c.BlizzardID, path, c.Portrait.Sha256+".png", c.Profile.Name, "snapshot", contentType, data); err != nil {
+	if err := storePortrait(
+		ctx, c.BlizzardID, path, c.Portrait.Sha256+".png", c.Profile.Name, "snapshot", contentType, data,
+	); err != nil {
 		return "", err
 	}
 	return path, nil
@@ -108,7 +110,9 @@ func imageDimensions(data []byte) (width, height *int) {
 	return &cfg.Width, &cfg.Height
 }
 
-func storePortrait(ctx context.Context, blizzardID int, path, filename, caption, role, contentType string, data []byte) error {
+func storePortrait(
+	ctx context.Context, blizzardID int, path, filename, caption, role, contentType string, data []byte,
+) error {
 	width, height := imageDimensions(data)
 
 	tx, err := db.BeginTxx(ctx, nil)
@@ -122,7 +126,7 @@ func storePortrait(ctx context.Context, blizzardID int, path, filename, caption,
 	}()
 
 	var mediaID int
-	err = tx.QueryRow(`
+	err = tx.QueryRowContext(ctx, `
 		INSERT INTO media (content_type, original_filename, data, width, height)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id
@@ -131,7 +135,7 @@ func storePortrait(ctx context.Context, blizzardID int, path, filename, caption,
 		return fmt.Errorf("failed to create media: %w", err)
 	}
 
-	res, err := tx.Exec(`
+	res, err := tx.ExecContext(ctx, `
 		INSERT INTO media_relations (path, media_id, caption, description, role, entity_type, entity_id)
 		VALUES ($1, $2, $3, NULL, $4, 'wow_character', $5)
 		ON CONFLICT (path) DO NOTHING

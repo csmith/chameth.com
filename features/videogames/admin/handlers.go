@@ -112,7 +112,7 @@ func EditVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 		for i, review := range reviews {
 			playtime := ""
 			if review.Playtime != nil {
-				playtime = fmt.Sprintf("%d", *review.Playtime)
+				playtime = strconv.Itoa(*review.Playtime)
 			}
 
 			completionStatus := ""
@@ -123,7 +123,7 @@ func EditVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 			reviewSummaries[i] = templates.VideoGameReviewSummary{
 				ID:               review.ID,
 				PlayedDate:       review.PlayedDate.Format("2006-01-02"),
-				Rating:           fmt.Sprintf("%d", review.Rating),
+				Rating:           strconv.Itoa(review.Rating),
 				Playtime:         playtime,
 				CompletionStatus: completionStatus,
 				Notes:            review.Notes,
@@ -224,7 +224,7 @@ func EditVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 
 		playtime := ""
 		if review.Playtime != nil {
-			playtime = fmt.Sprintf("%d", *review.Playtime)
+			playtime = strconv.Itoa(*review.Playtime)
 		}
 
 		completionStatus := ""
@@ -237,7 +237,7 @@ func EditVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 			VideoGameID:      game.ID,
 			VideoGameTitle:   game.Title,
 			PlayedDate:       review.PlayedDate.Format("2006-01-02"),
-			Rating:           fmt.Sprintf("%d", review.Rating),
+			Rating:           strconv.Itoa(review.Rating),
 			Playtime:         playtime,
 			CompletionStatus: completionStatus,
 			Notes:            review.Notes,
@@ -318,7 +318,9 @@ func UpdateVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 		notes := r.FormValue("notes")
 		published := r.FormValue("published") == "true"
 
-		if err := videogames.UpdateVideoGameReview(r.Context(), id, rating, playedDate, playtime, completionStatus, published, notes); err != nil {
+		if err := videogames.UpdateVideoGameReview(
+			r.Context(), id, rating, playedDate, playtime, completionStatus, published, notes,
+		); err != nil {
 			http.Error(w, "Failed to update video game review", http.StatusInternalServerError)
 			return
 		}

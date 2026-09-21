@@ -57,7 +57,7 @@ func GenerateAndStore(ctx context.Context, postPath string) error {
 		return fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	req, err := http.NewRequest("POST", *ollamaEndpoint+"/api/embed", bytes.NewBuffer(jsonData))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, *ollamaEndpoint+"/api/embed", bytes.NewReader(jsonData))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -174,7 +174,10 @@ func GetRecentPostsBySimilarity(ctx context.Context, likeSlugs, unlikeSlugs []st
 	// where an untyped parameter would be inferred as an integer and truncated.
 	maxLikeDist := 1 - minLikeSimilarity
 	minUnlikeDist := 1 - maxUnlikeSimilarity
-	return recentPostsBySimilarityScore(ctx, slugsToPaths(likeSlugs), slugsToPaths(unlikeSlugs), unlikeCoefficient, maxLikeDist, minScore, minUnlikeDist, limit)
+	return recentPostsBySimilarityScore(
+		ctx, slugsToPaths(likeSlugs), slugsToPaths(unlikeSlugs),
+		unlikeCoefficient, maxLikeDist, minScore, minUnlikeDist, limit,
+	)
 }
 
 // slugsToPaths expands slugs into the post path forms they could match.

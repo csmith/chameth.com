@@ -3,6 +3,7 @@ package update
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 
@@ -17,7 +18,7 @@ var tmpl = template.Must(template.New("update.html.gotpl").ParseFS(templates, "u
 
 func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	if len(args) < 2 {
-		return "", fmt.Errorf("update requires at least 2 arguments (date, content)")
+		return "", errors.New("update requires at least 2 arguments (date, content)")
 	}
 
 	date := args[0]

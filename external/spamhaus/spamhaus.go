@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -55,7 +56,7 @@ func (r Result) Summary() string {
 
 func Check(host string) (Result, error) {
 	result := Result{
-		CheckURL: fmt.Sprintf("https://check.spamhaus.org/results/?query=%s", host),
+		CheckURL: "https://check.spamhaus.org/results/?query=" + host,
 	}
 
 	ip := net.ParseIP(host)
@@ -134,8 +135,8 @@ func reverseIPv6(ip net.IP) string {
 	var parts []string
 	// Convert each byte to two hex digits, then split them
 	for _, i := range slices.Backward(ip) {
-		parts = append(parts, fmt.Sprintf("%x", i&0x0f))
-		parts = append(parts, fmt.Sprintf("%x", i>>4))
+		parts = append(parts, strconv.FormatUint(uint64(i&0x0f), 16))
+		parts = append(parts, strconv.FormatUint(uint64(i>>4), 16))
 	}
 
 	return strings.Join(parts, ".")

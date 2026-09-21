@@ -86,9 +86,7 @@ func formatDistanceKm(km float64) string {
 	return strings.TrimSuffix(s, ".0") + "k"
 }
 
-// startOfDay returns midnight UTC on the given day. Both it and the
-// race dates parsed above are UTC midnights, so "is it still upcoming"
-// is a whole-day comparison, matching the countdown's day maths.
+// startOfDay uses UTC midnight to compare races by whole days.
 func startOfDay(t time.Time) time.Time {
 	y, m, d := t.UTC().Date()
 	return time.Date(y, m, d, 0, 0, 0, 0, time.UTC)

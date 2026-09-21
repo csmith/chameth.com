@@ -10,7 +10,10 @@ import (
 )
 
 func GetFilmByID(ctx context.Context, id int) (*Film, error) {
-	film, err := db.Get[Film](ctx, "SELECT id, tmdb_id, title, year, overview, runtime, published, path FROM films WHERE id = $1", id)
+	film, err := db.Get[Film](ctx, `
+		SELECT id, tmdb_id, title, year, overview, runtime, published, path
+		FROM films WHERE id = $1
+	`, id)
 	if err != nil {
 		return nil, err
 	}
@@ -18,14 +21,18 @@ func GetFilmByID(ctx context.Context, id int) (*Film, error) {
 }
 
 func GetAllFilms(ctx context.Context) ([]Film, error) {
-	return db.Select[Film](ctx, "SELECT id, tmdb_id, title, year, overview, runtime, published, path FROM films ORDER BY title")
+	return db.Select[Film](ctx, `
+		SELECT id, tmdb_id, title, year, overview, runtime, published, path
+		FROM films ORDER BY title
+	`)
 }
 
 func GetAllFilmsWithReviews(ctx context.Context) ([]FilmWithReview, error) {
 	query := `
 		SELECT
 			f.id, f.tmdb_id, f.title, f.year, f.overview, f.runtime, f.published, f.path,
-			fr.id as review_id, fr.film_id as review_film_id, fr.watched_date, fr.rating, fr.is_rewatch, fr.has_spoilers, fr.review_text, fr.published as review_published
+			fr.id as review_id, fr.film_id as review_film_id, fr.watched_date, fr.rating,
+			fr.is_rewatch, fr.has_spoilers, fr.review_text, fr.published as review_published
 		FROM films f
 		LEFT JOIN LATERAL (
 			SELECT * FROM film_reviews
@@ -54,7 +61,8 @@ func GetAllFilmsWithReviews(ctx context.Context) ([]FilmWithReview, error) {
 
 		err := rows.Scan(
 			&f.ID, &f.TMDBID, &f.Title, &f.Year, &f.Overview, &f.Runtime, &f.Published, &f.Path,
-			&reviewID, &reviewFilmID, &watchedDate, &rating, &review.IsRewatch, &review.HasSpoilers, &reviewText, &reviewPublished,
+			&reviewID, &reviewFilmID, &watchedDate, &rating,
+			&review.IsRewatch, &review.HasSpoilers, &reviewText, &reviewPublished,
 		)
 		if err != nil {
 			return nil, err
@@ -80,7 +88,8 @@ func GetAllFilmsWithReviewsAndPosters(ctx context.Context) ([]FilmWithReviewAndP
 	query := `
 		SELECT
 			f.id, f.tmdb_id, f.title, f.year, f.overview, f.runtime, f.published, f.path,
-			fr.id as review_id, fr.film_id as review_film_id, fr.watched_date, fr.rating, fr.is_rewatch, fr.has_spoilers, fr.review_text, fr.published as review_published,
+			fr.id as review_id, fr.film_id as review_film_id, fr.watched_date, fr.rating,
+			fr.is_rewatch, fr.has_spoilers, fr.review_text, fr.published as review_published,
 			mr.path as poster_path, mr.media_id as poster_media_id,
 			(SELECT COUNT(*) FROM film_reviews WHERE film_id = f.id) as review_count,
 			(SELECT to_char(MAX(watched_date), 'YYYY-MM-DD') FROM film_reviews WHERE film_id = f.id) as last_watched
@@ -117,7 +126,8 @@ func GetAllFilmsWithReviewsAndPosters(ctx context.Context) ([]FilmWithReviewAndP
 
 		err := rows.Scan(
 			&f.ID, &f.TMDBID, &f.Title, &f.Year, &f.Overview, &f.Runtime, &f.Published, &f.Path,
-			&reviewID, &reviewFilmID, &watchedDate, &rating, &review.IsRewatch, &review.HasSpoilers, &reviewText, &reviewPublished,
+			&reviewID, &reviewFilmID, &watchedDate, &rating,
+			&review.IsRewatch, &review.HasSpoilers, &reviewText, &reviewPublished,
 			&posterPath, &posterMediaID,
 			&reviewCount, &lastWatched,
 		)
@@ -149,7 +159,9 @@ func GetAllFilmsWithReviewsAndPosters(ctx context.Context) ([]FilmWithReviewAndP
 			lw = &lastWatched.String
 		}
 
-		films = append(films, FilmWithReviewAndPoster{FilmWithReview: fwr, PosterPath: pp, PosterMediaID: pmi, ReviewCount: reviewCount, LastWatched: lw})
+		films = append(films, FilmWithReviewAndPoster{
+			FilmWithReview: fwr, PosterPath: pp, PosterMediaID: pmi, ReviewCount: reviewCount, LastWatched: lw,
+		})
 	}
 
 	return films, nil
@@ -181,7 +193,10 @@ func CreateFilm(ctx context.Context, tmdbID int, title, year, path string, overv
 	return id, nil
 }
 
-func UpdateFilm(ctx context.Context, id int, tmdbID *int, title, year, path string, overview string, runtime int, published bool) error {
+func UpdateFilm(
+	ctx context.Context, id int, tmdbID *int, title, year, path string,
+	overview string, runtime int, published bool,
+) error {
 	var yearPtr *int
 	if year != "" {
 		y, err := strconv.Atoi(year)
@@ -207,7 +222,10 @@ func UpdateFilm(ctx context.Context, id int, tmdbID *int, title, year, path stri
 }
 
 func GetFilmByTMDBID(ctx context.Context, tmdbID int) (*Film, error) {
-	film, err := db.Get[Film](ctx, "SELECT id, tmdb_id, title, year, overview, runtime, published, path FROM films WHERE tmdb_id = $1", tmdbID)
+	film, err := db.Get[Film](ctx, `
+		SELECT id, tmdb_id, title, year, overview, runtime, published, path
+		FROM films WHERE tmdb_id = $1
+	`, tmdbID)
 	if err != nil {
 		return nil, err
 	}
@@ -255,7 +273,10 @@ func SearchFilms(ctx context.Context, query string) ([]FilmSearchResult, error) 
 }
 
 func GetFilmReviewByID(ctx context.Context, id int) (*FilmReview, error) {
-	review, err := db.Get[FilmReview](ctx, "SELECT id, film_id, watched_date, rating, is_rewatch, has_spoilers, review_text, published FROM film_reviews WHERE id = $1", id)
+	review, err := db.Get[FilmReview](ctx, `
+		SELECT id, film_id, watched_date, rating, is_rewatch, has_spoilers, review_text, published
+		FROM film_reviews WHERE id = $1
+	`, id)
 	if err != nil {
 		return nil, err
 	}
@@ -263,10 +284,17 @@ func GetFilmReviewByID(ctx context.Context, id int) (*FilmReview, error) {
 }
 
 func GetFilmReviewsByFilmID(ctx context.Context, filmID int) ([]FilmReview, error) {
-	return db.Select[FilmReview](ctx, "SELECT id, film_id, watched_date, rating, is_rewatch, has_spoilers, review_text, published FROM film_reviews WHERE film_id = $1 ORDER BY watched_date DESC", filmID)
+	return db.Select[FilmReview](ctx, `
+		SELECT id, film_id, watched_date, rating, is_rewatch, has_spoilers, review_text, published
+		FROM film_reviews WHERE film_id = $1
+		ORDER BY watched_date DESC
+	`, filmID)
 }
 
-func CreateFilmReview(ctx context.Context, filmID int, rating int, watchedDate any, isRewatch, hasSpoilers, published bool, reviewText string) (int, error) {
+func CreateFilmReview(
+	ctx context.Context, filmID int, rating int, watchedDate any,
+	isRewatch, hasSpoilers, published bool, reviewText string,
+) (int, error) {
 	var id int
 	err := db.QueryRow(ctx, `
 		INSERT INTO film_reviews (film_id, rating, watched_date, is_rewatch, has_spoilers, review_text, published)
@@ -287,7 +315,10 @@ func DeleteFilmReview(ctx context.Context, id int) error {
 	return nil
 }
 
-func UpdateFilmReview(ctx context.Context, id int, rating int, watchedDate string, isRewatch, hasSpoilers, published bool, reviewText string) error {
+func UpdateFilmReview(
+	ctx context.Context, id int, rating int, watchedDate string,
+	isRewatch, hasSpoilers, published bool, reviewText string,
+) error {
 	_, err := db.Exec(ctx, `
 		UPDATE film_reviews
 		SET rating = $1, watched_date = $2, is_rewatch = $3, has_spoilers = $4, review_text = $5, published = $6
@@ -303,7 +334,8 @@ func GetAllPublishedFilmReviewsWithFilmAndPosters(ctx context.Context) ([]FilmRe
 	query := `
 		SELECT
 			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",
-			fr.rating as "filmreview.rating", fr.is_rewatch as "filmreview.is_rewatch", fr.has_spoilers as "filmreview.has_spoilers",
+			fr.rating as "filmreview.rating", fr.is_rewatch as "filmreview.is_rewatch",
+			fr.has_spoilers as "filmreview.has_spoilers",
 			fr.review_text as "filmreview.review_text", fr.published as "filmreview.published",
 			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title", f.year as "film.year",
 			f.overview as "film.overview", f.runtime as "film.runtime", f.published as "film.published", f.path as "film.path",
@@ -323,11 +355,14 @@ func GetAllPublishedFilmReviewsWithFilmAndPosters(ctx context.Context) ([]FilmRe
 	return db.Select[FilmReviewWithFilmAndPoster](ctx, query)
 }
 
-func GetRecentPublishedFilmReviewsWithFilmAndPosters(ctx context.Context, limit int) ([]FilmReviewWithFilmAndPoster, error) {
+func GetRecentPublishedFilmReviewsWithFilmAndPosters(
+	ctx context.Context, limit int,
+) ([]FilmReviewWithFilmAndPoster, error) {
 	query := `
 		SELECT
 			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",
-			fr.rating as "filmreview.rating", fr.is_rewatch as "filmreview.is_rewatch", fr.has_spoilers as "filmreview.has_spoilers",
+			fr.rating as "filmreview.rating", fr.is_rewatch as "filmreview.is_rewatch",
+			fr.has_spoilers as "filmreview.has_spoilers",
 			fr.review_text as "filmreview.review_text", fr.published as "filmreview.published",
 			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title", f.year as "film.year",
 			f.overview as "film.overview", f.runtime as "film.runtime", f.published as "film.published", f.path as "film.path",
@@ -349,11 +384,19 @@ func GetRecentPublishedFilmReviewsWithFilmAndPosters(ctx context.Context, limit 
 }
 
 func GetAllFilmLists(ctx context.Context) ([]FilmList, error) {
-	return db.Select[FilmList](ctx, "SELECT id, title, description, published, path FROM film_lists WHERE published = true ORDER BY title")
+	return db.Select[FilmList](ctx, `
+		SELECT id, title, description, published, path
+		FROM film_lists WHERE published = true
+		ORDER BY title
+	`)
 }
 
 func GetDraftFilmLists(ctx context.Context) ([]FilmList, error) {
-	return db.Select[FilmList](ctx, "SELECT id, title, description, published, path FROM film_lists WHERE published = false ORDER BY title")
+	return db.Select[FilmList](ctx, `
+		SELECT id, title, description, published, path
+		FROM film_lists WHERE published = false
+		ORDER BY title
+	`)
 }
 
 func GetFilmListByID(ctx context.Context, id int) (*FilmList, error) {
@@ -365,7 +408,10 @@ func GetFilmListByID(ctx context.Context, id int) (*FilmList, error) {
 }
 
 func GetFilmListByPath(ctx context.Context, path string) (*FilmList, error) {
-	list, err := db.Get[FilmList](ctx, "SELECT id, title, description, published, path FROM film_lists WHERE path = $1 OR path = $2", path, path+"/")
+	list, err := db.Get[FilmList](ctx, `
+		SELECT id, title, description, published, path
+		FROM film_lists WHERE path = $1 OR path = $2
+	`, path, path+"/")
 	if err != nil {
 		return nil, err
 	}
@@ -459,7 +505,10 @@ func GetEntriesForList(ctx context.Context, listID int) ([]FilmListEntryWithFilm
 }
 
 func GetEntryByID(ctx context.Context, entryID int) (*FilmListEntry, error) {
-	entry, err := db.Get[FilmListEntry](ctx, "SELECT id, film_list_id, film_id, position FROM film_list_entries WHERE id = $1", entryID)
+	entry, err := db.Get[FilmListEntry](ctx, `
+		SELECT id, film_list_id, film_id, position
+		FROM film_list_entries WHERE id = $1
+	`, entryID)
 	if err != nil {
 		return nil, err
 	}
@@ -477,12 +526,12 @@ func AddFilmToList(ctx context.Context, listID, filmID int, position int) (int, 
 		}
 	}()
 
-	_, err = tx.Exec("SET CONSTRAINTS ALL DEFERRED")
+	_, err = tx.ExecContext(ctx, "SET CONSTRAINTS ALL DEFERRED")
 	if err != nil {
 		return 0, fmt.Errorf("failed to defer constraints: %w", err)
 	}
 
-	_, err = tx.Exec(`
+	_, err = tx.ExecContext(ctx, `
 		UPDATE film_list_entries
 		SET position = position + 1
 		WHERE film_list_id = $1 AND position >= $2
@@ -492,7 +541,7 @@ func AddFilmToList(ctx context.Context, listID, filmID int, position int) (int, 
 	}
 
 	var id int
-	err = tx.QueryRow(`
+	err = tx.QueryRowContext(ctx, `
 		INSERT INTO film_list_entries (film_list_id, film_id, position)
 		VALUES ($1, $2, $3)
 		RETURNING id
@@ -524,12 +573,12 @@ func RemoveFilmFromList(ctx context.Context, entryID int) error {
 		}
 	}()
 
-	_, err = tx.Exec("SET CONSTRAINTS ALL DEFERRED")
+	_, err = tx.ExecContext(ctx, "SET CONSTRAINTS ALL DEFERRED")
 	if err != nil {
 		return fmt.Errorf("failed to defer constraints: %w", err)
 	}
 
-	_, err = tx.Exec(`
+	_, err = tx.ExecContext(ctx, `
 		UPDATE film_list_entries
 		SET position = position - 1
 		WHERE film_list_id = $1 AND position > $2
@@ -538,7 +587,7 @@ func RemoveFilmFromList(ctx context.Context, entryID int) error {
 		return fmt.Errorf("failed to reflow positions: %w", err)
 	}
 
-	_, err = tx.Exec("DELETE FROM film_list_entries WHERE id = $1", entryID)
+	_, err = tx.ExecContext(ctx, "DELETE FROM film_list_entries WHERE id = $1", entryID)
 	if err != nil {
 		return fmt.Errorf("failed to delete entry: %w", err)
 	}
@@ -572,13 +621,13 @@ func UpdateEntryPosition(ctx context.Context, entryID, newPosition int) error {
 		}
 	}()
 
-	_, err = tx.Exec("SET CONSTRAINTS ALL DEFERRED")
+	_, err = tx.ExecContext(ctx, "SET CONSTRAINTS ALL DEFERRED")
 	if err != nil {
 		return fmt.Errorf("failed to defer constraints: %w", err)
 	}
 
 	if oldPosition < newPosition {
-		_, err = tx.Exec(`
+		_, err = tx.ExecContext(ctx, `
 			UPDATE film_list_entries
 			SET position = position - 1
 			WHERE film_list_id = $1 AND position > $2 AND position <= $3
@@ -587,7 +636,7 @@ func UpdateEntryPosition(ctx context.Context, entryID, newPosition int) error {
 			return fmt.Errorf("failed to shift positions down: %w", err)
 		}
 	} else {
-		_, err = tx.Exec(`
+		_, err = tx.ExecContext(ctx, `
 			UPDATE film_list_entries
 			SET position = position + 1
 			WHERE film_list_id = $1 AND position >= $2 AND position < $3
@@ -597,7 +646,7 @@ func UpdateEntryPosition(ctx context.Context, entryID, newPosition int) error {
 		}
 	}
 
-	_, err = tx.Exec(`
+	_, err = tx.ExecContext(ctx, `
 		UPDATE film_list_entries
 		SET position = $1
 		WHERE id = $2
@@ -662,7 +711,8 @@ func GetFilmReviewWithFilmAndPoster(ctx context.Context, reviewID int) (*FilmRev
 	result, err := db.Get[FilmReviewWithFilmAndPoster](ctx, `
 		SELECT
 			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",
-			fr.rating as "filmreview.rating", fr.is_rewatch as "filmreview.is_rewatch", fr.has_spoilers as "filmreview.has_spoilers",
+			fr.rating as "filmreview.rating", fr.is_rewatch as "filmreview.is_rewatch",
+			fr.has_spoilers as "filmreview.has_spoilers",
 			fr.review_text as "filmreview.review_text", fr.published as "filmreview.published",
 			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title", f.year as "film.year",
 			f.overview as "film.overview", f.runtime as "film.runtime", f.published as "film.published",
@@ -732,7 +782,8 @@ func GetWatchedFilmsByDateRange(ctx context.Context, startDate, endDate any) ([]
 	return db.Select[FilmReviewWithFilmAndPoster](ctx, `
 		SELECT
 			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",
-			fr.rating as "filmreview.rating", fr.is_rewatch as "filmreview.is_rewatch", fr.has_spoilers as "filmreview.has_spoilers",
+			fr.rating as "filmreview.rating", fr.is_rewatch as "filmreview.is_rewatch",
+			fr.has_spoilers as "filmreview.has_spoilers",
 			fr.review_text as "filmreview.review_text", fr.published as "filmreview.published",
 			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title", f.year as "film.year",
 			f.overview as "film.overview", f.runtime as "film.runtime", f.published as "film.published", f.path as "film.path",

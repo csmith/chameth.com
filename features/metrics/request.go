@@ -149,17 +149,6 @@ func (w *StatsResponseWriter) WriteHeader(statusCode int) {
 	w.ResponseWriter.WriteHeader(statusCode)
 }
 
-func (w *StatsResponseWriter) status() int {
-	if w.code == 0 {
-		return http.StatusOK
-	}
-	return w.code
-}
-
-func (w *StatsResponseWriter) statusCode() string {
-	return strconv.Itoa(w.status())
-}
-
 // Flush implements http.Flusher so that non-buffered responses can stream.
 // For buffered pages only the headers can be flushed early; the body follows
 // when the request completes.
@@ -183,6 +172,17 @@ func (w *StatsResponseWriter) Finish(duration time.Duration, queries int32) {
 		w.ResponseWriter.WriteHeader(http.StatusOK)
 	}
 	_, _ = w.ResponseWriter.Write(w.buffer)
+}
+
+func (w *StatsResponseWriter) status() int {
+	if w.code == 0 {
+		return http.StatusOK
+	}
+	return w.code
+}
+
+func (w *StatsResponseWriter) statusCode() string {
+	return strconv.Itoa(w.status())
 }
 
 func statsHTML(requestID string, duration time.Duration, queries int32) []byte {

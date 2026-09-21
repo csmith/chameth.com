@@ -39,7 +39,9 @@ type GroupSummary struct {
 	WalkDistanceM *float64 `json:"walk_distance_m"`
 }
 
-func ActivitySummary(ctx context.Context, client *http.Client, start, end, group string) (map[string]GroupSummary, error) {
+func ActivitySummary(
+	ctx context.Context, client *http.Client, start, end, group string,
+) (map[string]GroupSummary, error) {
 	body, err := pompeiBandGet(ctx, client, "/api/insights/activity-summary", windowValues(start, end, group))
 	if err != nil {
 		return nil, err

@@ -113,7 +113,7 @@ func storeCover(ctx context.Context, c coverRef, contentType string, data []byte
 	_, subtype, _ := strings.Cut(contentType, "/")
 	filename := fmt.Sprintf("music-%s-%d.%s", c.entityType, c.id, subtype)
 	var mediaID int
-	err = tx.QueryRow(`
+	err = tx.QueryRowContext(ctx, `
 		INSERT INTO media (content_type, original_filename, data)
 		VALUES ($1, $2, $3)
 		RETURNING id
@@ -123,12 +123,12 @@ func storeCover(ctx context.Context, c coverRef, contentType string, data []byte
 	}
 
 	caption := c.name
-	description := fmt.Sprintf("Cover art for %s", c.name)
+	description := "Cover art for " + c.name
 	if c.entityType == "artist" {
-		description = fmt.Sprintf("Image of %s", c.name)
+		description = "Image of " + c.name
 	}
 	role := "image"
-	res, err := tx.Exec(`
+	res, err := tx.ExecContext(ctx, `
 		INSERT INTO media_relations (path, media_id, caption, description, role, entity_type, entity_id)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		ON CONFLICT (path) DO NOTHING

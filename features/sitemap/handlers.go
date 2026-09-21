@@ -212,7 +212,9 @@ func sortPageTree(nodes []*SiteMapPageDetails) {
 }
 
 func handleHtml(w http.ResponseWriter, r *http.Request) {
-	siteMapData, err := buildSiteMapData(r.Context(), content.CreatePageData(r.Context(), "Sitemap", "/sitemap/", templates.OpenGraphHeaders{}))
+	siteMapData, err := buildSiteMapData(r.Context(),
+		content.CreatePageData(r.Context(), "Sitemap", "/sitemap/", templates.OpenGraphHeaders{}),
+	)
 	if err != nil {
 		slog.Error("Failed to build site map data", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

@@ -14,7 +14,9 @@ import (
 
 type check = func(req request, remoteAddr string) error
 
-var checks = []check{checkHoneypot, checkTimestamp, checkRateLimit, checkSensible, checkCyrillic, checkUnsubscribeLink, checkSpamhaus}
+var checks = []check{
+	checkHoneypot, checkTimestamp, checkRateLimit, checkSensible, checkCyrillic, checkUnsubscribeLink, checkSpamhaus,
+}
 
 func checkHoneypot(req request, _ string) error {
 	if req.Honeypot != "" {

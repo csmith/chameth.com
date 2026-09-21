@@ -17,7 +17,12 @@ import (
 
 func RegisterRoutes(rm *routing.Manager) {
 	crud.Register(rm.Admin, "/pages", crud.Routes{
-		List:   crud.List("page", crud.DraftsAndAll(pages.GetDraftStaticPages, pages.GetAllStaticPages), toSummary, templates.RenderListPages),
+		List: crud.List(
+			"page",
+			crud.DraftsAndAll(pages.GetDraftStaticPages, pages.GetAllStaticPages),
+			toSummary,
+			templates.RenderListPages,
+		),
 		Create: crud.Create("page", "/pages", crud.GeneratePath("/%s/", pages.CreateStaticPage)),
 		Edit:   crud.Edit("page", pages.GetStaticPageByID, toEditData, templates.RenderEditPage),
 		Update: crud.Update("page", "/pages", applyUpdate),

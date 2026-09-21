@@ -5,6 +5,7 @@ package parkruns
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -43,8 +44,6 @@ func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
 	)
 }
 
-// bestRun is the fastest recorded gun time. Date and Location are
-// formatted for display; Time is the gun time as recorded.
 type bestRun struct {
 	Time     string `json:"time"`
 	Date     string `json:"date"`
@@ -99,7 +98,8 @@ func parseRange(args []string) (start, end time.Time, err error) {
 		return time.Time{}, time.Time{}, nil
 	}
 	if len(args) != 2 {
-		return time.Time{}, time.Time{}, fmt.Errorf("parkruns requires 0 or 2 arguments (start_date, end_date) in YYYY-MM-DD format")
+		return time.Time{}, time.Time{},
+			errors.New("parkruns requires 0 or 2 arguments (start_date, end_date) in YYYY-MM-DD format")
 	}
 
 	start, err = time.Parse("2006-01-02", args[0])
@@ -113,7 +113,7 @@ func parseRange(args []string) (start, end time.Time, err error) {
 	}
 
 	if start.After(end) {
-		return time.Time{}, time.Time{}, fmt.Errorf("start date must not be after end date")
+		return time.Time{}, time.Time{}, errors.New("start date must not be after end date")
 	}
 
 	return start, end, nil

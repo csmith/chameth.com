@@ -21,7 +21,9 @@ func GetMediaByPath(ctx context.Context, path string) (*Media, error) {
 	return &media, nil
 }
 
-func GetMediaRelationsForEntity(ctx context.Context, entityType string, entityID int) ([]MediaRelationWithDetails, error) {
+func GetMediaRelationsForEntity(
+	ctx context.Context, entityType string, entityID int,
+) ([]MediaRelationWithDetails, error) {
 	return db.Select[MediaRelationWithDetails](ctx, `
 		SELECT
 			mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id,
@@ -51,7 +53,9 @@ func HasMediaRelationForEntity(ctx context.Context, entityType string, entityID 
 	return db.Get[bool](ctx, query, args...)
 }
 
-func GetOpenGraphDetailsForEntity(ctx context.Context, entityType string, entityID int) (*MediaRelationWithDetails, error) {
+func GetOpenGraphDetailsForEntity(
+	ctx context.Context, entityType string, entityID int,
+) (*MediaRelationWithDetails, error) {
 	relation, err := db.Get[MediaRelationWithDetails](ctx, `
 		SELECT
 			mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id,
@@ -86,7 +90,9 @@ func GetOpenGraphImageForEntity(ctx context.Context, entityType string, entityID
 	return path, nil
 }
 
-func GetOpenGraphImageVariantsForEntity(ctx context.Context, entityType string, entityID int) ([]MediaImageVariant, error) {
+func GetOpenGraphImageVariantsForEntity(
+	ctx context.Context, entityType string, entityID int,
+) ([]MediaImageVariant, error) {
 	return db.Select[MediaImageVariant](ctx, `
 		SELECT mr.path, m.content_type, COALESCE(mr.description, '') AS description
 		FROM media_relations mr
@@ -103,7 +109,10 @@ func GetOpenGraphImageVariantsForEntity(ctx context.Context, entityType string, 
 	`, entityType, entityID)
 }
 
-func CreateMedia(ctx context.Context, contentType, originalFilename string, data []byte, width, height *int, parentMediaID *int) (int, error) {
+func CreateMedia(
+	ctx context.Context, contentType, originalFilename string, data []byte,
+	width, height *int, parentMediaID *int,
+) (int, error) {
 	return db.Get[int](ctx, `
 		INSERT INTO media (content_type, original_filename, data, width, height, parent_media_id)
 		VALUES ($1, $2, $3, $4, $5, $6)
@@ -118,7 +127,9 @@ func UpdateMediaData(ctx context.Context, id int, data []byte, width, height *in
 	return err
 }
 
-func UpdateMedia(ctx context.Context, id int, contentType, originalFilename string, data []byte, width, height *int) error {
+func UpdateMedia(
+	ctx context.Context, id int, contentType, originalFilename string, data []byte, width, height *int,
+) error {
 	_, err := db.Exec(ctx, `
 		UPDATE media SET content_type = $1, original_filename = $2, data = $3, width = $4, height = $5 WHERE id = $6
 	`, contentType, originalFilename, data, width, height, id)
@@ -145,7 +156,9 @@ func GetMediaByID(ctx context.Context, id int) (*Media, error) {
 	return &media, nil
 }
 
-func UpdateMediaRelation(ctx context.Context, entityType string, entityID int, path string, caption, description, role *string) error {
+func UpdateMediaRelation(
+	ctx context.Context, entityType string, entityID int, path string, caption, description, role *string,
+) error {
 	_, err := db.Exec(ctx, `
 		UPDATE media_relations
 		SET caption = $1, description = $2, role = $3
@@ -162,7 +175,9 @@ func DeleteMediaRelation(ctx context.Context, entityType string, entityID int, p
 	return err
 }
 
-func UpdateMediaRelationVariants(ctx context.Context, entityType string, entityID, parentMediaID int, caption, description *string) error {
+func UpdateMediaRelationVariants(
+	ctx context.Context, entityType string, entityID, parentMediaID int, caption, description *string,
+) error {
 	_, err := db.Exec(ctx, `
 		UPDATE media_relations
 		SET caption = $1, description = $2
@@ -186,7 +201,10 @@ func GetAvailableMediaForEntity(ctx context.Context, entityType string, entityID
 	`, entityType, entityID)
 }
 
-func CreateMediaRelation(ctx context.Context, entityType string, entityID, mediaID int, path string, caption, description, role *string) error {
+func CreateMediaRelation(
+	ctx context.Context, entityType string, entityID, mediaID int, path string,
+	caption, description, role *string,
+) error {
 	_, err := db.Exec(ctx, `
 		INSERT INTO media_relations (path, media_id, caption, description, role, entity_type, entity_id)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)

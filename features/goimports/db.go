@@ -30,11 +30,21 @@ func GetGoImportByID(ctx context.Context, id int) (*GoImport, error) {
 }
 
 func GetAllGoImports(ctx context.Context) ([]GoImport, error) {
-	return db.Select[GoImport](ctx, "SELECT id, path, vcs, repo_url, published FROM goimports WHERE published = true ORDER BY path")
+	return db.Select[GoImport](ctx, `
+		SELECT id, path, vcs, repo_url, published
+		FROM goimports
+		WHERE published = true
+		ORDER BY path
+	`)
 }
 
 func GetDraftGoImports(ctx context.Context) ([]GoImport, error) {
-	return db.Select[GoImport](ctx, "SELECT id, path, vcs, repo_url, published FROM goimports WHERE published = false ORDER BY path")
+	return db.Select[GoImport](ctx, `
+		SELECT id, path, vcs, repo_url, published
+		FROM goimports
+		WHERE published = false
+		ORDER BY path
+	`)
 }
 
 func CreateGoImport(ctx context.Context, path, vcs, repoUrl string) (int, error) {

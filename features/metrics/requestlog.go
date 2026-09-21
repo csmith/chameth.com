@@ -15,7 +15,10 @@ import (
 	"unicode/utf8"
 )
 
-var ipHashKey = flag.String("metrics-ip-hash-key", "", "Secret used to HMAC client IP addresses before storing them in request logs")
+var ipHashKey = flag.String(
+	"metrics-ip-hash-key", "",
+	"Secret used to HMAC client IP addresses before storing them in request logs",
+)
 var processHashSalt = func() []byte { b := make([]byte, 32); _, _ = rand.Read(b); return b }()
 
 const (
@@ -107,13 +110,13 @@ func remoteAddress(addr string) netip.Addr {
 	return ip.Unmap().WithZone("")
 }
 
-func truncateString(s string, max int) string {
+func truncateString(s string, maxLength int) string {
 	s = strings.ToValidUTF8(s, "�")
 	s = strings.ReplaceAll(s, "\x00", "�")
-	if len(s) <= max {
+	if len(s) <= maxLength {
 		return s
 	}
-	s = s[:max]
+	s = s[:maxLength]
 	// Trim any partial UTF-8 sequence so the value is still valid for PostgreSQL.
 	for len(s) > 0 {
 		r, size := utf8.DecodeLastRuneInString(s)

@@ -91,9 +91,16 @@ func sendContact(req request, content string) error {
 	if addr, err := mail.ParseAddress(req.SenderEmail); err == nil {
 		replyTo = addr.Address
 	}
-	body := fmt.Sprintf("To: %s\r\nSubject: %s\r\nReply-to: %s\r\nFrom: Online contact form <%s>\r\n\r\n%s\r\n", *toAddress, *emailSubject, replyTo, *fromAddress, content)
-	slog.Info("Sending e-mail message", "from", *fromAddress, "to", *toAddress, "subject", *emailSubject, "replyTo", req.SenderEmail)
-	err := smtp.SendMail(fmt.Sprintf("%s:%d", *smtpServer, *smtpPort), auth, *fromAddress, []string{*toAddress}, []byte(body))
+	body := fmt.Sprintf(
+		"To: %s\r\nSubject: %s\r\nReply-to: %s\r\nFrom: Online contact form <%s>\r\n\r\n%s\r\n",
+		*toAddress, *emailSubject, replyTo, *fromAddress, content,
+	)
+	slog.Info("Sending e-mail message",
+		"from", *fromAddress, "to", *toAddress, "subject", *emailSubject, "replyTo", req.SenderEmail,
+	)
+	err := smtp.SendMail(
+		fmt.Sprintf("%s:%d", *smtpServer, *smtpPort), auth, *fromAddress, []string{*toAddress}, []byte(body),
+	)
 	if err != nil {
 		slog.Error("Unable to send e-mail", "error", err)
 		return err

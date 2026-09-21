@@ -8,7 +8,11 @@ import (
 )
 
 func GetPoemByPath(ctx context.Context, path string) (*Poem, error) {
-	poem, err := db.Get[Poem](ctx, "SELECT id, path, title, poem, notes, date, published FROM poems WHERE path = $1 OR path = $2", path, path+"/")
+	poem, err := db.Get[Poem](ctx, `
+		SELECT id, path, title, poem, notes, date, published
+		FROM poems
+		WHERE path = $1 OR path = $2
+	`, path, path+"/")
 	if err != nil {
 		return nil, err
 	}
@@ -16,7 +20,11 @@ func GetPoemByPath(ctx context.Context, path string) (*Poem, error) {
 }
 
 func GetPoemByID(ctx context.Context, id int) (*Poem, error) {
-	poem, err := db.Get[Poem](ctx, "SELECT id, path, title, poem, notes, date, published FROM poems WHERE id = $1", id)
+	poem, err := db.Get[Poem](ctx, `
+		SELECT id, path, title, poem, notes, date, published
+		FROM poems
+		WHERE id = $1
+	`, id)
 	if err != nil {
 		return nil, err
 	}
@@ -24,11 +32,21 @@ func GetPoemByID(ctx context.Context, id int) (*Poem, error) {
 }
 
 func GetAllPoems(ctx context.Context) ([]PoemMetadata, error) {
-	return db.Select[PoemMetadata](ctx, "SELECT id, path, title, date, published FROM poems WHERE published = true ORDER BY date DESC")
+	return db.Select[PoemMetadata](ctx, `
+		SELECT id, path, title, date, published
+		FROM poems
+		WHERE published = true
+		ORDER BY date DESC
+	`)
 }
 
 func GetDraftPoems(ctx context.Context) ([]PoemMetadata, error) {
-	return db.Select[PoemMetadata](ctx, "SELECT id, path, title, date, published FROM poems WHERE published = false ORDER BY date DESC")
+	return db.Select[PoemMetadata](ctx, `
+		SELECT id, path, title, date, published
+		FROM poems
+		WHERE published = false
+		ORDER BY date DESC
+	`)
 }
 
 func CreatePoem(ctx context.Context, path, title string) (int, error) {

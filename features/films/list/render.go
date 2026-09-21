@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"strconv"
@@ -20,7 +21,7 @@ var tmpl = template.Must(template.New("filmlist.html.gotpl").ParseFS(templates, 
 
 func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
-		return "", fmt.Errorf("filmlist requires at least 1 argument (id)")
+		return "", errors.New("filmlist requires at least 1 argument (id)")
 	}
 
 	id, err := strconv.Atoi(args[0])

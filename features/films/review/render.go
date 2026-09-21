@@ -3,6 +3,7 @@ package review
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"strconv"
@@ -20,7 +21,7 @@ var tmpl = template.Must(template.New("filmreview.html.gotpl").ParseFS(templates
 
 func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
-		return "", fmt.Errorf("filmreview requires at least 1 argument (id)")
+		return "", errors.New("filmreview requires at least 1 argument (id)")
 	}
 
 	id, err := strconv.Atoi(args[0])

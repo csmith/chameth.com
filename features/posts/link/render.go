@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"log/slog"
@@ -32,7 +33,7 @@ var postlinkCache = cache.NewKeyed(24*time.Hour, func(path string) (string, erro
 
 func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
-		return "", fmt.Errorf("postlink requires at least 1 argument (path)")
+		return "", errors.New("postlink requires at least 1 argument (path)")
 	}
 
 	result := postlinkCache.Get(args[0])

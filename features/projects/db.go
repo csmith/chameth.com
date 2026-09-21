@@ -2,6 +2,7 @@ package projects
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"chameth.com/chameth.com/db"
@@ -12,19 +13,38 @@ func GetAllProjectSections(ctx context.Context) ([]ProjectSection, error) {
 }
 
 func GetProjectsInSection(ctx context.Context, sectionID int) ([]Project, error) {
-	return db.Select[Project](ctx, "SELECT id, section, name, icon, pinned, description FROM projects WHERE section = $1 AND published = true ORDER BY pinned DESC, LOWER(name)", sectionID)
+	return db.Select[Project](ctx, `
+		SELECT id, section, name, icon, pinned, description
+		FROM projects
+		WHERE section = $1 AND published = true
+		ORDER BY pinned DESC, LOWER(name)
+	`, sectionID)
 }
 
 func GetAllProjects(ctx context.Context) ([]Project, error) {
-	return db.Select[Project](ctx, "SELECT id, section, name, icon, pinned, description FROM projects WHERE published = true ORDER BY section, pinned DESC, LOWER(name)")
+	return db.Select[Project](ctx, `
+		SELECT id, section, name, icon, pinned, description
+		FROM projects
+		WHERE published = true
+		ORDER BY section, pinned DESC, LOWER(name)
+	`)
 }
 
 func GetDraftProjects(ctx context.Context) ([]Project, error) {
-	return db.Select[Project](ctx, "SELECT id, section, name, icon, pinned, description FROM projects WHERE published = false ORDER BY section, pinned DESC, LOWER(name)")
+	return db.Select[Project](ctx, `
+		SELECT id, section, name, icon, pinned, description
+		FROM projects
+		WHERE published = false
+		ORDER BY section, pinned DESC, LOWER(name)
+	`)
 }
 
 func GetProjectByID(ctx context.Context, id int) (*Project, error) {
-	project, err := db.Get[Project](ctx, "SELECT id, section, name, icon, pinned, description, published FROM projects WHERE id = $1", id)
+	project, err := db.Get[Project](ctx, `
+		SELECT id, section, name, icon, pinned, description, published
+		FROM projects
+		WHERE id = $1
+	`, id)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +57,7 @@ func CreateProject(ctx context.Context, name string) (int, error) {
 		return 0, fmt.Errorf("failed to get sections: %w", err)
 	}
 	if len(sections) == 0 {
-		return 0, fmt.Errorf("no sections available")
+		return 0, errors.New("no sections available")
 	}
 	defaultSection := sections[0].ID
 
@@ -53,7 +73,9 @@ func CreateProject(ctx context.Context, name string) (int, error) {
 	return id, nil
 }
 
-func UpdateProject(ctx context.Context, id int, name, icon, description string, section int, pinned, published bool) error {
+func UpdateProject(
+	ctx context.Context, id int, name, icon, description string, section int, pinned, published bool,
+) error {
 	_, err := db.Exec(ctx, `
 		UPDATE projects
 		SET section = $1, name = $2, icon = $3, pinned = $4, description = $5, published = $6

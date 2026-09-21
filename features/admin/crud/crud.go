@@ -130,7 +130,9 @@ func Create(entity, basePath string, create func(*http.Request) (int, error)) ht
 
 // GeneratePath returns a create function that picks a new aca-generated name
 // and creates an item at the path formed from that name, e.g. "/paste/<name>/".
-func GeneratePath(pathFormat string, create func(context.Context, string, string) (int, error)) func(*http.Request) (int, error) {
+func GeneratePath(
+	pathFormat string, create func(context.Context, string, string) (int, error),
+) func(*http.Request) (int, error) {
 	return func(r *http.Request) (int, error) {
 		gen, err := aca.NewDefaultGenerator()
 		if err != nil {

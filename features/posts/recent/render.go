@@ -3,6 +3,7 @@ package recent
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"strconv"
@@ -26,16 +27,16 @@ type Data struct {
 
 func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
-		return "", fmt.Errorf("recentposts requires at least 1 argument (count)")
+		return "", errors.New("recentposts requires at least 1 argument (count)")
 	}
 
 	count, err := strconv.Atoi(args[0])
 	if err != nil {
-		return "", fmt.Errorf("recentposts requires a number as argument")
+		return "", errors.New("recentposts requires a number as argument")
 	}
 
 	if count <= 0 {
-		return "", fmt.Errorf("recentposts requires a positive number")
+		return "", errors.New("recentposts requires a positive number")
 	}
 
 	postList, err := posts.GetRecentPostsWithContent(ctx.Context, count)

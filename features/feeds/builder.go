@@ -93,7 +93,9 @@ func handleRelatedPostsBuilder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := BuilderData{
-		PageData: content.CreatePageData(r.Context(), "Build a post feed", builderFeedPrefix, parenttemplates.OpenGraphHeaders{}),
+		PageData: content.CreatePageData(
+			r.Context(), "Build a post feed", builderFeedPrefix, parenttemplates.OpenGraphHeaders{},
+		),
 		Sections: builderSections(allPosts, included, likes, unlikes),
 	}
 	if len(likes) > 0 || len(unlikes) > 0 {
@@ -109,8 +111,6 @@ func handleRelatedPostsBuilder(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Actions accepted by handleRelatedPostsBuilderAction, matching the
-// "action" form field submitted by the builder page's controls.
 const (
 	builderActionInclude       = "include"
 	builderActionExclude       = "exclude"

@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"math"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"chameth.com/chameth.com/content"
@@ -69,7 +70,7 @@ func FilmPage(w http.ResponseWriter, r *http.Request) {
 
 	year := ""
 	if film.Year != nil {
-		year = fmt.Sprintf("%d", *film.Year)
+		year = strconv.Itoa(*film.Year)
 	}
 
 	timesWatched := len(publishedReviews)
@@ -109,7 +110,8 @@ func FilmPage(w http.ResponseWriter, r *http.Request) {
 		AverageRating: averageRating,
 		PosterPath:    posterPath,
 		FilmLists:     filmListIDs,
-		PageData:      content.CreatePageData(r.Context(), fmt.Sprintf("%s (%s)", film.Title, year), film.Path, maintemplates.OpenGraphHeaders{}),
+		PageData: content.CreatePageData(r.Context(),
+			fmt.Sprintf("%s (%s)", film.Title, year), film.Path, maintemplates.OpenGraphHeaders{}),
 	})
 	if err != nil {
 		slog.Error("Failed to render film template", "error", err, "path", r.URL.Path)
@@ -147,7 +149,7 @@ func FilmListPage(w http.ResponseWriter, r *http.Request) {
 	for i, entry := range entries {
 		year := ""
 		if entry.Film.Year != nil {
-			year = fmt.Sprintf("%d", *entry.Film.Year)
+			year = strconv.Itoa(*entry.Film.Year)
 		}
 
 		var roundedRating int

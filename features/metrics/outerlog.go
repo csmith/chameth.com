@@ -17,7 +17,16 @@ func LogRequests() func(http.Handler) http.Handler {
 			if r.Method == http.MethodHead {
 				size = 0
 			}
-			enqueueRequestLog(requestLog{url: truncateString(r.URL.RequestURI(), maxLoggedURLLength), userAgent: truncateString(r.UserAgent(), maxLoggedUserAgentLength), ip: ip, ipHash: hashIP(ip, start), start: start, duration: time.Since(start), size: size, status: cw.status()})
+			enqueueRequestLog(requestLog{
+				url:       truncateString(r.URL.RequestURI(), maxLoggedURLLength),
+				userAgent: truncateString(r.UserAgent(), maxLoggedUserAgentLength),
+				ip:        ip,
+				ipHash:    hashIP(ip, start),
+				start:     start,
+				duration:  time.Since(start),
+				size:      size,
+				status:    cw.status(),
+			})
 		})
 	}
 }

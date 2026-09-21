@@ -2,6 +2,7 @@ package tmdb
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"image"
@@ -27,7 +28,7 @@ var (
 	client       = &http.Client{Timeout: 30 * time.Second}
 )
 
-func tmdbGet(apiKey, endpoint string, queryParams map[string]string) ([]byte, error) {
+func tmdbGet(ctx context.Context, apiKey, endpoint string, queryParams map[string]string) ([]byte, error) {
 	u, err := url.Parse(baseURL + endpoint)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse URL: %w", err)
@@ -41,7 +42,7 @@ func tmdbGet(apiKey, endpoint string, queryParams map[string]string) ([]byte, er
 		u.RawQuery = q.Encode()
 	}
 
-	req, err := http.NewRequest("GET", u.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -60,7 +61,7 @@ func tmdbGet(apiKey, endpoint string, queryParams map[string]string) ([]byte, er
 	return io.ReadAll(resp.Body)
 }
 
-func GetConfiguration(apiKey string) (*Config, error) {
+func GetConfiguration(ctx context.Context, apiKey string) (*Config, error) {
 	configMutex.RLock()
 	if cachedConfig != nil {
 		configMutex.RUnlock()
@@ -68,7 +69,7 @@ func GetConfiguration(apiKey string) (*Config, error) {
 	}
 	configMutex.RUnlock()
 
-	data, err := tmdbGet(apiKey, "/configuration", nil)
+	data, err := tmdbGet(ctx, apiKey, "/configuration", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -85,8 +86,8 @@ func GetConfiguration(apiKey string) (*Config, error) {
 	return cachedConfig, nil
 }
 
-func SearchMovies(apiKey, query string) ([]Movie, error) {
-	data, err := tmdbGet(apiKey, "/search/movie", map[string]string{"query": query})
+func SearchMovies(ctx context.Context, apiKey, query string) ([]Movie, error) {
+	data, err := tmdbGet(ctx, apiKey, "/search/movie", map[string]string{"query": query})
 	if err != nil {
 		return nil, err
 	}
@@ -99,8 +100,8 @@ func SearchMovies(apiKey, query string) ([]Movie, error) {
 	return searchResp.Results, nil
 }
 
-func GetMovie(apiKey string, movieID int) (*Movie, error) {
-	data, err := tmdbGet(apiKey, fmt.Sprintf("/movie/%d", movieID), nil)
+func GetMovie(ctx context.Context, apiKey string, movieID int) (*Movie, error) {
+	data, err := tmdbGet(ctx, apiKey, fmt.Sprintf("/movie/%d", movieID), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -113,8 +114,8 @@ func GetMovie(apiKey string, movieID int) (*Movie, error) {
 	return &movie, nil
 }
 
-func DownloadPoster(apiKey, posterPath string, targetWidth int) (*PosterData, error) {
-	config, err := GetConfiguration(apiKey)
+func DownloadPoster(ctx context.Context, apiKey, posterPath string, targetWidth int) (*PosterData, error) {
+	config, err := GetConfiguration(ctx, apiKey)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get TMDB configuration: %w", err)
 	}
@@ -122,7 +123,7 @@ func DownloadPoster(apiKey, posterPath string, targetWidth int) (*PosterData, er
 	size := selectPosterSize(targetWidth, config.Images.PosterSizes)
 	imageURL := config.Images.SecureBaseURL + size + posterPath
 
-	req, err := http.NewRequest("GET", imageURL, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, imageURL, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}

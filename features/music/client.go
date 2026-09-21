@@ -29,8 +29,7 @@ type NowPlaying struct {
 	Cover           string    `json:"cover"`
 }
 
-// Album is an entry from the insights endpoints. The chart fields are only
-// populated by the album chart; ID and SubsonicID key the rehosted cover art.
+// Album is an entry from the insights endpoints.
 type Album struct {
 	Position         int    `json:"position"`
 	Movement         string `json:"movement"`
@@ -166,7 +165,9 @@ func FetchImage(ctx context.Context, client *http.Client, path string) ([]byte, 
 	return body, header.Get("Content-Type"), nil
 }
 
-func bonusMetalGet(ctx context.Context, client *http.Client, path string, query url.Values) ([]byte, http.Header, error) {
+func bonusMetalGet(
+	ctx context.Context, client *http.Client, path string, query url.Values,
+) ([]byte, http.Header, error) {
 	u := strings.TrimRight(bonusMetalBaseURL, "/") + path
 	if len(query) > 0 {
 		u += "?" + query.Encode()

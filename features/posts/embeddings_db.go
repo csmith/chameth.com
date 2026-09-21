@@ -32,7 +32,10 @@ func relatedPostsByID(ctx context.Context, postID int, limit int) ([]PostMetadat
 	`, postID, limit)
 }
 
-func recentPostsBySimilarityScore(ctx context.Context, likePaths, unlikePaths []string, unlikeCoeff, maxLikeDist, minScore, minUnlikeDist float64, limit int) ([]Post, error) {
+func recentPostsBySimilarityScore(
+	ctx context.Context, likePaths, unlikePaths []string,
+	unlikeCoeff, maxLikeDist, minScore, minUnlikeDist float64, limit int,
+) ([]Post, error) {
 	return db.Select[Post](ctx, `
 		WITH likes AS (
 			SELECT embedding

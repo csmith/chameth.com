@@ -2,6 +2,7 @@ package calendar
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -67,7 +68,7 @@ func parseWindow(args []string) (window, error) {
 		w.title = fmt.Sprintf("Activity calendar %s - %s",
 			w.rangeStart.Format("2006-01-02"), w.rangeEnd.Format("2006-01-02"))
 	default:
-		return w, fmt.Errorf("workoutcalendar requires 0 or 2 arguments (start_date, end_date) in YYYY-MM-DD format")
+		return w, errors.New("workoutcalendar requires 0 or 2 arguments (start_date, end_date) in YYYY-MM-DD format")
 	}
 
 	return w, nil

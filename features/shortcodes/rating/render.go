@@ -3,6 +3,7 @@ package rating
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"math/rand"
@@ -20,7 +21,7 @@ var tmpl = template.Must(template.New("rating.html.gotpl").Funcs(template.FuncMa
 
 func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
-		return "", fmt.Errorf("rating requires at least 1 argument (value)")
+		return "", errors.New("rating requires at least 1 argument (value)")
 	}
 
 	numericRating, err := strconv.Atoi(args[0])

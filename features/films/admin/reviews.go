@@ -37,7 +37,7 @@ func EditFilmReviewHandler() func(http.ResponseWriter, *http.Request) {
 			FilmID:      film.ID,
 			FilmTitle:   film.Title,
 			WatchedDate: review.WatchedDate.Format("2006-01-02"),
-			Rating:      fmt.Sprintf("%d", review.Rating),
+			Rating:      strconv.Itoa(review.Rating),
 			IsRewatch:   review.IsRewatch,
 			HasSpoilers: review.HasSpoilers,
 			ReviewText:  review.ReviewText,
@@ -132,7 +132,9 @@ func UpdateFilmReviewHandler() func(http.ResponseWriter, *http.Request) {
 		reviewText := r.FormValue("review_text")
 		published := r.FormValue("published") == "true"
 
-		if err := films.UpdateFilmReview(r.Context(), id, rating, watchedDate, isRewatch, hasSpoilers, published, reviewText); err != nil {
+		if err := films.UpdateFilmReview(
+			r.Context(), id, rating, watchedDate, isRewatch, hasSpoilers, published, reviewText,
+		); err != nil {
 			http.Error(w, "Failed to update film review", http.StatusInternalServerError)
 			return
 		}

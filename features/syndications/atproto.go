@@ -2,6 +2,7 @@ package syndications
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"html"
@@ -31,13 +32,13 @@ func RegisterGoroutine(ctx context.Context) func() {
 }
 
 func SyndicateAllPosts(ctx context.Context) {
-	client, err := newClient()
+	client, err := newClient(ctx)
 	if err != nil {
 		slog.Error("Failed to create ATProto client", "error", err)
 		return
 	}
 
-	publicationRef, err := client.GetRecord(atproto.StandardSitePublicationCollection, standardSitePublicationRkey)
+	publicationRef, err := client.GetRecord(ctx, atproto.StandardSitePublicationCollection, standardSitePublicationRkey)
 	if err != nil {
 		slog.Error("Failed to get standard.site publication ref", "error", err)
 		return
@@ -94,13 +95,14 @@ func backfillStandardSiteDocument(ctx context.Context, client *atproto.Client, s
 		return err
 	}
 	if openGraph != nil {
-		blob, err = client.UploadBlob(openGraph.ContentType, openGraph.Data)
+		blob, err = client.UploadBlob(ctx, openGraph.ContentType, openGraph.Data)
 		if err != nil {
 			slog.Warn("Failed to upload blob to PDS", "error", err)
 		}
 	}
 
 	docRef, _, err := client.CreateRecord(
+		ctx,
 		atproto.StandardSiteDocumentCollection,
 		atproto.NewStandardSiteDocument(
 			standardSitePublicationUri,
@@ -117,19 +119,23 @@ func backfillStandardSiteDocument(ctx context.Context, client *atproto.Client, s
 	}
 
 	slog.Info("Backfilled standard.site.document", "path", post.Path, "uri", docRef.URI)
-	_, err = CreateSyndication(ctx, post.Path, docRef.URI, "standard.site document", true, "link", new("site.standard.document"))
+	_, err = CreateSyndication(
+		ctx, post.Path, docRef.URI, "standard.site document", true, "link", new("site.standard.document"),
+	)
 	return err
 }
 
-func newClient() (*atproto.Client, error) {
+func newClient(ctx context.Context) (*atproto.Client, error) {
 	if *pdsUrl == "" {
-		return nil, fmt.Errorf("atproto PDS server not configured")
+		return nil, errors.New("atproto PDS server not configured")
 	}
 
-	return atproto.NewClient(*pdsUrl, *handle, *password)
+	return atproto.NewClient(ctx, *pdsUrl, *handle, *password)
 }
 
-func syndicatePost(ctx context.Context, client *atproto.Client, publicationRef atproto.StrongRef, post posts.PostMetadata) error {
+func syndicatePost(
+	ctx context.Context, client *atproto.Client, publicationRef atproto.StrongRef, post posts.PostMetadata,
+) error {
 	fullPost, err := posts.GetPostByID(ctx, post.ID)
 	if err != nil {
 		return fmt.Errorf("failed to get post content: %w", err)
@@ -143,13 +149,14 @@ func syndicatePost(ctx context.Context, client *atproto.Client, publicationRef a
 
 	var blob *atproto.Blob
 	if openGraph != nil {
-		blob, err = client.UploadBlob(openGraph.ContentType, openGraph.Data)
+		blob, err = client.UploadBlob(ctx, openGraph.ContentType, openGraph.Data)
 		if err != nil {
 			slog.Warn("Failed to upload blob to PDS", "error", err)
 		}
 	}
 
 	docRef, _, err := client.CreateRecord(
+		ctx,
 		atproto.StandardSiteDocumentCollection,
 		atproto.NewStandardSiteDocument(
 			standardSitePublicationUri,
@@ -166,7 +173,9 @@ func syndicatePost(ctx context.Context, client *atproto.Client, publicationRef a
 	}
 
 	slog.Info("Automatically created standard.site.document", "path", post.Path, "uri", docRef.URI)
-	_, err = CreateSyndication(ctx, post.Path, docRef.URI, "standard.site document", true, "link", new("site.standard.document"))
+	_, err = CreateSyndication(
+		ctx, post.Path, docRef.URI, "standard.site document", true, "link", new("site.standard.document"),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to create standard.site document syndication: %w", err)
 	}
@@ -178,7 +187,11 @@ func syndicatePost(ctx context.Context, client *atproto.Client, publicationRef a
 		blob,
 		[]atproto.StrongRef{publicationRef, docRef},
 	)
-	_, publicURL, err := client.CreateRecord(atproto.BlueskyPostCollection, atproto.NewBlueskyPost("", []string{"en"}, post.Date, &embed))
+	_, publicURL, err := client.CreateRecord(
+		ctx,
+		atproto.BlueskyPostCollection,
+		atproto.NewBlueskyPost("", []string{"en"}, post.Date, &embed),
+	)
 	if err != nil {
 		return err
 	}

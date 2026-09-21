@@ -2,6 +2,7 @@ package playedalbums
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -69,7 +70,7 @@ func retrieve(ctx context.Context, client *http.Client, args []string) (shortcod
 
 func parseArgs(args []string) (start, end time.Time, err error) {
 	if len(args) != 2 {
-		return time.Time{}, time.Time{}, fmt.Errorf("playedalbums requires 2 arguments (start date, end date)")
+		return time.Time{}, time.Time{}, errors.New("playedalbums requires 2 arguments (start date, end date)")
 	}
 
 	start, err = time.Parse("2006-01-02", args[0])

@@ -3,6 +3,7 @@ package warning
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 
@@ -17,7 +18,7 @@ var tmpl = template.Must(template.New("warning.html.gotpl").ParseFS(templates, "
 
 func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
-		return "", fmt.Errorf("warning requires at least 1 argument (content)")
+		return "", errors.New("warning requires at least 1 argument (content)")
 	}
 
 	content := args[0]

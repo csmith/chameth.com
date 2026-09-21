@@ -1,7 +1,6 @@
 package prints
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"path"
@@ -56,7 +55,7 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 				previewPath = mr.Path
 			case "download":
 				printLinks = append(printLinks, templates.PrintLink{
-					Name:    fmt.Sprintf("%s file", path.Ext(mr.Path)),
+					Name:    path.Ext(mr.Path) + " file",
 					Address: mr.Path,
 				})
 			}

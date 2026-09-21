@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"log/slog"
@@ -45,21 +46,8 @@ func filmsToBasic(allFilms []films.Film) []filmtemplates.FilmBasic {
 
 func FilmReviewWorkflowStep1Handler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "GET" {
-			allFilms, err := films.GetAllFilms(r.Context())
-			if err != nil {
-				slog.Error("Failed to get films", "error", err)
-				http.Error(w, "Failed to load films", http.StatusInternalServerError)
-				return
-			}
-
-			data := filmtemplates.Step1Data{
-				Films: filmsToBasic(allFilms),
-			}
-
-			if err := filmtemplates.RenderFilmReviewWorkflowStep1(w, data); err != nil {
-				http.Error(w, "Failed to render template", http.StatusInternalServerError)
-			}
+		if r.Method == http.MethodGet {
+			renderStep1(w, r)
 			return
 		}
 
@@ -68,63 +56,95 @@ func FilmReviewWorkflowStep1Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		var filmID int
-		tmdbIDStr := r.FormValue("tmdb_id")
-		existingFilmID := r.FormValue("film_id")
-
-		if tmdbIDStr != "" {
-			tmdbID, err := strconv.Atoi(tmdbIDStr)
-			if err != nil {
-				http.Error(w, "Invalid TMDB ID", http.StatusBadRequest)
-				return
-			}
-
-			posterPath := r.FormValue("poster_path")
-
-			movie, err := tmdb.GetMovie(*tmdbAPIKey, tmdbID)
-			if err != nil {
-				slog.Error("Failed to get movie from TMDB", "error", err)
-				http.Error(w, "Movie not found", http.StatusNotFound)
-				return
-			}
-
-			year := ""
-			yearInt := 0
-			if movie.ReleaseDate != "" {
-				releaseDate, err := time.Parse("2006-01-02", movie.ReleaseDate)
-				if err == nil {
-					year = strconv.Itoa(releaseDate.Year())
-					yearInt = releaseDate.Year()
-				}
-			}
-
-			path := generateFilmPath(movie.Title, yearInt)
-			filmID, err = films.CreateFilm(r.Context(), movie.ID, movie.Title, year, path, movie.Overview, movie.Runtime)
-			if err != nil {
-				slog.Error("Failed to create film", "error", err)
-				http.Error(w, "Failed to create film", http.StatusInternalServerError)
-				return
-			}
-
-			if posterPath != "" {
-				if err := updateOrCreateFilmPoster(r.Context(), filmID, movie.Title, posterPath); err != nil {
-					slog.Error("Failed to update film poster", "error", err)
-				}
-			}
-		} else if existingFilmID != "" {
-			var err error
-			filmID, err = strconv.Atoi(existingFilmID)
-			if err != nil {
-				http.Error(w, "Invalid film ID", http.StatusBadRequest)
-				return
-			}
-		} else {
-			http.Error(w, "No film selected", http.StatusBadRequest)
+		filmID, ok := resolveStep1FilmID(w, r)
+		if !ok {
 			return
 		}
 
 		http.Redirect(w, r, fmt.Sprintf("/films/workflow/step/2?film_id=%d", filmID), http.StatusSeeOther)
 	}
+}
+
+func renderStep1(w http.ResponseWriter, r *http.Request) {
+	allFilms, err := films.GetAllFilms(r.Context())
+	if err != nil {
+		slog.Error("Failed to get films", "error", err)
+		http.Error(w, "Failed to load films", http.StatusInternalServerError)
+		return
+	}
+
+	data := filmtemplates.Step1Data{
+		Films: filmsToBasic(allFilms),
+	}
+
+	if err := filmtemplates.RenderFilmReviewWorkflowStep1(w, data); err != nil {
+		http.Error(w, "Failed to render template", http.StatusInternalServerError)
+	}
+}
+
+// resolveStep1FilmID creates a film from the submitted TMDB ID or resolves
+// an existing film ID, writing an error response when neither is usable.
+func resolveStep1FilmID(w http.ResponseWriter, r *http.Request) (int, bool) {
+	tmdbIDStr := r.FormValue("tmdb_id")
+	existingFilmID := r.FormValue("film_id")
+
+	switch {
+	case tmdbIDStr != "":
+		return createFilmFromTMDB(w, r, tmdbIDStr)
+	case existingFilmID != "":
+		filmID, err := strconv.Atoi(existingFilmID)
+		if err != nil {
+			http.Error(w, "Invalid film ID", http.StatusBadRequest)
+			return 0, false
+		}
+		return filmID, true
+	default:
+		http.Error(w, "No film selected", http.StatusBadRequest)
+		return 0, false
+	}
+}
+
+func createFilmFromTMDB(w http.ResponseWriter, r *http.Request, tmdbIDStr string) (int, bool) {
+	tmdbID, err := strconv.Atoi(tmdbIDStr)
+	if err != nil {
+		http.Error(w, "Invalid TMDB ID", http.StatusBadRequest)
+		return 0, false
+	}
+
+	posterPath := r.FormValue("poster_path")
+
+	movie, err := tmdb.GetMovie(r.Context(), *tmdbAPIKey, tmdbID)
+	if err != nil {
+		slog.Error("Failed to get movie from TMDB", "error", err)
+		http.Error(w, "Movie not found", http.StatusNotFound)
+		return 0, false
+	}
+
+	year, yearInt := releaseYear(movie.ReleaseDate)
+
+	path := generateFilmPath(movie.Title, yearInt)
+	filmID, err := films.CreateFilm(r.Context(), movie.ID, movie.Title, year, path, movie.Overview, movie.Runtime)
+	if err != nil {
+		slog.Error("Failed to create film", "error", err)
+		http.Error(w, "Failed to create film", http.StatusInternalServerError)
+		return 0, false
+	}
+
+	if posterPath != "" {
+		if err := updateOrCreateFilmPoster(r.Context(), filmID, movie.Title, posterPath); err != nil {
+			slog.Error("Failed to update film poster", "error", err)
+		}
+	}
+
+	return filmID, true
+}
+
+func releaseYear(releaseDate string) (string, int) {
+	parsed, err := time.Parse("2006-01-02", releaseDate)
+	if err != nil {
+		return "", 0
+	}
+	return strconv.Itoa(parsed.Year()), parsed.Year()
 }
 
 func FilmReviewWorkflowStep2Handler() func(http.ResponseWriter, *http.Request) {
@@ -142,56 +162,8 @@ func FilmReviewWorkflowStep2Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if r.Method == "GET" {
-			entries, err := films.GetFilmListEntriesWithDetails(r.Context(), 1)
-			if err != nil {
-				entries = []films.FilmListEntryWithDetails{}
-			}
-
-			entriesWithPosters := make([]filmtemplates.FilmListEntryWithPoster, 0, len(entries))
-			for _, entry := range entries {
-				var posterMediaID *int
-				if entry.Poster.MediaID != 0 {
-					posterMediaID = &entry.Poster.MediaID
-				}
-				tmdbID := 0
-				if entry.Film.TMDBID != nil {
-					tmdbID = *entry.Film.TMDBID
-				}
-
-				var ratingHTML template.HTML
-				avgRating := 10
-				if entry.AverageRating != nil {
-					avgRating = int(math.Round(*entry.AverageRating))
-					stars, err := rating.Render(avgRating)
-					if err != nil {
-						slog.Error("Failed to render rating", "error", err, "rating", avgRating)
-					} else {
-						ratingHTML = template.HTML(stars)
-					}
-				}
-
-				entriesWithPosters = append(entriesWithPosters, filmtemplates.FilmListEntryWithPoster{
-					Entry:         films.FilmListEntry{ID: entry.ID, FilmListID: entry.FilmListID, FilmID: entry.FilmID, Position: entry.Position},
-					Film:          filmtemplates.FilmBasic{ID: entry.Film.ID, TMDBID: tmdbID, Title: entry.Film.Title, Year: entry.Film.Year, Path: entry.Film.Path},
-					PosterMediaID: posterMediaID,
-					AverageRating: avgRating,
-					RatingHTML:    ratingHTML,
-				})
-			}
-
-			slog.Info("Found entries", "count", len(entriesWithPosters))
-
-			data := filmtemplates.Step2Data{
-				FilmID:      filmID,
-				Film:        filmToBasic(film),
-				Entries:     entriesWithPosters,
-				EndPosition: len(entries) + 1,
-			}
-
-			if err := filmtemplates.RenderFilmReviewWorkflowStep2(w, data); err != nil {
-				slog.Error("Failed to render template", "err", err)
-			}
+		if r.Method == http.MethodGet {
+			renderStep2(w, r, filmID, film)
 			return
 		}
 
@@ -215,6 +187,66 @@ func FilmReviewWorkflowStep2Handler() func(http.ResponseWriter, *http.Request) {
 
 		http.Redirect(w, r, fmt.Sprintf("/films/workflow/step/3?film_id=%d&default_rating=%d&position=%d",
 			filmID, defaultRating, position), http.StatusSeeOther)
+	}
+}
+
+func renderStep2(w http.ResponseWriter, r *http.Request, filmID int, film *films.Film) {
+	entries, err := films.GetFilmListEntriesWithDetails(r.Context(), 1)
+	if err != nil {
+		entries = []films.FilmListEntryWithDetails{}
+	}
+
+	entriesWithPosters := make([]filmtemplates.FilmListEntryWithPoster, 0, len(entries))
+	for _, entry := range entries {
+		entriesWithPosters = append(entriesWithPosters, step2EntryWithPoster(entry))
+	}
+
+	slog.Info("Found entries", "count", len(entriesWithPosters))
+
+	data := filmtemplates.Step2Data{
+		FilmID:      filmID,
+		Film:        filmToBasic(film),
+		Entries:     entriesWithPosters,
+		EndPosition: len(entries) + 1,
+	}
+
+	if err := filmtemplates.RenderFilmReviewWorkflowStep2(w, data); err != nil {
+		slog.Error("Failed to render template", "err", err)
+	}
+}
+
+func step2EntryWithPoster(entry films.FilmListEntryWithDetails) filmtemplates.FilmListEntryWithPoster {
+	var posterMediaID *int
+	if entry.Poster.MediaID != 0 {
+		posterMediaID = &entry.Poster.MediaID
+	}
+	tmdbID := 0
+	if entry.Film.TMDBID != nil {
+		tmdbID = *entry.Film.TMDBID
+	}
+
+	var ratingHTML template.HTML
+	avgRating := 10
+	if entry.AverageRating != nil {
+		avgRating = int(math.Round(*entry.AverageRating))
+		stars, err := rating.Render(avgRating)
+		if err != nil {
+			slog.Error("Failed to render rating", "error", err, "rating", avgRating)
+		} else {
+			ratingHTML = template.HTML(stars)
+		}
+	}
+
+	return filmtemplates.FilmListEntryWithPoster{
+		Entry: films.FilmListEntry{
+			ID: entry.ID, FilmListID: entry.FilmListID, FilmID: entry.FilmID, Position: entry.Position,
+		},
+		Film: filmtemplates.FilmBasic{
+			ID: entry.Film.ID, TMDBID: tmdbID, Title: entry.Film.Title, Year: entry.Film.Year, Path: entry.Film.Path,
+		},
+		PosterMediaID: posterMediaID,
+		AverageRating: avgRating,
+		RatingHTML:    ratingHTML,
 	}
 }
 
@@ -245,7 +277,7 @@ func FilmReviewWorkflowStep3Handler() func(http.ResponseWriter, *http.Request) {
 			letterboxdURL = strings.TrimSuffix(syndicationResults[0].ExternalURL, "/") + "/edit/"
 		}
 
-		if r.Method == "GET" {
+		if r.Method == http.MethodGet {
 			data := filmtemplates.Step3Data{
 				FilmID:            filmID,
 				Film:              filmToBasic(film),
@@ -259,7 +291,8 @@ func FilmReviewWorkflowStep3Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/films/workflow/step/4?film_id=%d&default_rating=%d", filmID, defaultRating), http.StatusSeeOther)
+		http.Redirect(w, r, fmt.Sprintf("/films/workflow/step/4?film_id=%d&default_rating=%d",
+			filmID, defaultRating), http.StatusSeeOther)
 	}
 }
 
@@ -279,7 +312,7 @@ func FilmReviewWorkflowStep4Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if r.Method == "GET" {
+		if r.Method == http.MethodGet {
 			data := filmtemplates.Step4Data{
 				FilmID:        filmID,
 				Film:          filmToBasic(film),
@@ -311,7 +344,9 @@ func FilmReviewWorkflowStep4Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		reviewID, err := films.CreateFilmReview(r.Context(), filmID, ratingVal, watchedDate, isRewatch, hasSpoilers, published, reviewText)
+		reviewID, err := films.CreateFilmReview(
+			r.Context(), filmID, ratingVal, watchedDate, isRewatch, hasSpoilers, published, reviewText,
+		)
 		if err != nil {
 			slog.Error("Failed to create review", "error", err)
 			http.Error(w, "Failed to create review", http.StatusInternalServerError)
@@ -350,7 +385,7 @@ func FilmReviewWorkflowStep5Handler() func(http.ResponseWriter, *http.Request) {
 
 		letterboxdURL := fmt.Sprintf("https://letterboxd.com/tmdb/%d", *film.TMDBID)
 
-		if r.Method == "GET" {
+		if r.Method == http.MethodGet {
 			data := filmtemplates.Step5Data{
 				FilmID:            filmID,
 				Film:              filmToBasic(film),
@@ -381,7 +416,7 @@ func FilmReviewWorkflowStep6Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if r.Method == "GET" {
+		if r.Method == http.MethodGet {
 			data := filmtemplates.Step6Data{
 				FilmID: filmID,
 				Film:   filmToBasic(film),
@@ -404,7 +439,9 @@ func FilmReviewWorkflowStep6Handler() func(http.ResponseWriter, *http.Request) {
 			syndicationName := r.FormValue("syndication_name")
 
 			if syndicationURL != "" {
-				_, err := syndications.CreateSyndication(r.Context(), film.Path, syndicationURL, syndicationName, true, "anchor", nil)
+				_, err := syndications.CreateSyndication(
+					r.Context(), film.Path, syndicationURL, syndicationName, true, "anchor", nil,
+				)
 				if err != nil {
 					slog.Error("Failed to create syndication", "error", err)
 				}
@@ -426,40 +463,8 @@ func FilmReviewWorkflowStep7Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		if r.Method == "GET" {
-			allLists, err := films.GetAllFilmLists(r.Context())
-			if err != nil {
-				allLists = []films.FilmList{}
-			}
-
-			listsWithUrls := make([]filmtemplates.FilmListWithLetterboxd, 0, len(allLists))
-			for _, list := range allLists {
-				syndicationResults, err := syndications.GetSyndicationsByPath(r.Context(), list.Path, "anchor")
-				if err != nil {
-					slog.Warn("Failed to get syndications for list", "path", list.Path, "error", err)
-				}
-				var letterboxdURL string
-				if len(syndicationResults) > 0 {
-					letterboxdURL = strings.TrimSuffix(syndicationResults[0].ExternalURL, "/") + "/edit/"
-				}
-
-				listsWithUrls = append(listsWithUrls, filmtemplates.FilmListWithLetterboxd{
-					ID:                list.ID,
-					Title:             list.Title,
-					Path:              list.Path,
-					LetterboxdListURL: letterboxdURL,
-				})
-			}
-
-			data := filmtemplates.Step7Data{
-				FilmID:   filmID,
-				Film:     filmToBasic(film),
-				AllLists: listsWithUrls,
-			}
-
-			if err := filmtemplates.RenderFilmReviewWorkflowStep7(w, data); err != nil {
-				http.Error(w, "Failed to render template", http.StatusInternalServerError)
-			}
+		if r.Method == http.MethodGet {
+			renderStep7(w, r, filmID, film)
 			return
 		}
 
@@ -468,18 +473,59 @@ func FilmReviewWorkflowStep7Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		action := r.FormValue("action")
-		if action != "skip" {
-			listIDs := r.Form["list_ids"]
-			for _, listIDStr := range listIDs {
-				listID, _ := strconv.Atoi(listIDStr)
-				if listID != 1 {
-					position, _ := films.GetNextPosition(r.Context(), listID)
-					films.AddFilmToList(r.Context(), listID, filmID, position)
-				}
-			}
+		if r.FormValue("action") != "skip" {
+			addFilmToSelectedLists(r.Context(), r.Form["list_ids"], filmID)
 		}
 
 		http.Redirect(w, r, fmt.Sprintf("/films?added=%d", filmID), http.StatusSeeOther)
+	}
+}
+
+func renderStep7(w http.ResponseWriter, r *http.Request, filmID int, film *films.Film) {
+	allLists, err := films.GetAllFilmLists(r.Context())
+	if err != nil {
+		allLists = []films.FilmList{}
+	}
+
+	data := filmtemplates.Step7Data{
+		FilmID:   filmID,
+		Film:     filmToBasic(film),
+		AllLists: filmListsWithLetterboxd(r.Context(), allLists),
+	}
+
+	if err := filmtemplates.RenderFilmReviewWorkflowStep7(w, data); err != nil {
+		http.Error(w, "Failed to render template", http.StatusInternalServerError)
+	}
+}
+
+func filmListsWithLetterboxd(ctx context.Context, allLists []films.FilmList) []filmtemplates.FilmListWithLetterboxd {
+	listsWithUrls := make([]filmtemplates.FilmListWithLetterboxd, 0, len(allLists))
+	for _, list := range allLists {
+		var letterboxdURL string
+		syndicationResults, err := syndications.GetSyndicationsByPath(ctx, list.Path, "anchor")
+		if err != nil {
+			slog.Warn("Failed to get syndications for list", "path", list.Path, "error", err)
+		} else if len(syndicationResults) > 0 {
+			letterboxdURL = strings.TrimSuffix(syndicationResults[0].ExternalURL, "/") + "/edit/"
+		}
+
+		listsWithUrls = append(listsWithUrls, filmtemplates.FilmListWithLetterboxd{
+			ID:                list.ID,
+			Title:             list.Title,
+			Path:              list.Path,
+			LetterboxdListURL: letterboxdURL,
+		})
+	}
+	return listsWithUrls
+}
+
+func addFilmToSelectedLists(ctx context.Context, listIDStrs []string, filmID int) {
+	for _, listIDStr := range listIDStrs {
+		listID, _ := strconv.Atoi(listIDStr)
+		if listID == 1 {
+			continue
+		}
+		position, _ := films.GetNextPosition(ctx, listID)
+		films.AddFilmToList(ctx, listID, filmID, position)
 	}
 }

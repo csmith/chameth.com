@@ -17,7 +17,8 @@ func makeURLsAbsolute(htmlContent, baseURL string) (string, error) {
 	processNode = func(n *html.Node) {
 		if n.Type == html.ElementNode {
 			for i, attr := range n.Attr {
-				if (attr.Key == "href" || attr.Key == "src") && strings.HasPrefix(attr.Val, "/") && !strings.HasPrefix(attr.Val, "//") {
+				if (attr.Key == "href" || attr.Key == "src") && strings.HasPrefix(attr.Val, "/") &&
+					!strings.HasPrefix(attr.Val, "//") {
 					n.Attr[i].Val = baseURL + attr.Val
 				}
 				if attr.Key == "srcset" {
@@ -49,7 +50,8 @@ func makeSrcsetAbsolute(srcset, baseURL string) string {
 	for i, part := range parts {
 		part = strings.TrimSpace(part)
 		urlAndDescriptor := strings.Fields(part)
-		if len(urlAndDescriptor) > 0 && strings.HasPrefix(urlAndDescriptor[0], "/") && !strings.HasPrefix(urlAndDescriptor[0], "//") {
+		if len(urlAndDescriptor) > 0 && strings.HasPrefix(urlAndDescriptor[0], "/") &&
+			!strings.HasPrefix(urlAndDescriptor[0], "//") {
 			urlAndDescriptor[0] = baseURL + urlAndDescriptor[0]
 			parts[i] = strings.Join(urlAndDescriptor, " ")
 		}

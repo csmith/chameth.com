@@ -3,6 +3,7 @@ package figure
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 
@@ -18,7 +19,7 @@ var tmpl = template.Must(template.New("figure.html.gotpl").ParseFS(templates, "f
 
 func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 2 {
-		return "", fmt.Errorf("figure requires at least 2 arguments (class, description)")
+		return "", errors.New("figure requires at least 2 arguments (class, description)")
 	}
 
 	class := args[0]

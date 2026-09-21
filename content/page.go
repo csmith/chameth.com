@@ -2,7 +2,6 @@ package content
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 
 	"chameth.com/chameth.com/assets"
@@ -28,7 +27,7 @@ func CreatePageData(ctx context.Context, title, path string, ogHeaders templates
 	}
 
 	return templates.PageData{
-		Title:        fmt.Sprintf("%s · Chameth.com", title),
+		Title:        title + " · Chameth.com",
 		SiteURL:      templates.SiteURL(),
 		AdminURL:     templates.AdminURL(),
 		CanonicalUrl: canonicalUrl,

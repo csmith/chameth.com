@@ -3,6 +3,7 @@ package distance
 import (
 	"bytes"
 	_ "embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"strconv"
@@ -17,7 +18,7 @@ var tmpl = template.Must(template.New("walkingdistance.html.gotpl").Parse(templa
 
 func render(args []string, totalDistance float64, _ *shortcodes.Context) (string, error) {
 	if len(args) < 3 {
-		return "", fmt.Errorf("walkingdistance shortcode requires three arguments: name, distance, svg")
+		return "", errors.New("walkingdistance shortcode requires three arguments: name, distance, svg")
 	}
 
 	name := args[0]

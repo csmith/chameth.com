@@ -70,7 +70,7 @@ func UploadMediaHandler() func(http.ResponseWriter, *http.Request) {
 		fileGroups := groupFilesByBaseName(files)
 
 		for baseName, group := range fileGroups {
-			if err := processMediaGroup(r.Context(), baseName, group); err != nil {
+			if err := processMediaGroup(r.Context(), group); err != nil {
 				slog.Error("Failed to process media group", "baseName", baseName, "error", err)
 				http.Error(w, "Failed to process uploaded files", http.StatusInternalServerError)
 				return
@@ -107,7 +107,7 @@ func isImage(ext string) bool {
 	return isOriginalImage(ext) || ext == ".webp" || ext == ".avif"
 }
 
-func processMediaGroup(ctx context.Context, baseName string, files []fileInfo) error {
+func processMediaGroup(ctx context.Context, files []fileInfo) error {
 	var originalFile *fileInfo
 	for i := range files {
 		if isOriginalImage(files[i].ext) {
@@ -176,7 +176,9 @@ func getImageDimensions(fileHeader *multipart.FileHeader) (int, int, error) {
 	return img.Width, img.Height, nil
 }
 
-func createMediaFromFile(ctx context.Context, fileHeader *multipart.FileHeader, width, height, parentMediaID *int) (int, error) {
+func createMediaFromFile(
+	ctx context.Context, fileHeader *multipart.FileHeader, width, height, parentMediaID *int,
+) (int, error) {
 	file, err := fileHeader.Open()
 	if err != nil {
 		return 0, err
@@ -308,52 +310,8 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		var entityPath string
-		switch entityType {
-		case "post":
-			post, err := posts.GetPostByID(r.Context(), entityID)
-			if err != nil {
-				http.Error(w, "Entity not found", http.StatusNotFound)
-				return
-			}
-			entityPath = post.Path
-		case "poem":
-			poem, err := poems.GetPoemByID(r.Context(), entityID)
-			if err != nil {
-				http.Error(w, "Entity not found", http.StatusNotFound)
-				return
-			}
-			entityPath = poem.Path
-		case "snippet":
-			snippet, err := snippets.GetSnippetByID(r.Context(), entityID)
-			if err != nil {
-				http.Error(w, "Entity not found", http.StatusNotFound)
-				return
-			}
-			entityPath = snippet.Path
-		case "staticpage":
-			page, err := pages.GetStaticPageByID(r.Context(), entityID)
-			if err != nil {
-				http.Error(w, "Entity not found", http.StatusNotFound)
-				return
-			}
-			entityPath = page.Path
-		case "film":
-			film, err := films.GetFilmByID(r.Context(), entityID)
-			if err != nil {
-				http.Error(w, "Entity not found", http.StatusNotFound)
-				return
-			}
-			entityPath = fmt.Sprintf("/film-%d/", film.ID)
-		case "videogame":
-			game, err := videogames.GetVideoGameByID(r.Context(), entityID)
-			if err != nil {
-				http.Error(w, "Entity not found", http.StatusNotFound)
-				return
-			}
-			entityPath = game.Path
-		default:
-			http.Error(w, "Unsupported entity type", http.StatusBadRequest)
+		entityPath, ok := entityPathFor(w, r, entityType, entityID)
+		if !ok {
 			return
 		}
 
@@ -363,80 +321,134 @@ func EditMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		primaryMedia := make([]templates.MediaRelationItem, 0)
-		variantsByParent := make(map[int][]templates.MediaRelationItem)
-
-		for _, rel := range mediaRelations {
-			caption := ""
-			if rel.Caption != nil {
-				caption = *rel.Caption
-			}
-			description := ""
-			if rel.Description != nil {
-				description = *rel.Description
-			}
-			role := ""
-			if rel.Role != nil {
-				role = *rel.Role
-			}
-
-			item := templates.MediaRelationItem{
-				Path:        rel.Path,
-				Title:       caption,
-				AltText:     description,
-				Width:       rel.Width,
-				Height:      rel.Height,
-				Role:        role,
-				ContentType: rel.ContentType,
-				MediaID:     rel.MediaID,
-				IsVariant:   rel.ParentMediaID != nil,
-			}
-
-			if rel.ParentMediaID == nil {
-				primaryMedia = append(primaryMedia, item)
-			} else {
-				variantsByParent[*rel.ParentMediaID] = append(variantsByParent[*rel.ParentMediaID], item)
-			}
-		}
-
-		mediaItems := make([]templates.MediaRelationItem, 0, len(mediaRelations))
-		for _, primary := range primaryMedia {
-			mediaItems = append(mediaItems, primary)
-			if variants, exists := variantsByParent[primary.MediaID]; exists {
-				mediaItems = append(mediaItems, variants...)
-			}
-		}
-
 		availableMedia, err := media.GetAvailableMediaForEntity(r.Context(), entityType, entityID)
 		if err != nil {
 			http.Error(w, "Failed to retrieve available media", http.StatusInternalServerError)
 			return
 		}
 
-		availableMediaItems := make([]templates.AvailableMediaItem, 0, len(availableMedia))
-		for _, m := range availableMedia {
-			availableMediaItems = append(availableMediaItems, templates.AvailableMediaItem{
-				MediaID:          m.ID,
-				OriginalFilename: m.OriginalFilename,
-				ContentType:      m.ContentType,
-				Width:            m.Width,
-				Height:           m.Height,
-				IsVariant:        m.ParentMediaID != nil,
-			})
-		}
-
 		data := templates.EditMediaRelationsData{
 			EntityType:     entityType,
 			EntityID:       entityID,
 			EntityPath:     entityPath,
-			Media:          mediaItems,
-			AvailableMedia: availableMediaItems,
+			Media:          orderedMediaItems(mediaRelations),
+			AvailableMedia: availableMediaItems(availableMedia),
 		}
 
 		if err := templates.RenderEditMediaRelations(w, data); err != nil {
 			http.Error(w, "Failed to render template", http.StatusInternalServerError)
 		}
 	}
+}
+
+// entityPathFor resolves the canonical path of the entity, writing an error
+// response when the type is unsupported or the entity does not exist.
+func entityPathFor(w http.ResponseWriter, r *http.Request, entityType string, entityID int) (string, bool) {
+	var entityPath string
+	switch entityType {
+	case "post":
+		post, err := posts.GetPostByID(r.Context(), entityID)
+		if err != nil {
+			http.Error(w, "Entity not found", http.StatusNotFound)
+			return "", false
+		}
+		entityPath = post.Path
+	case "poem":
+		poem, err := poems.GetPoemByID(r.Context(), entityID)
+		if err != nil {
+			http.Error(w, "Entity not found", http.StatusNotFound)
+			return "", false
+		}
+		entityPath = poem.Path
+	case "snippet":
+		snippet, err := snippets.GetSnippetByID(r.Context(), entityID)
+		if err != nil {
+			http.Error(w, "Entity not found", http.StatusNotFound)
+			return "", false
+		}
+		entityPath = snippet.Path
+	case "staticpage":
+		page, err := pages.GetStaticPageByID(r.Context(), entityID)
+		if err != nil {
+			http.Error(w, "Entity not found", http.StatusNotFound)
+			return "", false
+		}
+		entityPath = page.Path
+	case "film":
+		film, err := films.GetFilmByID(r.Context(), entityID)
+		if err != nil {
+			http.Error(w, "Entity not found", http.StatusNotFound)
+			return "", false
+		}
+		entityPath = fmt.Sprintf("/film-%d/", film.ID)
+	case "videogame":
+		game, err := videogames.GetVideoGameByID(r.Context(), entityID)
+		if err != nil {
+			http.Error(w, "Entity not found", http.StatusNotFound)
+			return "", false
+		}
+		entityPath = game.Path
+	default:
+		http.Error(w, "Unsupported entity type", http.StatusBadRequest)
+		return "", false
+	}
+	return entityPath, true
+}
+
+// orderedMediaItems maps relations to template items, placing each variant
+// directly after its parent media.
+func orderedMediaItems(mediaRelations []media.MediaRelationWithDetails) []templates.MediaRelationItem {
+	primaryMedia := make([]templates.MediaRelationItem, 0)
+	variantsByParent := make(map[int][]templates.MediaRelationItem)
+
+	for _, rel := range mediaRelations {
+		item := templates.MediaRelationItem{
+			Path:        rel.Path,
+			Title:       orEmpty(rel.Caption),
+			AltText:     orEmpty(rel.Description),
+			Width:       rel.Width,
+			Height:      rel.Height,
+			Role:        orEmpty(rel.Role),
+			ContentType: rel.ContentType,
+			MediaID:     rel.MediaID,
+			IsVariant:   rel.ParentMediaID != nil,
+		}
+
+		if rel.ParentMediaID == nil {
+			primaryMedia = append(primaryMedia, item)
+		} else {
+			variantsByParent[*rel.ParentMediaID] = append(variantsByParent[*rel.ParentMediaID], item)
+		}
+	}
+
+	items := make([]templates.MediaRelationItem, 0, len(mediaRelations))
+	for _, primary := range primaryMedia {
+		items = append(items, primary)
+		items = append(items, variantsByParent[primary.MediaID]...)
+	}
+	return items
+}
+
+func availableMediaItems(availableMedia []media.MediaMetadata) []templates.AvailableMediaItem {
+	items := make([]templates.AvailableMediaItem, 0, len(availableMedia))
+	for _, m := range availableMedia {
+		items = append(items, templates.AvailableMediaItem{
+			MediaID:          m.ID,
+			OriginalFilename: m.OriginalFilename,
+			ContentType:      m.ContentType,
+			Width:            m.Width,
+			Height:           m.Height,
+			IsVariant:        m.ParentMediaID != nil,
+		})
+	}
+	return items
+}
+
+func orEmpty(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }
 
 func UpdateMediaRelationHandler() func(http.ResponseWriter, *http.Request) {
@@ -477,17 +489,23 @@ func UpdateMediaRelationHandler() func(http.ResponseWriter, *http.Request) {
 			rolePtr = &role
 		}
 
-		if err := media.UpdateMediaRelation(r.Context(), entityType, entityID, path, titlePtr, altTextPtr, rolePtr); err != nil {
+		if err := media.UpdateMediaRelation(
+			r.Context(), entityType, entityID, path, titlePtr, altTextPtr, rolePtr,
+		); err != nil {
 			http.Error(w, "Failed to update media relation", http.StatusInternalServerError)
 			return
 		}
 
-		if err := media.UpdateMediaRelationVariants(r.Context(), entityType, entityID, mediaID, titlePtr, altTextPtr); err != nil {
+		if err := media.UpdateMediaRelationVariants(
+			r.Context(), entityType, entityID, mediaID, titlePtr, altTextPtr,
+		); err != nil {
 			http.Error(w, "Failed to update variant media relations", http.StatusInternalServerError)
 			return
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/media-relations/edit?entity_type=%s&entity_id=%d", entityType, entityID), http.StatusSeeOther)
+		http.Redirect(w, r,
+			fmt.Sprintf("/media-relations/edit?entity_type=%s&entity_id=%d", entityType, entityID),
+			http.StatusSeeOther)
 	}
 }
 
@@ -513,7 +531,9 @@ func RemoveMediaRelationHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/media-relations/edit?entity_type=%s&entity_id=%d", entityType, entityID), http.StatusSeeOther)
+		http.Redirect(w, r,
+			fmt.Sprintf("/media-relations/edit?entity_type=%s&entity_id=%d", entityType, entityID),
+			http.StatusSeeOther)
 	}
 }
 
@@ -554,12 +574,16 @@ func AddMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 				rolePtr = &role
 			}
 
-			if err := media.CreateMediaRelation(r.Context(), entityType, entityID, mediaID, path, nil, nil, rolePtr); err != nil {
+			if err := media.CreateMediaRelation(
+				r.Context(), entityType, entityID, mediaID, path, nil, nil, rolePtr,
+			); err != nil {
 				http.Error(w, "Failed to create media relation", http.StatusInternalServerError)
 				return
 			}
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/media-relations/edit?entity_type=%s&entity_id=%d", entityType, entityID), http.StatusSeeOther)
+		http.Redirect(w, r,
+			fmt.Sprintf("/media-relations/edit?entity_type=%s&entity_id=%d", entityType, entityID),
+			http.StatusSeeOther)
 	}
 }

@@ -3,6 +3,7 @@ package countdown
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"time"
@@ -20,7 +21,7 @@ var tmpl = template.Must(template.New("countdown.html.gotpl").ParseFS(templates,
 // have passed since it. The date is YYYY-MM-DD.
 func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	if len(args) != 2 {
-		return "", fmt.Errorf("countdown requires 2 arguments (date, event name)")
+		return "", errors.New("countdown requires 2 arguments (date, event name)")
 	}
 
 	date, err := time.Parse("2006-01-02", args[0])
@@ -57,9 +58,7 @@ func pluralise(n int, noun string) string {
 	return noun + "s"
 }
 
-// startOfDay returns midnight UTC on the given day. Both it and dates
-// parsed by RenderFromText are UTC midnights, so their difference is an
-// exact multiple of 24 hours.
+// startOfDay uses UTC midnight to keep day differences exact.
 func startOfDay(t time.Time) time.Time {
 	y, m, d := t.UTC().Date()
 	return time.Date(y, m, d, 0, 0, 0, 0, time.UTC)

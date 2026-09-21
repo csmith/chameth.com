@@ -13,7 +13,10 @@ import (
 
 func RegisterRoutes(rm *routing.Manager) {
 	crud.Register(rm.Admin, "/snippets", crud.Routes{
-		List:   crud.List("snippet", crud.DraftsAndAll(snippets.GetDraftSnippets, snippets.GetAllSnippets), toSummary, templates.RenderListSnippets),
+		List: crud.List("snippet",
+			crud.DraftsAndAll(snippets.GetDraftSnippets, snippets.GetAllSnippets),
+			toSummary, templates.RenderListSnippets,
+		),
 		Create: crud.Create("snippet", "/snippets", crud.GeneratePath("/snippets/%s/", snippets.CreateSnippet)),
 		Edit:   crud.Edit("snippet", snippets.GetSnippetByID, toEditData, templates.RenderEditSnippet),
 		Update: crud.Update("snippet", "/snippets", applyUpdate),

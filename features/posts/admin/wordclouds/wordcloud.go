@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	_ "embed"
+	"errors"
 	"fmt"
 	"maps"
 	"math/rand/v2"
@@ -145,7 +146,7 @@ func bestWords(analysis postAnalysis, frequencies map[string]float64) []string {
 		return int((1-b.freq)*float64(b.count)) - int((1-a.freq)*float64(a.count))
 	})
 
-	var res []string
+	res := make([]string, 0, len(sortedScores))
 	for i := range sortedScores {
 		res = append(res, sortedScores[i].word)
 	}
@@ -155,7 +156,7 @@ func bestWords(analysis postAnalysis, frequencies map[string]float64) []string {
 // generateImage creates a word cloud image from the given words
 func generateImage(words []string) ([]byte, []string, error) {
 	if len(words) == 0 {
-		return nil, nil, fmt.Errorf("no words to generate image")
+		return nil, nil, errors.New("no words to generate image")
 	}
 
 	im := image.NewNRGBA(image.Rect(0, 0, 500, 400))

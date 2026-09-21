@@ -31,13 +31,17 @@ func PreWarm(entityType string, entityID int, content string, url string) {
 }
 
 // RenderContent renders content (shortcodes + markdown to HTML) for any entity type.
-func RenderContent(ctx context.Context, entityType string, entityID int, content string, url string) (template.HTML, error) {
+func RenderContent(
+	ctx context.Context, entityType string, entityID int, content string, url string,
+) (template.HTML, error) {
 	mediaRelations, err := media.GetMediaRelationsForEntity(ctx, entityType, entityID)
 	if err != nil {
 		return "", fmt.Errorf("failed to get media relations: %w", err)
 	}
 
-	contentWithShortcodes := ShortcodesManager.Render(content, &shortcodes.Context{Media: mediaRelations, URL: url, Context: ctx})
+	contentWithShortcodes := ShortcodesManager.Render(content, &shortcodes.Context{
+		Media: mediaRelations, URL: url, Context: ctx,
+	})
 
 	renderedContent, err := markdown.Render(contentWithShortcodes)
 	if err != nil {

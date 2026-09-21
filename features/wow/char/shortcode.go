@@ -2,6 +2,7 @@ package char
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -29,7 +30,7 @@ func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
 
 func parseArgs(args []string) (realm, name string, at time.Time, err error) {
 	if len(args) < 2 || len(args) > 3 {
-		return "", "", time.Time{}, fmt.Errorf("wowchar requires 2 or 3 arguments (realm character [date])")
+		return "", "", time.Time{}, errors.New("wowchar requires 2 or 3 arguments (realm character [date])")
 	}
 
 	realm, name = args[0], args[1]

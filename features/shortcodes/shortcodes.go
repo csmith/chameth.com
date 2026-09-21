@@ -3,7 +3,7 @@ package shortcodes
 import (
 	"bytes"
 	"context"
-	"fmt"
+	"errors"
 	"log/slog"
 	"regexp"
 	"strings"
@@ -165,7 +165,7 @@ func splitArguments(input string) ([]string, error) {
 	}
 
 	if inQuote {
-		return nil, fmt.Errorf("unclosed quote in argument string")
+		return nil, errors.New("unclosed quote in argument string")
 	}
 
 	return args, nil

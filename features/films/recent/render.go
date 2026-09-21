@@ -3,6 +3,7 @@ package recent
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"strconv"
@@ -19,7 +20,7 @@ var tmpl = template.Must(template.New("recentfilms.html.gotpl").ParseFS(template
 
 func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
-		return "", fmt.Errorf("recentfilms requires at least 1 argument (count)")
+		return "", errors.New("recentfilms requires at least 1 argument (count)")
 	}
 
 	count, err := strconv.Atoi(args[0])

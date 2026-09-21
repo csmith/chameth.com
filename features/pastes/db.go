@@ -8,7 +8,11 @@ import (
 )
 
 func GetPasteByPath(ctx context.Context, path string) (*Paste, error) {
-	paste, err := db.Get[Paste](ctx, "SELECT id, path, title, language, date, published, content FROM pastes WHERE path = $1 OR path = $2", path, path+"/")
+	paste, err := db.Get[Paste](ctx, `
+		SELECT id, path, title, language, date, published, content
+		FROM pastes
+		WHERE path = $1 OR path = $2
+	`, path, path+"/")
 	if err != nil {
 		return nil, err
 	}
@@ -16,7 +20,11 @@ func GetPasteByPath(ctx context.Context, path string) (*Paste, error) {
 }
 
 func GetPasteByID(ctx context.Context, id int) (*Paste, error) {
-	paste, err := db.Get[Paste](ctx, "SELECT id, path, title, language, date, published, content FROM pastes WHERE id = $1", id)
+	paste, err := db.Get[Paste](ctx, `
+		SELECT id, path, title, language, date, published, content
+		FROM pastes
+		WHERE id = $1
+	`, id)
 	if err != nil {
 		return nil, err
 	}
@@ -24,11 +32,21 @@ func GetPasteByID(ctx context.Context, id int) (*Paste, error) {
 }
 
 func GetAllPastes(ctx context.Context) ([]PasteMetadata, error) {
-	return db.Select[PasteMetadata](ctx, "SELECT id, path, title, language, date, published FROM pastes WHERE published = true ORDER BY date DESC")
+	return db.Select[PasteMetadata](ctx, `
+		SELECT id, path, title, language, date, published
+		FROM pastes
+		WHERE published = true
+		ORDER BY date DESC
+	`)
 }
 
 func GetDraftPastes(ctx context.Context) ([]PasteMetadata, error) {
-	return db.Select[PasteMetadata](ctx, "SELECT id, path, title, language, date, published FROM pastes WHERE published = false ORDER BY date DESC")
+	return db.Select[PasteMetadata](ctx, `
+		SELECT id, path, title, language, date, published
+		FROM pastes
+		WHERE published = false
+		ORDER BY date DESC
+	`)
 }
 
 func CreatePaste(ctx context.Context, path, title string) (int, error) {

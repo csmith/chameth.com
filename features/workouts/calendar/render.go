@@ -45,15 +45,15 @@ func indexDays(entries []dayEntry) map[string]*dayBucket {
 
 // Keep zero-distance types in the map so they still appear in the legend.
 func perTypeMaxDay(byDay map[string]*dayBucket) map[string]float64 {
-	max := map[string]float64{}
+	maxes := map[string]float64{}
 	for _, b := range byDay {
 		for t, dist := range b.groups {
-			if prev, ok := max[t]; !ok || dist > prev {
-				max[t] = dist
+			if prev, ok := maxes[t]; !ok || dist > prev {
+				maxes[t] = dist
 			}
 		}
 	}
-	return max
+	return maxes
 }
 
 func buildData(title string, start, end, rangeStart, rangeEnd time.Time, entries []dayEntry) Data {
@@ -81,7 +81,10 @@ func buildData(title string, start, end, rangeStart, rangeEnd time.Time, entries
 	}
 }
 
-func buildCell(date, start, end, rangeStart, rangeEnd time.Time, byDay map[string]*dayBucket, maxByType map[string]float64) Cell {
+func buildCell(
+	date, start, end, rangeStart, rangeEnd time.Time,
+	byDay map[string]*dayBucket, maxByType map[string]float64,
+) Cell {
 	if date.Before(start) || date.After(end) {
 		return Cell{Inactive: true}
 	}
@@ -108,8 +111,8 @@ func buildStripes(groups map[string]float64, maxByType map[string]float64) []Str
 	stripes := make([]Stripe, 0, len(keys))
 	for _, k := range keys {
 		var ratio float64
-		if max := maxByType[k]; max > 0 {
-			ratio = groups[k] / max
+		if ceiling := maxByType[k]; ceiling > 0 {
+			ratio = groups[k] / ceiling
 		}
 		stripes = append(stripes, Stripe{Class: stripeClass(k, ratio)})
 	}

@@ -3,6 +3,7 @@ package sidenote
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 
@@ -17,7 +18,7 @@ var tmpl = template.Must(template.New("sidenote.html.gotpl").ParseFS(templates, 
 
 func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	if len(args) < 2 {
-		return "", fmt.Errorf("sidenote requires at least 2 arguments (title, content)")
+		return "", errors.New("sidenote requires at least 2 arguments (title, content)")
 	}
 
 	title := args[0]

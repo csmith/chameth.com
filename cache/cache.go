@@ -5,10 +5,9 @@ import (
 	"time"
 )
 
-// Cache lazily maintains a value of type T, refreshing it via update when it
-// is older than maxAge. A failed refresh is not cached: the previous value is
-// served and the refresh retried on the next call to Get. Until the first
-// successful refresh, Get returns the zero value of T.
+// Cache lazily refreshes expired data. Failed refreshes preserve stale data
+// and are retried on the next access. Before the first successful refresh,
+// it serves the zero value of T.
 type Cache[T any] struct {
 	mutex      sync.Mutex
 	value      T

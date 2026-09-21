@@ -3,6 +3,7 @@ package watched
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 	"time"
@@ -19,7 +20,7 @@ var tmpl = template.Must(template.New("watchedfilms.html.gotpl").ParseFS(templat
 
 func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 2 {
-		return "", fmt.Errorf("watchedfilms requires 2 arguments (start_date, end_date) in YYYY-MM-DD format")
+		return "", errors.New("watchedfilms requires 2 arguments (start_date, end_date) in YYYY-MM-DD format")
 	}
 
 	startDate, err := time.Parse("2006-01-02", args[0])

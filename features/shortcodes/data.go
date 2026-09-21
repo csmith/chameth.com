@@ -96,7 +96,15 @@ func (m *Manager) renderData(name string, reg dataRegistration, args []string, c
 // fetchData retrieves fresh data for a key and stores it. When
 // skipIfInFlight is set and another goroutine is already fetching the same
 // key, it returns errFetchInProgress instead of waiting.
-func (m *Manager) fetchData(ctx context.Context, name string, reg dataRegistration, args []string, argsHash string, skipIfInFlight bool) ([]byte, error) {
+func (m *Manager) fetchData(
+	ctx context.Context, name string, reg dataRegistration,
+	args []string, argsHash string, skipIfInFlight bool,
+) ([]byte, error) {
+	argsJSON, err := json.Marshal(args)
+	if err != nil {
+		return nil, err
+	}
+
 	lock := m.keyLock(name + "\x00" + argsHash)
 	if skipIfInFlight {
 		if !lock.TryLock() {
@@ -124,7 +132,6 @@ func (m *Manager) fetchData(ctx context.Context, name string, reg dataRegistrati
 	dataJSON, refreshAt, err := reg.retrieve(retrieveCtx, args)
 
 	retrievedAt := time.Now()
-	argsJSON, _ := json.Marshal(args)
 
 	if err != nil {
 		// Negative-cache the failure: repeated renders fail fast against
@@ -133,7 +140,9 @@ func (m *Manager) fetchData(ctx context.Context, name string, reg dataRegistrati
 		// untouched. Failed retrieves never supply a final refresh time:
 		// with no data there is nothing to freeze.
 		next := retrievedAt.Add(fetchRetryDelay)
-		if upsertErr := upsertShortcodeDataFailure(ctx, name, reg.version, argsHash, argsJSON, retrievedAt, &next); upsertErr != nil {
+		if upsertErr := upsertShortcodeDataFailure(
+			ctx, name, reg.version, argsHash, argsJSON, retrievedAt, &next,
+		); upsertErr != nil {
 			return nil, errors.Join(err, upsertErr)
 		}
 		return nil, err
@@ -174,7 +183,11 @@ func RefreshUntil(interval time.Duration, cutoff time.Time) time.Time {
 }
 
 func hashArgs(args []string) string {
-	encoded, _ := json.Marshal(args)
+	encoded, err := json.Marshal(args)
+	if err != nil {
+		// Marshalling a slice of strings cannot fail, but be defensive.
+		panic(err)
+	}
 	sum := sha256.Sum256(encoded)
 	return hex.EncodeToString(sum[:])
 }

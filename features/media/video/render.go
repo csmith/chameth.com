@@ -3,6 +3,7 @@ package video
 import (
 	"bytes"
 	"embed"
+	"errors"
 	"fmt"
 	"html/template"
 
@@ -16,14 +17,17 @@ var tmpl = template.Must(template.New("video.html.gotpl").ParseFS(templates, "vi
 
 func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
-		return "", fmt.Errorf("video requires at least 1 argument (description)")
+		return "", errors.New("video requires at least 1 argument (description)")
 	}
 
 	description := args[0]
 
 	mediaRelation := ctx.MediaWithDescription(description)
 	if len(mediaRelation) != 1 {
-		return "", fmt.Errorf("incorrect number of video files found for description %s (expected 1, got %d)", description, len(mediaRelation))
+		return "", fmt.Errorf(
+			"incorrect number of video files found for description %s (expected 1, got %d)",
+			description, len(mediaRelation),
+		)
 	}
 
 	return renderTemplate(Data{

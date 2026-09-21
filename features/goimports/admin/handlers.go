@@ -14,7 +14,10 @@ import (
 
 func RegisterRoutes(rm *routing.Manager) {
 	crud.Register(rm.Admin, "/goimports", crud.Routes{
-		List:   crud.List("goimport", crud.DraftsAndAll(goimports.GetDraftGoImports, goimports.GetAllGoImports), toSummary, templates.RenderListGoImports),
+		List: crud.List("goimport",
+			crud.DraftsAndAll(goimports.GetDraftGoImports, goimports.GetAllGoImports),
+			toSummary, templates.RenderListGoImports,
+		),
 		Create: crud.Create("goimport", "/goimports", createGoImport),
 		Edit:   crud.Edit("goimport", goimports.GetGoImportByID, toEditData, templates.RenderEditGoImport),
 		Update: crud.Update("goimport", "/goimports", applyUpdate),

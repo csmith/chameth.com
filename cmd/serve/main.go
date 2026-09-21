@@ -33,7 +33,10 @@ var (
 	port          = flag.Int("port", 8080, "Port to listen on")
 	tailscaleHost = flag.String("tailscale-host", "website-admin", "Tailscale host")
 	tailscaleDir  = flag.String("tailscale-dir", "tsdata", "Tailscale directory")
-	tailscaleWait = flag.Duration("tailscale-wait", 30*time.Second, "How long to wait for the tailnet before starting background jobs")
+	tailscaleWait = flag.Duration(
+		"tailscale-wait", 30*time.Second,
+		"How long to wait for the tailnet before starting background jobs",
+	)
 )
 
 func main() {
@@ -108,7 +111,13 @@ func main() {
 				middleware.Compress(),
 				middleware.Headers(
 					middleware.WithHeader("X-Content-Type-Options", "nosniff"),
-					middleware.WithHeader("Content-Security-Policy", fmt.Sprintf("default-src 'self' %s/ https://u.c5h.io/ 'nonce-littlefoot-ae805b14'; style-src 'self';", templates.SiteURL())),
+					middleware.WithHeader(
+						"Content-Security-Policy",
+						fmt.Sprintf(
+							"default-src 'self' %s/ https://u.c5h.io/ 'nonce-littlefoot-ae805b14'; style-src 'self';",
+							templates.SiteURL(),
+						),
+					),
 					middleware.WithHeader("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload"),
 					middleware.WithHeader("Referrer-Policy", "no-referrer-when-downgrade"),
 				),

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"image"
@@ -67,7 +68,9 @@ func removeExistingPoster(ctx context.Context, filmID int) error {
 	return nil
 }
 
-func setFilmPoster(ctx context.Context, filmID int, filmTitle, contentType string, data []byte, width, height int) error {
+func setFilmPoster(
+	ctx context.Context, filmID int, filmTitle, contentType string, data []byte, width, height int,
+) error {
 	if err := removeExistingPoster(ctx, filmID); err != nil {
 		return err
 	}
@@ -84,10 +87,12 @@ func setFilmPoster(ctx context.Context, filmID int, filmTitle, contentType strin
 		return fmt.Errorf("failed to create media: %w", err)
 	}
 
-	description := fmt.Sprintf("Poster of %s", filmTitle)
+	description := "Poster of " + filmTitle
 	caption := filmTitle
 	role := "poster"
-	if err := media.CreateMediaRelation(ctx, "film", filmID, mediaID, mediaRelationsPath, &caption, &description, &role); err != nil {
+	if err := media.CreateMediaRelation(
+		ctx, "film", filmID, mediaID, mediaRelationsPath, &caption, &description, &role,
+	); err != nil {
 		return fmt.Errorf("failed to create media relation: %w", err)
 	}
 
@@ -130,15 +135,17 @@ func encodeImage(img image.Image, format string) ([]byte, string, error) {
 
 func updateOrCreateFilmPoster(ctx context.Context, filmID int, filmTitle, posterPath string) error {
 	if posterPath == "" {
-		return fmt.Errorf("poster path is empty")
+		return errors.New("poster path is empty")
 	}
 
-	posterData, err := tmdb.DownloadPoster(*tmdbAPIKey, posterPath, 500)
+	posterData, err := tmdb.DownloadPoster(ctx, *tmdbAPIKey, posterPath, 500)
 	if err != nil {
 		return fmt.Errorf("failed to download poster: %w", err)
 	}
 
-	return setFilmPoster(ctx, filmID, filmTitle, posterData.ContentType, posterData.Data, posterData.Width, posterData.Height)
+	return setFilmPoster(
+		ctx, filmID, filmTitle, posterData.ContentType, posterData.Data, posterData.Width, posterData.Height,
+	)
 }
 
 func ListFilmsHandler() func(http.ResponseWriter, *http.Request) {
@@ -197,7 +204,7 @@ func SearchFilmsHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		results, err := tmdb.SearchMovies(*tmdbAPIKey, query)
+		results, err := tmdb.SearchMovies(r.Context(), *tmdbAPIKey, query)
 		if err != nil {
 			slog.Error("Failed to search TMDB", "error", err)
 			http.Error(w, "Failed to search TMDB", http.StatusInternalServerError)
@@ -254,7 +261,7 @@ func CreateFilmHandler() func(http.ResponseWriter, *http.Request) {
 
 		posterPath := r.FormValue("poster_path")
 
-		movie, err := tmdb.GetMovie(*tmdbAPIKey, tmdbID)
+		movie, err := tmdb.GetMovie(r.Context(), *tmdbAPIKey, tmdbID)
 		if err != nil {
 			slog.Error("Failed to get movie from TMDB", "error", err)
 			http.Error(w, "Movie not found", http.StatusNotFound)
@@ -340,7 +347,7 @@ func EditFilmHandler() func(http.ResponseWriter, *http.Request) {
 			reviewSummaries[i] = filmtemplates.FilmReviewSummary{
 				ID:          review.ID,
 				WatchedDate: review.WatchedDate.Format("2006-01-02"),
-				Rating:      fmt.Sprintf("%d", review.Rating),
+				Rating:      strconv.Itoa(review.Rating),
 				IsRewatch:   review.IsRewatch,
 				HasSpoilers: review.HasSpoilers,
 				ReviewText:  review.ReviewText,
@@ -477,7 +484,7 @@ func FetchFilmPosterHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		movie, err := tmdb.GetMovie(*tmdbAPIKey, *film.TMDBID)
+		movie, err := tmdb.GetMovie(r.Context(), *tmdbAPIKey, *film.TMDBID)
 		if err != nil {
 			slog.Error("Failed to get movie from TMDB", "error", err)
 			http.Error(w, "Failed to fetch movie from TMDB", http.StatusInternalServerError)

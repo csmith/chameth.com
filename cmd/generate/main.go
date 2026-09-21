@@ -98,16 +98,7 @@ func parseSite(root string) []provider {
 		die("failed to parse site.go: %v", err)
 	}
 
-	fileImports := map[string]string{}
-	for _, imp := range f.Imports {
-		impPath := strings.Trim(imp.Path.Value, "\"")
-		if imp.Name != nil {
-			fileImports[imp.Name.Name] = impPath
-		} else {
-			parts := strings.Split(impPath, "/")
-			fileImports[parts[len(parts)-1]] = impPath
-		}
-	}
+	fileImports := fileImports(f)
 
 	var providers []provider
 	for _, d := range f.Decls {
@@ -124,32 +115,7 @@ func parseSite(root string) []provider {
 			if !ok {
 				continue
 			}
-			for _, field := range st.Fields.List {
-				if len(field.Names) != 1 {
-					continue
-				}
-				typeExpr := field.Type
-				if star, ok := typeExpr.(*ast.StarExpr); ok {
-					typeExpr = star.X
-				}
-				sel, ok := typeExpr.(*ast.SelectorExpr)
-				if !ok {
-					continue
-				}
-				ident, ok := sel.X.(*ast.Ident)
-				if !ok {
-					continue
-				}
-				impPath, ok := fileImports[ident.Name]
-				if !ok {
-					continue
-				}
-				providers = append(providers, provider{
-					importPath: impPath,
-					typeName:   sel.Sel.Name,
-					fieldName:  field.Names[0].Name,
-				})
-			}
+			providers = append(providers, providersFromFields(st.Fields.List, fileImports)...)
 		}
 	}
 
@@ -157,6 +123,57 @@ func parseSite(root string) []provider {
 		die("no providers found in site struct")
 	}
 	return providers
+}
+
+func fileImports(f *ast.File) map[string]string {
+	imports := map[string]string{}
+	for _, imp := range f.Imports {
+		impPath := strings.Trim(imp.Path.Value, "\"")
+		if imp.Name != nil {
+			imports[imp.Name.Name] = impPath
+		} else {
+			parts := strings.Split(impPath, "/")
+			imports[parts[len(parts)-1]] = impPath
+		}
+	}
+	return imports
+}
+
+func providersFromFields(fields []*ast.Field, fileImports map[string]string) []provider {
+	var providers []provider
+	for _, field := range fields {
+		if len(field.Names) != 1 {
+			continue
+		}
+		if p, ok := providerForField(field, fileImports); ok {
+			providers = append(providers, p)
+		}
+	}
+	return providers
+}
+
+func providerForField(field *ast.Field, fileImports map[string]string) (provider, bool) {
+	typeExpr := field.Type
+	if star, ok := typeExpr.(*ast.StarExpr); ok {
+		typeExpr = star.X
+	}
+	sel, ok := typeExpr.(*ast.SelectorExpr)
+	if !ok {
+		return provider{}, false
+	}
+	ident, ok := sel.X.(*ast.Ident)
+	if !ok {
+		return provider{}, false
+	}
+	impPath, ok := fileImports[ident.Name]
+	if !ok {
+		return provider{}, false
+	}
+	return provider{
+		importPath: impPath,
+		typeName:   sel.Sel.Name,
+		fieldName:  field.Names[0].Name,
+	}, true
 }
 
 func matchProviders(fn *ast.FuncDecl, fileImports map[string]string, providers []provider, pkgImportPath string) []int {
@@ -204,8 +221,7 @@ func scan(root, mod string, providers []provider) map[string]*pkg {
 			return nil
 		}
 		if info.IsDir() {
-			switch info.Name() {
-			case ".git", ".postgres", "tsdata":
+			if skippedDir(info.Name()) {
 				return filepath.SkipDir
 			}
 			return nil
@@ -213,79 +229,90 @@ func scan(root, mod string, providers []provider) map[string]*pkg {
 		if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
 			return nil
 		}
-
-		fset := token.NewFileSet()
-		f, err := parser.ParseFile(fset, path, nil, 0)
-		if err != nil {
-			return nil
-		}
-
-		fileImports := map[string]string{}
-		for _, imp := range f.Imports {
-			impPath := strings.Trim(imp.Path.Value, "\"")
-			if imp.Name != nil {
-				fileImports[imp.Name.Name] = impPath
-			} else {
-				parts := strings.Split(impPath, "/")
-				fileImports[parts[len(parts)-1]] = impPath
-			}
-		}
-
-		rel, err := filepath.Rel(root, path)
-		if err != nil {
-			return nil
-		}
-		dir := filepath.Dir(rel)
-		if dir == "." {
-			return nil
-		}
-		importPath := mod + "/" + filepath.ToSlash(dir)
-
-		p, ok := pkgs[importPath]
-		if !ok {
-			p = &pkg{importPath: importPath, alias: makeAlias(mod, importPath)}
-			pkgs[importPath] = p
-		}
-
-		var found bool
-		for _, d := range f.Decls {
-			fn, ok := d.(*ast.FuncDecl)
-			if !ok {
-				continue
-			}
-			switch fn.Name.Name {
-			case "RegisterShortcodes":
-				found = true
-				p.hasShortcodes = true
-				p.shortcodeParams = append(p.shortcodeParams, matchProviders(fn, fileImports, providers, importPath)...)
-			case "RegisterAssets":
-				found = true
-				p.hasAssets = true
-				p.assetParams = append(p.assetParams, matchProviders(fn, fileImports, providers, importPath)...)
-			case "RegisterRoutes":
-				found = true
-				p.hasRoutes = true
-				p.routeParams = append(p.routeParams, matchProviders(fn, fileImports, providers, importPath)...)
-			case "RegisterGoroutine":
-				found = true
-				p.hasGoroutines = true
-				p.goroutineParams = append(p.goroutineParams, matchProviders(fn, fileImports, providers, importPath)...)
-			case "RegisterContentTypes":
-				found = true
-				p.hasContentTypes = true
-				p.contentTypeParams = append(p.contentTypeParams, matchProviders(fn, fileImports, providers, importPath)...)
-			}
-		}
-		if !found && !p.hasShortcodes && !p.hasAssets && !p.hasRoutes && !p.hasGoroutines && !p.hasContentTypes {
-			delete(pkgs, importPath)
-		}
+		scanFile(root, mod, path, providers, pkgs)
 		return nil
 	})
 	return pkgs
 }
 
+func skippedDir(name string) bool {
+	switch name {
+	case ".git", ".postgres", "tsdata":
+		return true
+	}
+	return false
+}
+
+// scanFile records the registration functions found in a single Go file. A
+// package whose files register nothing is removed from the map again.
+func scanFile(root, mod, path string, providers []provider, pkgs map[string]*pkg) {
+	fset := token.NewFileSet()
+	f, err := parser.ParseFile(fset, path, nil, 0)
+	if err != nil {
+		return
+	}
+
+	fileImports := fileImports(f)
+
+	rel, err := filepath.Rel(root, path)
+	if err != nil {
+		return
+	}
+	dir := filepath.Dir(rel)
+	if dir == "." {
+		return
+	}
+	importPath := mod + "/" + filepath.ToSlash(dir)
+
+	p, ok := pkgs[importPath]
+	if !ok {
+		p = &pkg{importPath: importPath, alias: makeAlias(mod, importPath)}
+		pkgs[importPath] = p
+	}
+
+	if !registerDecls(f, fileImports, providers, importPath, p) &&
+		!p.hasShortcodes && !p.hasAssets && !p.hasRoutes && !p.hasGoroutines && !p.hasContentTypes {
+		delete(pkgs, importPath)
+	}
+}
+
+// registerDecls processes the top-level declarations of f, updating p for
+// each registration function found. It reports whether any were found.
+func registerDecls(f *ast.File, fileImports map[string]string, providers []provider, importPath string, p *pkg) bool {
+	found := false
+	for _, d := range f.Decls {
+		fn, ok := d.(*ast.FuncDecl)
+		if !ok {
+			continue
+		}
+		switch fn.Name.Name {
+		case "RegisterShortcodes":
+			found = true
+			p.hasShortcodes = true
+			p.shortcodeParams = append(p.shortcodeParams, matchProviders(fn, fileImports, providers, importPath)...)
+		case "RegisterAssets":
+			found = true
+			p.hasAssets = true
+			p.assetParams = append(p.assetParams, matchProviders(fn, fileImports, providers, importPath)...)
+		case "RegisterRoutes":
+			found = true
+			p.hasRoutes = true
+			p.routeParams = append(p.routeParams, matchProviders(fn, fileImports, providers, importPath)...)
+		case "RegisterGoroutine":
+			found = true
+			p.hasGoroutines = true
+			p.goroutineParams = append(p.goroutineParams, matchProviders(fn, fileImports, providers, importPath)...)
+		case "RegisterContentTypes":
+			found = true
+			p.hasContentTypes = true
+			p.contentTypeParams = append(p.contentTypeParams, matchProviders(fn, fileImports, providers, importPath)...)
+		}
+	}
+	return found
+}
+
 func buildArgs(paramIndices []int, providers []provider) string {
-	var args []string
+	args := make([]string, 0, len(paramIndices))
 	for _, idx := range paramIndices {
 		args = append(args, "s."+providers[idx].fieldName)
 	}

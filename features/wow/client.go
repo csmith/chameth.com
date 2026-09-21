@@ -135,7 +135,9 @@ func FetchImage(ctx context.Context, client *http.Client, path string) ([]byte, 
 	return body, headers.Get("Content-Type"), nil
 }
 
-func ogreStreamGet(ctx context.Context, client *http.Client, path string, query url.Values) ([]byte, http.Header, error) {
+func ogreStreamGet(
+	ctx context.Context, client *http.Client, path string, query url.Values,
+) ([]byte, http.Header, error) {
 	u := strings.TrimRight(ogreStreamBaseURL, "/") + path
 	if len(query) > 0 {
 		u += "?" + query.Encode()
