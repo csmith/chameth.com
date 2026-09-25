@@ -2,52 +2,48 @@ package markdown
 
 import (
 	"bytes"
+	"errors"
 	"html/template"
 
+	"chameth.com/cfm"
+	"github.com/alecthomas/chroma/v2"
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
-	"github.com/yuin/goldmark"
-	highlighting "github.com/yuin/goldmark-highlighting/v2"
-	"github.com/yuin/goldmark/extension"
-	"github.com/yuin/goldmark/parser"
-	"github.com/yuin/goldmark/renderer/html"
+	"github.com/alecthomas/chroma/v2/lexers"
+	"github.com/alecthomas/chroma/v2/styles"
 )
 
-var md = goldmark.New(
-	goldmark.WithExtensions(
-		extension.Typographer,
-		extension.Table,
-		extension.Strikethrough,
-		extension.Linkify,
-		extension.Footnote,
-		highlighting.NewHighlighting(
-			highlighting.WithFormatOptions(
-				chromahtml.WithClasses(true),
-				chromahtml.ClassPrefix("chroma-"),
-			),
-		),
-	),
-	goldmark.WithParserOptions(
-		parser.WithAutoHeadingID(),
-		&disableCodeBlocks{},
-	),
-	goldmark.WithRendererOptions(
-		html.WithUnsafe(),
-	),
-)
+var md = cfm.Renderer{Highlight: highlight}
 
-type disableCodeBlocks struct {
-}
-
-func (d *disableCodeBlocks) SetParserOption(config *parser.Config) {
-	// This relies on NewCodeBlockParser returning the same instance each
-	// call, which it does currently, but... :shrug:
-	config.BlockParsers = config.BlockParsers.Remove(parser.NewCodeBlockParser())
-}
-
+// Render converts markdown input to HTML. The error is always nil; it is
+// kept in the signature so callers can treat rendering as fallible.
 func Render(input string) (template.HTML, error) {
-	var buf bytes.Buffer
-	if err := md.Convert([]byte(input), &buf); err != nil {
+	return template.HTML(md.Markdown(input)), nil
+}
+
+var chromaFormatter = chromahtml.New(
+	chromahtml.WithClasses(true),
+	chromahtml.ClassPrefix("chroma-"),
+)
+
+// highlight renders the body of a fenced code block with Chroma, emitting
+// CSS classes rather than inline styles. If the block has no language, or
+// Chroma has no lexer for it, an error is returned and the block is left
+// as escaped plain code.
+func highlight(code, language string) (string, error) {
+	if language == "" {
+		return "", errors.New("code block has no language")
+	}
+	lexer := lexers.Get(language)
+	if lexer == nil {
+		return "", errors.New("no lexer for language " + language)
+	}
+	iterator, err := chroma.Coalesce(lexer).Tokenise(nil, code)
+	if err != nil {
 		return "", err
 	}
-	return template.HTML(buf.String()), nil
+	var buf bytes.Buffer
+	if err := chromaFormatter.Format(&buf, styles.Get("github"), iterator); err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 }

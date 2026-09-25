@@ -1,6 +1,6 @@
 module chameth.com/chameth.com
 
-go 1.27
+go 1.27.1
 
 require (
 	filippo.io/edwards25519 v1.2.0 // indirect
@@ -60,6 +60,7 @@ require (
 )
 
 require (
+	chameth.com/cfm v1.0.0
 	github.com/alecthomas/chroma/v2 v2.27.0
 	github.com/anthonynsimon/bild v0.17.0
 	github.com/csmith/aca v1.2.0
@@ -72,8 +73,6 @@ require (
 	github.com/kljensen/snowball v0.10.0
 	github.com/pgvector/pgvector-go v0.4.1
 	github.com/prometheus/client_golang v1.24.1
-	github.com/yuin/goldmark v1.8.5
-	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	golang.org/x/image v0.45.0
 	golang.org/x/net v0.58.0
 	golang.org/x/text v0.41.0
