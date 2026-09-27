@@ -26,7 +26,8 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 	if len(mediaRelation) != 1 {
 		return "", fmt.Errorf(
 			"incorrect number of video files found for description %s (expected 1, got %d)",
-			description, len(mediaRelation),
+			description,
+			len(mediaRelation),
 		)
 	}
 

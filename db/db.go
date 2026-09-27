@@ -22,7 +22,8 @@ var migrationsFS embed.FS
 
 var (
 	connString = flag.String(
-		"db-connection-string", "postgres://postgres:postgres@localhost/postgres",
+		"db-connection-string",
+		"postgres://postgres:postgres@localhost/postgres",
 		"Connection string for database",
 	)
 

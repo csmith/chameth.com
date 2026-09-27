@@ -12,9 +12,11 @@ import (
 
 func RegisterRoutes(rm *routing.Manager) {
 	crud.Register(rm.Admin, "/pastes", crud.Routes{
-		List: crud.List("paste",
+		List: crud.List(
+			"paste",
 			crud.DraftsAndAll(pastes.GetDraftPastes, pastes.GetAllPastes),
-			toSummary, templates.RenderListPastes,
+			toSummary,
+			templates.RenderListPastes,
 		),
 		Create: crud.Create("paste", "/pastes", crud.GeneratePath("/paste/%s/", pastes.CreatePaste)),
 		Edit:   crud.Edit("paste", pastes.GetPasteByID, toEditData, templates.RenderEditPaste),
@@ -44,7 +46,9 @@ func toEditData(_ context.Context, paste *pastes.Paste) (templates.EditPasteData
 }
 
 func applyUpdate(ctx context.Context, id int, form url.Values) error {
-	return pastes.UpdatePaste(ctx, id,
+	return pastes.UpdatePaste(
+		ctx,
+		id,
 		form.Get("path"),
 		form.Get("title"),
 		form.Get("language"),

@@ -60,9 +60,22 @@ func GetAllFilmsWithReviews(ctx context.Context) ([]FilmWithReview, error) {
 		var reviewPublished sql.NullBool
 
 		err := rows.Scan(
-			&f.ID, &f.TMDBID, &f.Title, &f.Year, &f.Overview, &f.Runtime, &f.Published, &f.Path,
-			&reviewID, &reviewFilmID, &watchedDate, &rating,
-			&review.IsRewatch, &review.HasSpoilers, &reviewText, &reviewPublished,
+			&f.ID,
+			&f.TMDBID,
+			&f.Title,
+			&f.Year,
+			&f.Overview,
+			&f.Runtime,
+			&f.Published,
+			&f.Path,
+			&reviewID,
+			&reviewFilmID,
+			&watchedDate,
+			&rating,
+			&review.IsRewatch,
+			&review.HasSpoilers,
+			&reviewText,
+			&reviewPublished,
 		)
 		if err != nil {
 			return nil, err
@@ -125,11 +138,26 @@ func GetAllFilmsWithReviewsAndPosters(ctx context.Context) ([]FilmWithReviewAndP
 		var lastWatched sql.NullString
 
 		err := rows.Scan(
-			&f.ID, &f.TMDBID, &f.Title, &f.Year, &f.Overview, &f.Runtime, &f.Published, &f.Path,
-			&reviewID, &reviewFilmID, &watchedDate, &rating,
-			&review.IsRewatch, &review.HasSpoilers, &reviewText, &reviewPublished,
-			&posterPath, &posterMediaID,
-			&reviewCount, &lastWatched,
+			&f.ID,
+			&f.TMDBID,
+			&f.Title,
+			&f.Year,
+			&f.Overview,
+			&f.Runtime,
+			&f.Published,
+			&f.Path,
+			&reviewID,
+			&reviewFilmID,
+			&watchedDate,
+			&rating,
+			&review.IsRewatch,
+			&review.HasSpoilers,
+			&reviewText,
+			&reviewPublished,
+			&posterPath,
+			&posterMediaID,
+			&reviewCount,
+			&lastWatched,
 		)
 		if err != nil {
 			return nil, err

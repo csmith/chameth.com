@@ -110,8 +110,12 @@ func FilmPage(w http.ResponseWriter, r *http.Request) {
 		AverageRating: averageRating,
 		PosterPath:    posterPath,
 		FilmLists:     filmListIDs,
-		PageData: content.CreatePageData(r.Context(),
-			fmt.Sprintf("%s (%s)", film.Title, year), film.Path, maintemplates.OpenGraphHeaders{}),
+		PageData: content.CreatePageData(
+			r.Context(),
+			fmt.Sprintf("%s (%s)", film.Title, year),
+			film.Path,
+			maintemplates.OpenGraphHeaders{},
+		),
 	})
 	if err != nil {
 		slog.Error("Failed to render film template", "error", err, "path", r.URL.Path)

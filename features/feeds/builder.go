@@ -94,7 +94,10 @@ func handleRelatedPostsBuilder(w http.ResponseWriter, r *http.Request) {
 
 	data := BuilderData{
 		PageData: content.CreatePageData(
-			r.Context(), "Build a post feed", builderFeedPrefix, parenttemplates.OpenGraphHeaders{},
+			r.Context(),
+			"Build a post feed",
+			builderFeedPrefix,
+			parenttemplates.OpenGraphHeaders{},
 		),
 		Sections: builderSections(allPosts, included, likes, unlikes),
 	}

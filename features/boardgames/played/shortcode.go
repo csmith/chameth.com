@@ -60,8 +60,12 @@ func retrieve(ctx context.Context, client *http.Client, args []string) (shortcod
 		return shortcodes.Result[[]entry]{}, err
 	}
 
-	games, err := boardgames.PlayCounts(ctx, client,
-		startDate.Format("2006-01-02"), endDate.AddDate(0, 0, 1).Format("2006-01-02"))
+	games, err := boardgames.PlayCounts(
+		ctx,
+		client,
+		startDate.Format("2006-01-02"),
+		endDate.AddDate(0, 0, 1).Format("2006-01-02"),
+	)
 	if err != nil {
 		return shortcodes.Result[[]entry]{}, fmt.Errorf("failed to fetch play counts: %w", err)
 	}

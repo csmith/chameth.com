@@ -16,7 +16,8 @@ import (
 )
 
 var ipHashKey = flag.String(
-	"metrics-ip-hash-key", "",
+	"metrics-ip-hash-key",
+	"",
 	"Secret used to HMAC client IP addresses before storing them in request logs",
 )
 var processHashSalt = func() []byte { b := make([]byte, 32); _, _ = rand.Read(b); return b }()

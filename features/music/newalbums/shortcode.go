@@ -35,8 +35,12 @@ func retrieve(ctx context.Context, client *http.Client, args []string) (shortcod
 	}
 
 	// The service takes a half-open range; the shortcode's end date is inclusive.
-	albums, err := music.NewAlbums(ctx, client,
-		start.Format("2006-01-02"), end.AddDate(0, 0, 1).Format("2006-01-02"))
+	albums, err := music.NewAlbums(
+		ctx,
+		client,
+		start.Format("2006-01-02"),
+		end.AddDate(0, 0, 1).Format("2006-01-02"),
+	)
 	if err != nil {
 		return shortcodes.Result[[]Album]{}, fmt.Errorf("failed to fetch new albums: %w", err)
 	}

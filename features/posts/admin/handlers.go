@@ -21,8 +21,12 @@ import (
 
 func RegisterRoutes(rm *routing.Manager) {
 	crud.Register(rm.Admin, "/posts", crud.Routes{
-		List: crud.List("post", crud.DraftsAndAll(posts.GetDraftPosts, posts.GetAllPosts),
-			toSummary, templates.RenderListPosts),
+		List: crud.List(
+			"post",
+			crud.DraftsAndAll(posts.GetDraftPosts, posts.GetAllPosts),
+			toSummary,
+			templates.RenderListPosts,
+		),
 		Create: crud.Create("post", "/posts", crud.GeneratePath("/%s/", posts.CreatePost)),
 		Edit:   crud.Edit("post", posts.GetPostByID, toEditData, templates.RenderEditPost),
 		Update: crud.Update("post", "/posts", applyUpdate),
@@ -92,7 +96,9 @@ func applyUpdate(ctx context.Context, id int, form url.Values) error {
 	path := form.Get("path")
 	published := form.Get("published") == "true"
 
-	if err := posts.UpdatePost(ctx, id,
+	if err := posts.UpdatePost(
+		ctx,
+		id,
 		path,
 		form.Get("title"),
 		form.Get("content"),
@@ -167,7 +173,13 @@ func updateWordcloud(
 		return false
 	}
 	if err := media.UpdateMediaRelation(
-		r.Context(), "post", postID, existing.Path, nil, &description, existing.Role,
+		r.Context(),
+		"post",
+		postID,
+		existing.Path,
+		nil,
+		&description,
+		existing.Role,
 	); err != nil {
 		slog.Error("Failed to update wordcloud description", "error", err)
 		http.Error(w, "Failed to update wordcloud description", http.StatusInternalServerError)
@@ -196,7 +208,14 @@ func createWordcloud(
 	mediaPath := post.Path + "wordcloud.png"
 	role := "opengraph"
 	if err := media.CreateMediaRelation(
-		r.Context(), "post", postID, mediaID, mediaPath, nil, &description, &role,
+		r.Context(),
+		"post",
+		postID,
+		mediaID,
+		mediaPath,
+		nil,
+		&description,
+		&role,
 	); err != nil {
 		slog.Error("Failed to create media relation", "error", err)
 		http.Error(w, "Failed to attach wordcloud to post", http.StatusInternalServerError)

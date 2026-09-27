@@ -175,8 +175,14 @@ func GetRecentPostsBySimilarity(ctx context.Context, likeSlugs, unlikeSlugs []st
 	maxLikeDist := 1 - minLikeSimilarity
 	minUnlikeDist := 1 - maxUnlikeSimilarity
 	return recentPostsBySimilarityScore(
-		ctx, slugsToPaths(likeSlugs), slugsToPaths(unlikeSlugs),
-		unlikeCoefficient, maxLikeDist, minScore, minUnlikeDist, limit,
+		ctx,
+		slugsToPaths(likeSlugs),
+		slugsToPaths(unlikeSlugs),
+		unlikeCoefficient,
+		maxLikeDist,
+		minScore,
+		minUnlikeDist,
+		limit,
 	)
 }
 

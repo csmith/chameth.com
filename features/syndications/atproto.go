@@ -120,7 +120,13 @@ func backfillStandardSiteDocument(ctx context.Context, client *atproto.Client, s
 
 	slog.Info("Backfilled standard.site.document", "path", post.Path, "uri", docRef.URI)
 	_, err = CreateSyndication(
-		ctx, post.Path, docRef.URI, "standard.site document", true, "link", new("site.standard.document"),
+		ctx,
+		post.Path,
+		docRef.URI,
+		"standard.site document",
+		true,
+		"link",
+		new("site.standard.document"),
 	)
 	return err
 }
@@ -174,7 +180,13 @@ func syndicatePost(
 
 	slog.Info("Automatically created standard.site.document", "path", post.Path, "uri", docRef.URI)
 	_, err = CreateSyndication(
-		ctx, post.Path, docRef.URI, "standard.site document", true, "link", new("site.standard.document"),
+		ctx,
+		post.Path,
+		docRef.URI,
+		"standard.site document",
+		true,
+		"link",
+		new("site.standard.document"),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to create standard.site document syndication: %w", err)

@@ -86,7 +86,14 @@ func ensureHistoricalPortrait(ctx context.Context, client *http.Client, c *wow.C
 	}
 
 	if err := storePortrait(
-		ctx, c.BlizzardID, path, c.Portrait.Sha256+".png", c.Profile.Name, "snapshot", contentType, data,
+		ctx,
+		c.BlizzardID,
+		path,
+		c.Portrait.Sha256+".png",
+		c.Profile.Name,
+		"snapshot",
+		contentType,
+		data,
 	); err != nil {
 		return "", err
 	}

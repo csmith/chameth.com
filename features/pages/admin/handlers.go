@@ -108,7 +108,9 @@ func applyUpdate(ctx context.Context, id int, form url.Values) error {
 		}
 	}
 
-	if err := pages.UpdateStaticPage(ctx, id,
+	if err := pages.UpdateStaticPage(
+		ctx,
+		id,
 		form.Get("path"),
 		form.Get("title"),
 		form.Get("content"),

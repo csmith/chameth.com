@@ -163,7 +163,14 @@ func UpdateSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		if err := syndications.UpdateSyndication(
-			r.Context(), id, path, externalURL, name, published, disposition, rel,
+			r.Context(),
+			id,
+			path,
+			externalURL,
+			name,
+			published,
+			disposition,
+			rel,
 		); err != nil {
 			http.Error(w, "Failed to update syndication", http.StatusInternalServerError)
 			return

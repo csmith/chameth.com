@@ -91,7 +91,14 @@ func setFilmPoster(
 	caption := filmTitle
 	role := "poster"
 	if err := media.CreateMediaRelation(
-		ctx, "film", filmID, mediaID, mediaRelationsPath, &caption, &description, &role,
+		ctx,
+		"film",
+		filmID,
+		mediaID,
+		mediaRelationsPath,
+		&caption,
+		&description,
+		&role,
 	); err != nil {
 		return fmt.Errorf("failed to create media relation: %w", err)
 	}
@@ -144,7 +151,13 @@ func updateOrCreateFilmPoster(ctx context.Context, filmID int, filmTitle, poster
 	}
 
 	return setFilmPoster(
-		ctx, filmID, filmTitle, posterData.ContentType, posterData.Data, posterData.Width, posterData.Height,
+		ctx,
+		filmID,
+		filmTitle,
+		posterData.ContentType,
+		posterData.Data,
+		posterData.Width,
+		posterData.Height,
 	)
 }
 

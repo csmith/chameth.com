@@ -133,7 +133,14 @@ func UpdateFilmReviewHandler() func(http.ResponseWriter, *http.Request) {
 		published := r.FormValue("published") == "true"
 
 		if err := films.UpdateFilmReview(
-			r.Context(), id, rating, watchedDate, isRewatch, hasSpoilers, published, reviewText,
+			r.Context(),
+			id,
+			rating,
+			watchedDate,
+			isRewatch,
+			hasSpoilers,
+			published,
+			reviewText,
 		); err != nil {
 			http.Error(w, "Failed to update film review", http.StatusInternalServerError)
 			return

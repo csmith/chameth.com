@@ -93,7 +93,8 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 		})
 	}
 
-	pageDetails = append(pageDetails,
+	pageDetails = append(
+		pageDetails,
 		SiteMapPageDetails{Title: "Posts", Path: "/posts/", Frequency: "daily", Priority: "0.2"},
 		SiteMapPageDetails{Title: "3D Prints", Path: "/prints/", Frequency: "monthly", Priority: "0.2"},
 		SiteMapPageDetails{Title: "Projects", Path: "/projects/", Frequency: "monthly", Priority: "0.5"},
@@ -190,7 +191,8 @@ func buildPageTree(ctx context.Context) ([]*SiteMapPageDetails, error) {
 		}
 	}
 
-	tree = append(tree,
+	tree = append(
+		tree,
 		&SiteMapPageDetails{Title: "Posts", Path: "/posts/"},
 		&SiteMapPageDetails{Title: "3D Prints", Path: "/prints/"},
 		&SiteMapPageDetails{Title: "Projects", Path: "/projects/"},
@@ -212,7 +214,8 @@ func sortPageTree(nodes []*SiteMapPageDetails) {
 }
 
 func handleHtml(w http.ResponseWriter, r *http.Request) {
-	siteMapData, err := buildSiteMapData(r.Context(),
+	siteMapData, err := buildSiteMapData(
+		r.Context(),
 		content.CreatePageData(r.Context(), "Sitemap", "/sitemap/", templates.OpenGraphHeaders{}),
 	)
 	if err != nil {

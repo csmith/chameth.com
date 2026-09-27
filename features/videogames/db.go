@@ -63,8 +63,20 @@ func GetAllVideoGamesWithReviews(ctx context.Context) ([]VideoGameWithReview, er
 		var reviewPublished sql.NullBool
 
 		err := rows.Scan(
-			&vg.ID, &vg.Title, &vg.Platform, &vg.Overview, &vg.Published, &vg.Path,
-			&reviewID, &reviewVideoGameID, &playedDate, &rating, &playtime, &completionStatus, &notes, &reviewPublished,
+			&vg.ID,
+			&vg.Title,
+			&vg.Platform,
+			&vg.Overview,
+			&vg.Published,
+			&vg.Path,
+			&reviewID,
+			&reviewVideoGameID,
+			&playedDate,
+			&rating,
+			&playtime,
+			&completionStatus,
+			&notes,
+			&reviewPublished,
 		)
 		if err != nil {
 			return nil, err

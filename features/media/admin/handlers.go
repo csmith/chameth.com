@@ -490,22 +490,36 @@ func UpdateMediaRelationHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		if err := media.UpdateMediaRelation(
-			r.Context(), entityType, entityID, path, titlePtr, altTextPtr, rolePtr,
+			r.Context(),
+			entityType,
+			entityID,
+			path,
+			titlePtr,
+			altTextPtr,
+			rolePtr,
 		); err != nil {
 			http.Error(w, "Failed to update media relation", http.StatusInternalServerError)
 			return
 		}
 
 		if err := media.UpdateMediaRelationVariants(
-			r.Context(), entityType, entityID, mediaID, titlePtr, altTextPtr,
+			r.Context(),
+			entityType,
+			entityID,
+			mediaID,
+			titlePtr,
+			altTextPtr,
 		); err != nil {
 			http.Error(w, "Failed to update variant media relations", http.StatusInternalServerError)
 			return
 		}
 
-		http.Redirect(w, r,
+		http.Redirect(
+			w,
+			r,
 			fmt.Sprintf("/media-relations/edit?entity_type=%s&entity_id=%d", entityType, entityID),
-			http.StatusSeeOther)
+			http.StatusSeeOther,
+		)
 	}
 }
 
@@ -531,9 +545,12 @@ func RemoveMediaRelationHandler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r,
+		http.Redirect(
+			w,
+			r,
 			fmt.Sprintf("/media-relations/edit?entity_type=%s&entity_id=%d", entityType, entityID),
-			http.StatusSeeOther)
+			http.StatusSeeOther,
+		)
 	}
 }
 
@@ -575,15 +592,25 @@ func AddMediaRelationsHandler() func(http.ResponseWriter, *http.Request) {
 			}
 
 			if err := media.CreateMediaRelation(
-				r.Context(), entityType, entityID, mediaID, path, nil, nil, rolePtr,
+				r.Context(),
+				entityType,
+				entityID,
+				mediaID,
+				path,
+				nil,
+				nil,
+				rolePtr,
 			); err != nil {
 				http.Error(w, "Failed to create media relation", http.StatusInternalServerError)
 				return
 			}
 		}
 
-		http.Redirect(w, r,
+		http.Redirect(
+			w,
+			r,
 			fmt.Sprintf("/media-relations/edit?entity_type=%s&entity_id=%d", entityType, entityID),
-			http.StatusSeeOther)
+			http.StatusSeeOther,
+		)
 	}
 }

@@ -185,8 +185,12 @@ func FilmReviewWorkflowStep2Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/films/workflow/step/3?film_id=%d&default_rating=%d&position=%d",
-			filmID, defaultRating, position), http.StatusSeeOther)
+		http.Redirect(
+			w,
+			r,
+			fmt.Sprintf("/films/workflow/step/3?film_id=%d&default_rating=%d&position=%d", filmID, defaultRating, position),
+			http.StatusSeeOther,
+		)
 	}
 }
 
@@ -291,8 +295,12 @@ func FilmReviewWorkflowStep3Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/films/workflow/step/4?film_id=%d&default_rating=%d",
-			filmID, defaultRating), http.StatusSeeOther)
+		http.Redirect(
+			w,
+			r,
+			fmt.Sprintf("/films/workflow/step/4?film_id=%d&default_rating=%d", filmID, defaultRating),
+			http.StatusSeeOther,
+		)
 	}
 }
 
@@ -345,7 +353,14 @@ func FilmReviewWorkflowStep4Handler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		reviewID, err := films.CreateFilmReview(
-			r.Context(), filmID, ratingVal, watchedDate, isRewatch, hasSpoilers, published, reviewText,
+			r.Context(),
+			filmID,
+			ratingVal,
+			watchedDate,
+			isRewatch,
+			hasSpoilers,
+			published,
+			reviewText,
 		)
 		if err != nil {
 			slog.Error("Failed to create review", "error", err)
@@ -353,8 +368,12 @@ func FilmReviewWorkflowStep4Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/films/workflow/step/5?film_id=%d&review_id=%d",
-			filmID, reviewID), http.StatusSeeOther)
+		http.Redirect(
+			w,
+			r,
+			fmt.Sprintf("/films/workflow/step/5?film_id=%d&review_id=%d", filmID, reviewID),
+			http.StatusSeeOther,
+		)
 	}
 }
 
@@ -400,8 +419,12 @@ func FilmReviewWorkflowStep5Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/films/workflow/step/6?film_id=%d&review_id=%d",
-			filmID, reviewID), http.StatusSeeOther)
+		http.Redirect(
+			w,
+			r,
+			fmt.Sprintf("/films/workflow/step/6?film_id=%d&review_id=%d", filmID, reviewID),
+			http.StatusSeeOther,
+		)
 	}
 }
 
@@ -440,7 +463,13 @@ func FilmReviewWorkflowStep6Handler() func(http.ResponseWriter, *http.Request) {
 
 			if syndicationURL != "" {
 				_, err := syndications.CreateSyndication(
-					r.Context(), film.Path, syndicationURL, syndicationName, true, "anchor", nil,
+					r.Context(),
+					film.Path,
+					syndicationURL,
+					syndicationName,
+					true,
+					"anchor",
+					nil,
 				)
 				if err != nil {
 					slog.Error("Failed to create syndication", "error", err)

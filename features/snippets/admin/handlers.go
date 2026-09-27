@@ -13,9 +13,11 @@ import (
 
 func RegisterRoutes(rm *routing.Manager) {
 	crud.Register(rm.Admin, "/snippets", crud.Routes{
-		List: crud.List("snippet",
+		List: crud.List(
+			"snippet",
 			crud.DraftsAndAll(snippets.GetDraftSnippets, snippets.GetAllSnippets),
-			toSummary, templates.RenderListSnippets,
+			toSummary,
+			templates.RenderListSnippets,
 		),
 		Create: crud.Create("snippet", "/snippets", crud.GeneratePath("/snippets/%s/", snippets.CreateSnippet)),
 		Edit:   crud.Edit("snippet", snippets.GetSnippetByID, toEditData, templates.RenderEditSnippet),
@@ -55,7 +57,9 @@ func applyUpdate(ctx context.Context, id int, form url.Values) error {
 		topic = form.Get("topic")
 	}
 
-	if err := snippets.UpdateSnippet(ctx, id,
+	if err := snippets.UpdateSnippet(
+		ctx,
+		id,
 		form.Get("path"),
 		form.Get("title"),
 		topic,

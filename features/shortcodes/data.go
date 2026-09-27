@@ -141,7 +141,13 @@ func (m *Manager) fetchData(
 		// with no data there is nothing to freeze.
 		next := retrievedAt.Add(fetchRetryDelay)
 		if upsertErr := upsertShortcodeDataFailure(
-			ctx, name, reg.version, argsHash, argsJSON, retrievedAt, &next,
+			ctx,
+			name,
+			reg.version,
+			argsHash,
+			argsJSON,
+			retrievedAt,
+			&next,
 		); upsertErr != nil {
 			return nil, errors.Join(err, upsertErr)
 		}

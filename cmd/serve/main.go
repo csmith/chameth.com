@@ -34,7 +34,8 @@ var (
 	tailscaleHost = flag.String("tailscale-host", "website-admin", "Tailscale host")
 	tailscaleDir  = flag.String("tailscale-dir", "tsdata", "Tailscale directory")
 	tailscaleWait = flag.Duration(
-		"tailscale-wait", 30*time.Second,
+		"tailscale-wait",
+		30*time.Second,
 		"How long to wait for the tailnet before starting background jobs",
 	)
 )

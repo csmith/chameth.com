@@ -65,8 +65,11 @@ func parseWindow(args []string) (window, error) {
 		if w.rangeStart.Before(w.start) {
 			w.start = w.rangeStart
 		}
-		w.title = fmt.Sprintf("Activity calendar %s - %s",
-			w.rangeStart.Format("2006-01-02"), w.rangeEnd.Format("2006-01-02"))
+		w.title = fmt.Sprintf(
+			"Activity calendar %s - %s",
+			w.rangeStart.Format("2006-01-02"),
+			w.rangeEnd.Format("2006-01-02"),
+		)
 	default:
 		return w, errors.New("workoutcalendar requires 0 or 2 arguments (start_date, end_date) in YYYY-MM-DD format")
 	}
@@ -80,8 +83,13 @@ func retrieve(ctx context.Context, client *http.Client, args []string) (shortcod
 		return shortcodes.Result[[]dayEntry]{}, err
 	}
 
-	days, err := workouts.ActivityDays(ctx, client,
-		w.start.Format("2006-01-02"), w.end.AddDate(0, 0, 1).Format("2006-01-02"), "")
+	days, err := workouts.ActivityDays(
+		ctx,
+		client,
+		w.start.Format("2006-01-02"),
+		w.end.AddDate(0, 0, 1).Format("2006-01-02"),
+		"",
+	)
 	if err != nil {
 		return shortcodes.Result[[]dayEntry]{}, fmt.Errorf("failed to fetch activity days: %w", err)
 	}

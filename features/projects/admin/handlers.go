@@ -110,7 +110,9 @@ func applyUpdate(ctx context.Context, id int, form url.Values) error {
 		return err
 	}
 
-	return projects.UpdateProject(ctx, id,
+	return projects.UpdateProject(
+		ctx,
+		id,
 		form.Get("name"),
 		form.Get("icon"),
 		form.Get("description"),

@@ -319,7 +319,14 @@ func UpdateVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 		published := r.FormValue("published") == "true"
 
 		if err := videogames.UpdateVideoGameReview(
-			r.Context(), id, rating, playedDate, playtime, completionStatus, published, notes,
+			r.Context(),
+			id,
+			rating,
+			playedDate,
+			playtime,
+			completionStatus,
+			published,
+			notes,
 		); err != nil {
 			http.Error(w, "Failed to update video game review", http.StatusInternalServerError)
 			return

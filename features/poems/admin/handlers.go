@@ -13,9 +13,11 @@ import (
 
 func RegisterRoutes(rm *routing.Manager) {
 	crud.Register(rm.Admin, "/poems", crud.Routes{
-		List: crud.List("poem",
+		List: crud.List(
+			"poem",
 			crud.DraftsAndAll(poems.GetDraftPoems, poems.GetAllPoems),
-			toSummary, templates.RenderListPoems,
+			toSummary,
+			templates.RenderListPoems,
 		),
 		Create: crud.Create("poem", "/poems", crud.GeneratePath("/%s/", poems.CreatePoem)),
 		Edit:   crud.Edit("poem", poems.GetPoemByID, toEditData, templates.RenderEditPoem),
@@ -45,7 +47,9 @@ func toEditData(_ context.Context, poem *poems.Poem) (templates.EditPoemData, er
 }
 
 func applyUpdate(ctx context.Context, id int, form url.Values) error {
-	if err := poems.UpdatePoem(ctx, id,
+	if err := poems.UpdatePoem(
+		ctx,
+		id,
 		form.Get("path"),
 		form.Get("title"),
 		form.Get("poem"),
