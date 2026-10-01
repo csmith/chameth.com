@@ -9,12 +9,13 @@ import (
 	"slices"
 	"strings"
 
+	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/features/posts"
 	parenttemplates "chameth.com/chameth.com/templates"
 )
 
-//go:embed builder.html.gotpl
+//go:embed builder.html.gotpl builder_entry.html.gotpl
 var builderTemplates embed.FS
 
 var builderTemplate = func() *template.Template {
@@ -26,6 +27,11 @@ var builderTemplate = func() *template.Template {
 
 	template.Must(t.ParseFS(builderTemplates, "builder.html.gotpl"))
 	return t
+}()
+
+var builderEntryTemplate = func() *template.Template {
+	t := template.Must(builderTemplate.Clone())
+	return template.Must(t.ParseFS(builderTemplates, "builder_entry.html.gotpl"))
 }()
 
 const builderFeedPrefix = "/feeds/posts/build/"
@@ -62,6 +68,7 @@ type builderAction struct {
 }
 
 func handleRelatedPostsBuilder(w http.ResponseWriter, r *http.Request) {
+	builderResponseHeaders(w)
 	likes, unlikes, ok := parseRelatedFeedParams(strings.TrimPrefix(r.URL.Path, builderFeedPrefix))
 	if !ok {
 		http.NotFound(w, r)
@@ -72,6 +79,11 @@ func handleRelatedPostsBuilder(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != canonicalPath {
 		w.Header().Set("Location", canonicalPath)
 		w.WriteHeader(http.StatusMovedPermanently)
+		return
+	}
+
+	if !hasBuilderCookie(r) {
+		renderBuilderEntry(w)
 		return
 	}
 
@@ -114,7 +126,26 @@ func handleRelatedPostsBuilder(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// renderBuilderEntry deliberately avoids CreatePageData, which retrieves links
+// from the database. Unrecognised visitors only receive static content and assets.
+func renderBuilderEntry(w http.ResponseWriter) {
+	_, stylesheet := content.AssetsManager.Bundle(assets.PublicCSS)
+	_, scripts := content.AssetsManager.Bundle(assets.PublicJS)
+	data := parenttemplates.PageData{
+		Title:      "Build a post feed · Chameth.com",
+		SiteURL:    parenttemplates.SiteURL(),
+		Stylesheet: stylesheet + ".css",
+		Scripts:    scripts + ".js",
+		Robots:     "noindex, nofollow",
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := builderEntryTemplate.Execute(w, data); err != nil {
+		slog.Error("Failed to render feed builder entry template", "error", err)
+	}
+}
+
 const (
+	builderActionContinue      = "continue"
 	builderActionInclude       = "include"
 	builderActionExclude       = "exclude"
 	builderActionRemoveInclude = "remove-include"
@@ -126,12 +157,27 @@ const (
 // selection, which is then rendered by the GET handler. The current selection
 // comes from the URL path, so no database access is needed here.
 func handleRelatedPostsBuilderAction(w http.ResponseWriter, r *http.Request) {
+	builderResponseHeaders(w)
 	likes, unlikes, ok := parseRelatedFeedParams(strings.TrimPrefix(r.URL.Path, builderFeedPrefix))
 	if !ok {
 		http.NotFound(w, r)
 		return
 	}
 
+	r.Body = http.MaxBytesReader(w, r.Body, 4096)
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form", http.StatusBadRequest)
+		return
+	}
+
+	if r.PostFormValue("action") == builderActionContinue {
+		setBuilderCookie(w)
+		http.Redirect(w, r, builderPath(likes, unlikes), http.StatusSeeOther)
+		return
+	}
+
+	// Apply a submitted selection even if its cookie has just expired. This
+	// handler does no database work and renews the cookie before redirecting.
 	slug := r.PostFormValue("slug")
 	if !relatedFeedSlugRegex.MatchString(slug) {
 		http.Error(w, "Invalid slug", http.StatusBadRequest)
@@ -160,6 +206,7 @@ func handleRelatedPostsBuilderAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	setBuilderCookie(w)
 	http.Redirect(w, r, builderPath(likes, unlikes), http.StatusSeeOther)
 }
 

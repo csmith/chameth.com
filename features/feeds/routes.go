@@ -5,6 +5,7 @@ import (
 )
 
 func RegisterRoutes(rm *routing.Manager) {
+	builderCookieCipher()
 	rm.Public.HandleFunc("GET /index.xml", handleAllPosts)
 	rm.Public.HandleFunc("GET /short.xml", handleShortPosts)
 	rm.Public.HandleFunc("GET /long.xml", handleLongPosts)

@@ -1,0 +1,19 @@
+{{/* gotype: chameth.com/chameth.com/templates.PageData*/}}
+{{define "content"}}
+    <h2><a href="/feeds/">Feeds</a> &raquo; Post feed builder</h2>
+
+    <p>
+        Build a personalised feed of <a href="/posts/">my posts</a> by choosing
+        posts you like, or topics you'd rather leave out. The feed builder finds
+        similar posts and gives you an Atom feed to subscribe to in your feed reader.
+    </p>
+
+    <p>
+        Due to an annoying influx of scrapers, you need to allow cookies and click
+        below to continue to the builder. Sorry.
+    </p>
+
+    <form method="post" action="">
+        <button class="feed-builder-button" type="submit" name="action" value="continue">Continue to the feed builder</button>
+    </form>
+{{end}}
