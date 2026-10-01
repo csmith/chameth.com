@@ -49,12 +49,15 @@ func retrieve(ctx context.Context, client *http.Client, args []string) (shortcod
 
 	records := make([]record, 0, len(pbs))
 	for _, pb := range pbs {
-		records = append(records, record{
-			DistanceM:  pb.DistanceM,
-			ElapsedS:   pb.ElapsedS,
-			PaceSPerKm: pb.GapPaceSPerKm,
-			Date:       pb.Date,
-		})
+		records = append(
+			records,
+			record{
+				DistanceM:  pb.DistanceM,
+				ElapsedS:   pb.ElapsedS,
+				PaceSPerKm: pb.GapPaceSPerKm,
+				Date:       pb.Date,
+			},
+		)
 	}
 	return shortcodes.Result[[]record]{
 		Data:      records,

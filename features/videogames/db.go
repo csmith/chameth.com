@@ -10,10 +10,14 @@ import (
 )
 
 func GetVideoGameByID(ctx context.Context, id int) (*VideoGame, error) {
-	game, err := db.Get[VideoGame](ctx, `
+	game, err := db.Get[VideoGame](
+		ctx,
+		`
 		SELECT id, title, platform, overview, published, path
 		FROM video_games WHERE id = $1
-	`, id)
+	`,
+		id,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -21,10 +25,13 @@ func GetVideoGameByID(ctx context.Context, id int) (*VideoGame, error) {
 }
 
 func GetAllVideoGames(ctx context.Context) ([]VideoGame, error) {
-	return db.Select[VideoGame](ctx, `
+	return db.Select[VideoGame](
+		ctx,
+		`
 		SELECT id, title, platform, overview, published, path
 		FROM video_games ORDER BY title
-	`)
+	`,
+	)
 }
 
 func GetAllVideoGamesWithReviews(ctx context.Context) ([]VideoGameWithReview, error) {
@@ -107,11 +114,18 @@ func GetAllVideoGamesWithReviews(ctx context.Context) ([]VideoGameWithReview, er
 
 func CreateVideoGame(ctx context.Context, title, platform, overview, path string) (int, error) {
 	var id int
-	err := db.QueryRow(ctx, `
+	err := db.QueryRow(
+		ctx,
+		`
 		INSERT INTO video_games (title, platform, overview, published, path)
 		VALUES ($1, $2, $3, false, $4)
 		RETURNING id
-	`, title, platform, overview, path).Scan(&id)
+	`,
+		title,
+		platform,
+		overview,
+		path,
+	).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create video game: %w", err)
 	}
@@ -119,11 +133,20 @@ func CreateVideoGame(ctx context.Context, title, platform, overview, path string
 }
 
 func UpdateVideoGame(ctx context.Context, id int, title, platform, overview, path string, published bool) error {
-	_, err := db.Exec(ctx, `
+	_, err := db.Exec(
+		ctx,
+		`
 		UPDATE video_games
 		SET title = $1, platform = $2, overview = $3, published = $4, path = $5
 		WHERE id = $6
-	`, title, platform, overview, published, path, id)
+	`,
+		title,
+		platform,
+		overview,
+		published,
+		path,
+		id,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to update video game: %w", err)
 	}
@@ -131,10 +154,15 @@ func UpdateVideoGame(ctx context.Context, id int, title, platform, overview, pat
 }
 
 func GetVideoGameByPath(ctx context.Context, path string) (*VideoGame, error) {
-	game, err := db.Get[VideoGame](ctx, `
+	game, err := db.Get[VideoGame](
+		ctx,
+		`
 		SELECT id, title, platform, overview, published, path
 		FROM video_games WHERE path = $1 OR path = $2
-	`, path, path+"/")
+	`,
+		path,
+		path+"/",
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -150,10 +178,14 @@ func DeleteVideoGame(ctx context.Context, id int) error {
 }
 
 func GetVideoGameReviewByID(ctx context.Context, id int) (*VideoGameReview, error) {
-	review, err := db.Get[VideoGameReview](ctx, `
+	review, err := db.Get[VideoGameReview](
+		ctx,
+		`
 		SELECT id, video_game_id, played_date, rating, playtime, completion_status, notes, published
 		FROM video_game_reviews WHERE id = $1
-	`, id)
+	`,
+		id,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -161,11 +193,15 @@ func GetVideoGameReviewByID(ctx context.Context, id int) (*VideoGameReview, erro
 }
 
 func GetVideoGameReviewsByVideoGameID(ctx context.Context, gameID int) ([]VideoGameReview, error) {
-	return db.Select[VideoGameReview](ctx, `
+	return db.Select[VideoGameReview](
+		ctx,
+		`
 		SELECT id, video_game_id, played_date, rating, playtime, completion_status, notes, published
 		FROM video_game_reviews WHERE video_game_id = $1
 		ORDER BY played_date DESC
-	`, gameID)
+	`,
+		gameID,
+	)
 }
 
 func CreateVideoGameReview(
@@ -173,11 +209,21 @@ func CreateVideoGameReview(
 	playtime *int, completionStatus *string, published bool, notes string,
 ) (int, error) {
 	var id int
-	err := db.QueryRow(ctx, `
+	err := db.QueryRow(
+		ctx,
+		`
 		INSERT INTO video_game_reviews (video_game_id, rating, played_date, playtime, completion_status, notes, published)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id
-	`, gameID, rating, playedDate, playtime, completionStatus, notes, published).Scan(&id)
+	`,
+		gameID,
+		rating,
+		playedDate,
+		playtime,
+		completionStatus,
+		notes,
+		published,
+	).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create video game review: %w", err)
 	}
@@ -188,11 +234,21 @@ func UpdateVideoGameReview(
 	ctx context.Context, id int, rating int, playedDate string,
 	playtime *int, completionStatus *string, published bool, notes string,
 ) error {
-	_, err := db.Exec(ctx, `
+	_, err := db.Exec(
+		ctx,
+		`
 		UPDATE video_game_reviews
 		SET rating = $1, played_date = $2, playtime = $3, completion_status = $4, notes = $5, published = $6
 		WHERE id = $7
-	`, rating, playedDate, playtime, completionStatus, notes, published, id)
+	`,
+		rating,
+		playedDate,
+		playtime,
+		completionStatus,
+		notes,
+		published,
+		id,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to update video game review: %w", err)
 	}

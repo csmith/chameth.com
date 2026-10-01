@@ -51,24 +51,27 @@ func TestSplitArguments(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result, err := splitArguments(tt.input)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("splitArguments() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !tt.wantErr {
-				if len(result) != len(tt.expected) {
-					t.Errorf("splitArguments() returned %d args, expected %d", len(result), len(tt.expected))
+		t.Run(
+			tt.name,
+			func(t *testing.T) {
+				result, err := splitArguments(tt.input)
+				if (err != nil) != tt.wantErr {
+					t.Errorf("splitArguments() error = %v, wantErr %v", err, tt.wantErr)
 					return
 				}
-				for i := range tt.expected {
-					if result[i] != tt.expected[i] {
-						t.Errorf("splitArguments()[%d] = %q, want %q", i, result[i], tt.expected[i])
+				if !tt.wantErr {
+					if len(result) != len(tt.expected) {
+						t.Errorf("splitArguments() returned %d args, expected %d", len(result), len(tt.expected))
+						return
+					}
+					for i := range tt.expected {
+						if result[i] != tt.expected[i] {
+							t.Errorf("splitArguments()[%d] = %q, want %q", i, result[i], tt.expected[i])
+						}
 					}
 				}
-			}
-		})
+			},
+		)
 	}
 }
 

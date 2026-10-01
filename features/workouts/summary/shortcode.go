@@ -166,12 +166,15 @@ func fastestPBs(events []workouts.PBEvent) []pb {
 			result = append(result, *p)
 		}
 	}
-	sort.Slice(result, func(i, j int) bool {
-		if result[i].Group != result[j].Group {
-			return result[i].Group < result[j].Group
-		}
-		return result[i].DistanceM < result[j].DistanceM
-	})
+	sort.Slice(
+		result,
+		func(i, j int) bool {
+			if result[i].Group != result[j].Group {
+				return result[i].Group < result[j].Group
+			}
+			return result[i].DistanceM < result[j].DistanceM
+		},
+	)
 	return result
 }
 

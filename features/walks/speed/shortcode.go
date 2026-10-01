@@ -50,10 +50,13 @@ func retrieve(ctx context.Context, client *http.Client, _ []string) (shortcodes.
 			return shortcodes.Result[[]monthSpeed]{}, fmt.Errorf("invalid month %q: %w", m.Month, err)
 		}
 
-		speeds = append(speeds, monthSpeed{
-			Month:    month,
-			SpeedKmh: *m.MaxAverageSpeedMps * 3.6,
-		})
+		speeds = append(
+			speeds,
+			monthSpeed{
+				Month:    month,
+				SpeedKmh: *m.MaxAverageSpeedMps * 3.6,
+			},
+		)
 	}
 
 	// The chart plots by slice index, so enforce chronological order

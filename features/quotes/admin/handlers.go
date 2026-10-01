@@ -13,12 +13,16 @@ import (
 )
 
 func RegisterRoutes(rm *routing.Manager) {
-	crud.Register(rm.Admin, "/quotes", crud.Routes{
-		List:   crud.List("quote", crud.AllItems(quotes.GetAllQuotes), toSummary, templates.RenderListQuotes),
-		Create: crud.Create("quote", "/quotes", createQuote),
-		Edit:   crud.Edit("quote", quotes.GetQuoteByID, toEditData, templates.RenderEditQuote),
-		Update: crud.Update("quote", "/quotes", applyUpdate),
-	})
+	crud.Register(
+		rm.Admin,
+		"/quotes",
+		crud.Routes{
+			List:   crud.List("quote", crud.AllItems(quotes.GetAllQuotes), toSummary, templates.RenderListQuotes),
+			Create: crud.Create("quote", "/quotes", createQuote),
+			Edit:   crud.Edit("quote", quotes.GetQuoteByID, toEditData, templates.RenderEditQuote),
+			Update: crud.Update("quote", "/quotes", applyUpdate),
+		},
+	)
 	rm.Admin.HandleFunc("POST /quotes/delete/{id}", deleteQuoteHandler())
 }
 

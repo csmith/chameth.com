@@ -142,9 +142,12 @@ func bestWords(analysis postAnalysis, frequencies map[string]float64) []string {
 		}
 	}
 
-	sortedScores := slices.SortedFunc(maps.Values(scores), func(a, b ScoredWord) int {
-		return int((1-b.freq)*float64(b.count)) - int((1-a.freq)*float64(a.count))
-	})
+	sortedScores := slices.SortedFunc(
+		maps.Values(scores),
+		func(a, b ScoredWord) int {
+			return int((1-b.freq)*float64(b.count)) - int((1-a.freq)*float64(a.count))
+		},
+	)
 
 	res := make([]string, 0, len(sortedScores))
 	for i := range sortedScores {
@@ -161,26 +164,32 @@ func generateImage(words []string) ([]byte, []string, error) {
 
 	im := image.NewNRGBA(image.Rect(0, 0, 500, 400))
 
-	dark := image.NewUniform(color.NRGBA{
-		R: 30,
-		G: 50,
-		B: 70,
-		A: 255,
-	})
+	dark := image.NewUniform(
+		color.NRGBA{
+			R: 30,
+			G: 50,
+			B: 70,
+			A: 255,
+		},
+	)
 
-	fg := image.NewUniform(color.NRGBA{
-		R: 60,
-		G: 101,
-		B: 141,
-		A: 255,
-	})
+	fg := image.NewUniform(
+		color.NRGBA{
+			R: 60,
+			G: 101,
+			B: 141,
+			A: 255,
+		},
+	)
 
-	bg := image.NewUniform(color.NRGBA{
-		R: 48,
-		G: 81,
-		B: 113,
-		A: 255,
-	})
+	bg := image.NewUniform(
+		color.NRGBA{
+			R: 48,
+			G: 81,
+			B: 113,
+			A: 255,
+		},
+	)
 
 	draw.Draw(im, im.Bounds(), bg, image.Point{}, draw.Src)
 
@@ -189,11 +198,14 @@ func generateImage(words []string) ([]byte, []string, error) {
 		return nil, nil, err
 	}
 
-	face, err := opentype.NewFace(f, &opentype.FaceOptions{
-		Size:    60,
-		DPI:     72,
-		Hinting: font.HintingFull,
-	})
+	face, err := opentype.NewFace(
+		f,
+		&opentype.FaceOptions{
+			Size:    60,
+			DPI:     72,
+			Hinting: font.HintingFull,
+		},
+	)
 	if err != nil {
 		return nil, nil, err
 	}

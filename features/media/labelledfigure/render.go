@@ -49,10 +49,13 @@ func Render(args []string, ctx *shortcodes.Context) (string, error) {
 				primaryMedia = m
 			}
 		case "image/avif", "image/webp":
-			sources = append(sources, Source{
-				Src:  m.Path,
-				Type: m.ContentType,
-			})
+			sources = append(
+				sources,
+				Source{
+					Src:  m.Path,
+					Type: m.ContentType,
+				},
+			)
 		}
 	}
 
@@ -74,15 +77,17 @@ func Render(args []string, ctx *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("failed to render labelledfigure caption markdown: %w", err)
 	}
 
-	return renderTemplate(Data{
-		Sources:     sources,
-		Src:         primaryMedia.Path,
-		Description: description,
-		Caption:     renderedCaption,
-		Width:       *primaryMedia.Width,
-		Height:      *primaryMedia.Height,
-		Regions:     regions,
-	})
+	return renderTemplate(
+		Data{
+			Sources:     sources,
+			Src:         primaryMedia.Path,
+			Description: description,
+			Caption:     renderedCaption,
+			Width:       *primaryMedia.Width,
+			Height:      *primaryMedia.Height,
+			Regions:     regions,
+		},
+	)
 }
 
 func parseRegions(text string) ([]Region, error) {
@@ -133,17 +138,20 @@ func parseRegions(text string) ([]Region, error) {
 		h := y2 - y1
 		fontSize := max(h/4, 14)
 
-		regions = append(regions, Region{
-			X:        x1,
-			Y:        y1,
-			W:        w,
-			H:        h,
-			CenterX:  x1 + w/2,
-			CenterY:  y1 + h/2,
-			Colour:   colour,
-			Label:    label,
-			FontSize: fontSize,
-		})
+		regions = append(
+			regions,
+			Region{
+				X:        x1,
+				Y:        y1,
+				W:        w,
+				H:        h,
+				CenterX:  x1 + w/2,
+				CenterY:  y1 + h/2,
+				Colour:   colour,
+				Label:    label,
+				FontSize: fontSize,
+			},
+		)
 	}
 	return regions, nil
 }

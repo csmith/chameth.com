@@ -209,10 +209,13 @@ func parseASNCSV(r io.Reader) ([]asnNetwork, error) {
 			return nil, errors.New("organization field too large")
 		}
 
-		networks = append(networks, asnNetwork{
-			network:      prefix.Masked(),
-			asn:          int64(asn),
-			organization: record[2],
-		})
+		networks = append(
+			networks,
+			asnNetwork{
+				network:      prefix.Masked(),
+				asn:          int64(asn),
+				organization: record[2],
+			},
+		)
 	}
 }

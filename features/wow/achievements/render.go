@@ -9,9 +9,13 @@ import (
 //go:embed *.gotpl
 var templates string
 
-var tmpl = template.Must(template.New("achievements.html.gotpl").Funcs(template.FuncMap{
-	"formatDate": formatDate,
-}).Parse(templates))
+var tmpl = template.Must(
+	template.New("achievements.html.gotpl").Funcs(
+		template.FuncMap{
+			"formatDate": formatDate,
+		},
+	).Parse(templates),
+)
 
 func renderTemplate(data Data) (string, error) {
 	buf := &bytes.Buffer{}

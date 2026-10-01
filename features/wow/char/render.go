@@ -76,12 +76,15 @@ func buildProfessions(professions []wow.Profession) []Profession {
 		}
 	}
 
-	sort.SliceStable(built, func(i, j int) bool {
-		if built[i].Kind != built[j].Kind {
-			return built[i].Kind < built[j].Kind
-		}
-		return built[i].Name < built[j].Name
-	})
+	sort.SliceStable(
+		built,
+		func(i, j int) bool {
+			if built[i].Kind != built[j].Kind {
+				return built[i].Kind < built[j].Kind
+			}
+			return built[i].Name < built[j].Name
+		},
+	)
 
 	return built
 }
@@ -98,17 +101,23 @@ func buildMythicPlus(mp *wow.MythicPlus) *MythicPlusData {
 
 	runs := make([]MythicPlusRun, 0, len(best))
 	for _, r := range best {
-		runs = append(runs, MythicPlusRun{
-			DungeonName:   r.DungeonName,
-			KeystoneLevel: r.KeystoneLevel,
-			Duration:      formatDuration(r.DurationMS),
-			Overtime:      !r.InTime,
-			Rating:        fmt.Sprintf("%.0f", r.Rating),
-		})
+		runs = append(
+			runs,
+			MythicPlusRun{
+				DungeonName:   r.DungeonName,
+				KeystoneLevel: r.KeystoneLevel,
+				Duration:      formatDuration(r.DurationMS),
+				Overtime:      !r.InTime,
+				Rating:        fmt.Sprintf("%.0f", r.Rating),
+			},
+		)
 	}
-	sort.SliceStable(runs, func(i, j int) bool {
-		return runs[i].DungeonName < runs[j].DungeonName
-	})
+	sort.SliceStable(
+		runs,
+		func(i, j int) bool {
+			return runs[i].DungeonName < runs[j].DungeonName
+		},
+	)
 
 	return &MythicPlusData{
 		Runs:        runs,

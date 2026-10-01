@@ -21,12 +21,16 @@ type projectWithSection struct {
 }
 
 func RegisterRoutes(rm *routing.Manager) {
-	crud.Register(rm.Admin, "/projects", crud.Routes{
-		List:   crud.List("project", fetchProjects, toSummary, templates.RenderListProjects),
-		Create: crud.Create("project", "/projects", crud.GenerateName(projects.CreateProject)),
-		Edit:   crud.Edit("project", projects.GetProjectByID, toEditData, templates.RenderEditProject),
-		Update: crud.Update("project", "/projects", applyUpdate),
-	})
+	crud.Register(
+		rm.Admin,
+		"/projects",
+		crud.Routes{
+			List:   crud.List("project", fetchProjects, toSummary, templates.RenderListProjects),
+			Create: crud.Create("project", "/projects", crud.GenerateName(projects.CreateProject)),
+			Edit:   crud.Edit("project", projects.GetProjectByID, toEditData, templates.RenderEditProject),
+			Update: crud.Update("project", "/projects", applyUpdate),
+		},
+	)
 }
 
 func fetchProjects(ctx context.Context) ([]projectWithSection, []projectWithSection, error) {

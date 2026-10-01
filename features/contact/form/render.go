@@ -21,11 +21,13 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 		preamble = args[0]
 	}
 
-	return renderTemplate(Data{
-		Page:      parenttemplates.SiteURL() + ctx.URL,
-		Preamble:  preamble,
-		Timestamp: contact.SignedTimestamp(),
-	})
+	return renderTemplate(
+		Data{
+			Page:      parenttemplates.SiteURL() + ctx.URL,
+			Preamble:  preamble,
+			Timestamp: contact.SignedTimestamp(),
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

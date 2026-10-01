@@ -20,7 +20,9 @@ func postPathsWithoutEmbeddings(ctx context.Context) ([]string, error) {
 }
 
 func relatedPostsByID(ctx context.Context, postID int, limit int) ([]PostMetadata, error) {
-	return db.Select[PostMetadata](ctx, `
+	return db.Select[PostMetadata](
+		ctx,
+		`
 		SELECT id, path, title, date, format, published
 		FROM posts
 		WHERE id != $1
@@ -29,14 +31,19 @@ func relatedPostsByID(ctx context.Context, postID int, limit int) ([]PostMetadat
 		  AND (SELECT embedding FROM posts WHERE id = $1) IS NOT NULL
 		ORDER BY embedding <=> (SELECT embedding FROM posts WHERE id = $1)
 		LIMIT $2
-	`, postID, limit)
+	`,
+		postID,
+		limit,
+	)
 }
 
 func recentPostsBySimilarityScore(
 	ctx context.Context, likePaths, unlikePaths []string,
 	unlikeCoeff, maxLikeDist, minScore, minUnlikeDist float64, limit int,
 ) ([]Post, error) {
-	return db.Select[Post](ctx, `
+	return db.Select[Post](
+		ctx,
+		`
 		WITH likes AS (
 			SELECT embedding
 			FROM posts
@@ -70,5 +77,13 @@ func recentPostsBySimilarityScore(
 		)
 		ORDER BY date DESC
 		LIMIT $7
-	`, likePaths, unlikePaths, maxLikeDist, unlikeCoeff, minScore, minUnlikeDist, limit)
+	`,
+		likePaths,
+		unlikePaths,
+		maxLikeDist,
+		unlikeCoeff,
+		minScore,
+		minUnlikeDist,
+		limit,
+	)
 }

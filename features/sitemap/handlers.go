@@ -35,14 +35,17 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 
 	var postDetails []templates.ContentDetails
 	for _, p := range allPosts {
-		postDetails = append(postDetails, templates.ContentDetails{
-			Title: p.Title,
-			Path:  p.Path,
-			Date: templates.ContentDate{
-				Iso:      p.Date.Format("2006-01-02"),
-				Friendly: p.Date.Format("Jan 2, 2006"),
+		postDetails = append(
+			postDetails,
+			templates.ContentDetails{
+				Title: p.Title,
+				Path:  p.Path,
+				Date: templates.ContentDate{
+					Iso:      p.Date.Format("2006-01-02"),
+					Friendly: p.Date.Format("Jan 2, 2006"),
+				},
 			},
-		})
+		)
 	}
 
 	filmReviews, err := films.GetAllPublishedFilmReviewsWithFilmAndPosters(ctx)
@@ -52,14 +55,17 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 
 	var filmDetails []templates.ContentDetails
 	for _, review := range filmReviews {
-		filmDetails = append(filmDetails, templates.ContentDetails{
-			Title: review.Film.Title,
-			Path:  review.Film.Path,
-			Date: templates.ContentDate{
-				Iso:      review.FilmReview.WatchedDate.Format("2006-01-02"),
-				Friendly: review.FilmReview.WatchedDate.Format("Jan 2, 2006"),
+		filmDetails = append(
+			filmDetails,
+			templates.ContentDetails{
+				Title: review.Film.Title,
+				Path:  review.Film.Path,
+				Date: templates.ContentDate{
+					Iso:      review.FilmReview.WatchedDate.Format("2006-01-02"),
+					Friendly: review.FilmReview.WatchedDate.Format("Jan 2, 2006"),
+				},
 			},
-		})
+		)
 	}
 
 	filmLists, err := films.GetAllFilmLists(ctx)
@@ -69,10 +75,13 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 
 	var filmListDetails []templates.ContentDetails
 	for _, list := range filmLists {
-		filmListDetails = append(filmListDetails, templates.ContentDetails{
-			Title: list.Title,
-			Path:  list.Path,
-		})
+		filmListDetails = append(
+			filmListDetails,
+			templates.ContentDetails{
+				Title: list.Title,
+				Path:  list.Path,
+			},
+		)
 	}
 
 	sitemapPages, err := pages.GetSitemapStaticPages(ctx)
@@ -85,12 +94,15 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 		if strings.Count(p.Path, "/") > 2 {
 			continue
 		}
-		pageDetails = append(pageDetails, SiteMapPageDetails{
-			Title:     p.Title,
-			Path:      p.Path,
-			Frequency: *p.SitemapFrequency,
-			Priority:  fmt.Sprintf("%.1f", *p.SitemapPriority),
-		})
+		pageDetails = append(
+			pageDetails,
+			SiteMapPageDetails{
+				Title:     p.Title,
+				Path:      p.Path,
+				Frequency: *p.SitemapFrequency,
+				Priority:  fmt.Sprintf("%.1f", *p.SitemapPriority),
+			},
+		)
 	}
 
 	pageDetails = append(
@@ -102,15 +114,18 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 		SiteMapPageDetails{Title: "Snippets", Path: "/snippets/", Frequency: "weekly", Priority: "0.2"},
 	)
 
-	slices.SortFunc(pageDetails, func(a, b SiteMapPageDetails) int {
-		if a.Path < b.Path {
-			return -1
-		}
-		if a.Path > b.Path {
-			return 1
-		}
-		return 0
-	})
+	slices.SortFunc(
+		pageDetails,
+		func(a, b SiteMapPageDetails) int {
+			if a.Path < b.Path {
+				return -1
+			}
+			if a.Path > b.Path {
+				return 1
+			}
+			return 0
+		},
+	)
 
 	pageTree, err := buildPageTree(ctx)
 	if err != nil {
@@ -205,9 +220,12 @@ func buildPageTree(ctx context.Context) ([]*SiteMapPageDetails, error) {
 }
 
 func sortPageTree(nodes []*SiteMapPageDetails) {
-	slices.SortFunc(nodes, func(a, b *SiteMapPageDetails) int {
-		return strings.Compare(a.Path, b.Path)
-	})
+	slices.SortFunc(
+		nodes,
+		func(a, b *SiteMapPageDetails) int {
+			return strings.Compare(a.Path, b.Path)
+		},
+	)
 	for _, node := range nodes {
 		sortPageTree(node.Children)
 	}

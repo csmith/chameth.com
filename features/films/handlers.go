@@ -52,13 +52,16 @@ func FilmPage(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		reviewData = append(reviewData, templates.FilmReviewData{
-			WatchedDate: review.WatchedDate.Format("2006-01-02"),
-			Rating:      review.Rating,
-			IsRewatch:   review.IsRewatch,
-			HasSpoilers: review.HasSpoilers,
-			Content:     reviewTextHTML,
-		})
+		reviewData = append(
+			reviewData,
+			templates.FilmReviewData{
+				WatchedDate: review.WatchedDate.Format("2006-01-02"),
+				Rating:      review.Rating,
+				IsRewatch:   review.IsRewatch,
+				HasSpoilers: review.HasSpoilers,
+				Content:     reviewTextHTML,
+			},
+		)
 	}
 
 	renderedOverview, err := markdown.Render(film.Overview)
@@ -100,23 +103,26 @@ func FilmPage(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderFilm(w, templates.FilmData{
-		FilmTitle:     film.Title,
-		Year:          year,
-		TMDBID:        film.TMDBID,
-		Overview:      renderedOverview,
-		Reviews:       reviewData,
-		TimesWatched:  timesWatched,
-		AverageRating: averageRating,
-		PosterPath:    posterPath,
-		FilmLists:     filmListIDs,
-		PageData: content.CreatePageData(
-			r.Context(),
-			fmt.Sprintf("%s (%s)", film.Title, year),
-			film.Path,
-			maintemplates.OpenGraphHeaders{},
-		),
-	})
+	err = templates.RenderFilm(
+		w,
+		templates.FilmData{
+			FilmTitle:     film.Title,
+			Year:          year,
+			TMDBID:        film.TMDBID,
+			Overview:      renderedOverview,
+			Reviews:       reviewData,
+			TimesWatched:  timesWatched,
+			AverageRating: averageRating,
+			PosterPath:    posterPath,
+			FilmLists:     filmListIDs,
+			PageData: content.CreatePageData(
+				r.Context(),
+				fmt.Sprintf("%s (%s)", film.Title, year),
+				film.Path,
+				maintemplates.OpenGraphHeaders{},
+			),
+		},
+	)
 	if err != nil {
 		slog.Error("Failed to render film template", "error", err, "path", r.URL.Path)
 	}
@@ -182,12 +188,15 @@ func FilmListPage(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderFilmList(w, templates.FilmListData{
-		ListTitle:   filmList.Title,
-		Description: renderedDescription,
-		Entries:     filmListItems,
-		PageData:    content.CreatePageData(r.Context(), filmList.Title, filmList.Path, maintemplates.OpenGraphHeaders{}),
-	})
+	err = templates.RenderFilmList(
+		w,
+		templates.FilmListData{
+			ListTitle:   filmList.Title,
+			Description: renderedDescription,
+			Entries:     filmListItems,
+			PageData:    content.CreatePageData(r.Context(), filmList.Title, filmList.Path, maintemplates.OpenGraphHeaders{}),
+		},
+	)
 	if err != nil {
 		slog.Error("Failed to render film list template", "error", err, "path", r.URL.Path)
 	}

@@ -31,15 +31,18 @@ var (
 
 func generateFilmPath(title string, year int) string {
 	lowered := strings.ToLower(title)
-	replaced := strings.Map(func(r rune) rune {
-		if r == ' ' {
+	replaced := strings.Map(
+		func(r rune) rune {
+			if r == ' ' {
+				return '-'
+			}
+			if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
+				return r
+			}
 			return '-'
-		}
-		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
-			return r
-		}
-		return '-'
-	}, lowered)
+		},
+		lowered,
+	)
 	cleaned := regexp.MustCompile(`-+`).ReplaceAllString(replaced, "-")
 	cleaned = regexp.MustCompile(`^-+|-+$`).ReplaceAllString(cleaned, "")
 	if year > 0 {

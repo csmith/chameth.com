@@ -64,14 +64,16 @@ func Render(ctx context.Context, id int) (string, error) {
 		return "", fmt.Errorf("failed to render film list description: %w", err)
 	}
 
-	return renderTemplate(Data{
-		ID:          list.ID,
-		Title:       list.Title,
-		Description: description,
-		Path:        list.Path,
-		Count:       count,
-		Films:       filmList,
-	})
+	return renderTemplate(
+		Data{
+			ID:          list.ID,
+			Title:       list.Title,
+			Description: description,
+			Path:        list.Path,
+			Count:       count,
+			Films:       filmList,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

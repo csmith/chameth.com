@@ -91,10 +91,13 @@ func groupFilesByBaseName(files []*multipart.FileHeader) map[string][]fileInfo {
 	for _, file := range files {
 		ext := strings.ToLower(filepath.Ext(file.Filename))
 		baseName := strings.TrimSuffix(file.Filename, ext)
-		groups[baseName] = append(groups[baseName], fileInfo{
-			header: file,
-			ext:    ext,
-		})
+		groups[baseName] = append(
+			groups[baseName],
+			fileInfo{
+				header: file,
+				ext:    ext,
+			},
+		)
 	}
 	return groups
 }
@@ -432,14 +435,17 @@ func orderedMediaItems(mediaRelations []media.MediaRelationWithDetails) []templa
 func availableMediaItems(availableMedia []media.MediaMetadata) []templates.AvailableMediaItem {
 	items := make([]templates.AvailableMediaItem, 0, len(availableMedia))
 	for _, m := range availableMedia {
-		items = append(items, templates.AvailableMediaItem{
-			MediaID:          m.ID,
-			OriginalFilename: m.OriginalFilename,
-			ContentType:      m.ContentType,
-			Width:            m.Width,
-			Height:           m.Height,
-			IsVariant:        m.ParentMediaID != nil,
-		})
+		items = append(
+			items,
+			templates.AvailableMediaItem{
+				MediaID:          m.ID,
+				OriginalFilename: m.OriginalFilename,
+				ContentType:      m.ContentType,
+				Width:            m.Width,
+				Height:           m.Height,
+				IsVariant:        m.ParentMediaID != nil,
+			},
+		)
 	}
 	return items
 }

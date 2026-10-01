@@ -8,26 +8,30 @@ import (
 // LogRequests records every request, including responses short-circuited by outer middleware.
 func LogRequests() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			start := time.Now()
-			cw := &outerWriter{ResponseWriter: w}
-			next.ServeHTTP(cw, r)
-			ip := remoteAddress(r.RemoteAddr)
-			size := cw.n
-			if r.Method == http.MethodHead {
-				size = 0
-			}
-			enqueueRequestLog(requestLog{
-				url:       truncateString(r.URL.RequestURI(), maxLoggedURLLength),
-				userAgent: truncateString(r.UserAgent(), maxLoggedUserAgentLength),
-				ip:        ip,
-				ipHash:    hashIP(ip, start),
-				start:     start,
-				duration:  time.Since(start),
-				size:      size,
-				status:    cw.status(),
-			})
-		})
+		return http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				start := time.Now()
+				cw := &outerWriter{ResponseWriter: w}
+				next.ServeHTTP(cw, r)
+				ip := remoteAddress(r.RemoteAddr)
+				size := cw.n
+				if r.Method == http.MethodHead {
+					size = 0
+				}
+				enqueueRequestLog(
+					requestLog{
+						url:       truncateString(r.URL.RequestURI(), maxLoggedURLLength),
+						userAgent: truncateString(r.UserAgent(), maxLoggedUserAgentLength),
+						ip:        ip,
+						ipHash:    hashIP(ip, start),
+						start:     start,
+						duration:  time.Since(start),
+						size:      size,
+						status:    cw.status(),
+					},
+				)
+			},
+		)
 	}
 }
 

@@ -47,13 +47,16 @@ func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 			filmWord = "films"
 		}
 
-		bars = append(bars, Bar{
-			X:      1 + (r-1)*20,
-			Y:      50 - height,
-			Width:  barWidth,
-			Height: height,
-			Title:  fmt.Sprintf("%.1f stars: %d %s", stars, count, filmWord),
-		})
+		bars = append(
+			bars,
+			Bar{
+				X:      1 + (r-1)*20,
+				Y:      50 - height,
+				Width:  barWidth,
+				Height: height,
+				Title:  fmt.Sprintf("%.1f stars: %d %s", stars, count, filmWord),
+			},
+		)
 	}
 
 	leftLabel, err := rating.Render(1)
@@ -66,11 +69,13 @@ func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("failed to render right label: %w", err)
 	}
 
-	return renderTemplate(Data{
-		Bars:       bars,
-		LeftLabel:  template.HTML(leftLabel),
-		RightLabel: template.HTML(rightLabel),
-	})
+	return renderTemplate(
+		Data{
+			Bars:       bars,
+			LeftLabel:  template.HTML(leftLabel),
+			RightLabel: template.HTML(rightLabel),
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

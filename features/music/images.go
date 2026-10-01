@@ -113,11 +113,17 @@ func storeCover(ctx context.Context, c coverRef, contentType string, data []byte
 	_, subtype, _ := strings.Cut(contentType, "/")
 	filename := fmt.Sprintf("music-%s-%d.%s", c.entityType, c.id, subtype)
 	var mediaID int
-	err = tx.QueryRowContext(ctx, `
+	err = tx.QueryRowContext(
+		ctx,
+		`
 		INSERT INTO media (content_type, original_filename, data)
 		VALUES ($1, $2, $3)
 		RETURNING id
-	`, contentType, filename, data).Scan(&mediaID)
+	`,
+		contentType,
+		filename,
+		data,
+	).Scan(&mediaID)
 	if err != nil {
 		return fmt.Errorf("failed to create media: %w", err)
 	}
@@ -128,11 +134,21 @@ func storeCover(ctx context.Context, c coverRef, contentType string, data []byte
 		description = "Image of " + c.name
 	}
 	role := "image"
-	res, err := tx.ExecContext(ctx, `
+	res, err := tx.ExecContext(
+		ctx,
+		`
 		INSERT INTO media_relations (path, media_id, caption, description, role, entity_type, entity_id)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		ON CONFLICT (path) DO NOTHING
-	`, c.path, mediaID, caption, description, role, c.entityType, c.id)
+	`,
+		c.path,
+		mediaID,
+		caption,
+		description,
+		role,
+		c.entityType,
+		c.id,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to create media relation: %w", err)
 	}

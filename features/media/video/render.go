@@ -31,10 +31,12 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 		)
 	}
 
-	return renderTemplate(Data{
-		Src:         mediaRelation[0].Path,
-		Description: description,
-	})
+	return renderTemplate(
+		Data{
+			Src:         mediaRelation[0].Path,
+			Description: description,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

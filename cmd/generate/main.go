@@ -216,22 +216,25 @@ func matchProviders(fn *ast.FuncDecl, fileImports map[string]string, providers [
 
 func scan(root, mod string, providers []provider) map[string]*pkg {
 	pkgs := map[string]*pkg{}
-	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return nil
-		}
-		if info.IsDir() {
-			if skippedDir(info.Name()) {
-				return filepath.SkipDir
+	filepath.Walk(
+		root,
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return nil
 			}
+			if info.IsDir() {
+				if skippedDir(info.Name()) {
+					return filepath.SkipDir
+				}
+				return nil
+			}
+			if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
+				return nil
+			}
+			scanFile(root, mod, path, providers, pkgs)
 			return nil
-		}
-		if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
-			return nil
-		}
-		scanFile(root, mod, path, providers, pkgs)
-		return nil
-	})
+		},
+	)
 	return pkgs
 }
 

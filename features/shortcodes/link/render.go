@@ -98,10 +98,12 @@ func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("unknown link page: %s", name)
 	}
 
-	return renderTemplate(Data{
-		Href: page.Href,
-		Icon: page.Icon,
-	})
+	return renderTemplate(
+		Data{
+			Href: page.Href,
+			Icon: page.Icon,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

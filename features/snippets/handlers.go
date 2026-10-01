@@ -31,12 +31,15 @@ func SnippetHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderSnippet(w, templates.SnippetData{
-		SnippetTitle:   snippet.Title,
-		SnippetGroup:   snippet.Topic,
-		SnippetContent: renderedContent,
-		PageData:       content.CreatePageData(r.Context(), snippet.Title, snippet.Path, parenttemplates.OpenGraphHeaders{}),
-	})
+	err = templates.RenderSnippet(
+		w,
+		templates.SnippetData{
+			SnippetTitle:   snippet.Title,
+			SnippetGroup:   snippet.Topic,
+			SnippetContent: renderedContent,
+			PageData:       content.CreatePageData(r.Context(), snippet.Title, snippet.Path, parenttemplates.OpenGraphHeaders{}),
+		},
+	)
 	if err != nil {
 		slog.Error("Failed to render snippet template", "error", err, "path", r.URL.Path)
 	}
@@ -55,18 +58,24 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 		if len(groups) == 0 || groups[len(groups)-1].Name != snippet.Topic {
 			groups = append(groups, templates.SnippetGroup{Name: snippet.Topic})
 		}
-		groups[len(groups)-1].Snippets = append(groups[len(groups)-1].Snippets, templates.SnippetDetails{
-			Name: snippet.Title,
-			Path: snippet.Path,
-		})
+		groups[len(groups)-1].Snippets = append(
+			groups[len(groups)-1].Snippets,
+			templates.SnippetDetails{
+				Name: snippet.Title,
+				Path: snippet.Path,
+			},
+		)
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderSnippets(w, templates.SnippetsData{
-		SnippetGroups: groups,
-		PageData:      content.CreatePageData(r.Context(), "Snippets", "/snippets/", parenttemplates.OpenGraphHeaders{}),
-	})
+	err = templates.RenderSnippets(
+		w,
+		templates.SnippetsData{
+			SnippetGroups: groups,
+			PageData:      content.CreatePageData(r.Context(), "Snippets", "/snippets/", parenttemplates.OpenGraphHeaders{}),
+		},
+	)
 	if err != nil {
 		slog.Error("Failed to render snippets template", "error", err)
 	}

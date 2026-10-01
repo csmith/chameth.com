@@ -56,25 +56,33 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = posttemplates.RenderPost(w, posttemplates.PostData{
-		PostContent:    renderedContent,
-		PostFormat:     post.Format,
-		ArticleTitle:   post.Title,
-		ArticleSummary: summary,
-		ArticleDate: parenttemplates.ArticleDate{
-			Iso:         post.Date.Format("2006-01-02"),
-			Friendly:    post.Date.Format("Jan 2, 2006"),
-			ShowWarning: showWarning,
-			YearsOld:    yearsOld,
+	err = posttemplates.RenderPost(
+		w,
+		posttemplates.PostData{
+			PostContent:    renderedContent,
+			PostFormat:     post.Format,
+			ArticleTitle:   post.Title,
+			ArticleSummary: summary,
+			ArticleDate: parenttemplates.ArticleDate{
+				Iso:         post.Date.Format("2006-01-02"),
+				Friendly:    post.Date.Format("Jan 2, 2006"),
+				ShowWarning: showWarning,
+				YearsOld:    yearsOld,
+			},
+			RelatedPosts:   relatedPosts,
+			FeedBuilderURL: feedBuilderURL(post.Path),
+			EditLink:       fmt.Sprintf("%s/posts/edit/%d", parenttemplates.AdminURL(), post.ID),
+			PageData: content.CreatePageData(
+				r.Context(),
+				post.Title,
+				post.Path,
+				parenttemplates.OpenGraphHeaders{
+					Image: ogImage,
+					Type:  "article",
+				},
+			),
 		},
-		RelatedPosts:   relatedPosts,
-		FeedBuilderURL: feedBuilderURL(post.Path),
-		EditLink:       fmt.Sprintf("%s/posts/edit/%d", parenttemplates.AdminURL(), post.ID),
-		PageData: content.CreatePageData(r.Context(), post.Title, post.Path, parenttemplates.OpenGraphHeaders{
-			Image: ogImage,
-			Type:  "article",
-		}),
-	})
+	)
 	if err != nil {
 		slog.Error("Failed to render post template", "error", err, "path", r.URL.Path)
 	}
@@ -107,10 +115,13 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = posttemplates.RenderPosts(w, posttemplates.PostsData{
-		Posts:    postPaths,
-		PageData: content.CreatePageData(r.Context(), "Posts", "/posts/", parenttemplates.OpenGraphHeaders{}),
-	})
+	err = posttemplates.RenderPosts(
+		w,
+		posttemplates.PostsData{
+			Posts:    postPaths,
+			PageData: content.CreatePageData(r.Context(), "Posts", "/posts/", parenttemplates.OpenGraphHeaders{}),
+		},
+	)
 	if err != nil {
 		slog.Error("Failed to render posts template", "error", err)
 	}

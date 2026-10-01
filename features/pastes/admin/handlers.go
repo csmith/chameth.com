@@ -11,17 +11,21 @@ import (
 )
 
 func RegisterRoutes(rm *routing.Manager) {
-	crud.Register(rm.Admin, "/pastes", crud.Routes{
-		List: crud.List(
-			"paste",
-			crud.DraftsAndAll(pastes.GetDraftPastes, pastes.GetAllPastes),
-			toSummary,
-			templates.RenderListPastes,
-		),
-		Create: crud.Create("paste", "/pastes", crud.GeneratePath("/paste/%s/", pastes.CreatePaste)),
-		Edit:   crud.Edit("paste", pastes.GetPasteByID, toEditData, templates.RenderEditPaste),
-		Update: crud.Update("paste", "/pastes", applyUpdate),
-	})
+	crud.Register(
+		rm.Admin,
+		"/pastes",
+		crud.Routes{
+			List: crud.List(
+				"paste",
+				crud.DraftsAndAll(pastes.GetDraftPastes, pastes.GetAllPastes),
+				toSummary,
+				templates.RenderListPastes,
+			),
+			Create: crud.Create("paste", "/pastes", crud.GeneratePath("/paste/%s/", pastes.CreatePaste)),
+			Edit:   crud.Edit("paste", pastes.GetPasteByID, toEditData, templates.RenderEditPaste),
+			Update: crud.Update("paste", "/pastes", applyUpdate),
+		},
+	)
 }
 
 func toSummary(paste pastes.PasteMetadata) templates.PasteSummary {

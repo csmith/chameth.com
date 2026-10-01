@@ -10,10 +10,14 @@ import (
 )
 
 func GetFilmByID(ctx context.Context, id int) (*Film, error) {
-	film, err := db.Get[Film](ctx, `
+	film, err := db.Get[Film](
+		ctx,
+		`
 		SELECT id, tmdb_id, title, year, overview, runtime, published, path
 		FROM films WHERE id = $1
-	`, id)
+	`,
+		id,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -21,10 +25,13 @@ func GetFilmByID(ctx context.Context, id int) (*Film, error) {
 }
 
 func GetAllFilms(ctx context.Context) ([]Film, error) {
-	return db.Select[Film](ctx, `
+	return db.Select[Film](
+		ctx,
+		`
 		SELECT id, tmdb_id, title, year, overview, runtime, published, path
 		FROM films ORDER BY title
-	`)
+	`,
+	)
 }
 
 func GetAllFilmsWithReviews(ctx context.Context) ([]FilmWithReview, error) {
@@ -187,9 +194,12 @@ func GetAllFilmsWithReviewsAndPosters(ctx context.Context) ([]FilmWithReviewAndP
 			lw = &lastWatched.String
 		}
 
-		films = append(films, FilmWithReviewAndPoster{
-			FilmWithReview: fwr, PosterPath: pp, PosterMediaID: pmi, ReviewCount: reviewCount, LastWatched: lw,
-		})
+		films = append(
+			films,
+			FilmWithReviewAndPoster{
+				FilmWithReview: fwr, PosterPath: pp, PosterMediaID: pmi, ReviewCount: reviewCount, LastWatched: lw,
+			},
+		)
 	}
 
 	return films, nil
@@ -210,11 +220,20 @@ func CreateFilm(ctx context.Context, tmdbID int, title, year, path string, overv
 	}
 
 	var id int
-	err := db.QueryRow(ctx, `
+	err := db.QueryRow(
+		ctx,
+		`
 		INSERT INTO films (tmdb_id, title, year, overview, runtime, published, path)
 		VALUES ($1, $2, $3, $4, $5, false, $6)
 		RETURNING id
-	`, tmdbID, title, yearPtr, overview, runtimePtr, path).Scan(&id)
+	`,
+		tmdbID,
+		title,
+		yearPtr,
+		overview,
+		runtimePtr,
+		path,
+	).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create film: %w", err)
 	}
@@ -238,11 +257,22 @@ func UpdateFilm(
 		runtimePtr = &runtime
 	}
 
-	_, err := db.Exec(ctx, `
+	_, err := db.Exec(
+		ctx,
+		`
 		UPDATE films
 		SET tmdb_id = $1, title = $2, year = $3, overview = $4, runtime = $5, published = $6, path = $7
 		WHERE id = $8
-	`, tmdbID, title, yearPtr, overview, runtimePtr, published, path, id)
+	`,
+		tmdbID,
+		title,
+		yearPtr,
+		overview,
+		runtimePtr,
+		published,
+		path,
+		id,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to update film: %w", err)
 	}
@@ -250,10 +280,14 @@ func UpdateFilm(
 }
 
 func GetFilmByTMDBID(ctx context.Context, tmdbID int) (*Film, error) {
-	film, err := db.Get[Film](ctx, `
+	film, err := db.Get[Film](
+		ctx,
+		`
 		SELECT id, tmdb_id, title, year, overview, runtime, published, path
 		FROM films WHERE tmdb_id = $1
-	`, tmdbID)
+	`,
+		tmdbID,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -261,14 +295,19 @@ func GetFilmByTMDBID(ctx context.Context, tmdbID int) (*Film, error) {
 }
 
 func GetFilmWithPosterByPath(ctx context.Context, path string) (*FilmWithPoster, error) {
-	film, err := db.Get[FilmWithPoster](ctx, `
+	film, err := db.Get[FilmWithPoster](
+		ctx,
+		`
 		SELECT
 			f.id, f.tmdb_id, f.title, f.year, f.overview, f.runtime, f.published, f.path,
 			mr.path as poster_path
 		FROM films f
 		LEFT JOIN media_relations mr ON mr.entity_type = 'film' AND mr.entity_id = f.id AND mr.role = 'poster'
 		WHERE f.path = $1 OR f.path = $2
-	`, path, path+"/")
+	`,
+		path,
+		path+"/",
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -284,7 +323,9 @@ func DeleteFilm(ctx context.Context, id int) error {
 }
 
 func SearchFilms(ctx context.Context, query string) ([]FilmSearchResult, error) {
-	return db.Select[FilmSearchResult](ctx, `
+	return db.Select[FilmSearchResult](
+		ctx,
+		`
 		SELECT
 			f.id,
 			f.title,
@@ -297,14 +338,20 @@ func SearchFilms(ctx context.Context, query string) ([]FilmSearchResult, error) 
 		WHERE EXISTS (SELECT 1 FROM film_reviews WHERE film_id = f.id AND published = true)
 			AND f.title ILIKE $1
 		ORDER BY f.title
-	`, "%"+query+"%")
+	`,
+		"%"+query+"%",
+	)
 }
 
 func GetFilmReviewByID(ctx context.Context, id int) (*FilmReview, error) {
-	review, err := db.Get[FilmReview](ctx, `
+	review, err := db.Get[FilmReview](
+		ctx,
+		`
 		SELECT id, film_id, watched_date, rating, is_rewatch, has_spoilers, review_text, published
 		FROM film_reviews WHERE id = $1
-	`, id)
+	`,
+		id,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -312,11 +359,15 @@ func GetFilmReviewByID(ctx context.Context, id int) (*FilmReview, error) {
 }
 
 func GetFilmReviewsByFilmID(ctx context.Context, filmID int) ([]FilmReview, error) {
-	return db.Select[FilmReview](ctx, `
+	return db.Select[FilmReview](
+		ctx,
+		`
 		SELECT id, film_id, watched_date, rating, is_rewatch, has_spoilers, review_text, published
 		FROM film_reviews WHERE film_id = $1
 		ORDER BY watched_date DESC
-	`, filmID)
+	`,
+		filmID,
+	)
 }
 
 func CreateFilmReview(
@@ -324,11 +375,21 @@ func CreateFilmReview(
 	isRewatch, hasSpoilers, published bool, reviewText string,
 ) (int, error) {
 	var id int
-	err := db.QueryRow(ctx, `
+	err := db.QueryRow(
+		ctx,
+		`
 		INSERT INTO film_reviews (film_id, rating, watched_date, is_rewatch, has_spoilers, review_text, published)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		RETURNING id
-	`, filmID, rating, watchedDate, isRewatch, hasSpoilers, reviewText, published).Scan(&id)
+	`,
+		filmID,
+		rating,
+		watchedDate,
+		isRewatch,
+		hasSpoilers,
+		reviewText,
+		published,
+	).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create film review: %w", err)
 	}
@@ -347,11 +408,21 @@ func UpdateFilmReview(
 	ctx context.Context, id int, rating int, watchedDate string,
 	isRewatch, hasSpoilers, published bool, reviewText string,
 ) error {
-	_, err := db.Exec(ctx, `
+	_, err := db.Exec(
+		ctx,
+		`
 		UPDATE film_reviews
 		SET rating = $1, watched_date = $2, is_rewatch = $3, has_spoilers = $4, review_text = $5, published = $6
 		WHERE id = $7
-	`, rating, watchedDate, isRewatch, hasSpoilers, reviewText, published, id)
+	`,
+		rating,
+		watchedDate,
+		isRewatch,
+		hasSpoilers,
+		reviewText,
+		published,
+		id,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to update film review: %w", err)
 	}
@@ -412,19 +483,25 @@ func GetRecentPublishedFilmReviewsWithFilmAndPosters(
 }
 
 func GetAllFilmLists(ctx context.Context) ([]FilmList, error) {
-	return db.Select[FilmList](ctx, `
+	return db.Select[FilmList](
+		ctx,
+		`
 		SELECT id, title, description, published, path
 		FROM film_lists WHERE published = true
 		ORDER BY title
-	`)
+	`,
+	)
 }
 
 func GetDraftFilmLists(ctx context.Context) ([]FilmList, error) {
-	return db.Select[FilmList](ctx, `
+	return db.Select[FilmList](
+		ctx,
+		`
 		SELECT id, title, description, published, path
 		FROM film_lists WHERE published = false
 		ORDER BY title
-	`)
+	`,
+	)
 }
 
 func GetFilmListByID(ctx context.Context, id int) (*FilmList, error) {
@@ -436,10 +513,15 @@ func GetFilmListByID(ctx context.Context, id int) (*FilmList, error) {
 }
 
 func GetFilmListByPath(ctx context.Context, path string) (*FilmList, error) {
-	list, err := db.Get[FilmList](ctx, `
+	list, err := db.Get[FilmList](
+		ctx,
+		`
 		SELECT id, title, description, published, path
 		FROM film_lists WHERE path = $1 OR path = $2
-	`, path, path+"/")
+	`,
+		path,
+		path+"/",
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -452,7 +534,9 @@ func GetFilmListWithEntries(ctx context.Context, id int) (*FilmList, []FilmListE
 		return nil, nil, err
 	}
 
-	entries, err := db.Select[FilmListEntryWithFilm](ctx, `
+	entries, err := db.Select[FilmListEntryWithFilm](
+		ctx,
+		`
 		SELECT
 			fle.id, fle.film_list_id, fle.film_id, fle.position,
 			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title",
@@ -462,7 +546,9 @@ func GetFilmListWithEntries(ctx context.Context, id int) (*FilmList, []FilmListE
 		JOIN films f ON fle.film_id = f.id
 		WHERE fle.film_list_id = $1
 		ORDER BY fle.position
-	`, id)
+	`,
+		id,
+	)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -471,7 +557,9 @@ func GetFilmListWithEntries(ctx context.Context, id int) (*FilmList, []FilmListE
 }
 
 func GetFilmListEntriesWithDetails(ctx context.Context, listID int) ([]FilmListEntryWithDetails, error) {
-	return db.Select[FilmListEntryWithDetails](ctx, `
+	return db.Select[FilmListEntryWithDetails](
+		ctx,
+		`
 		SELECT
 			fle.id, fle.film_list_id, fle.film_id, fle.position,
 			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title",
@@ -490,16 +578,24 @@ func GetFilmListEntriesWithDetails(ctx context.Context, listID int) ([]FilmListE
 		WHERE fle.film_list_id = $1
 		GROUP BY fle.id, f.id, mr.path, mr.media_id, mr.description, mr.caption, mr.role, mr.entity_type, mr.entity_id
 		ORDER BY fle.position
-	`, listID)
+	`,
+		listID,
+	)
 }
 
 func CreateFilmList(ctx context.Context, path, title, description string) (int, error) {
 	var id int
-	err := db.QueryRow(ctx, `
+	err := db.QueryRow(
+		ctx,
+		`
 		INSERT INTO film_lists (path, title, description, published)
 		VALUES ($1, $2, $3, false)
 		RETURNING id
-	`, path, title, description).Scan(&id)
+	`,
+		path,
+		title,
+		description,
+	).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create film list: %w", err)
 	}
@@ -507,11 +603,19 @@ func CreateFilmList(ctx context.Context, path, title, description string) (int, 
 }
 
 func UpdateFilmList(ctx context.Context, id int, path, title, description string, published bool) error {
-	_, err := db.Exec(ctx, `
+	_, err := db.Exec(
+		ctx,
+		`
 		UPDATE film_lists
 		SET path = $1, title = $2, description = $3, published = $4
 		WHERE id = $5
-	`, path, title, description, published, id)
+	`,
+		path,
+		title,
+		description,
+		published,
+		id,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to update film list: %w", err)
 	}
@@ -519,7 +623,9 @@ func UpdateFilmList(ctx context.Context, id int, path, title, description string
 }
 
 func GetEntriesForList(ctx context.Context, listID int) ([]FilmListEntryWithFilm, error) {
-	return db.Select[FilmListEntryWithFilm](ctx, `
+	return db.Select[FilmListEntryWithFilm](
+		ctx,
+		`
 		SELECT
 			fle.id, fle.film_list_id, fle.film_id, fle.position,
 			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title",
@@ -529,14 +635,20 @@ func GetEntriesForList(ctx context.Context, listID int) ([]FilmListEntryWithFilm
 		JOIN films f ON fle.film_id = f.id
 		WHERE fle.film_list_id = $1
 		ORDER BY fle.position
-	`, listID)
+	`,
+		listID,
+	)
 }
 
 func GetEntryByID(ctx context.Context, entryID int) (*FilmListEntry, error) {
-	entry, err := db.Get[FilmListEntry](ctx, `
+	entry, err := db.Get[FilmListEntry](
+		ctx,
+		`
 		SELECT id, film_list_id, film_id, position
 		FROM film_list_entries WHERE id = $1
-	`, entryID)
+	`,
+		entryID,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -559,21 +671,32 @@ func AddFilmToList(ctx context.Context, listID, filmID int, position int) (int, 
 		return 0, fmt.Errorf("failed to defer constraints: %w", err)
 	}
 
-	_, err = tx.ExecContext(ctx, `
+	_, err = tx.ExecContext(
+		ctx,
+		`
 		UPDATE film_list_entries
 		SET position = position + 1
 		WHERE film_list_id = $1 AND position >= $2
-	`, listID, position)
+	`,
+		listID,
+		position,
+	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to shift positions: %w", err)
 	}
 
 	var id int
-	err = tx.QueryRowContext(ctx, `
+	err = tx.QueryRowContext(
+		ctx,
+		`
 		INSERT INTO film_list_entries (film_list_id, film_id, position)
 		VALUES ($1, $2, $3)
 		RETURNING id
-	`, listID, filmID, position).Scan(&id)
+	`,
+		listID,
+		filmID,
+		position,
+	).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("failed to add film to list: %w", err)
 	}
@@ -606,11 +729,16 @@ func RemoveFilmFromList(ctx context.Context, entryID int) error {
 		return fmt.Errorf("failed to defer constraints: %w", err)
 	}
 
-	_, err = tx.ExecContext(ctx, `
+	_, err = tx.ExecContext(
+		ctx,
+		`
 		UPDATE film_list_entries
 		SET position = position - 1
 		WHERE film_list_id = $1 AND position > $2
-	`, entry.FilmListID, entry.Position)
+	`,
+		entry.FilmListID,
+		entry.Position,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to reflow positions: %w", err)
 	}
@@ -655,30 +783,47 @@ func UpdateEntryPosition(ctx context.Context, entryID, newPosition int) error {
 	}
 
 	if oldPosition < newPosition {
-		_, err = tx.ExecContext(ctx, `
+		_, err = tx.ExecContext(
+			ctx,
+			`
 			UPDATE film_list_entries
 			SET position = position - 1
 			WHERE film_list_id = $1 AND position > $2 AND position <= $3
-		`, entry.FilmListID, oldPosition, newPosition)
+		`,
+			entry.FilmListID,
+			oldPosition,
+			newPosition,
+		)
 		if err != nil {
 			return fmt.Errorf("failed to shift positions down: %w", err)
 		}
 	} else {
-		_, err = tx.ExecContext(ctx, `
+		_, err = tx.ExecContext(
+			ctx,
+			`
 			UPDATE film_list_entries
 			SET position = position + 1
 			WHERE film_list_id = $1 AND position >= $2 AND position < $3
-		`, entry.FilmListID, newPosition, oldPosition)
+		`,
+			entry.FilmListID,
+			newPosition,
+			oldPosition,
+		)
 		if err != nil {
 			return fmt.Errorf("failed to shift positions up: %w", err)
 		}
 	}
 
-	_, err = tx.ExecContext(ctx, `
+	_, err = tx.ExecContext(
+		ctx,
+		`
 		UPDATE film_list_entries
 		SET position = $1
 		WHERE id = $2
-	`, newPosition, entryID)
+	`,
+		newPosition,
+		entryID,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to update entry position: %w", err)
 	}
@@ -691,25 +836,35 @@ func UpdateEntryPosition(ctx context.Context, entryID, newPosition int) error {
 }
 
 func GetNextPosition(ctx context.Context, listID int) (int, error) {
-	return db.Get[int](ctx, `
+	return db.Get[int](
+		ctx,
+		`
 		SELECT COALESCE(MAX(position), 0) + 1
 		FROM film_list_entries
 		WHERE film_list_id = $1
-	`, listID)
+	`,
+		listID,
+	)
 }
 
 func GetFilmListsContainingFilm(ctx context.Context, filmID int) ([]FilmList, error) {
-	return db.Select[FilmList](ctx, `
+	return db.Select[FilmList](
+		ctx,
+		`
 		SELECT DISTINCT fl.id, fl.title, fl.description, fl.published, fl.path
 		FROM film_lists fl
 		JOIN film_list_entries fle ON fl.id = fle.film_list_id
 		WHERE fl.published = true AND fle.film_id = $1
 		ORDER BY fl.title
-	`, filmID)
+	`,
+		filmID,
+	)
 }
 
 func ReorderFilmListEntries(ctx context.Context, listID int) error {
-	_, err := db.Exec(ctx, `
+	_, err := db.Exec(
+		ctx,
+		`
 		UPDATE film_list_entries AS fle
 		SET position = sub.rn
 		FROM (
@@ -718,7 +873,9 @@ func ReorderFilmListEntries(ctx context.Context, listID int) error {
 			WHERE film_list_id = $1
 		) AS sub
 		WHERE fle.id = sub.id
-	`, listID)
+	`,
+		listID,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to reorder film list entries: %w", err)
 	}
@@ -726,17 +883,22 @@ func ReorderFilmListEntries(ctx context.Context, listID int) error {
 }
 
 func GetRatingDistribution(ctx context.Context) ([]FilmRatingDistribution, error) {
-	return db.Select[FilmRatingDistribution](ctx, `
+	return db.Select[FilmRatingDistribution](
+		ctx,
+		`
 		SELECT rating, COUNT(*) as count
 		FROM film_reviews
 		WHERE published = true
 		GROUP BY rating
 		ORDER BY rating ASC
-	`)
+	`,
+	)
 }
 
 func GetFilmReviewWithFilmAndPoster(ctx context.Context, reviewID int) (*FilmReviewWithFilmAndPoster, error) {
-	result, err := db.Get[FilmReviewWithFilmAndPoster](ctx, `
+	result, err := db.Get[FilmReviewWithFilmAndPoster](
+		ctx,
+		`
 		SELECT
 			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",
 			fr.rating as "filmreview.rating", fr.is_rewatch as "filmreview.is_rewatch",
@@ -755,7 +917,9 @@ func GetFilmReviewWithFilmAndPoster(ctx context.Context, reviewID int) (*FilmRev
 		JOIN media_relations mr ON mr.entity_type = 'film' AND mr.entity_id = f.id AND mr.role = 'poster'
 		JOIN media m ON mr.media_id = m.id
 		WHERE fr.id = $1
-	`, reviewID)
+	`,
+		reviewID,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -764,7 +928,9 @@ func GetFilmReviewWithFilmAndPoster(ctx context.Context, reviewID int) (*FilmRev
 }
 
 func GetFilmListWithCount(ctx context.Context, listID int) (*FilmList, int, []FilmListEntryWithPoster, error) {
-	list, err := db.Get[FilmListWithCount](ctx, `
+	list, err := db.Get[FilmListWithCount](
+		ctx,
+		`
 		SELECT
 			fl.id, fl.title, fl.description, fl.published, fl.path,
 			COUNT(fle.id) as count
@@ -772,12 +938,16 @@ func GetFilmListWithCount(ctx context.Context, listID int) (*FilmList, int, []Fi
 		LEFT JOIN film_list_entries fle ON fl.id = fle.film_list_id
 		WHERE fl.id = $1
 		GROUP BY fl.id
-	`, listID)
+	`,
+		listID,
+	)
 	if err != nil {
 		return nil, 0, nil, err
 	}
 
-	entries, err := db.Select[FilmListEntryWithPoster](ctx, `
+	entries, err := db.Select[FilmListEntryWithPoster](
+		ctx,
+		`
 		SELECT
 			fle.id, fle.position,
 			f.id as "film.id", f.tmdb_id as "film.tmdb_id", f.title as "film.title",
@@ -790,7 +960,9 @@ func GetFilmListWithCount(ctx context.Context, listID int) (*FilmList, int, []Fi
 		WHERE fle.film_list_id = $1
 		ORDER BY fle.position
 		LIMIT 5
-	`, listID)
+	`,
+		listID,
+	)
 	if err != nil {
 		return nil, 0, nil, err
 	}
@@ -807,7 +979,9 @@ func GetFilmListWithCount(ctx context.Context, listID int) (*FilmList, int, []Fi
 }
 
 func GetWatchedFilmsByDateRange(ctx context.Context, startDate, endDate any) ([]FilmReviewWithFilmAndPoster, error) {
-	return db.Select[FilmReviewWithFilmAndPoster](ctx, `
+	return db.Select[FilmReviewWithFilmAndPoster](
+		ctx,
+		`
 		SELECT
 			fr.id as "filmreview.id", fr.film_id as "filmreview.film_id", fr.watched_date as "filmreview.watched_date",
 			fr.rating as "filmreview.rating", fr.is_rewatch as "filmreview.is_rewatch",
@@ -826,5 +1000,8 @@ func GetWatchedFilmsByDateRange(ctx context.Context, startDate, endDate any) ([]
 		JOIN media m ON mr.media_id = m.id
 		WHERE fr.published = true AND fr.watched_date >= $1 AND fr.watched_date <= $2
 		ORDER BY fr.watched_date ASC
-	`, startDate, endDate)
+	`,
+		startDate,
+		endDate,
+	)
 }

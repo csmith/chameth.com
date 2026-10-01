@@ -54,12 +54,15 @@ func GroupByPrimary(relations []MediaRelationWithDetails) []GroupedMedia {
 			continue
 		}
 		if parent, exists := primaries[*rel.ParentMediaID]; exists {
-			parent.Variants = append(parent.Variants, GroupedMediaVariant{
-				MediaID:     rel.MediaID,
-				ContentType: rel.ContentType,
-				Width:       rel.Width,
-				Height:      rel.Height,
-			})
+			parent.Variants = append(
+				parent.Variants,
+				GroupedMediaVariant{
+					MediaID:     rel.MediaID,
+					ContentType: rel.ContentType,
+					Width:       rel.Width,
+					Height:      rel.Height,
+				},
+			)
 		}
 	}
 

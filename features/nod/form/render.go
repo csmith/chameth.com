@@ -15,9 +15,11 @@ var templates embed.FS
 var tmpl = template.Must(template.New("nod.html.gotpl").ParseFS(templates, "nod.html.gotpl"))
 
 func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
-	return renderTemplate(Data{
-		Page: parenttemplates.SiteURL() + ctx.URL,
-	})
+	return renderTemplate(
+		Data{
+			Page: parenttemplates.SiteURL() + ctx.URL,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

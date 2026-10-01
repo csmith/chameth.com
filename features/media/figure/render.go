@@ -42,10 +42,13 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 				primaryMedia = m
 			}
 		case "image/avif", "image/webp":
-			sources = append(sources, Source{
-				Src:  m.Path,
-				Type: m.ContentType,
-			})
+			sources = append(
+				sources,
+				Source{
+					Src:  m.Path,
+					Type: m.ContentType,
+				},
+			)
 		}
 	}
 
@@ -67,15 +70,17 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("failed to render figure caption markdown: %w", err)
 	}
 
-	return renderTemplate(Data{
-		Class:       class,
-		Sources:     sources,
-		Src:         primaryMedia.Path,
-		Description: description,
-		Caption:     renderedCaption,
-		Width:       *primaryMedia.Width,
-		Height:      *primaryMedia.Height,
-	})
+	return renderTemplate(
+		Data{
+			Class:       class,
+			Sources:     sources,
+			Src:         primaryMedia.Path,
+			Description: description,
+			Caption:     renderedCaption,
+			Width:       *primaryMedia.Width,
+			Height:      *primaryMedia.Height,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

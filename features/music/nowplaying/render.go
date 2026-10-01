@@ -21,13 +21,15 @@ func render(_ []string, c *cached, _ *shortcodes.Context) (string, error) {
 		return "", nil
 	}
 
-	return renderTemplate(Data{
-		ArtistName: c.ArtistName,
-		TrackName:  c.TrackName,
-		AlbumName:  c.AlbumName,
-		ImagePath:  c.ImagePath,
-		Status:     fmt.Sprintf("Scrobbled %s ago", formatDuration(time.Since(c.PlayedAt))),
-	})
+	return renderTemplate(
+		Data{
+			ArtistName: c.ArtistName,
+			TrackName:  c.TrackName,
+			AlbumName:  c.AlbumName,
+			ImagePath:  c.ImagePath,
+			Status:     fmt.Sprintf("Scrobbled %s ago", formatDuration(time.Since(c.PlayedAt))),
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

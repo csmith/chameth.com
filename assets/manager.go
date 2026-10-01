@@ -44,41 +44,51 @@ func (m *Manager) AddSource(kind BundleKind, source *Source) {
 }
 
 func (m *Manager) Add(fsys fs.FS, pathPrefix string) {
-	fs.WalkDir(fsys, ".", func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
+	fs.WalkDir(
+		fsys,
+		".",
+		func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
 
-		if d.IsDir() {
+			if d.IsDir() {
+				return nil
+			}
+
+			if bundle, ok := m.bundleFor(path); ok {
+				b, _ := fs.ReadFile(fsys, path)
+				m.bundles[bundle].addSource(
+					&Source{
+						Path:    filepath.Join(pathPrefix, path),
+						Content: b,
+					},
+				)
+			}
+
 			return nil
-		}
-
-		if bundle, ok := m.bundleFor(path); ok {
-			b, _ := fs.ReadFile(fsys, path)
-			m.bundles[bundle].addSource(&Source{
-				Path:    filepath.Join(pathPrefix, path),
-				Content: b,
-			})
-		}
-
-		return nil
-	})
+		},
+	)
 }
 
 func (m *Manager) AddStatic(fsys fs.FS, basePath string) {
-	fs.WalkDir(fsys, ".", func(p string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
+	fs.WalkDir(
+		fsys,
+		".",
+		func(p string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
 
-		if d.IsDir() {
+			if d.IsDir() {
+				return nil
+			}
+
+			urlPath := "/" + strings.TrimPrefix(p, basePath+"/")
+			m.staticAssets[urlPath] = staticAsset{fsys: fsys, fsPath: p}
 			return nil
-		}
-
-		urlPath := "/" + strings.TrimPrefix(p, basePath+"/")
-		m.staticAssets[urlPath] = staticAsset{fsys: fsys, fsPath: p}
-		return nil
-	})
+		},
+	)
 }
 
 func (m *Manager) StaticAsset(urlPath string) (fs.FS, string, bool) {
@@ -87,19 +97,23 @@ func (m *Manager) StaticAsset(urlPath string) (fs.FS, string, bool) {
 }
 
 func (m *Manager) AddAdminStatic(fsys fs.FS, urlPrefix string) {
-	fs.WalkDir(fsys, ".", func(p string, d fs.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
+	fs.WalkDir(
+		fsys,
+		".",
+		func(p string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
 
-		if d.IsDir() {
+			if d.IsDir() {
+				return nil
+			}
+
+			urlPath := urlPrefix + "/" + p
+			m.adminStaticAssets[urlPath] = staticAsset{fsys: fsys, fsPath: p}
 			return nil
-		}
-
-		urlPath := urlPrefix + "/" + p
-		m.adminStaticAssets[urlPath] = staticAsset{fsys: fsys, fsPath: p}
-		return nil
-	})
+		},
+	)
 }
 
 func (m *Manager) StaticAssetWithFallback(urlPath string) (fs.FS, string, bool) {

@@ -22,14 +22,17 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("postlink.html.gotpl").ParseFS(templates, "postlink.html.gotpl"))
 
-var postlinkCache = cache.NewKeyed(24*time.Hour, func(path string) (string, error) {
-	result, err := renderForPath(path)
-	if err != nil {
-		slog.Error("Failed to render postlink", "path", path, "error", err)
-		return "", err
-	}
-	return result, nil
-})
+var postlinkCache = cache.NewKeyed(
+	24*time.Hour,
+	func(path string) (string, error) {
+		result, err := renderForPath(path)
+		if err != nil {
+			slog.Error("Failed to render postlink", "path", path, "error", err)
+			return "", err
+		}
+		return result, nil
+	},
+)
 
 func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
@@ -55,20 +58,25 @@ func renderForPath(path string) (string, error) {
 	var images []Image
 	if err == nil {
 		for _, variant := range imageVariants {
-			images = append(images, Image{
-				Url:         variant.Path,
-				ContentType: variant.ContentType,
-				Alt:         variant.Description,
-			})
+			images = append(
+				images,
+				Image{
+					Url:         variant.Path,
+					ContentType: variant.ContentType,
+					Alt:         variant.Description,
+				},
+			)
 		}
 	}
 
-	return Render(Data{
-		Url:     post.Path,
-		Title:   post.Title,
-		Summary: template.HTML(summary),
-		Images:  images,
-	})
+	return Render(
+		Data{
+			Url:     post.Path,
+			Title:   post.Title,
+			Summary: template.HTML(summary),
+			Images:  images,
+		},
+	)
 }
 
 func Render(data Data) (string, error) {

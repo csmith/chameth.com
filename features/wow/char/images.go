@@ -101,12 +101,16 @@ func ensureHistoricalPortrait(ctx context.Context, client *http.Client, c *wow.C
 }
 
 func mediaIDAtPath(ctx context.Context, path string) (int, error) {
-	return db.Get[int](ctx, `
+	return db.Get[int](
+		ctx,
+		`
 		SELECT m.id
 		FROM media m
 		JOIN media_relations mr ON m.id = mr.media_id
 		WHERE mr.path = $1
-	`, path)
+	`,
+		path,
+	)
 }
 
 func imageDimensions(data []byte) (width, height *int) {
@@ -133,20 +137,36 @@ func storePortrait(
 	}()
 
 	var mediaID int
-	err = tx.QueryRowContext(ctx, `
+	err = tx.QueryRowContext(
+		ctx,
+		`
 		INSERT INTO media (content_type, original_filename, data, width, height)
 		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id
-	`, contentType, filename, data, width, height).Scan(&mediaID)
+	`,
+		contentType,
+		filename,
+		data,
+		width,
+		height,
+	).Scan(&mediaID)
 	if err != nil {
 		return fmt.Errorf("failed to create media: %w", err)
 	}
 
-	res, err := tx.ExecContext(ctx, `
+	res, err := tx.ExecContext(
+		ctx,
+		`
 		INSERT INTO media_relations (path, media_id, caption, description, role, entity_type, entity_id)
 		VALUES ($1, $2, $3, NULL, $4, 'wow_character', $5)
 		ON CONFLICT (path) DO NOTHING
-	`, path, mediaID, caption, role, blizzardID)
+	`,
+		path,
+		mediaID,
+		caption,
+		role,
+		blizzardID,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to create media relation: %w", err)
 	}

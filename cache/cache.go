@@ -59,9 +59,12 @@ func (c *KeyedCache[T]) Get(key string) T {
 	c.mutex.Lock()
 	entry, ok := c.values[key]
 	if !ok {
-		entry = New(c.maxAge, func() (T, error) {
-			return c.update(key)
-		})
+		entry = New(
+			c.maxAge,
+			func() (T, error) {
+				return c.update(key)
+			},
+		)
 		c.values[key] = entry
 	}
 	c.mutex.Unlock()

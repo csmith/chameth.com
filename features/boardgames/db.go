@@ -15,11 +15,14 @@ func imagePath(bggID int) string {
 }
 
 func rehostedImagePaths(ctx context.Context) (map[string]bool, error) {
-	paths, err := db.Select[string](ctx, `
+	paths, err := db.Select[string](
+		ctx,
+		`
 		SELECT path
 		FROM media_relations
 		WHERE entity_type = 'boardgame'
-	`)
+	`,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list boardgame art: %w", err)
 	}
@@ -47,11 +50,17 @@ func createBoardgameImage(ctx context.Context, bggID int, name, contentType stri
 	}()
 
 	var mediaID int
-	err = tx.QueryRowContext(ctx, `
+	err = tx.QueryRowContext(
+		ctx,
+		`
 		INSERT INTO media (content_type, original_filename, data)
 		VALUES ($1, $2, $3)
 		RETURNING id
-	`, contentType, filename, data).Scan(&mediaID)
+	`,
+		contentType,
+		filename,
+		data,
+	).Scan(&mediaID)
 	if err != nil {
 		return fmt.Errorf("failed to create media: %w", err)
 	}
@@ -59,11 +68,21 @@ func createBoardgameImage(ctx context.Context, bggID int, name, contentType stri
 	description := "Box art of " + name
 	caption := name
 	role := "image"
-	res, err := tx.ExecContext(ctx, `
+	res, err := tx.ExecContext(
+		ctx,
+		`
 		INSERT INTO media_relations (path, media_id, caption, description, role, entity_type, entity_id)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 		ON CONFLICT (path) DO NOTHING
-	`, mediaPath, mediaID, caption, description, role, "boardgame", bggID)
+	`,
+		mediaPath,
+		mediaID,
+		caption,
+		description,
+		role,
+		"boardgame",
+		bggID,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to create media relation: %w", err)
 	}

@@ -42,17 +42,19 @@ func GenerateAndStore(ctx context.Context, postPath string) error {
 
 	content := markdown.StripHTMLTags(codeRemovalRegex.ReplaceAllString(string(renderedHTML), ""))
 
-	jsonData, err := json.Marshal(struct {
-		Model      string         `json:"model"`
-		Input      string         `json:"input"`
-		Dimensions int            `json:"dimensions"`
-		Options    map[string]int `json:"options"`
-	}{
-		Model:      *ollamaModel,
-		Input:      fmt.Sprintf("%s\n\n%s", post.Title, content),
-		Dimensions: 4096,
-		Options:    map[string]int{"num_ctx": 8192},
-	})
+	jsonData, err := json.Marshal(
+		struct {
+			Model      string         `json:"model"`
+			Input      string         `json:"input"`
+			Dimensions int            `json:"dimensions"`
+			Options    map[string]int `json:"options"`
+		}{
+			Model:      *ollamaModel,
+			Input:      fmt.Sprintf("%s\n\n%s", post.Title, content),
+			Dimensions: 4096,
+			Options:    map[string]int{"num_ctx": 8192},
+		},
+	)
 	if err != nil {
 		return fmt.Errorf("failed to marshal request: %w", err)
 	}

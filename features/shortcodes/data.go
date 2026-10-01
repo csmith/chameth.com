@@ -63,9 +63,12 @@ func (m *Manager) RegisterData[T any](
 	}
 
 	m.data[name] = reg
-	m.Register(name, func(args []string, ctx *Context) (string, error) {
-		return m.renderData(name, reg, args, ctx)
-	})
+	m.Register(
+		name,
+		func(args []string, ctx *Context) (string, error) {
+			return m.renderData(name, reg, args, ctx)
+		},
+	)
 }
 
 func (m *Manager) renderData(name string, reg dataRegistration, args []string, ctx *Context) (string, error) {

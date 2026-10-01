@@ -39,12 +39,16 @@ func retrieve(ctx context.Context, client *http.Client) (shortcodes.Result[*cach
 		return shortcodes.Result[*cached]{RefreshAt: refreshAt}, nil
 	}
 
-	covers, err := music.EnsureAlbumCovers(ctx, client, []music.Album{{
-		ID:         np.AlbumID,
-		SubsonicID: np.AlbumSubsonicID,
-		Name:       np.Album,
-		Cover:      np.Cover,
-	}})
+	covers, err := music.EnsureAlbumCovers(
+		ctx,
+		client,
+		[]music.Album{{
+			ID:         np.AlbumID,
+			SubsonicID: np.AlbumSubsonicID,
+			Name:       np.Album,
+			Cover:      np.Cover,
+		}},
+	)
 	if err != nil {
 		return shortcodes.Result[*cached]{}, fmt.Errorf("failed to rehost album cover: %w", err)
 	}

@@ -12,13 +12,16 @@ func GetAllPrints(ctx context.Context) ([]Print, error) {
 }
 
 func GetAllPrintLinks(ctx context.Context) (map[int][]PrintLink, error) {
-	links, err := db.Select[PrintLink](ctx, `
+	links, err := db.Select[PrintLink](
+		ctx,
+		`
 		SELECT pl.id, pl.print_id, pl.name, pl.address
 		FROM prints_links pl
 		JOIN prints p ON pl.print_id = p.id
 		WHERE p.published = true
 		ORDER BY pl.print_id, pl.id
-	`)
+	`,
+	)
 	if err != nil {
 		return nil, err
 	}

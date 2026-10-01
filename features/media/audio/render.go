@@ -36,11 +36,13 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 		caption = *mediaRelation[0].Caption
 	}
 
-	return renderTemplate(Data{
-		Src:         mediaRelation[0].Path,
-		Description: description,
-		Caption:     caption,
-	})
+	return renderTemplate(
+		Data{
+			Src:         mediaRelation[0].Path,
+			Description: description,
+			Caption:     caption,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

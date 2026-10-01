@@ -59,16 +59,19 @@ func process(ctx context.Context, req request, mthd method, remoteAddr, userAgen
 	for i, c := range failedChecks {
 		failedCheckStrings[i] = string(c)
 	}
-	metrics.RecordContactSubmission(ctx, metrics.ContactSubmission{
-		Method:       string(mthd),
-		UserAgent:    userAgent,
-		RemoteAddr:   remoteAddr,
-		FailedChecks: failedCheckStrings,
-		Page:         req.Page,
-		SenderName:   req.SenderName,
-		SenderEmail:  req.SenderEmail,
-		Message:      req.Message,
-	})
+	metrics.RecordContactSubmission(
+		ctx,
+		metrics.ContactSubmission{
+			Method:       string(mthd),
+			UserAgent:    userAgent,
+			RemoteAddr:   remoteAddr,
+			FailedChecks: failedCheckStrings,
+			Page:         req.Page,
+			SenderName:   req.SenderName,
+			SenderEmail:  req.SenderEmail,
+			Message:      req.Message,
+		},
+	)
 
 	if len(failedChecks) > 0 {
 		time.Sleep(5 * time.Second)

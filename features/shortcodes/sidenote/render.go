@@ -29,10 +29,12 @@ func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("failed to render sidenote markdown: %w", err)
 	}
 
-	return renderTemplate(Data{
-		Title:   title,
-		Content: md,
-	})
+	return renderTemplate(
+		Data{
+			Title:   title,
+			Content: md,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

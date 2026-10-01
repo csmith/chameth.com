@@ -15,9 +15,13 @@ import (
 //go:embed *.gotpl
 var templates embed.FS
 
-var tmpl = template.Must(template.New("rating.html.gotpl").Funcs(template.FuncMap{
-	"mod": func(a, b int) int { return a % b },
-}).ParseFS(templates, "rating.html.gotpl"))
+var tmpl = template.Must(
+	template.New("rating.html.gotpl").Funcs(
+		template.FuncMap{
+			"mod": func(a, b int) int { return a % b },
+		},
+	).ParseFS(templates, "rating.html.gotpl"),
+)
 
 func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	if len(args) < 1 {
@@ -39,11 +43,13 @@ func Render(rating int) (string, error) {
 		rotations[i] = rand.Intn(15)
 	}
 
-	return renderTemplate(Data{
-		FilledStars: rotations,
-		HalfStar:    rating%2 == 1,
-		EmptyStars:  5 - ((rating + 1) / 2),
-	})
+	return renderTemplate(
+		Data{
+			FilledStars: rotations,
+			HalfStar:    rating%2 == 1,
+			EmptyStars:  5 - ((rating + 1) / 2),
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

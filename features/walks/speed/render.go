@@ -72,9 +72,11 @@ func render(_ []string, speeds []monthSpeed, _ *shortcodes.Context) (string, err
 	renderPoints(&svgBuilder, points)
 	fmt.Fprint(&svgBuilder, `</svg>`)
 
-	return renderTemplate(Data{
-		SVG: template.HTML(svgBuilder.String()),
-	})
+	return renderTemplate(
+		Data{
+			SVG: template.HTML(svgBuilder.String()),
+		},
+	)
 }
 
 func createPoints(speeds []monthSpeed, monthWidth, speedMin, speedRange float64) []point {
@@ -87,11 +89,14 @@ func createPoints(speeds []monthSpeed, monthWidth, speedMin, speedRange float64)
 		monthLabel := s.Month.Format("Jan 2006")
 		title := fmt.Sprintf("%s: %.1f km/h", monthLabel, s.SpeedKmh)
 
-		points = append(points, point{
-			X:     x,
-			Y:     y,
-			Title: title,
-		})
+		points = append(
+			points,
+			point{
+				X:     x,
+				Y:     y,
+				Title: title,
+			},
+		)
 	}
 	return points
 }

@@ -24,29 +24,31 @@ var builderCookieKey = flag.String(
 	"Hex-encoded 32-byte feed builder cookie encryption key; if empty, generate a new key on each startup",
 )
 
-var builderCookieCipher = sync.OnceValue(func() cipher.AEAD {
-	key := make([]byte, 32)
-	if *builderCookieKey == "" {
-		if _, err := rand.Read(key); err != nil {
+var builderCookieCipher = sync.OnceValue(
+	func() cipher.AEAD {
+		key := make([]byte, 32)
+		if *builderCookieKey == "" {
+			if _, err := rand.Read(key); err != nil {
+				panic(err)
+			}
+		} else {
+			var err error
+			key, err = hex.DecodeString(*builderCookieKey)
+			if err != nil || len(key) != 32 {
+				panic("feed-builder-cookie-key must be a hex-encoded 32-byte key")
+			}
+		}
+		block, err := aes.NewCipher(key)
+		if err != nil {
 			panic(err)
 		}
-	} else {
-		var err error
-		key, err = hex.DecodeString(*builderCookieKey)
-		if err != nil || len(key) != 32 {
-			panic("feed-builder-cookie-key must be a hex-encoded 32-byte key")
+		aead, err := cipher.NewGCMWithRandomNonce(block)
+		if err != nil {
+			panic(err)
 		}
-	}
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		panic(err)
-	}
-	aead, err := cipher.NewGCMWithRandomNonce(block)
-	if err != nil {
-		panic(err)
-	}
-	return aead
-})
+		return aead
+	},
+)
 
 func hasBuilderCookie(r *http.Request) bool {
 	cookie, err := r.Cookie(builderCookieName)
@@ -71,16 +73,19 @@ func setBuilderCookie(w http.ResponseWriter) {
 	payload := make([]byte, 8)
 	binary.BigEndian.PutUint64(payload, uint64(now.Unix()))
 	encoded := builderCookieCipher().Seal(nil, nil, payload, []byte(builderCookieName))
-	http.SetCookie(w, &http.Cookie{
-		Name:     builderCookieName,
-		Value:    base64.RawURLEncoding.EncodeToString(encoded),
-		Path:     builderFeedPrefix,
-		Expires:  now.Add(builderCookieLifetime),
-		MaxAge:   int(builderCookieLifetime.Seconds()),
-		Secure:   true,
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-	})
+	http.SetCookie(
+		w,
+		&http.Cookie{
+			Name:     builderCookieName,
+			Value:    base64.RawURLEncoding.EncodeToString(encoded),
+			Path:     builderFeedPrefix,
+			Expires:  now.Add(builderCookieLifetime),
+			MaxAge:   int(builderCookieLifetime.Seconds()),
+			Secure:   true,
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+		},
+	)
 }
 
 func builderResponseHeaders(w http.ResponseWriter) {

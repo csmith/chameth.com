@@ -21,10 +21,12 @@ var siteMapHtmlTemplate = func() *template.Template {
 				"page.html.gotpl",
 			),
 	)
-	return template.Must(t.ParseFS(
-		templateFS,
-		"sitemap.html.gotpl",
-	))
+	return template.Must(
+		t.ParseFS(
+			templateFS,
+			"sitemap.html.gotpl",
+		),
+	)
 }()
 
 var siteMapXmlTemplate = textTemplate.Must(

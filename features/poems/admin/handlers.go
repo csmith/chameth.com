@@ -12,17 +12,21 @@ import (
 )
 
 func RegisterRoutes(rm *routing.Manager) {
-	crud.Register(rm.Admin, "/poems", crud.Routes{
-		List: crud.List(
-			"poem",
-			crud.DraftsAndAll(poems.GetDraftPoems, poems.GetAllPoems),
-			toSummary,
-			templates.RenderListPoems,
-		),
-		Create: crud.Create("poem", "/poems", crud.GeneratePath("/%s/", poems.CreatePoem)),
-		Edit:   crud.Edit("poem", poems.GetPoemByID, toEditData, templates.RenderEditPoem),
-		Update: crud.Update("poem", "/poems", applyUpdate),
-	})
+	crud.Register(
+		rm.Admin,
+		"/poems",
+		crud.Routes{
+			List: crud.List(
+				"poem",
+				crud.DraftsAndAll(poems.GetDraftPoems, poems.GetAllPoems),
+				toSummary,
+				templates.RenderListPoems,
+			),
+			Create: crud.Create("poem", "/poems", crud.GeneratePath("/%s/", poems.CreatePoem)),
+			Edit:   crud.Edit("poem", poems.GetPoemByID, toEditData, templates.RenderEditPoem),
+			Update: crud.Update("poem", "/poems", applyUpdate),
+		},
+	)
 }
 
 func toSummary(poem poems.PoemMetadata) templates.PoemSummary {

@@ -37,31 +37,39 @@ func start(s *tsnet.Server, rm *routing.Manager) error {
 	}
 
 	httpServer := &http.Server{
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			httpsURL := "https://" + fullHostName(s) + r.URL.Path
-			if r.URL.RawQuery != "" {
-				httpsURL += "?" + r.URL.RawQuery
-			}
-			http.Redirect(w, r, httpsURL, http.StatusMovedPermanently)
-		}),
+		Handler: http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				httpsURL := "https://" + fullHostName(s) + r.URL.Path
+				if r.URL.RawQuery != "" {
+					httpsURL += "?" + r.URL.RawQuery
+				}
+				http.Redirect(w, r, httpsURL, http.StatusMovedPermanently)
+			},
+		),
 	}
 
 	httpsServer := &http.Server{
 		Handler: middleware.Chain(
 			middleware.WithMiddleware(
 				middleware.CacheControl(
-					middleware.WithCacheTimes(map[string]time.Duration{
-						"application/*":   time.Hour * 24 * 365,
-						"font/*":          time.Hour * 24 * 365,
-						"image/*":         time.Hour * 24 * 365,
-						"text/css":        time.Hour * 24 * 365,
-						"text/javascript": time.Hour * 24 * 365,
-					}),
+					middleware.WithCacheTimes(
+						map[string]time.Duration{
+							"application/*":   time.Hour * 24 * 365,
+							"font/*":          time.Hour * 24 * 365,
+							"image/*":         time.Hour * 24 * 365,
+							"text/css":        time.Hour * 24 * 365,
+							"text/javascript": time.Hour * 24 * 365,
+						},
+					),
 				),
 				middleware.CrossOriginProtection(),
-				middleware.Recover(middleware.WithPanicLogger(func(r *http.Request, err any) {
-					slog.Error("Panic serving admin site", "url", r.RequestURI, "error", err)
-				})),
+				middleware.Recover(
+					middleware.WithPanicLogger(
+						func(r *http.Request, err any) {
+							slog.Error("Panic serving admin site", "url", r.RequestURI, "error", err)
+						},
+					),
+				),
 			),
 		)(rm.Admin),
 	}

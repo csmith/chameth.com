@@ -36,10 +36,13 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 	for _, p := range allPrints {
 		var printLinks []templates.PrintLink
 		for _, link := range allLinks[p.ID] {
-			printLinks = append(printLinks, templates.PrintLink{
-				Name:    link.Name,
-				Address: link.Address,
-			})
+			printLinks = append(
+				printLinks,
+				templates.PrintLink{
+					Name:    link.Name,
+					Address: link.Address,
+				},
+			)
 		}
 
 		var renderPath, previewPath string
@@ -54,28 +57,37 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 			case "preview":
 				previewPath = mr.Path
 			case "download":
-				printLinks = append(printLinks, templates.PrintLink{
-					Name:    path.Ext(mr.Path) + " file",
-					Address: mr.Path,
-				})
+				printLinks = append(
+					printLinks,
+					templates.PrintLink{
+						Name:    path.Ext(mr.Path) + " file",
+						Address: mr.Path,
+					},
+				)
 			}
 		}
 
-		printDetails = append(printDetails, templates.PrintDetails{
-			Name:        p.Name,
-			Description: p.Description,
-			RenderPath:  renderPath,
-			PreviewPath: previewPath,
-			Links:       printLinks,
-		})
+		printDetails = append(
+			printDetails,
+			templates.PrintDetails{
+				Name:        p.Name,
+				Description: p.Description,
+				RenderPath:  renderPath,
+				PreviewPath: previewPath,
+				Links:       printLinks,
+			},
+		)
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = templates.RenderPrints(w, templates.PrintsData{
-		Prints:   printDetails,
-		PageData: content.CreatePageData(r.Context(), "3D Prints", "/prints/", parenttemplates.OpenGraphHeaders{}),
-	})
+	err = templates.RenderPrints(
+		w,
+		templates.PrintsData{
+			Prints:   printDetails,
+			PageData: content.CreatePageData(r.Context(), "3D Prints", "/prints/", parenttemplates.OpenGraphHeaders{}),
+		},
+	)
 	if err != nil {
 		slog.Error("Failed to render prints template", "error", err)
 	}

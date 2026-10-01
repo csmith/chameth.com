@@ -36,17 +36,19 @@ func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 			return "", fmt.Errorf("failed to render film review rating: %w", err)
 		}
 
-		replacement, err := review.Render(review.Data{
-			Name:       data.Film.Title,
-			Path:       data.Film.Path,
-			PosterPath: data.Poster.Path,
-			Stars:      template.HTML(stars),
-			Rating:     data.FilmReview.Rating,
-			Date:       data.FilmReview.WatchedDate.Format("2006-01-02"),
-			Rewatch:    data.FilmReview.IsRewatch,
-			Spoiler:    data.FilmReview.HasSpoilers,
-			Review:     md,
-		})
+		replacement, err := review.Render(
+			review.Data{
+				Name:       data.Film.Title,
+				Path:       data.Film.Path,
+				PosterPath: data.Poster.Path,
+				Stars:      template.HTML(stars),
+				Rating:     data.FilmReview.Rating,
+				Date:       data.FilmReview.WatchedDate.Format("2006-01-02"),
+				Rewatch:    data.FilmReview.IsRewatch,
+				Spoiler:    data.FilmReview.HasSpoilers,
+				Review:     md,
+			},
+		)
 		if err != nil {
 			return "", fmt.Errorf("failed to render film review: %w", err)
 		}
@@ -54,9 +56,11 @@ func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
 		htmlList = append(htmlList, template.HTML(replacement))
 	}
 
-	return renderTemplate(Data{
-		Reviews: htmlList,
-	})
+	return renderTemplate(
+		Data{
+			Reviews: htmlList,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

@@ -55,12 +55,15 @@ func nextPerDistance(races []race, now time.Time) []race {
 		}
 		future = append(future, candidate{race: r, date: date})
 	}
-	sort.Slice(future, func(i, j int) bool {
-		if !future[i].date.Equal(future[j].date) {
-			return future[i].date.Before(future[j].date)
-		}
-		return future[i].race.DistanceKm < future[j].race.DistanceKm
-	})
+	sort.Slice(
+		future,
+		func(i, j int) bool {
+			if !future[i].date.Equal(future[j].date) {
+				return future[i].date.Before(future[j].date)
+			}
+			return future[i].race.DistanceKm < future[j].race.DistanceKm
+		},
+	)
 
 	seen := map[float64]bool{}
 	next := make([]race, 0, len(future))

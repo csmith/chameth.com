@@ -300,18 +300,24 @@ func builderActions(path string, likes, unlikes []string) []builderAction {
 
 	var actions []builderAction
 	if len(likes) < maxFeedSlugs {
-		actions = append(actions, builderAction{
-			Label:  "Include posts like this",
-			Action: builderActionInclude,
-			Slug:   slug,
-		})
+		actions = append(
+			actions,
+			builderAction{
+				Label:  "Include posts like this",
+				Action: builderActionInclude,
+				Slug:   slug,
+			},
+		)
 	}
 	if len(unlikes) < maxFeedSlugs {
-		actions = append(actions, builderAction{
-			Label:  "Exclude posts like this",
-			Action: builderActionExclude,
-			Slug:   slug,
-		})
+		actions = append(
+			actions,
+			builderAction{
+				Label:  "Exclude posts like this",
+				Action: builderActionExclude,
+				Slug:   slug,
+			},
+		)
 	}
 	return actions
 }

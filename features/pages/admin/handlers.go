@@ -16,17 +16,21 @@ import (
 )
 
 func RegisterRoutes(rm *routing.Manager) {
-	crud.Register(rm.Admin, "/pages", crud.Routes{
-		List: crud.List(
-			"page",
-			crud.DraftsAndAll(pages.GetDraftStaticPages, pages.GetAllStaticPages),
-			toSummary,
-			templates.RenderListPages,
-		),
-		Create: crud.Create("page", "/pages", crud.GeneratePath("/%s/", pages.CreateStaticPage)),
-		Edit:   crud.Edit("page", pages.GetStaticPageByID, toEditData, templates.RenderEditPage),
-		Update: crud.Update("page", "/pages", applyUpdate),
-	})
+	crud.Register(
+		rm.Admin,
+		"/pages",
+		crud.Routes{
+			List: crud.List(
+				"page",
+				crud.DraftsAndAll(pages.GetDraftStaticPages, pages.GetAllStaticPages),
+				toSummary,
+				templates.RenderListPages,
+			),
+			Create: crud.Create("page", "/pages", crud.GeneratePath("/%s/", pages.CreateStaticPage)),
+			Edit:   crud.Edit("page", pages.GetStaticPageByID, toEditData, templates.RenderEditPage),
+			Update: crud.Update("page", "/pages", applyUpdate),
+		},
+	)
 }
 
 func toSummary(page pages.StaticPageMetadata) templates.PageSummary {
@@ -53,11 +57,14 @@ func toEditData(ctx context.Context, page *pages.StaticPage) (templates.EditPage
 		if candidate.ID == page.ID {
 			continue
 		}
-		availableParents = append(availableParents, templates.PageSummary{
-			ID:    candidate.ID,
-			Title: candidate.Title,
-			Path:  candidate.Path,
-		})
+		availableParents = append(
+			availableParents,
+			templates.PageSummary{
+				ID:    candidate.ID,
+				Title: candidate.Title,
+				Path:  candidate.Path,
+			},
+		)
 	}
 
 	sitemapFrequency := ""

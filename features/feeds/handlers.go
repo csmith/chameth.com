@@ -57,12 +57,15 @@ func handlePoems(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		feedItems = append(feedItems, FeedItem{
-			Title:   poem.Title,
-			Link:    templates.SiteURL() + poem.Path,
-			Updated: poem.Date.Format("2006-01-02T15:04:05Z"),
-			Content: absoluteContent,
-		})
+		feedItems = append(
+			feedItems,
+			FeedItem{
+				Title:   poem.Title,
+				Link:    templates.SiteURL() + poem.Path,
+				Updated: poem.Date.Format("2006-01-02T15:04:05Z"),
+				Content: absoluteContent,
+			},
+		)
 	}
 
 	var lastUpdated string
@@ -72,12 +75,15 @@ func handlePoems(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = renderAtom(w, AtomData{
-		FeedTitle:       "Chameth.com - poems",
-		FeedSelfLink:    templates.SiteURL() + "/poems/feed.xml",
-		FeedLastUpdated: lastUpdated,
-		FeedItems:       feedItems,
-	})
+	err = renderAtom(
+		w,
+		AtomData{
+			FeedTitle:       "Chameth.com - poems",
+			FeedSelfLink:    templates.SiteURL() + "/poems/feed.xml",
+			FeedLastUpdated: lastUpdated,
+			FeedItems:       feedItems,
+		},
+	)
 	if err != nil {
 		slog.Error("Failed to render atom feed", "error", err)
 	}
@@ -110,22 +116,28 @@ func handleSnippets(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		feedItems = append(feedItems, FeedItem{
-			Title:   snippet.Title,
-			Link:    templates.SiteURL() + snippet.Path,
-			Updated: "1970-01-01T00:00:00Z",
-			Content: absoluteContent,
-		})
+		feedItems = append(
+			feedItems,
+			FeedItem{
+				Title:   snippet.Title,
+				Link:    templates.SiteURL() + snippet.Path,
+				Updated: "1970-01-01T00:00:00Z",
+				Content: absoluteContent,
+			},
+		)
 	}
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = renderAtom(w, AtomData{
-		FeedTitle:       "Chameth.com - snippets",
-		FeedSelfLink:    templates.SiteURL() + "/snippets/feed.xml",
-		FeedLastUpdated: "1970-01-01T00:00:00Z",
-		FeedItems:       feedItems,
-	})
+	err = renderAtom(
+		w,
+		AtomData{
+			FeedTitle:       "Chameth.com - snippets",
+			FeedSelfLink:    templates.SiteURL() + "/snippets/feed.xml",
+			FeedLastUpdated: "1970-01-01T00:00:00Z",
+			FeedItems:       feedItems,
+		},
+	)
 	if err != nil {
 		slog.Error("Failed to render atom feed", "error", err)
 	}
@@ -167,12 +179,15 @@ func renderPostsFeed(w http.ResponseWriter, r *http.Request, title, format strin
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = renderAtom(w, AtomData{
-		FeedTitle:       title,
-		FeedSelfLink:    selfLink,
-		FeedLastUpdated: lastUpdated,
-		FeedItems:       feedItems,
-	})
+	err = renderAtom(
+		w,
+		AtomData{
+			FeedTitle:       title,
+			FeedSelfLink:    selfLink,
+			FeedLastUpdated: lastUpdated,
+			FeedItems:       feedItems,
+		},
+	)
 	if err != nil {
 		slog.Error("Failed to render atom feed", "error", err)
 	}
@@ -205,12 +220,15 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 
 		reviewURL := templates.SiteURL() + review.Film.Path
 
-		feedItems = append(feedItems, FeedItem{
-			Title:   review.Film.Title,
-			Link:    reviewURL,
-			Updated: review.FilmReview.WatchedDate.Format("2006-01-02T15:04:05Z"),
-			Content: content.String(),
-		})
+		feedItems = append(
+			feedItems,
+			FeedItem{
+				Title:   review.Film.Title,
+				Link:    reviewURL,
+				Updated: review.FilmReview.WatchedDate.Format("2006-01-02T15:04:05Z"),
+				Content: content.String(),
+			},
+		)
 	}
 
 	var lastUpdated string
@@ -220,12 +238,15 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = renderAtom(w, AtomData{
-		FeedTitle:       title,
-		FeedSelfLink:    selfLink,
-		FeedLastUpdated: lastUpdated,
-		FeedItems:       feedItems,
-	})
+	err = renderAtom(
+		w,
+		AtomData{
+			FeedTitle:       title,
+			FeedSelfLink:    selfLink,
+			FeedLastUpdated: lastUpdated,
+			FeedItems:       feedItems,
+		},
+	)
 	if err != nil {
 		slog.Error("Failed to render atom feed", "error", err)
 	}
@@ -246,12 +267,15 @@ func renderPostItems(ctx context.Context, postList []posts.Post) ([]FeedItem, er
 			return nil, err
 		}
 
-		feedItems = append(feedItems, FeedItem{
-			Title:   post.Title,
-			Link:    templates.SiteURL() + post.Path,
-			Updated: post.Date.Format("2006-01-02T15:04:05Z"),
-			Content: absoluteContent,
-		})
+		feedItems = append(
+			feedItems,
+			FeedItem{
+				Title:   post.Title,
+				Link:    templates.SiteURL() + post.Path,
+				Updated: post.Date.Format("2006-01-02T15:04:05Z"),
+				Content: absoluteContent,
+			},
+		)
 	}
 
 	return feedItems, nil
@@ -301,12 +325,15 @@ func handleRelatedPostsFeed(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	err = renderAtom(w, AtomData{
-		FeedTitle:       relatedFeedTitle(likes, unlikes),
-		FeedSelfLink:    templates.SiteURL() + canonicalPath,
-		FeedLastUpdated: lastUpdated,
-		FeedItems:       feedItems,
-	})
+	err = renderAtom(
+		w,
+		AtomData{
+			FeedTitle:       relatedFeedTitle(likes, unlikes),
+			FeedSelfLink:    templates.SiteURL() + canonicalPath,
+			FeedLastUpdated: lastUpdated,
+			FeedItems:       feedItems,
+		},
+	)
 	if err != nil {
 		slog.Error("Failed to render atom feed", "error", err)
 	}

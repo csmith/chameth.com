@@ -28,9 +28,11 @@ func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("failed to render warning markdown: %w", err)
 	}
 
-	return renderTemplate(Data{
-		Content: md,
-	})
+	return renderTemplate(
+		Data{
+			Content: md,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

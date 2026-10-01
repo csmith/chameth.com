@@ -108,14 +108,19 @@ func Query(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
 }
 
 func FindContentByPath(ctx context.Context, path string) (string, error) {
-	contentType, err := Get[string](ctx, `
+	contentType, err := Get[string](
+		ctx,
+		`
 		SELECT content_type FROM paths
 		WHERE path = $1 OR path = $2 OR (prefix_match AND $1 LIKE path || '%')
 		ORDER BY
 			prefix_match ASC,
 			LENGTH(path) DESC
 		LIMIT 1
-	`, path, path+"/")
+	`,
+		path,
+		path+"/",
+	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return "", nil

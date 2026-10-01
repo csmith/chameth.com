@@ -538,12 +538,15 @@ func filmListsWithLetterboxd(ctx context.Context, allLists []films.FilmList) []f
 			letterboxdURL = strings.TrimSuffix(syndicationResults[0].ExternalURL, "/") + "/edit/"
 		}
 
-		listsWithUrls = append(listsWithUrls, filmtemplates.FilmListWithLetterboxd{
-			ID:                list.ID,
-			Title:             list.Title,
-			Path:              list.Path,
-			LetterboxdListURL: letterboxdURL,
-		})
+		listsWithUrls = append(
+			listsWithUrls,
+			filmtemplates.FilmListWithLetterboxd{
+				ID:                list.ID,
+				Title:             list.Title,
+				Path:              list.Path,
+				LetterboxdListURL: letterboxdURL,
+			},
+		)
 	}
 	return listsWithUrls
 }

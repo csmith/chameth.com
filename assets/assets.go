@@ -31,11 +31,14 @@ func RegisterAssets(m *Manager) {
 
 	for _, mood := range moods {
 		b, _ := fs.ReadFile(moodStylesheets, filepath.Join("stylesheet", mood.include))
-		m.AddSource(PublicCSS, &Source{
-			Path:    mood.include,
-			Content: b,
-			Enabled: mood.enabled,
-		})
+		m.AddSource(
+			PublicCSS,
+			&Source{
+				Path:    mood.include,
+				Content: b,
+				Enabled: mood.enabled,
+			},
+		)
 	}
 }
 

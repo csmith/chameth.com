@@ -70,35 +70,39 @@ func (m *Manager) RegisterContentType(contentType string, handler http.HandlerFu
 
 func ApplyRedirects() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			for _, rw := range redirects {
-				n := rw.matcher.ReplaceAllString(r.URL.Path, rw.destination)
-				if n != r.URL.Path {
-					w.Header().Add("Location", n)
-					w.WriteHeader(http.StatusMovedPermanently)
-					return
+		return http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				for _, rw := range redirects {
+					n := rw.matcher.ReplaceAllString(r.URL.Path, rw.destination)
+					if n != r.URL.Path {
+						w.Header().Add("Location", n)
+						w.WriteHeader(http.StatusMovedPermanently)
+						return
+					}
 				}
-			}
 
-			next.ServeHTTP(w, r)
-		})
+				next.ServeHTTP(w, r)
+			},
+		)
 	}
 }
 
 func (m *Manager) contentHandler() http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		contentType, err := db.FindContentByPath(r.Context(), r.URL.Path)
-		if err != nil {
-			slog.Error("Failed to find content by path", "error", err, "path", r.URL.Path)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			contentType, err := db.FindContentByPath(r.Context(), r.URL.Path)
+			if err != nil {
+				slog.Error("Failed to find content by path", "error", err, "path", r.URL.Path)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
 
-		if handler, ok := m.contentTypes[contentType]; ok {
-			handler(w, r)
-			return
-		}
+			if handler, ok := m.contentTypes[contentType]; ok {
+				handler(w, r)
+				return
+			}
 
-		m.fallback(w, r)
-	})
+			m.fallback(w, r)
+		},
+	)
 }

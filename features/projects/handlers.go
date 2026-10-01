@@ -38,26 +38,35 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 				return
 			}
-			projectDetails = append(projectDetails, projecttemplates.ProjectDetails{
-				Name:        project.Name,
-				Pinned:      project.Pinned,
-				Icon:        template.HTML(project.Icon),
-				Description: renderedDesc,
-			})
+			projectDetails = append(
+				projectDetails,
+				projecttemplates.ProjectDetails{
+					Name:        project.Name,
+					Pinned:      project.Pinned,
+					Icon:        template.HTML(project.Icon),
+					Description: renderedDesc,
+				},
+			)
 		}
 
-		groups = append(groups, projecttemplates.ProjectGroup{
-			Name:        section.Name,
-			Description: section.Description,
-			Projects:    projectDetails,
-		})
+		groups = append(
+			groups,
+			projecttemplates.ProjectGroup{
+				Name:        section.Name,
+				Description: section.Description,
+				Projects:    projectDetails,
+			},
+		)
 	}
 
 	var rendered bytes.Buffer
-	if err := projecttemplates.RenderProjects(&rendered, projecttemplates.ProjectsData{
-		ProjectGroups: groups,
-		PageData:      content.CreatePageData(r.Context(), "Projects", "/projects/", parenttemplates.OpenGraphHeaders{}),
-	}); err != nil {
+	if err := projecttemplates.RenderProjects(
+		&rendered,
+		projecttemplates.ProjectsData{
+			ProjectGroups: groups,
+			PageData:      content.CreatePageData(r.Context(), "Projects", "/projects/", parenttemplates.OpenGraphHeaders{}),
+		},
+	); err != nil {
 		slog.Error("Failed to render projects", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return

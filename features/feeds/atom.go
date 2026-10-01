@@ -15,10 +15,12 @@ var atomTemplateFS embed.FS
 var atomTemplate = template.Must(
 	template.
 		New("atom.xml.gotpl").
-		Funcs(template.FuncMap{
-			"escape":  html.EscapeString,
-			"siteURL": func() string { return templates.SiteURL() },
-		}).
+		Funcs(
+			template.FuncMap{
+				"escape":  html.EscapeString,
+				"siteURL": func() string { return templates.SiteURL() },
+			},
+		).
 		ParseFS(
 			atomTemplateFS,
 			"atom.xml.gotpl",

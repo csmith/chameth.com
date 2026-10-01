@@ -47,9 +47,11 @@ func Render(ctx context.Context, url string) (string, error) {
 		}
 	}
 
-	return renderTemplate(Data{
-		Syndications: links,
-	})
+	return renderTemplate(
+		Data{
+			Syndications: links,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

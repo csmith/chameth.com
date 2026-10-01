@@ -54,9 +54,11 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 		}
 	}
 
-	return renderTemplate(Data{
-		Films: filmList,
-	})
+	return renderTemplate(
+		Data{
+			Films: filmList,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

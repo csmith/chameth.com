@@ -44,38 +44,40 @@ func normalizePath(path string) string {
 func CollectRequestStats() func(http.Handler) http.Handler {
 	generator, _ := aca.NewDefaultGenerator()
 	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			requestId := generator.Generate()
-			start := time.Now()
-			startRequestAt(requestId, start)
+		return http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				requestId := generator.Generate()
+				start := time.Now()
+				startRequestAt(requestId, start)
 
-			writer := &StatsResponseWriter{
-				ResponseWriter: w,
-				requestID:      requestId,
-			}
-
-			next.ServeHTTP(writer, r.WithContext(context.WithValue(r.Context(), requestIdKey, requestId)))
-
-			duration, queries := func() (time.Duration, int32) {
-				inFlightRequestsMu.RLock()
-				defer inFlightRequestsMu.RUnlock()
-				details, ok := inFlightRequests[requestId]
-				if !ok {
-					return 0, 0
+				writer := &StatsResponseWriter{
+					ResponseWriter: w,
+					requestID:      requestId,
 				}
-				return time.Since(details.start), details.queries.Load()
-			}()
 
-			path := normalizePath(r.URL.Path)
-			status := writer.statusCode()
-			httpRequestsTotal.WithLabelValues(r.Method, path, status).Inc()
-			dbQueriesPerRequest.WithLabelValues(path).Observe(float64(queries))
+				next.ServeHTTP(writer, r.WithContext(context.WithValue(r.Context(), requestIdKey, requestId)))
 
-			go recordRequestMetric(r.URL.Path, requestId, duration, queries)
+				duration, queries := func() (time.Duration, int32) {
+					inFlightRequestsMu.RLock()
+					defer inFlightRequestsMu.RUnlock()
+					details, ok := inFlightRequests[requestId]
+					if !ok {
+						return 0, 0
+					}
+					return time.Since(details.start), details.queries.Load()
+				}()
 
-			writer.Finish(duration, queries)
-			pruneRequest(requestId)
-		})
+				path := normalizePath(r.URL.Path)
+				status := writer.statusCode()
+				httpRequestsTotal.WithLabelValues(r.Method, path, status).Inc()
+				dbQueriesPerRequest.WithLabelValues(path).Observe(float64(queries))
+
+				go recordRequestMetric(r.URL.Path, requestId, duration, queries)
+
+				writer.Finish(duration, queries)
+				pruneRequest(requestId)
+			},
+		)
 	}
 }
 
@@ -198,11 +200,13 @@ func statsHTML(requestID string, duration time.Duration, queries int32) []byte {
 	}
 
 	p := message.NewPrinter(language.English)
-	return []byte(p.Sprintf(
-		`Request ID <code>%s</code> served by chameth.com <code>%s</code> in %dμs using %d db queries`,
-		requestID,
-		shortCommit,
-		duration.Microseconds(),
-		queries,
-	))
+	return []byte(
+		p.Sprintf(
+			`Request ID <code>%s</code> served by chameth.com <code>%s</code> in %dμs using %d db queries`,
+			requestID,
+			shortCommit,
+			duration.Microseconds(),
+			queries,
+		),
+	)
 }

@@ -8,11 +8,16 @@ import (
 )
 
 func GetPasteByPath(ctx context.Context, path string) (*Paste, error) {
-	paste, err := db.Get[Paste](ctx, `
+	paste, err := db.Get[Paste](
+		ctx,
+		`
 		SELECT id, path, title, language, date, published, content
 		FROM pastes
 		WHERE path = $1 OR path = $2
-	`, path, path+"/")
+	`,
+		path,
+		path+"/",
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -20,11 +25,15 @@ func GetPasteByPath(ctx context.Context, path string) (*Paste, error) {
 }
 
 func GetPasteByID(ctx context.Context, id int) (*Paste, error) {
-	paste, err := db.Get[Paste](ctx, `
+	paste, err := db.Get[Paste](
+		ctx,
+		`
 		SELECT id, path, title, language, date, published, content
 		FROM pastes
 		WHERE id = $1
-	`, id)
+	`,
+		id,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -32,30 +41,41 @@ func GetPasteByID(ctx context.Context, id int) (*Paste, error) {
 }
 
 func GetAllPastes(ctx context.Context) ([]PasteMetadata, error) {
-	return db.Select[PasteMetadata](ctx, `
+	return db.Select[PasteMetadata](
+		ctx,
+		`
 		SELECT id, path, title, language, date, published
 		FROM pastes
 		WHERE published = true
 		ORDER BY date DESC
-	`)
+	`,
+	)
 }
 
 func GetDraftPastes(ctx context.Context) ([]PasteMetadata, error) {
-	return db.Select[PasteMetadata](ctx, `
+	return db.Select[PasteMetadata](
+		ctx,
+		`
 		SELECT id, path, title, language, date, published
 		FROM pastes
 		WHERE published = false
 		ORDER BY date DESC
-	`)
+	`,
+	)
 }
 
 func CreatePaste(ctx context.Context, path, title string) (int, error) {
 	var id int
-	err := db.QueryRow(ctx, `
+	err := db.QueryRow(
+		ctx,
+		`
 		INSERT INTO pastes (path, title, language, date, published, content)
 		VALUES ($1, $2, '', CURRENT_TIMESTAMP, false, '')
 		RETURNING id
-	`, path, title).Scan(&id)
+	`,
+		path,
+		title,
+	).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create paste: %w", err)
 	}
@@ -63,11 +83,21 @@ func CreatePaste(ctx context.Context, path, title string) (int, error) {
 }
 
 func UpdatePaste(ctx context.Context, id int, path, title, language, content, date string, published bool) error {
-	_, err := db.Exec(ctx, `
+	_, err := db.Exec(
+		ctx,
+		`
 		UPDATE pastes
 		SET path = $1, title = $2, language = $3, content = $4, date = $5, published = $6
 		WHERE id = $7
-	`, path, title, language, content, date, published, id)
+	`,
+		path,
+		title,
+		language,
+		content,
+		date,
+		published,
+		id,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to update paste: %w", err)
 	}

@@ -44,17 +44,19 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("failed to render film review stars: %w", err)
 	}
 
-	return Render(Data{
-		Name:       data.Film.Title,
-		Path:       data.Film.Path,
-		PosterPath: data.Poster.Path,
-		Rating:     data.FilmReview.Rating,
-		Stars:      template.HTML(stars),
-		Date:       data.FilmReview.WatchedDate.Format("2006-01-02"),
-		Rewatch:    data.FilmReview.IsRewatch,
-		Spoiler:    data.FilmReview.HasSpoilers,
-		Review:     md,
-	})
+	return Render(
+		Data{
+			Name:       data.Film.Title,
+			Path:       data.Film.Path,
+			PosterPath: data.Poster.Path,
+			Rating:     data.FilmReview.Rating,
+			Stars:      template.HTML(stars),
+			Date:       data.FilmReview.WatchedDate.Format("2006-01-02"),
+			Rewatch:    data.FilmReview.IsRewatch,
+			Spoiler:    data.FilmReview.HasSpoilers,
+			Review:     md,
+		},
+	)
 }
 
 func Render(data Data) (string, error) {

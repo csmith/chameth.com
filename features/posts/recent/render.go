@@ -52,29 +52,36 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 		var images []link.Image
 		if err == nil {
 			for _, variant := range imageVariants {
-				images = append(images, link.Image{
-					Url:         variant.Path,
-					ContentType: variant.ContentType,
-					Alt:         variant.Description,
-				})
+				images = append(
+					images,
+					link.Image{
+						Url:         variant.Path,
+						ContentType: variant.ContentType,
+						Alt:         variant.Description,
+					},
+				)
 			}
 		}
 
-		linkHTML, err := link.Render(link.Data{
-			Url:     post.Path,
-			Title:   post.Title,
-			Summary: template.HTML(summary),
-			Images:  images,
-		})
+		linkHTML, err := link.Render(
+			link.Data{
+				Url:     post.Path,
+				Title:   post.Title,
+				Summary: template.HTML(summary),
+				Images:  images,
+			},
+		)
 		if err != nil {
 			return "", fmt.Errorf("failed to render post link: %w", err)
 		}
 		postLinks.WriteString(linkHTML)
 	}
 
-	return renderTemplate(Data{
-		Posts: template.HTML(postLinks.String()),
-	})
+	return renderTemplate(
+		Data{
+			Posts: template.HTML(postLinks.String()),
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

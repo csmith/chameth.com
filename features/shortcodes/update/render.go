@@ -29,10 +29,12 @@ func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("failed to render update markdown: %w", err)
 	}
 
-	return renderTemplate(Data{
-		Date:    date,
-		Content: md,
-	})
+	return renderTemplate(
+		Data{
+			Date:    date,
+			Content: md,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

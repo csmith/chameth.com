@@ -29,11 +29,16 @@ func GetQuoteByID(ctx context.Context, id int) (*Quote, error) {
 
 func CreateQuote(ctx context.Context, text, author string) (int, error) {
 	var id int
-	err := db.QueryRow(ctx, `
+	err := db.QueryRow(
+		ctx,
+		`
 		INSERT INTO quotes (text, author)
 		VALUES ($1, $2)
 		RETURNING id
-	`, text, author).Scan(&id)
+	`,
+		text,
+		author,
+	).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create quote: %w", err)
 	}
@@ -41,11 +46,17 @@ func CreateQuote(ctx context.Context, text, author string) (int, error) {
 }
 
 func UpdateQuote(ctx context.Context, id int, text, author string) error {
-	_, err := db.Exec(ctx, `
+	_, err := db.Exec(
+		ctx,
+		`
 		UPDATE quotes
 		SET text = $1, author = $2
 		WHERE id = $3
-	`, text, author, id)
+	`,
+		text,
+		author,
+		id,
+	)
 	if err != nil {
 		return fmt.Errorf("failed to update quote: %w", err)
 	}

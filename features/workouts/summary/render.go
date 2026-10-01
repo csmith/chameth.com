@@ -24,11 +24,14 @@ func buildData(dateRange string, d data) Data {
 		if d.LongestCycle != nil {
 			sectionStats = append(sectionStats, Stat{Value: formatKm(d.LongestCycle.DistanceM), Label: "longest distance"})
 		}
-		view.Sections = append(view.Sections, Section{
-			Title: "Cycling · " + dateRange,
-			Stats: sectionStats,
-			PBs:   pbsForGroup(d.PBs, "cycle"),
-		})
+		view.Sections = append(
+			view.Sections,
+			Section{
+				Title: "Cycling · " + dateRange,
+				Stats: sectionStats,
+				PBs:   pbsForGroup(d.PBs, "cycle"),
+			},
+		)
 	}
 
 	if d.RunCount > 0 {
@@ -40,11 +43,14 @@ func buildData(dateRange string, d data) Data {
 		if d.LongestRun != nil {
 			sectionStats = append(sectionStats, Stat{Value: formatKm(d.LongestRun.DistanceM), Label: "longest distance"})
 		}
-		view.Sections = append(view.Sections, Section{
-			Title: "Running · " + dateRange,
-			Stats: sectionStats,
-			PBs:   pbsForGroup(d.PBs, "run"),
-		})
+		view.Sections = append(
+			view.Sections,
+			Section{
+				Title: "Running · " + dateRange,
+				Stats: sectionStats,
+				PBs:   pbsForGroup(d.PBs, "run"),
+			},
+		)
 	}
 
 	return view
@@ -56,11 +62,14 @@ func pbsForGroup(pbs []pb, group string) []PB {
 		if pb.Group != group {
 			continue
 		}
-		result = append(result, PB{
-			Label:    formatDistanceLabel(pb.DistanceM),
-			Time:     formatDuration(pb.GapElapsedS),
-			Previous: formatPreviousBest(pb.PreviousGapElapsedS),
-		})
+		result = append(
+			result,
+			PB{
+				Label:    formatDistanceLabel(pb.DistanceM),
+				Time:     formatDuration(pb.GapElapsedS),
+				Previous: formatPreviousBest(pb.PreviousGapElapsedS),
+			},
+		)
 	}
 	return result
 }

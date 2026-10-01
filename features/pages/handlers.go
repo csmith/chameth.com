@@ -33,10 +33,13 @@ func StaticPageHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 
-		err = pagetemplates.RenderRawPage(w, pagetemplates.RawPageData{
-			RawContent: renderedContent,
-			PageData:   content.CreatePageData(r.Context(), page.Title, page.Path, parenttemplates.OpenGraphHeaders{}),
-		})
+		err = pagetemplates.RenderRawPage(
+			w,
+			pagetemplates.RawPageData{
+				RawContent: renderedContent,
+				PageData:   content.CreatePageData(r.Context(), page.Title, page.Path, parenttemplates.OpenGraphHeaders{}),
+			},
+		)
 		if err != nil {
 			slog.Error("Failed to render raw page template", "error", err, "path", r.URL.Path)
 		}

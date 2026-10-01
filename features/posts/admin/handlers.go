@@ -20,17 +20,21 @@ import (
 )
 
 func RegisterRoutes(rm *routing.Manager) {
-	crud.Register(rm.Admin, "/posts", crud.Routes{
-		List: crud.List(
-			"post",
-			crud.DraftsAndAll(posts.GetDraftPosts, posts.GetAllPosts),
-			toSummary,
-			templates.RenderListPosts,
-		),
-		Create: crud.Create("post", "/posts", crud.GeneratePath("/%s/", posts.CreatePost)),
-		Edit:   crud.Edit("post", posts.GetPostByID, toEditData, templates.RenderEditPost),
-		Update: crud.Update("post", "/posts", applyUpdate),
-	})
+	crud.Register(
+		rm.Admin,
+		"/posts",
+		crud.Routes{
+			List: crud.List(
+				"post",
+				crud.DraftsAndAll(posts.GetDraftPosts, posts.GetAllPosts),
+				toSummary,
+				templates.RenderListPosts,
+			),
+			Create: crud.Create("post", "/posts", crud.GeneratePath("/%s/", posts.CreatePost)),
+			Edit:   crud.Edit("post", posts.GetPostByID, toEditData, templates.RenderEditPost),
+			Update: crud.Update("post", "/posts", applyUpdate),
+		},
+	)
 	rm.Admin.HandleFunc("POST /posts/delete/{id}", DeletePostHandler())
 	rm.Admin.HandleFunc("POST /posts/generate-wordcloud/{id}", GenerateWordcloudHandler())
 }

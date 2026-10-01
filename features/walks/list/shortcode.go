@@ -47,12 +47,15 @@ func retrieve(ctx context.Context, client *http.Client, _ []string) (shortcodes.
 		if a.Elevation != nil {
 			elevationM = a.Elevation.GainM
 		}
-		walks = append(walks, walk{
-			Date:       a.StartTime,
-			DurationS:  a.DurationS,
-			DistanceKm: a.WalkingDistanceM() / 1000,
-			ElevationM: elevationM,
-		})
+		walks = append(
+			walks,
+			walk{
+				Date:       a.StartTime,
+				DurationS:  a.DurationS,
+				DistanceKm: a.WalkingDistanceM() / 1000,
+				ElevationM: elevationM,
+			},
+		)
 	}
 
 	// The API returns activities oldest first; the page lists newest first.
