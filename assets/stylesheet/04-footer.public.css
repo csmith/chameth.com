@@ -1,14 +1,34 @@
-.footer-wave {
-    display: block;
-    margin-top: var(--large-space);
-    height: 60px;
-}
-
 body > footer {
     position: relative;
-    margin-top: 0;
-    padding: var(--small-space) var(--medium-space);
-    background-color: var(--background-alt-colour);
+    isolation: isolate;
+    margin-top: var(--large-space);
+    padding: calc(var(--medium-space) + 20px) var(--medium-space) var(--small-space);
+
+    /* The edge the page is torn along. tear-shadow.svg traces the same
+       points (with x as a percentage), so keep the two in sync. */
+    --tear: polygon(0 18px, 4% 6px, 9% 20px, 14% 4px, 21% 16px, 27% 2px, 33% 18px, 40% 6px, 46% 20px, 53% 3px, 60% 15px, 66% 4px, 72% 19px, 79% 5px, 85% 17px, 91% 2px, 96% 14px, 100% 6px, 100% 100%, 0 100%);
+
+    /* The footer's paper, torn along the top. It's a pseudo-element so that
+       the tear doesn't clip anything hanging off the footer. */
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: #131315;
+        clip-path: var(--tear);
+    }
+
+    /* The shadow the page casts over the footer along the tear. */
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: url("/paper/tear-shadow.svg") 0 0 / 100% 40px no-repeat;
+        clip-path: var(--tear);
+        pointer-events: none;
+    }
 
     .columns {
         display: flex;
@@ -132,7 +152,7 @@ body > footer {
             border-radius: 100%;
             width: calc(1em + 3 * var(--small-space));
             height: calc(1em + 3 * var(--small-space));
-            background-color: var(--background-colour);
+            background-color: var(--background-alt-colour);
             cursor: help;
             text-align: center;
             display: flex;
@@ -147,7 +167,7 @@ body > footer {
                 2 * var(--smedium-space) + 1em + 3 * var(--small-space)
             );
             display: none;
-            background-color: var(--background-colour);
+            background-color: var(--background-alt-colour);
             font-size: var(--font-size-tiny);
             transition: all 200ms ease-in-out;
             border-radius: 10px;
