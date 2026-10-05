@@ -1,0 +1,26 @@
+root = "."
+tmp_dir = "tmp"
+env_files = [".env"]
+
+[build]
+cmd = "make build"
+entrypoint = ["/tmp/chamethdotcom"]
+args_bin = ["-csp-report-only", "-no-cache"]
+include_ext = ["go", "gotpl", "html", "css", "js", "sql", "svg", "png", "webp", "woff", "woff2", "txt"]
+exclude_dir = [".git", ".postgres", "tsdata", "cache", "tmp", ".idea", ".zed", ".zcode", ".crush", ".claude", ".forgejo"]
+exclude_unchanged = true
+delay = 200
+send_interrupt = true
+kill_delay = 1000 # ms
+
+[misc]
+clean_on_exit = true
+
+[screen]
+clear_on_rebuild = false
+
+[proxy]
+enabled = true
+proxy_port = 8090
+app_port = 8080
+app_start_timeout = 1000

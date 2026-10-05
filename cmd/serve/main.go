@@ -38,6 +38,16 @@ var (
 		30*time.Second,
 		"How long to wait for the tailnet before starting background jobs",
 	)
+	noCache = flag.Bool(
+		"no-cache",
+		false,
+		"Tell browsers not to cache any responses, for local development",
+	)
+	cspReportOnly = flag.Bool(
+		"csp-report-only",
+		false,
+		"Send the Content-Security-Policy as report-only, so it doesn't block air's live reload script",
+	)
 )
 
 func main() {
@@ -115,7 +125,7 @@ func main() {
 				middleware.Headers(
 					middleware.WithHeader("X-Content-Type-Options", "nosniff"),
 					middleware.WithHeader(
-						"Content-Security-Policy",
+						cspHeader(),
 						fmt.Sprintf(
 							"default-src 'self' %s/ https://u.c5h.io/ 'nonce-littlefoot-ae805b14'; style-src 'self';",
 							templates.SiteURL(),
@@ -127,6 +137,7 @@ func main() {
 				routing.ApplyRedirects(),
 				sudo.Middleware,
 				middleware.Recover(),
+				disableCaching(),
 			),
 		)(s.Routes.Public),
 	}
@@ -162,4 +173,11 @@ func main() {
 		slog.Error("Failed to shutdown HTTP server", "error", err)
 		panic(err)
 	}
+}
+
+func cspHeader() string {
+	if *cspReportOnly {
+		return "Content-Security-Policy-Report-Only"
+	}
+	return "Content-Security-Policy"
 }

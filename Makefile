@@ -6,11 +6,11 @@ db:
 db-down:
 	docker compose down
 
-dev:	build db
+dev:	db
 ifndef AGENT
 	trap 'docker compose down' EXIT; \
 	trap 'exit 130' INT TERM; \
-	bash -c "export $$(grep -v '^#' .env | xargs -d '\n'); /tmp/chamethdotcom"
+	go tool air
 else
 	$(error The dev target should not be run by agents)
 endif
