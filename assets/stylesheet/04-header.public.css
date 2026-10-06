@@ -13,12 +13,23 @@ body > header {
     align-items: flex-end;
     justify-content: space-between;
     gap: 1.25rem 3rem;
-    border-bottom: 1px solid #2a2a2a;
     container-type: inline-size;
+    position: relative;
+
+    /* A faint biro rule under the header, in place of a hard border. */
+    &::after {
+        content: "";
+        position: absolute;
+        inset: auto 0 -15px;
+        height: 30px;
+        background: color-mix(in srgb, var(--text-colour) 22%, transparent);
+        mask: url("/paper/header-rule.svg") 0 0 / 100% 100% no-repeat;
+        pointer-events: none;
+    }
 
     @media (width <= 1080px) {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
     }
 
     & > a {
@@ -159,8 +170,10 @@ body > header {
         }
 
         @media (width <= 700px) {
-            flex-direction: column;
-            align-items: flex-start;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            justify-items: center;
+            gap: 0.8em 2.5em;
         }
     }
 }
