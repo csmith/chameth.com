@@ -127,57 +127,22 @@ body {
 
         &:not(.plain-header) {
             transform: rotate(-0.15deg);
-            padding: var(--smedium-space);
-            /* Poor man's text-box-trim */
-            padding-top: calc(var(--smedium-space) + 0.5ex);
+            padding-bottom: 0.05em;
+            text-shadow: 2px 2px 3px rgb(0 0 0 / 0.6);
             font-weight: 800;
             position: relative;
 
-            filter: drop-shadow(3px 3px 5px rgb(0, 0, 0));
-
+            /* A hand-drawn rule under the heading, in the accent colour (darkened
+               for lower heading levels below). */
             &::before {
                 content: "";
                 position: absolute;
-                inset: 0;
+                inset: auto 0 0;
+                height: 10px;
                 z-index: -1;
-                background-color: var(--accent-colour);
-                background-image:
-                    repeating-linear-gradient(
-                        -45deg,
-                        transparent 0px,
-                        transparent 3px,
-                        rgba(0, 0, 0, 0.02) 3px,
-                        rgba(0, 0, 0, 0.02) 4px
-                    ),
-                    linear-gradient(
-                        180deg,
-                        rgba(255, 255, 255, 0.14) 0%,
-                        rgba(0, 0, 0, 0.06) 100%
-                    );
-                clip-path: polygon(
-                    0% 0%,
-                    100% 0%,
-                    calc(100% - 1px) 10%,
-                    calc(100% + 2px) 20%,
-                    calc(100% - 2px) 30%,
-                    calc(100% + 1px) 40%,
-                    calc(100% - 2px) 50%,
-                    calc(100% + 2px) 60%,
-                    calc(100% - 1px) 70%,
-                    calc(100% + 2px) 80%,
-                    calc(100% - 2px) 90%,
-                    100% 100%,
-                    0% 100%,
-                    2px 90%,
-                    -1px 80%,
-                    2px 70%,
-                    -2px 60%,
-                    1px 50%,
-                    -2px 40%,
-                    2px 30%,
-                    -1px 20%,
-                    1px 10%
-                );
+                background: var(--accent-colour);
+                mask: url("/paper/heading-rule.svg") 0 0 / 100% 100% no-repeat;
+                pointer-events: none;
             }
         }
 
