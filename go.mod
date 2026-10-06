@@ -87,7 +87,7 @@ require (
 	github.com/csmith/middleware v1.3.0
 	github.com/csmith/slogflags v1.2.0
 	github.com/golang-migrate/migrate/v4 v4.19.1
-	github.com/jackc/pgx/v5 v5.10.0
+	github.com/jackc/pgx/v5 v5.11.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/kljensen/snowball v0.10.0
 	github.com/pgvector/pgvector-go v0.4.1
