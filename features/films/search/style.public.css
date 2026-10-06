@@ -71,7 +71,7 @@
             h3 {
                 margin: 0;
                 padding: 0 0 var(--small-space) 0;
-                font-family: "IBM Plex Sans", serif;
+                font-family: var(--font-body);
                 font-size: var(--font-size-large);
             }
 

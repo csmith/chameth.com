@@ -111,7 +111,7 @@
                 -1px 1px 0 rgba(255, 255, 255, 0.1),
                 1px -1px 0 rgba(0, 0, 0, 0.4);
             font-size: var(--font-size-large);
-            font-family: "IBM Plex Sans", serif;
+            font-family: var(--font-body);
             font-weight: bolder;
 
             box-shadow:

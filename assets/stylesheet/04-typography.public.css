@@ -1,35 +1,89 @@
 :root {
-    --font-size-tiny: 11pt;
-    --font-size-small: 13pt;
-    --font-size-regular: 16pt;
-    --font-size-large: 19pt;
-    --font-size-xlarge: 24pt;
-    --font-size-xxlarge: 32pt;
-    --font-size-giant: 40pt;
+    --font-body: "Charis", Georgia, serif;
 
-    @media (width <= 500px) and (min-resolution: 2dppx) {
-        --font-size-tiny: 8pt;
-        --font-size-small: 9pt;
-        --font-size-regular: 12pt;
-        --font-size-large: 15pt;
-        --font-size-xlarge: 20pt;
-        --font-size-xxlarge: 25pt;
-    }
+    --font-size-tiny: 13px;
+    --font-size-small: 15.5px;
+    --font-size-regular: clamp(18.5px, 0.3vw + 16px, 22.5px);
+    --font-size-large: calc(1.2 * var(--font-size-regular));
+    --font-size-xlarge: 1.75rem;
+    --font-size-xxlarge: clamp(2rem, 2.6vw, 2.6rem);
+    --font-size-giant: clamp(2.5rem, 4.4vw, 4.2rem);
 
-    @media (width <= 500px) {
-        --font-size-giant: 30pt;
+    @media (width <= 600px) {
+        --font-size-regular: 17.5px;
     }
 }
 
 @font-face {
-    font-family: "IBM Plex Sans";
-    src:
-        local("IBM Plex Sans"),
-        url("/fonts/IBMPlexSans-Regular.woff2") format("woff2"),
-        url("/fonts/IBMPlexSans-Regular.woff") format("woff");
+    font-family: "Charis";
+    src: url("/fonts/Charis-Regular.woff2") format("woff2");
     font-weight: normal;
     font-style: normal;
     font-display: swap;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Charis";
+    src: url("/fonts/Charis-Regular-Ext.woff2") format("woff2");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: "Charis";
+    src: url("/fonts/Charis-Italic.woff2") format("woff2");
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Charis";
+    src: url("/fonts/Charis-Italic-Ext.woff2") format("woff2");
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: "Charis";
+    src: url("/fonts/Charis-Bold.woff2") format("woff2");
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Charis";
+    src: url("/fonts/Charis-Bold-Ext.woff2") format("woff2");
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+    font-family: "Charis";
+    src: url("/fonts/Charis-BoldItalic.woff2") format("woff2");
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+    font-family: "Charis";
+    src: url("/fonts/Charis-BoldItalic-Ext.woff2") format("woff2");
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 @font-face {
@@ -55,8 +109,8 @@
 
 body {
     font-size: var(--font-size-regular);
-    font-family: "IBM Plex Sans", serif;
-    line-height: 1.6;
+    font-family: var(--font-body);
+    line-height: 1.58;
 }
 
 @layer headers {
