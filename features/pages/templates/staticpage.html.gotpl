@@ -1,7 +1,9 @@
 {{/* gotype: chameth.com/chameth.com/features/pages/templates.StaticPageData*/}}
 {{define "content"}}
 <h2>{{ if .ParentPath }}<a href="{{ .ParentPath }}">{{ .ParentTitle }}</a> &raquo; {{ end }}{{ .StaticTitle }}</h2>
+<div class="page-content">
 {{ .StaticContent }}
+</div>
 
 {{call .Component "nod"}}
 {{end}}

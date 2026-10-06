@@ -5,7 +5,7 @@
 }
 
 body > header {
-    width: min(1900px, 100% - 2 * clamp(16px, 4vw, 72px));
+    width: var(--content-width);
     margin: clamp(1.5rem, 3vw, 2.75rem) auto clamp(2.5rem, 4vw, 3.75rem);
     padding: 0 0 1.1rem;
     display: flex;

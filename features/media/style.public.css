@@ -27,10 +27,27 @@ figure.video {
     }
 
     @media (width >= 1200px) {
+        /* Floats overlap the text column by a fixed amount and hang the rest out
+           into the margin, up to the overhang limit and never past the page
+           gutter. The width comes from the image's data-width (it's border-box,
+           so includes the figure's padding). */
+        &.left,
+        &.right {
+            --float-width: min(
+                attr(data-width type(<number>), 0) * 1px + 2 * var(--medium-space),
+                var(--float-max-width, 30%)
+            );
+            --float-hang: clamp(
+                0px,
+                var(--content-margin) - var(--page-gutter),
+                min(var(--float-overhang, 50px), var(--float-width) - var(--float-overlap, 100px))
+            );
+        }
+
         &.left {
             float: left;
-            max-width: 30%;
-            margin-left: calc(-1 * clamp(0px, var(--content-margin), 50px));
+            max-width: var(--float-max-width, 30%);
+            margin-left: calc(-1 * var(--float-hang));
             transform: rotate(-2deg);
             margin-right: calc(var(--medium-space) * 1.5);
 
@@ -42,8 +59,8 @@ figure.video {
 
         &.right {
             float: right;
-            max-width: 30%;
-            margin-right: calc(-1 * clamp(0px, var(--content-margin), 50px));
+            max-width: var(--float-max-width, 30%);
+            margin-right: calc(-1 * var(--float-hang));
             transform: rotate(2deg);
             margin-left: calc(var(--medium-space) * 1.5);
 

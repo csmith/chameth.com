@@ -2,6 +2,14 @@
     --timing-ease-in-out-quad: cubic-bezier(0.45, 0, 0.55, 1);
 }
 
+/* Registered so the ch measure resolves at body text size on main, rather than
+   in each heading's larger font. */
+@property --prose-width {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
 body {
     background: url(/background.png) var(--background-colour);
     color: var(--text-colour);
@@ -21,6 +29,21 @@ main {
     width: var(--content-width);
     margin: 0 auto;
     flex-grow: 1;
+
+    --prose-width: 70ch;
+
+    /* Long-form bodies (posts and pastes, and static pages guessed from a run of
+       paragraphs) are narrowed to a comfortable measure, along with their titles.
+       Widgets after the body keep the full width, and full-bleed blocks inside it
+       still reach the edges. */
+    & > article.h-entry > :is(header, .old-post-warning, .e-content),
+    &:has(> .page-content > p + p + p) > :is(h2, .page-content) {
+        max-width: var(--prose-width);
+        margin-inline: auto;
+        --content-margin: calc((100vw - min(var(--prose-width), var(--content-width))) / 2);
+        --float-overhang: 20rem;
+        --float-max-width: 50%;
+    }
 
     & > h2 {
         margin-top: 0;

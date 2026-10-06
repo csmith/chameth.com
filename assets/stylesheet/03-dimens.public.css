@@ -6,7 +6,8 @@
     --medium-space: 2.5rem;
     --large-space: 5rem;
 
-    --content-width: min(1600px, calc(100vw - 2 * var(--large-space)));
+    --page-gutter: clamp(16px, 4vw, 72px);
+    --content-width: min(1900px, 100vw - 2 * var(--page-gutter));
     --content-margin: calc((100vw - var(--content-width)) / 2);
 
     @media (width <= 1200px) {
@@ -21,9 +22,5 @@
         --smedium-space: 0.8rem;
         --medium-space: 1.5rem;
         --large-space: 2.5rem;
-    }
-
-    @media (width <= 500px) {
-        --content-width: calc(100vw - 20pt);
     }
 }
