@@ -146,17 +146,19 @@ body {
             }
         }
 
+        /* Links are shown by colour alone, as an underline would clash with
+           the heading's rule. */
         a {
             background: none;
-            text-decoration-skip-ink: auto;
-            transition: text-decoration-color 500ms
-                var(--timing-ease-in-out-quad);
-            text-decoration-color: var(--text-alt-colour);
+            text-decoration: none;
+            color: var(--link-colour);
+            transition: color 500ms var(--timing-ease-in-out-quad);
 
             &:hover,
             &:focus,
             &:active {
-                text-decoration-color: var(--accent-colour);
+                color: var(--accent-colour);
+                transition-duration: 150ms;
             }
 
             &::after {
