@@ -1,55 +1,161 @@
+@property --loop-sweep {
+    syntax: "<angle>";
+    inherits: true;
+    initial-value: 0deg;
+}
+
 body > header {
-    padding: var(--small-space) 0;
-    width: var(--content-width);
-    margin: var(--large-space) auto 2em auto;
-
+    width: min(1900px, 100% - 2 * clamp(16px, 4vw, 72px));
+    margin: clamp(1.5rem, 3vw, 2.75rem) auto clamp(2.5rem, 4vw, 3.75rem);
+    padding: 0 0 1.1rem;
     display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
     justify-content: space-between;
+    gap: 1.25rem 3rem;
+    border-bottom: 1px solid #2a2a2a;
+    container-type: inline-size;
 
-    @media (width <= 1200px) {
+    @media (width <= 1080px) {
         flex-direction: column;
         align-items: flex-start;
-        gap: var(--medium-space);
     }
 
     & > a {
         /* Safari underlines block level elements within an A... */
         text-decoration: none;
+        color: inherit;
     }
 
     h1 {
-        display: inline-flex;
-        flex-direction: column;
-        align-items: flex-start;
-        color: var(--text-highlight-colour);
+        display: grid;
+        justify-items: start;
+        color: var(--accent-colour);
+    }
+
+    .banner {
+        margin: 0;
         font-family: "Berkeley Mono", monospace;
-        text-transform: uppercase;
+        /* Size the art by a whole-pixel character width (Berkeley Mono is 0.6em
+           wide), as Firefox snaps each glyph to whole pixels. Fractional widths
+           make it overflow and the lines misalign. */
+        --advance: clamp(3px, round(0.312vw + 0.6px, 1px), 7px);
+        font-size: calc(var(--advance) / 0.6);
+        line-height: 1;
+        white-space: pre;
+        --flood-steps: attr(data-steps type(<number>), 0);
+        /* Smears each glyph a hair sideways to fill the seams between blocks. */
+        text-shadow: 0.1px 0 currentColor, -0.1px 0 currentColor;
+
+        /* The solid blocks; the box-drawing outlines take the h1 colour. Glyphs
+           are 1.2em tall so rows overlap slightly; positioning the blocks paints
+           them over any outline poking up from the row below. */
+        span {
+            position: relative;
+            color: var(--link-colour);
+            /* data-step is each block's distance from the top-left of the C in a
+               flood fill (the pre's data-steps is the largest). Hovering snaps each
+               block on in that order, leaving un-fills in reverse. */
+            transition: color 0s calc((var(--flood-steps) - attr(data-step type(<number>), 0)) * 6ms);
+
+            @media (prefers-reduced-motion: reduce) {
+                transition-delay: 0s;
+            }
+        }
+
+        /* Once the nav drops below, the art can use the full width (91 characters). */
+        @media (width <= 1080px) {
+            --advance: clamp(3px, round(down, (100cqi - 2px) / 91, 1px), 7px);
+        }
+    }
+
+    .title {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .byline {
+        font-family: "Chris Hand", sans-serif;
+        font-size: clamp(1.1rem, 1.1vw, 1.4rem);
+        line-height: 1;
+        color: var(--accent-colour);
+        margin: 0.6rem 0 0 var(--medium-space);
+        transform: rotate(-1.5deg);
         text-wrap: nowrap;
 
-        .prelude {
-            font-size: var(--font-size-small);
-            line-height: 1;
-            color: var(--text-alt-colour);
-            text-decoration: none;
+        /* A biro arrow curving up to the logo, drawn in the text colour. */
+        &::before {
+            content: "";
+            display: inline-block;
+            width: 1.1em;
+            height: 1.2em;
+            margin-right: 0.15em;
+            vertical-align: -0.1em;
+            background: currentColor;
+            mask: url("/paper/byline-arrow.svg") center / contain no-repeat;
         }
+    }
 
-        .title {
-            font-size: var(--font-size-giant);
-            line-height: 1;
+    & > a:is(:hover, :focus-visible) .banner span {
+        color: var(--text-highlight-colour);
+        transition-delay: calc(attr(data-step type(<number>), 0) * 18ms);
+
+        @media (prefers-reduced-motion: reduce) {
+            transition-delay: 0s;
         }
-
-        border-bottom: 4px solid var(--accent-colour);
     }
 
     nav {
         display: flex;
-        gap: 20px;
+        gap: 1.4em;
         align-items: flex-end;
+        font-family: "Chris Hand", sans-serif;
+        font-size: clamp(1.2rem, 1.3vw, 1.6rem);
 
         a {
-            font-family: "Berkeley Mono", monospace;
-            text-transform: uppercase;
+            position: relative;
+            color: var(--text-colour);
+            text-transform: lowercase;
             white-space: nowrap;
+            text-decoration: none;
+            background: none;
+
+            /* A biro loop drawn round the link by sweeping conic masks over it.
+               The overshoot tail crosses the start of the loop, so it's a separate
+               piece revealed only once the sweep passes a full turn. */
+            transition: --loop-sweep 200ms ease-in;
+
+            &::before,
+            &::after {
+                content: "";
+                position: absolute;
+                inset: -0.3em -0.45em -0.2em;
+                background: var(--accent-colour);
+                pointer-events: none;
+            }
+
+            &::before {
+                mask:
+                    url("/paper/nav-loop.svg") 0 0 / 100% 100% no-repeat,
+                    conic-gradient(from 280deg, #000 var(--loop-sweep), transparent 0);
+                mask-composite: intersect;
+            }
+
+            &::after {
+                mask:
+                    url("/paper/nav-loop-tail.svg") 0 0 / 100% 100% no-repeat,
+                    conic-gradient(from 260deg, #000 calc(var(--loop-sweep) - 340deg), transparent 0);
+                mask-composite: intersect;
+            }
+
+            &:is(:hover, :focus-visible) {
+                --loop-sweep: 420deg;
+                transition: --loop-sweep 500ms ease-out;
+            }
         }
 
         @media (width <= 700px) {
