@@ -59,7 +59,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 	err = posttemplates.RenderPost(
 		w,
 		posttemplates.PostData{
-			PostContent:    renderedContent,
+			PostContent:    content.WithMarginNotes(renderedContent),
 			PostFormat:     post.Format,
 			ArticleTitle:   post.Title,
 			ArticleSummary: summary,

@@ -88,3 +88,94 @@ article section + section {
         margin-bottom: 0;
     }
 }
+
+/* Footnotes become handwritten notes in the margin, alongside the block that
+   cites them (see content.WithMarginNotes). They float out past the right edge
+   of the prose column, taking no space in it, and clear each other so a long
+   note pushes the next one down. The notes are copies, so on screens without
+   room for them they're hidden and the footnotes are shown instead. On wider
+   screens, the article script hides the footnote list and points the
+   references at the notes. */
+.marginnote {
+    display: none;
+
+    @media (width >= 1420px) {
+        --note-gap: 2.5rem;
+        --note-width: clamp(12rem, var(--content-margin) - var(--page-gutter) - var(--note-gap), 18rem);
+
+        display: block;
+        float: right;
+        clear: right;
+        width: var(--note-width);
+        margin: 0 calc(-1 * (var(--note-width) + var(--note-gap))) 1.2em 0;
+        font-family: "Chris Hand", sans-serif;
+        font-size: 1.3rem;
+        line-height: 1.2;
+        color: var(--pen-ink-colour);
+
+        & > div {
+            padding-top: 0.25em;
+            scroll-margin-top: var(--medium-space);
+            transform: rotate(-1.5deg);
+
+            & + div {
+                margin-top: 1.2em;
+            }
+        }
+
+        &:nth-of-type(3n + 2) > div {
+            transform: rotate(-0.4deg);
+        }
+
+        &:nth-of-type(3n) > div {
+            transform: rotate(-2.2deg);
+        }
+
+        b {
+            display: inline-block;
+            font-family: "Berkeley Mono", monospace;
+            font-size: var(--font-size-tiny);
+            font-weight: 400;
+            line-height: 1.5;
+            color: var(--background-colour);
+            background: var(--pen-ink-colour);
+            padding: 0 0.45em;
+            margin-right: 0.45em;
+            vertical-align: 2px;
+        }
+
+        p {
+            display: inline;
+            margin: 0;
+        }
+
+        a:not(.plain-link) {
+            color: inherit;
+        }
+
+        code {
+            font-size: 0.7em;
+        }
+    }
+}
+
+/* Footnote references (and littlefoot's buttons, which use the same markup)
+   as small versions of the margin notes' number badges. */
+a.footnote-ref,
+sup.footnote-ref > a {
+    display: inline-block;
+    font-family: "Berkeley Mono", monospace;
+    font-size: 0.7rem;
+    font-weight: 400;
+    line-height: 1.4;
+    padding: 0 0.35em;
+    margin-inline: 0.25em;
+    color: var(--background-colour);
+    background: var(--pen-ink-colour);
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+        background: var(--text-highlight-colour);
+    }
+}

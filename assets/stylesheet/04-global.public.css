@@ -74,10 +74,6 @@ ul {
     padding-left: 1.5em;
 }
 
-.footnote-ref a {
-    text-decoration-thickness: 2px;
-}
-
 *[hidden] {
     display: none;
 }

@@ -66,10 +66,38 @@
 
     <script type="application/javascript" nonce="littlefoot-ae805b14">
         document.addEventListener('DOMContentLoaded', () => {
-            littlefoot.littlefoot({
-                activateDelay: 0,
-                buttonTemplate: `<sup id="fnref:<% number %>" class="footnote-ref"><a href="#fn:<% number %>" role="doc-noteref">[<% number %>]</a></sup>`,
-            });
+            const hasNotes = document.querySelector('.marginnote') !== null;
+            const lists = document.querySelectorAll('.e-content > .footnotes');
+            const wide = matchMedia('(width >= 1420px)');
+            let popovers = null;
+
+            const retarget = (from, to) => {
+                document.querySelectorAll(`a.footnote-ref[href^="#${from}:"]`).forEach((a) => {
+                    a.setAttribute('href', `#${to}:` + a.getAttribute('href').slice(from.length + 2));
+                });
+            };
+
+            // Wide layouts show footnotes as notes in the margin, so hide the
+            // footnote list and point the references at the notes. Otherwise use
+            // the list, with littlefoot popovers. Re-run whenever the layout flips.
+            const update = () => {
+                if (hasNotes && wide.matches) {
+                    popovers?.unmount();
+                    popovers = null;
+                    lists.forEach((list) => list.hidden = true);
+                    retarget('fn', 'mn');
+                } else {
+                    retarget('mn', 'fn');
+                    lists.forEach((list) => list.hidden = false);
+                    popovers ??= littlefoot.littlefoot({
+                        activateDelay: 0,
+                        buttonTemplate: `<sup id="fnref:<% number %>" class="footnote-ref"><a href="#fn:<% number %>" role="doc-noteref"><% number %></a></sup>`,
+                    });
+                }
+            };
+
+            update();
+            wide.addEventListener('change', update);
         });
     </script>
 {{end}}
