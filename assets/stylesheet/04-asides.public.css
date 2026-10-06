@@ -1,37 +1,31 @@
+/* Blockquotes: a hand-drawn biro stroke down the left, in the same style as
+   the heading rules. */
 blockquote {
-    padding: var(--small-space)
-        calc(var(--content-margin) + var(--medium-space));
-    background-color: var(--background-alt-colour);
-    border-radius: 0;
-    margin: 0 calc(-1 * var(--content-margin));
-    width: 100vw;
     position: relative;
+    margin: var(--medium-space) 0;
+    padding-left: 2rem;
+    font-style: italic;
 
     &::before {
+        content: "";
         position: absolute;
-        top: var(--medium-space);
-        left: var(--content-margin);
-        content: "“";
-        display: block;
-        color: var(--accent-colour);
-        font-size: var(--font-size-giant);
-        line-height: var(--font-size-giant);
-    }
-
-    &::after {
-        position: absolute;
-        bottom: 0;
-        right: var(--content-margin);
-        content: "”";
-        display: block;
-        color: var(--accent-colour);
-        font-size: var(--font-size-giant);
-        line-height: var(--font-size-giant);
+        inset: 0.2em auto 0.2em 0;
+        width: 12px;
+        background: var(--accent-colour);
+        mask: url("/paper/quote-rule.svg") 0 0 / 100% 100% no-repeat;
+        pointer-events: none;
     }
 
     p {
-        margin-left: calc(var(--small-space) + 2ex);
-        margin-right: calc(var(--small-space) + 2ex);
+        margin-block: var(--small-space);
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 }
 
