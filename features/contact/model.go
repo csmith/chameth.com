@@ -46,6 +46,7 @@ const (
 	causeSpamhaus         cause = "listed_in_xbl"
 	causeUnsubscribeLink  cause = "unsubscribe_link"
 	causeLLM              cause = "llm_spam"
+	causeDuplicate        cause = "duplicate_message"
 )
 
 type rejection struct {

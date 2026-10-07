@@ -180,7 +180,7 @@ func checkSpam(ctx workflow.Context, sub submission) (spamVerdict, error) {
 	return result.Output, nil
 }
 
-func checksActivity(_ context.Context, sub submission) ([]cause, error) {
+func checksActivity(ctx context.Context, sub submission) ([]cause, error) {
 	host, _, err := net.SplitHostPort(sub.RemoteAddr)
 	if err != nil {
 		host = sub.RemoteAddr
@@ -188,7 +188,7 @@ func checksActivity(_ context.Context, sub submission) ([]cause, error) {
 
 	var failed []cause
 	for _, check := range checks {
-		if err := check(sub, host); err != nil {
+		if err := check(ctx, sub, host); err != nil {
 			if rej, ok := errors.AsType[*rejection](err); ok {
 				failed = append(failed, rej.cause)
 			} else {

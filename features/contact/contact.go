@@ -29,6 +29,10 @@ var (
 	rateLimitTTL  = 1 * time.Minute
 
 	minFormAge = 10 * time.Second
+
+	// duplicateWindow is how long a message body, sent or rejected, blocks
+	// identical resubmissions.
+	duplicateWindow = 28 * 24 * time.Hour
 )
 
 func sendContact(req request, content string) error {

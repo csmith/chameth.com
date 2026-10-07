@@ -1,6 +1,7 @@
 package contact
 
 import (
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
@@ -12,13 +13,14 @@ import (
 	"chameth.com/chameth.com/external/spamhaus"
 )
 
-type check = func(sub submission, remoteAddr string) error
+type check = func(ctx context.Context, sub submission, remoteAddr string) error
 
 var checks = []check{
 	checkHoneypot, checkTimestamp, checkRateLimit, checkSensible, checkCyrillic, checkUnsubscribeLink, checkSpamhaus,
+	checkDuplicate,
 }
 
-func checkHoneypot(sub submission, _ string) error {
+func checkHoneypot(_ context.Context, sub submission, _ string) error {
 	req := sub.Request
 	if req.Honeypot != "" {
 		slog.Info("Honeypot field filled in contact form submission", "subject", req.Honeypot)
@@ -27,7 +29,7 @@ func checkHoneypot(sub submission, _ string) error {
 	return nil
 }
 
-func checkTimestamp(sub submission, _ string) error {
+func checkTimestamp(_ context.Context, sub submission, _ string) error {
 	req := sub.Request
 	if req.Timestamp == "" {
 		slog.Info("Missing timestamp in contact form submission")
@@ -60,7 +62,7 @@ func checkTimestamp(sub submission, _ string) error {
 	return nil
 }
 
-func checkRateLimit(sub submission, remoteAddr string) error {
+func checkRateLimit(_ context.Context, sub submission, remoteAddr string) error {
 	req := sub.Request
 	if !isRateAllowed(remoteAddr) {
 		slog.Info("Rate limit exceeded for contact form", "remoteAddr", remoteAddr, "request", req)
@@ -69,7 +71,7 @@ func checkRateLimit(sub submission, remoteAddr string) error {
 	return nil
 }
 
-func checkSensible(sub submission, _ string) error {
+func checkSensible(_ context.Context, sub submission, _ string) error {
 	req := sub.Request
 	trimmed := strings.TrimSpace(req.Message)
 	if trimmed != "" && len(strings.Fields(trimmed)) >= 2 {
@@ -79,7 +81,7 @@ func checkSensible(sub submission, _ string) error {
 	return &rejection{cause: causeSensible}
 }
 
-func checkCyrillic(sub submission, _ string) error {
+func checkCyrillic(_ context.Context, sub submission, _ string) error {
 	req := sub.Request
 	for _, r := range req.Message {
 		if r >= '\u0400' && r <= '\u04FF' {
@@ -90,7 +92,7 @@ func checkCyrillic(sub submission, _ string) error {
 	return nil
 }
 
-func checkUnsubscribeLink(sub submission, _ string) error {
+func checkUnsubscribeLink(_ context.Context, sub submission, _ string) error {
 	req := sub.Request
 	if strings.Contains(req.Message, "unsubscribe.php?d=chameth.com") {
 		slog.Info("Blocking unsubscribe link in contact form message", "request", req)
@@ -99,7 +101,7 @@ func checkUnsubscribeLink(sub submission, _ string) error {
 	return nil
 }
 
-func checkSpamhaus(sub submission, remoteAddr string) error {
+func checkSpamhaus(_ context.Context, sub submission, remoteAddr string) error {
 	req := sub.Request
 	result, err := spamhaus.Check(remoteAddr)
 	if err != nil {
@@ -110,6 +112,18 @@ func checkSpamhaus(sub submission, remoteAddr string) error {
 	if result.ExploitsBlockList {
 		slog.Info("Blocking contact form from XBL listed address", "remoteAddr", remoteAddr, "request", req)
 		return &rejection{cause: causeSpamhaus}
+	}
+	return nil
+}
+
+func checkDuplicate(ctx context.Context, sub submission, _ string) error {
+	seen, err := messageSeenSince(ctx, sub.Request.Message, sub.ReceivedAt.Add(-duplicateWindow))
+	if err != nil {
+		return err
+	}
+	if seen {
+		slog.Info("Blocking duplicate contact form message", "request", sub.Request)
+		return &rejection{cause: causeDuplicate}
 	}
 	return nil
 }
