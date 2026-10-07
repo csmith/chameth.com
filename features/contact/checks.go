@@ -12,13 +12,14 @@ import (
 	"chameth.com/chameth.com/external/spamhaus"
 )
 
-type check = func(req request, remoteAddr string) error
+type check = func(sub submission, remoteAddr string) error
 
 var checks = []check{
 	checkHoneypot, checkTimestamp, checkRateLimit, checkSensible, checkCyrillic, checkUnsubscribeLink, checkSpamhaus,
 }
 
-func checkHoneypot(req request, _ string) error {
+func checkHoneypot(sub submission, _ string) error {
+	req := sub.Request
 	if req.Honeypot != "" {
 		slog.Info("Honeypot field filled in contact form submission", "subject", req.Honeypot)
 		return &rejection{cause: causeHoneypot}
@@ -26,7 +27,8 @@ func checkHoneypot(req request, _ string) error {
 	return nil
 }
 
-func checkTimestamp(req request, _ string) error {
+func checkTimestamp(sub submission, _ string) error {
+	req := sub.Request
 	if req.Timestamp == "" {
 		slog.Info("Missing timestamp in contact form submission")
 		return &rejection{cause: causeTimestampInvalid}
@@ -51,14 +53,15 @@ func checkTimestamp(req request, _ string) error {
 		return &rejection{cause: causeTimestampInvalid}
 	}
 
-	if elapsed := time.Since(time.Unix(ts, 0)); elapsed < minFormAge {
+	if elapsed := sub.ReceivedAt.Sub(time.Unix(ts, 0)); elapsed < minFormAge {
 		slog.Info("Contact form submitted too quickly", "elapsed", elapsed)
 		return &rejection{cause: causeTimestampTooSoon}
 	}
 	return nil
 }
 
-func checkRateLimit(req request, remoteAddr string) error {
+func checkRateLimit(sub submission, remoteAddr string) error {
+	req := sub.Request
 	if !isRateAllowed(remoteAddr) {
 		slog.Info("Rate limit exceeded for contact form", "remoteAddr", remoteAddr, "request", req)
 		return &rejection{cause: causeRateLimit}
@@ -66,7 +69,8 @@ func checkRateLimit(req request, remoteAddr string) error {
 	return nil
 }
 
-func checkSensible(req request, _ string) error {
+func checkSensible(sub submission, _ string) error {
+	req := sub.Request
 	trimmed := strings.TrimSpace(req.Message)
 	if trimmed != "" && len(strings.Fields(trimmed)) >= 2 {
 		return nil
@@ -75,7 +79,8 @@ func checkSensible(req request, _ string) error {
 	return &rejection{cause: causeSensible}
 }
 
-func checkCyrillic(req request, _ string) error {
+func checkCyrillic(sub submission, _ string) error {
+	req := sub.Request
 	for _, r := range req.Message {
 		if r >= '\u0400' && r <= '\u04FF' {
 			slog.Info("Blocking Cyrillic contact form message", "request", req)
@@ -85,7 +90,8 @@ func checkCyrillic(req request, _ string) error {
 	return nil
 }
 
-func checkUnsubscribeLink(req request, _ string) error {
+func checkUnsubscribeLink(sub submission, _ string) error {
+	req := sub.Request
 	if strings.Contains(req.Message, "unsubscribe.php?d=chameth.com") {
 		slog.Info("Blocking unsubscribe link in contact form message", "request", req)
 		return &rejection{cause: causeUnsubscribeLink}
@@ -93,7 +99,8 @@ func checkUnsubscribeLink(req request, _ string) error {
 	return nil
 }
 
-func checkSpamhaus(req request, remoteAddr string) error {
+func checkSpamhaus(sub submission, remoteAddr string) error {
+	req := sub.Request
 	result, err := spamhaus.Check(remoteAddr)
 	if err != nil {
 		slog.Error("Error checking Spamhaus", "error", err, "remoteAddr", remoteAddr)

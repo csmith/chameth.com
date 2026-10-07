@@ -1,23 +1,18 @@
 package contact
 
 import (
-	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"flag"
 	"fmt"
 	"log/slog"
-	"net"
 	"net/mail"
 	"net/smtp"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
-
-	"chameth.com/chameth.com/features/metrics"
 )
 
 var (
@@ -35,57 +30,6 @@ var (
 
 	minFormAge = 10 * time.Second
 )
-
-func process(ctx context.Context, req request, mthd method, remoteAddr, userAgent string) error {
-	host, _, err := net.SplitHostPort(remoteAddr)
-	if err != nil {
-		host = remoteAddr
-	}
-
-	var failedChecks []cause
-
-	for _, check := range checks {
-		err := check(req, host)
-		if err != nil {
-			if rej, ok := errors.AsType[*rejection](err); ok {
-				failedChecks = append(failedChecks, rej.cause)
-			} else {
-				slog.Error("Error checking contact form for spam", "request", req, "error", err)
-			}
-		}
-	}
-
-	failedCheckStrings := make([]string, len(failedChecks))
-	for i, c := range failedChecks {
-		failedCheckStrings[i] = string(c)
-	}
-	metrics.RecordContactSubmission(
-		ctx,
-		metrics.ContactSubmission{
-			Method:       string(mthd),
-			UserAgent:    userAgent,
-			RemoteAddr:   remoteAddr,
-			FailedChecks: failedCheckStrings,
-			Page:         req.Page,
-			SenderName:   req.SenderName,
-			SenderEmail:  req.SenderEmail,
-			Message:      req.Message,
-		},
-	)
-
-	if len(failedChecks) > 0 {
-		time.Sleep(5 * time.Second)
-		return errRejected
-	}
-
-	content := messageBody(req, mthd, remoteAddr)
-	if err := sendContact(req, content); err != nil {
-		slog.Error("Error sending contact form", "error", err, "request", req)
-		return fmt.Errorf("failed to send: %w", err)
-	}
-
-	return nil
-}
 
 func sendContact(req request, content string) error {
 	auth := smtp.PlainAuth("", *smtpUsername, *smtpPassword, *smtpServer)

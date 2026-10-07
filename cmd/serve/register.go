@@ -137,7 +137,7 @@ func (s *site) registerShortcodes() {
 func (s *site) registerRoutes() {
 	assets.RegisterRoutes(s.Routes, s.Assets)
 	featuresAdmin.RegisterRoutes(s.Routes, s.Assets)
-	featuresContact.RegisterRoutes(s.Routes)
+	featuresContact.RegisterRoutes(s.Routes, s.Temporal)
 	featuresFeeds.RegisterRoutes(s.Routes)
 	featuresFilms.RegisterRoutes(s.Routes)
 	featuresFilmsAdmin.RegisterRoutes(s.Routes)
@@ -165,6 +165,7 @@ func (s *site) registerRoutes() {
 func (s *site) launchGoroutines() {
 	go externalMaxmind.RegisterGoroutine(s.Context)()
 	go featuresAdmin.RegisterGoroutine(s.Tailscale, s.Routes)()
+	go featuresContact.RegisterGoroutine(s.Context, s.Temporal)()
 	go featuresMetrics.RegisterGoroutine(s.Context)()
 	go featuresPosts.RegisterGoroutine(s.Context)()
 	go featuresShortcodes.RegisterGoroutine(s.Shortcodes, s.Context)()

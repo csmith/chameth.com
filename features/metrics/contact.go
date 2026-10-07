@@ -11,8 +11,9 @@ type ContactSubmission struct {
 	SenderName   string
 	SenderEmail  string
 	Message      string
+	LLMReason    *string
 }
 
-func RecordContactSubmission(ctx context.Context, sub ContactSubmission) {
-	recordContactMetric(ctx, sub)
+func RecordContactSubmission(ctx context.Context, sub ContactSubmission) error {
+	return recordContactMetric(ctx, sub)
 }

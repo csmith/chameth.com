@@ -1,6 +1,6 @@
 package contact
 
-import "errors"
+import "time"
 
 type method string
 
@@ -18,7 +18,21 @@ type request struct {
 	Honeypot    string `json:"subject"`
 }
 
-var errRejected = errors.New("submission rejected")
+// submission is the contact workflow's input: the request plus what the
+// handler knew about where and when it came from.
+type submission struct {
+	Request    request   `json:"request"`
+	Method     method    `json:"method"`
+	RemoteAddr string    `json:"remoteAddr"`
+	UserAgent  string    `json:"userAgent"`
+	ReceivedAt time.Time `json:"receivedAt"`
+}
+
+// spamVerdict is the check-blog-spam workflow's output.
+type spamVerdict struct {
+	Send   bool   `json:"send"`
+	Reason string `json:"reason"`
+}
 
 type cause string
 
@@ -31,6 +45,7 @@ const (
 	causeCyrillic         cause = "contained_cyrillic"
 	causeSpamhaus         cause = "listed_in_xbl"
 	causeUnsubscribeLink  cause = "unsubscribe_link"
+	causeLLM              cause = "llm_spam"
 )
 
 type rejection struct {

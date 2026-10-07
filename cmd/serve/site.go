@@ -5,6 +5,7 @@ import (
 	"chameth.com/chameth.com/features/routing"
 	"chameth.com/chameth.com/features/shortcodes"
 	"context"
+	"go.temporal.io/sdk/client"
 	"tailscale.com/tsnet"
 )
 
@@ -14,4 +15,5 @@ type site struct {
 	Assets     *assets.Manager
 	Shortcodes *shortcodes.Manager
 	Routes     *routing.Manager
+	Temporal   client.Client
 }

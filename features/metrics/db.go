@@ -3,24 +3,28 @@ package metrics
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"time"
 
 	"chameth.com/chameth.com/db"
 )
 
-func recordContactMetric(ctx context.Context, sub ContactSubmission) {
+func recordContactMetric(ctx context.Context, sub ContactSubmission) error {
 	checksJSON, err := json.Marshal(sub.FailedChecks)
 	if err != nil {
-		slog.Error("Error marshalling contact checks", "error", err)
-		return
+		return fmt.Errorf("marshal contact checks: %w", err)
 	}
 
 	_, err = db.NamedExec(
 		ctx,
 		`
-		INSERT INTO contact_metrics (method, user_agent, remote_addr, checks, page, sender_name, sender_email, message)
-		VALUES (:method, :user_agent, :remote_addr, :checks, :page, :sender_name, :sender_email, :message)
+		INSERT INTO contact_metrics (
+			method, user_agent, remote_addr, checks, page, sender_name, sender_email, message, llm_reason
+		)
+		VALUES (
+			:method, :user_agent, :remote_addr, :checks, :page, :sender_name, :sender_email, :message, :llm_reason
+		)
 	`,
 		map[string]any{
 			"method":       sub.Method,
@@ -31,11 +35,13 @@ func recordContactMetric(ctx context.Context, sub ContactSubmission) {
 			"sender_name":  sub.SenderName,
 			"sender_email": sub.SenderEmail,
 			"message":      sub.Message,
+			"llm_reason":   sub.LLMReason,
 		},
 	)
 	if err != nil {
-		slog.Error("Error recording contact metric", "error", err)
+		return fmt.Errorf("insert contact metric: %w", err)
 	}
+	return nil
 }
 
 func insertRequestLog(ctx context.Context, log requestLog) {
