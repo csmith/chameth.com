@@ -109,7 +109,7 @@ require (
 	go.temporal.io/api v1.63.6
 	go.temporal.io/sdk v1.49.0
 	golang.org/x/image v0.46.0
-	golang.org/x/net v0.59.0
+	golang.org/x/net v0.60.0
 	golang.org/x/text v0.42.0
 	google.golang.org/grpc v1.84.0
 	tailscale.com v1.102.4
