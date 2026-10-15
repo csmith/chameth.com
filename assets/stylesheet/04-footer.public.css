@@ -84,25 +84,21 @@ body > footer {
         }
 
         a {
-            font-size: var(--font-size-xlarge);
-            color: var(--accent-colour);
-            border: 1px solid var(--accent-colour);
+            color: var(--text-highlight-colour);
             display: inline-block;
-            box-sizing: content-box;
             height: 24px;
             width: 24px;
-            padding: 2px;
-            border-radius: 4px;
-            margin-left: calc(var(--medium-space) / 2);
-            background-color: var(--background-colour);
-            transition:
-                background-position 300ms ease-in-out,
-                color 300ms ease-in-out;
+            margin-left: auto;
+            align-self: center;
+            transform: translateY(-0.2em);
+            /* Matches the heading's text-shadow, which doesn't apply to SVGs. */
+            filter: drop-shadow(2px 2px 3px rgb(0 0 0 / 0.6));
+            transition: color 300ms ease-in-out;
 
             &:hover,
             &:active,
             &:focus {
-                color: var(--text-highlight-colour);
+                color: var(--accent-colour);
             }
         }
     }
