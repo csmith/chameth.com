@@ -1,5 +1,13 @@
+@property --curl {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+}
+
 .about {
-    /* Centers the trading card when it's not floated */
+    container: about / inline-size;
+
+    /* Centers the trading card when it's not beside the content */
     text-align: center;
 
     * {
@@ -32,23 +40,310 @@
             line-height: 0;
         }
     }
+
+    /* On wide screens, the content's children join the section's grid so
+       the trading card can sit in a column beside the intro and notes. */
+    @media (width > 1200px) {
+        display: grid;
+        column-gap: var(--large-space);
+        align-items: start;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "hello card"
+            "intro card"
+            "list card"
+            "latest latest"
+            "posts posts";
+
+        & > :last-child {
+            display: contents;
+
+            & > p:nth-of-type(1) { grid-area: hello; }
+            & > p:nth-of-type(2) { grid-area: intro; }
+            & > ul { grid-area: list; }
+            & > p:nth-of-type(3) { grid-area: latest; }
+            & > .recent-posts { grid-area: posts; }
+        }
+    }
+
+    /* The slash pages are post-it notes stuck up in staggered rows: k notes,
+       then k-1 sitting in the gaps below and overlapping them, and so on.
+       Everything is derived from the note's index (--i) and the number of
+       notes (--n), so it copes with any number of links (up to the 24 the
+       tables below cover). Notes are as big as fits, up to 270px, in two
+       rows when there's room and as few balanced rows as possible otherwise.
+       The thresholds for how many fit across assume a note of at least
+       170px, 6% apart. */
+    ul {
+        /* Width available to the board: the whole section, or (on wide
+           screens, below) the section minus the trading card column. */
+        --board: calc(100cqi - var(--small-space));
+        --kfit: 2;
+        --n: 1;
+        /* Rows needed (at least two), then the fewest notes per long
+           row that fit them all, so the rows come out balanced. */
+        --rows-min: max(min(2, var(--n)), round(up, calc(var(--n) / (var(--kfit) - 0.5)), 1));
+        --k: max(2, round(up, calc((var(--n) + round(down, calc(var(--rows-min) / 2), 1)) / var(--rows-min)), 1));
+        --w: min(270px, calc(var(--board) / (1.06 * var(--k) - 0.06)));
+        --m: calc(2 * var(--k) - 1);
+        --full: round(down, calc(var(--n) / var(--m)), 1);
+        --rem: calc(var(--n) - var(--full) * var(--m));
+        --rows: calc(2 * var(--full) + min(1, var(--rem)) + clamp(0, var(--rem) - var(--k), 1));
+
+        position: relative;
+        list-style: none;
+        padding: 0;
+        height: calc((var(--rows) - 1) * 0.8 * var(--w) + var(--w) + 30px);
+        margin: var(--medium-space) 0 var(--small-space);
+    }
+
+    @container about (width >= 538px) { ul { --kfit: 3; } }
+    @container about (width >= 719px) { ul { --kfit: 4; } }
+    @container about (width >= 899px) { ul { --kfit: 5; } }
+    @container about (width >= 1079px) { ul { --kfit: 6; } }
+    @container about (width >= 1259px) { ul { --kfit: 7; } }
+
+    ul:has(> li:nth-child(1):last-child) { --n: 1; }
+    ul:has(> li:nth-child(2):last-child) { --n: 2; }
+    ul:has(> li:nth-child(3):last-child) { --n: 3; }
+    ul:has(> li:nth-child(4):last-child) { --n: 4; }
+    ul:has(> li:nth-child(5):last-child) { --n: 5; }
+    ul:has(> li:nth-child(6):last-child) { --n: 6; }
+    ul:has(> li:nth-child(7):last-child) { --n: 7; }
+    ul:has(> li:nth-child(8):last-child) { --n: 8; }
+    ul:has(> li:nth-child(9):last-child) { --n: 9; }
+    ul:has(> li:nth-child(10):last-child) { --n: 10; }
+    ul:has(> li:nth-child(11):last-child) { --n: 11; }
+    ul:has(> li:nth-child(12):last-child) { --n: 12; }
+    ul:has(> li:nth-child(13):last-child) { --n: 13; }
+    ul:has(> li:nth-child(14):last-child) { --n: 14; }
+    ul:has(> li:nth-child(15):last-child) { --n: 15; }
+    ul:has(> li:nth-child(16):last-child) { --n: 16; }
+    ul:has(> li:nth-child(17):last-child) { --n: 17; }
+    ul:has(> li:nth-child(18):last-child) { --n: 18; }
+    ul:has(> li:nth-child(19):last-child) { --n: 19; }
+    ul:has(> li:nth-child(20):last-child) { --n: 20; }
+    ul:has(> li:nth-child(21):last-child) { --n: 21; }
+    ul:has(> li:nth-child(22):last-child) { --n: 22; }
+    ul:has(> li:nth-child(23):last-child) { --n: 23; }
+    ul:has(> li:nth-child(24):last-child) { --n: 24; }
+
+    li:nth-child(1) { --i: 0; }
+    li:nth-child(2) { --i: 1; }
+    li:nth-child(3) { --i: 2; }
+    li:nth-child(4) { --i: 3; }
+    li:nth-child(5) { --i: 4; }
+    li:nth-child(6) { --i: 5; }
+    li:nth-child(7) { --i: 6; }
+    li:nth-child(8) { --i: 7; }
+    li:nth-child(9) { --i: 8; }
+    li:nth-child(10) { --i: 9; }
+    li:nth-child(11) { --i: 10; }
+    li:nth-child(12) { --i: 11; }
+    li:nth-child(13) { --i: 12; }
+    li:nth-child(14) { --i: 13; }
+    li:nth-child(15) { --i: 14; }
+    li:nth-child(16) { --i: 15; }
+    li:nth-child(17) { --i: 16; }
+    li:nth-child(18) { --i: 17; }
+    li:nth-child(19) { --i: 18; }
+    li:nth-child(20) { --i: 19; }
+    li:nth-child(21) { --i: 20; }
+    li:nth-child(22) { --i: 21; }
+    li:nth-child(23) { --i: 22; }
+    li:nth-child(24) { --i: 23; }
+
+    li {
+        /* Position in the staggered rows. */
+        --j: mod(var(--i), var(--m));
+        --odd: clamp(0, var(--j) - var(--k) + 1, 1);
+        --row: calc(2 * round(down, calc(var(--i) / var(--m)), 1) + var(--odd));
+        --col: calc(var(--j) - var(--odd) * var(--k));
+        --step: calc(1.06 * var(--w));
+        --used: calc((var(--k) - 1) * var(--step) + var(--w));
+
+        /* Numbers in [0, 1) for this note, from low-discrepancy
+           sequences (multiples of irrational numbers) so that
+           neighbouring notes always come out noticeably different. */
+        --r1: mod(calc(var(--i) * 0.6180340 + 0.35), 1);
+        --r2: mod(calc(var(--i) * 0.7548777 + 0.1), 1);
+        --r3: mod(calc(var(--i) * 0.5698403 + 0.6), 1);
+        --r4: mod(calc(var(--i) * 0.4142136 + 0.5), 1);
+        --r5: mod(calc(var(--i) * 0.3819660 + 0.02), 1);
+
+        --tilt: calc((var(--r1) - 0.5) * 10deg);
+        --dx: calc((var(--r2) - 0.5) * 0.05 * var(--w));
+        --dy: calc((var(--r3) - 0.5) * 0.08 * var(--w));
+
+        position: absolute;
+        left: calc((100% - var(--used)) / 2 + (var(--col) + var(--odd) * 0.5) * var(--step));
+        top: calc(var(--row) * 0.8 * var(--w) + 10px);
+        width: var(--w);
+        height: var(--w);
+        padding: calc(var(--w) * 0.11) calc(var(--w) * 0.15) 0 calc(var(--w) * 0.085);
+        box-sizing: border-box;
+        color: #26231c;
+        font-family: "Chris Hand", sans-serif;
+        font-size: calc(var(--w) * 0.083);
+        line-height: 1.15;
+        transform: translate(var(--dx), var(--dy)) rotate(var(--tilt));
+
+        /* Colour from the row and column, which guarantees no two
+           touching notes (beside, above or below) match. */
+        --c: mod(calc(2 * var(--row) + var(--col)), 5);
+        --c0: calc(1 - min(1, var(--c) * var(--c)));
+        --c1: calc(1 - min(1, (var(--c) - 1) * (var(--c) - 1)));
+        --c2: calc(1 - min(1, (var(--c) - 2) * (var(--c) - 2)));
+        --c3: calc(1 - min(1, (var(--c) - 3) * (var(--c) - 3)));
+        --note: color-mix(in srgb, #e8d65e calc(var(--c0) * 100%),
+            color-mix(in srgb, #eba3bd calc(var(--c1) * 100%),
+                color-mix(in srgb, #a6d99a calc(var(--c2) * 100%),
+                    color-mix(in srgb, #9ccbe6 calc(var(--c3) * 100%), #f0b175))));
+
+        /* The bottom edge: lifted at the right, lifted at the left, or
+           flat. A lifted corner curves and casts a longer shadow. The
+           drop-shadow follows the note's shape, so cut corners show the
+           wall behind. */
+        --lift: round(down, calc(var(--r4) * 3), 1);
+        --lift-r: calc(1 - min(1, var(--lift)));
+        --lift-l: calc(1 - min(1, (var(--lift) - 1) * (var(--lift) - 1)));
+        border-bottom-right-radius: calc(var(--lift-r) * 60px) calc(var(--lift-r) * 6px);
+        border-bottom-left-radius: calc(var(--lift-l) * 60px) calc(var(--lift-l) * 6px);
+        filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.3))
+            drop-shadow(calc((var(--lift-r) - var(--lift-l)) * 3px + 2px) calc((var(--lift-r) + var(--lift-l)) * 5px + 4px) calc((var(--lift-r) + var(--lift-l)) * 2px + 4px) rgb(0 0 0 / 0.5));
+
+        /* A fold at a random corner (or none): 0 top-left, 1 top-right,
+           2 bottom-right, 3 bottom-left. */
+        --fold-at: round(down, calc(var(--r5) * 9), 1);
+        --f0: calc(1 - min(1, var(--fold-at) * var(--fold-at)));
+        --f1: calc(1 - min(1, (var(--fold-at) - 1) * (var(--fold-at) - 1)));
+        --f2: calc(1 - min(1, (var(--fold-at) - 2) * (var(--fold-at) - 2)));
+        --f3: calc(1 - min(1, (var(--fold-at) - 3) * (var(--fold-at) - 3)));
+        --fold: calc(var(--w) * 0.09);
+
+        /* Each corner's cut. The top-right one is also the hover peel. */
+        --curl: 0px;
+        --cut-tl: calc(var(--f0) * var(--fold));
+        --cut-tr: max(calc(var(--f1) * var(--fold)), var(--curl));
+        --cut-br: calc(var(--f2) * var(--fold));
+        --cut-bl: calc(var(--f3) * var(--fold));
+        transition: --curl 300ms ease-out;
+
+        &:hover,
+        &:focus-within {
+            --curl: calc(var(--w) * 0.24);
+        }
+
+        /* The paper, in quarters so each can have its corner cut away. */
+        --shade: color-mix(in srgb, var(--note), black 10%);
+        background:
+            linear-gradient(135deg, transparent calc(var(--cut-tl) * 0.7071), var(--shade) calc(var(--cut-tl) * 0.7071), var(--note) 30%) 0 0,
+            linear-gradient(225deg, transparent calc(var(--cut-tr) * 0.7071), var(--shade) calc(var(--cut-tr) * 0.7071), var(--note) 30%) 100% 0,
+            linear-gradient(315deg, transparent calc(var(--cut-br) * 0.7071), var(--shade) calc(var(--cut-br) * 0.7071), var(--note) 30%) 100% 100%,
+            linear-gradient(45deg, transparent calc(var(--cut-bl) * 0.7071), var(--shade) calc(var(--cut-bl) * 0.7071), var(--note) 30%) 0 100%;
+        background-size: calc(50% + 1px) calc(50% + 1px);
+        background-repeat: no-repeat;
+
+        /* The adhesive strip, cut to match the top corners. */
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto;
+            height: calc(var(--w) * 0.11);
+            background: linear-gradient(to bottom, rgb(0 0 0 / 0.08), transparent);
+            mask:
+                linear-gradient(135deg, transparent calc(var(--cut-tl) * 0.7071), #000 0),
+                linear-gradient(225deg, transparent calc(var(--cut-tr) * 0.7071), #000 0);
+            mask-composite: intersect;
+            pointer-events: none;
+        }
+
+        /* The flaps: the back of the paper folded over where each cut
+           corner was. The top-right one peels on hover; the link's
+           ::before is borrowed for a fold at any other corner. */
+        &::after,
+        a::before {
+            content: "";
+            position: absolute;
+            filter: drop-shadow(0 0 2px rgb(0 0 0 / 0.25));
+            pointer-events: none;
+        }
+
+        &::after {
+            top: 0;
+            right: 0;
+            width: var(--cut-tr);
+            height: var(--cut-tr);
+            background: linear-gradient(to top right,
+                color-mix(in srgb, var(--note), white 30%) 0,
+                color-mix(in srgb, var(--note), black 6%) 50%,
+                transparent 50%);
+        }
+
+        a::before {
+            --size: calc((var(--f0) + var(--f2) + var(--f3)) * var(--fold));
+            top: calc((var(--f2) + var(--f3)) * (100% - var(--size)));
+            left: calc(var(--f2) * (100% - var(--size)));
+            width: var(--size);
+            height: var(--size);
+            background: linear-gradient(calc(315deg + var(--fold-at) * 90deg),
+                color-mix(in srgb, var(--note), white 30%) 0,
+                color-mix(in srgb, var(--note), black 6%) 50%,
+                transparent 50%);
+        }
+
+        a {
+            display: block;
+            background: none;
+            text-decoration: none;
+            margin-bottom: 0.3em;
+            color: #1b2a44;
+            font-size: 1.65em;
+            font-weight: 800;
+            line-height: 1;
+
+            &::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+            }
+
+            &:focus-visible {
+                outline: none;
+            }
+        }
+    }
+
+    /* Wide screens: the board shrinks to make room for the trading card. */
+    @media (width > 1200px) {
+        ul {
+            --board: calc(100cqi - 330px - var(--large-space));
+            --kfit: 2;
+        }
+
+        @container about (width >= 940px) { ul { --kfit: 3; } }
+        @container about (width >= 1121px) { ul { --kfit: 4; } }
+        @container about (width >= 1301px) { ul { --kfit: 5; } }
+        @container about (width >= 1481px) { ul { --kfit: 6; } }
+        @container about (width >= 1661px) { ul { --kfit: 7; } }
+        @container about (width >= 1841px) { ul { --kfit: 8; } }
+        @container about (width >= 2022px) { ul { --kfit: 9; } }
+    }
 }
 
 .tcg-outer {
-    float: right;
     position: relative;
     width: min-content;
     cursor: help;
 
     transform: rotate(4deg) translateY(40px);
-    margin-left: var(--large-space);
-    margin-bottom: var(--medium-space);
+    margin: 0 auto var(--large-space);
 
-    @media (width <= 1200px) {
-        float: none;
-        margin-bottom: var(--large-space);
-        margin-left: auto;
-        margin-right: auto;
+    /* Beside the content on wide screens; see .about. */
+    @media (width > 1200px) {
+        grid-area: card;
+        margin: 0;
+        transform: rotate(4deg) translateY(20px);
     }
 
     @media (width <= 800px) {
