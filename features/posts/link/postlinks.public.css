@@ -3,12 +3,24 @@
 }
 
 .post-links {
-    display: flex;
+    display: grid;
     gap: var(--medium-space);
-    flex-direction: row;
+    grid-template-columns: 1fr;
 
-    @container (width < 1000px) {
-        flex-direction: column;
+    @container (width >= 640px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @container (width >= 1280px) {
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
+
+    /* Four links would wrap 3+1 between the three and four column widths;
+       split them 2+2 instead. */
+    &:has(> :nth-child(4):last-child) {
+        @container (1280px <= width < 1720px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 }
 
