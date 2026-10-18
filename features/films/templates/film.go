@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"time"
 
 	parenttemplates "chameth.com/chameth.com/templates"
 )
@@ -39,10 +40,13 @@ type FilmData struct {
 	AverageRating int
 	PosterPath    string
 	FilmLists     []int
+	Ranking       int
+	RankingTotal  int
+	RankingPath   string
 }
 
 type FilmReviewData struct {
-	WatchedDate string
+	WatchedDate time.Time
 	Rating      int
 	IsRewatch   bool
 	HasSpoilers bool

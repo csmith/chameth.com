@@ -120,160 +120,201 @@ ol.watched-films {
 }
 
 .film-page {
-    display: grid;
+    --film-poster-width: 260px;
 
-    @media (width >= 1200px) {
-        grid-template-areas: "header sidebar" "review sidebar" "review -";
-        grid-template-columns: calc(var(--content-width) - 300px) 300px;
+    /* Wide enough for the poster on one side and an equal gap on the other,
+       so the hero's text lines up with the reviews below. */
+    .film-hero {
+        max-width: calc(var(--prose-width) + 2 * (var(--film-poster-width) + 2 * var(--medium-space)) + 2px);
+        margin-inline: auto;
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--background-alt-colour);
+        box-shadow: 3px 3px 8px black;
+        background: var(--background-alt-colour);
+    }
+
+    /* The poster again, blurred out to tint the hero. */
+    .film-backdrop {
+        position: absolute;
+        inset: -60px;
+        width: calc(100% + 120px);
+        height: calc(100% + 120px);
+        object-fit: cover;
+        filter: blur(40px) brightness(0.35) saturate(1.3);
+        z-index: -1;
+    }
+
+    .film-details {
+        display: grid;
+        /* The text column is centred to line up with the reviews; the poster
+           shrinks a little to make room before it pushes the text off centre. */
+        grid-template-columns: minmax(180px, 1fr) minmax(0, var(--prose-width)) minmax(0, 1fr);
         grid-template-rows: auto auto 1fr;
         column-gap: var(--medium-space);
+        align-items: start;
+        padding: var(--medium-space);
 
-        aside {
-            rotate: 1.5deg;
+        & > :not(.film-poster) {
+            grid-column: 2;
         }
 
-        .film-review-content {
-            padding-right: calc(
-                300px + var(--medium-space) + var(--content-margin)
-            );
+        @media (width <= 700px) {
+            grid-template-columns: 110px 1fr;
+            grid-template-rows: auto 1fr auto;
+            column-gap: var(--smedium-space);
+            padding: var(--smedium-space);
 
-            &::after {
-                right: calc(
-                    300px + var(--medium-space) + var(--content-margin)
-                );
+            h2 {
+                font-size: var(--font-size-xxlarge);
+            }
+
+            .film-overview {
+                grid-column: 1 / -1;
+                margin-top: var(--smedium-space);
             }
         }
     }
 
-    @media (width <= 1200px) {
-        grid-template-areas: "header" "review" "sidebar";
-        grid-template-columns: 1fr;
+    .film-poster {
+        grid-row: 1 / -1;
+        justify-self: end;
+        width: 100%;
+        max-width: var(--film-poster-width);
+        border-radius: 4px;
+        box-shadow: 4px 4px 12px rgb(0 0 0 / 0.7);
 
-        aside {
-            margin-top: var(--medium-space);
+        @media (width <= 700px) {
+            grid-row: 1 / 3;
         }
     }
 
-    & > header {
-        grid-area: header;
+    .film-breadcrumb {
+        margin: 0;
+        font-family: "Berkeley Mono", monospace;
+        font-size: var(--font-size-small);
+        color: var(--text-alt-colour);
     }
 
-    & > div {
-        grid-area: review;
-    }
+    h2 {
+        margin: var(--small-space) 0 var(--smedium-space);
+        font-size: var(--font-size-giant);
+        text-shadow: 2px 2px 6px rgb(0 0 0 / 0.7);
 
-    & > aside {
-        grid-area: sidebar;
-    }
-
-    .film-page-review {
-        position: relative;
-
-        .film-review-content p {
-            font-family: "Chris Hand", sans-serif;
-            font-size: var(--font-size-xlarge);
-        }
-
-        & > h3 {
-            margin-bottom: 0;
-        }
-
-        & > p {
-            margin-top: 0;
-
-            span:not(:first-child) {
-                margin-left: var(--smedium-space);
-            }
+        .film-year {
+            font-size: 0.5em;
+            color: var(--text-alt-colour);
+            text-shadow: none;
+            margin-left: var(--small-space);
         }
     }
 
-    aside {
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-        max-width: 300px;
-        overflow: hidden;
-        gap: var(--smedium-space);
-        padding-bottom: var(--medium-space);
+    .film-overview {
+        color: var(--text-highlight-colour);
+        text-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
 
-        img {
-            width: 100%;
-        }
-
-        p,
-        a {
-            margin: 0 var(--small-space);
-            font-size: var(--font-size-small);
-            text-align: center;
-            background: none;
-
-            &.release-date {
-                color: var(--text-alt-colour);
-            }
-        }
-    }
-}
-
-[data-film-id="37735"] {
-    h2::before {
-        content: "A.";
-        color: red;
-    }
-
-    h3::before {
-        content: "AA.";
-        color: red;
-    }
-}
-
-[data-film-id="44214"] {
-    .star-rating img {
-        filter: invert(1) grayscale(1) contrast(400%);
-    }
-}
-
-[data-film-id="545611"] {
-    blockquote p:last-child::after {
-        content: " 🥯";
-        font-size: var(--font-size-large);
-        filter: grayscale(1) invert(1);
-    }
-}
-
-[data-film-id="603"] {
-    blockquote {
-        background-color: black;
-        color: lawngreen;
         p {
-            font-family: "Berkeley Mono", monospace !important;
+            margin: 0 0 var(--small-space);
+        }
+    }
 
-            &:last-child::after {
-                content: " █";
-                animation: terminal-blink 1s step-end infinite;
+    .film-summary {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--small-space) var(--medium-space);
+        padding: var(--smedium-space) var(--medium-space);
+        background: rgb(0 0 0 / 0.35);
+        border-top: 1px solid rgb(255 255 255 / 0.08);
+        font-family: "Berkeley Mono", monospace;
+        font-size: var(--font-size-small);
+
+        @media (width <= 700px) {
+            padding: var(--smedium-space);
+        }
+
+        p {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--small-space) var(--medium-space);
+            margin: 0;
+        }
+
+        .star-rating img {
+            width: 20px;
+            height: 20px;
+            vertical-align: -4px;
+        }
+    }
+
+    .film-links {
+        margin-left: auto;
+    }
+
+    /* Reviews read like a blog post: centred, at prose width. */
+    .film-reviews {
+        max-width: var(--prose-width);
+        margin: var(--large-space) auto 0;
+
+        & > :first-child h3 {
+            margin-top: 0;
+        }
+    }
+
+    .h-review {
+        & + .h-review {
+            margin-top: var(--large-space);
+        }
+
+        h3 {
+            margin-bottom: var(--smedium-space);
+        }
+
+        .e-content {
+            p:first-child {
+                margin-top: 0;
+            }
+
+            p:last-child {
+                margin-bottom: 0;
             }
         }
+    }
 
-        &::before,
-        &::after {
-            color: lawngreen;
+    .film-review-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--small-space) var(--smedium-space);
+        margin: 0 0 var(--smedium-space);
+
+        .star-rating img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .film-rewatch,
+        .film-spoilers {
+            font-family: "Berkeley Mono", monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            line-height: 1.8;
+            color: var(--text-highlight-colour);
         }
     }
-}
 
-[data-film-id="7326"] {
-    & + hr {
-        background: repeating-linear-gradient(
-            -45deg,
-            white 0,
-            white 10px,
-            #f15c22 10px,
-            #f15c22 20px
-        );
+    .film-no-review {
+        margin: 0;
+        color: var(--text-alt-colour);
+        font-style: italic;
     }
-}
 
-@keyframes terminal-blink {
-    50% {
-        opacity: 0;
+    .film-lists,
+    .syndications {
+        margin-top: var(--large-space);
     }
 }

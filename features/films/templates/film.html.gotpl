@@ -1,28 +1,60 @@
  {{/* gotype: chameth.com/chameth.com/features/films/templates.FilmData*/}}
 {{define "content"}}
-    <article class="film-page" data-film-id="{{ .TMDBID }}">
-        <header>
-            <h2><a href="/films/">Films</a> &raquo; {{.FilmTitle}}</h2>
-            <p class="meta">Watched {{.TimesWatched}} time{{if ne .TimesWatched 1}}s{{end}}{{if .AverageRating}}, average rating {{call .Component "rating" .AverageRating}}{{end}}</p>
+    <article class="film-page">
+        <header class="film-hero">
+            {{if .PosterPath}}
+            <img src="{{.PosterPath}}" alt="" class="film-backdrop">
+            {{end}}
+            <div class="film-details">
+                {{if .PosterPath}}
+                <img src="{{.PosterPath}}" alt="{{.FilmTitle}} poster" class="film-poster">
+                {{end}}
+                <p class="film-breadcrumb"><a href="/films/">Films</a> &raquo;</p>
+                <h2 class="plain-header">{{.FilmTitle}}{{if .Year}} <time class="film-year" datetime="{{.Year}}">{{.Year}}</time>{{end}}</h2>
+                <div class="film-overview">{{.Overview}}</div>
+            </div>
+            <div class="film-summary">
+                {{if .TimesWatched}}
+                <p>
+                    <span>Logged: {{if eq .TimesWatched 1}}once{{else if eq .TimesWatched 2}}twice{{else}}{{.TimesWatched}} times{{end}}.</span>
+                    <span>{{if gt .TimesWatched 1}}Average rating{{else}}Rating{{end}}: {{call .Component "rating" .AverageRating}}.</span>
+                    {{if .Ranking}}<span>Ranking: <a href="{{.RankingPath}}">{{.Ranking}}/{{.RankingTotal}}</a>.</span>{{end}}
+                </p>
+                {{end}}
+                {{if .TMDBID}}
+                <p class="film-links">
+                    <a href="https://www.themoviedb.org/movie/{{.TMDBID}}">TMDB</a>
+                    <a href="https://letterboxd.com/tmdb/{{.TMDBID}}">Letterboxd</a>
+                </p>
+                {{end}}
+            </div>
         </header>
 
-        <div>
+        <div class="film-reviews">
             {{range .Reviews}}
-            <section class="h-review film-page-review">
+            <section class="h-review">
+                <h3>Watched on <time class="dt-published" datetime="{{.WatchedDate.Format "2006-01-02"}}">{{.WatchedDate.Format "2 Jan 2006"}}</time></h3>
+                {{if or (gt $.TimesWatched 1) .IsRewatch .HasSpoilers}}
                 <p class="film-review-meta">
-                    <span>Watched on <time class="dt-published" datetime="{{.WatchedDate}}">{{.WatchedDate}}</time>.</span>
-                    <span>Rating: <data class="p-rating" value="{{.Rating}}">{{call $.Component "rating" .Rating}}</data></span>
+                    {{if gt $.TimesWatched 1}}<data class="p-rating" value="{{.Rating}}">{{call $.Component "rating" .Rating}}</data>{{end}}
                     {{if .IsRewatch}}<span class="film-rewatch">Rewatch</span>{{end}}
                     {{if .HasSpoilers}}<span class="film-spoilers">Spoilers</span>{{end}}
                 </p>
-                <blockquote class="e-content film-review-content">
+                {{else}}
+                <data class="p-rating" value="{{.Rating}}" hidden></data>
+                {{end}}
+                {{if .Content}}
+                <div class="e-content">
                     {{.Content}}
-                </blockquote>
+                </div>
+                {{else}}
+                <p class="film-no-review">No review.</p>
+                {{end}}
             </section>
             {{end}}
             {{if .FilmLists}}
             <section class="film-lists">
-                <h3>Appears in these lists</h3>
+                <h3>Listed in</h3>
                 {{range .FilmLists}}
                     {{call $.Component "filmlist" .}}
                 {{end}}
@@ -30,22 +62,6 @@
             {{end}}
             {{call .Component "syndication"}}
         </div>
-
-        <aside class="film-sidebar raised-box">
-            {{if .PosterPath}}
-            <img src="{{.PosterPath}}" alt="{{.FilmTitle}} poster" class="film-poster">
-            {{end}}
-            {{if .Year}}
-            <p class="release-date">Released in <time datetime="{{ .Year }}">{{ .Year }}</time></p>
-            {{end}}
-            {{if .Overview}}
-            {{.Overview}}
-            {{end}}
-            {{if .TMDBID}}
-            <a href="https://www.themoviedb.org/movie/{{.TMDBID}}">View on TMDB</a><br>
-            <a href="https://letterboxd.com/tmdb/{{.TMDBID}}">View on Letterboxd</a>
-            {{end}}
-        </aside>
     </article>
 
     {{call .Component "nod"}}

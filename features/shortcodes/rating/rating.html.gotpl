@@ -1,4 +1,4 @@
-{{/* gotype: chameth.com/chameth.com/features/shortcodes/rating.Data*/}}
+{{/* gotype: chameth.com/chameth.com/features/shortcodes/rating.Data*/ -}}
 <span class="star-rating">
 {{- range .FilledStars -}}
   <img src="{{if ge . 5}}/star-flat.png{{else}}/star.png{{end}}" width="28" height="28" alt="Full star" class="rot-{{mod . 3}}" />
@@ -9,4 +9,4 @@
 {{- range .EmptyStars -}}
   <img src="/star-empty.png" width="28" height="28" alt="Empty star" />
 {{- end -}}
-</span>
+</span>{{/* no trailing whitespace */ -}}

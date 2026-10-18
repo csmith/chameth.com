@@ -847,6 +847,22 @@ func GetNextPosition(ctx context.Context, listID int) (int, error) {
 	)
 }
 
+func GetFilmListPosition(ctx context.Context, listPath string, filmID int) (FilmListPosition, error) {
+	return db.Get[FilmListPosition](
+		ctx,
+		`
+		SELECT
+			fle.position,
+			(SELECT COUNT(*) FROM film_list_entries WHERE film_list_id = fl.id) AS total
+		FROM film_list_entries fle
+		JOIN film_lists fl ON fl.id = fle.film_list_id
+		WHERE fl.published = true AND fl.path = $1 AND fle.film_id = $2
+	`,
+		listPath,
+		filmID,
+	)
+}
+
 func GetFilmListsContainingFilm(ctx context.Context, filmID int) ([]FilmList, error) {
 	return db.Select[FilmList](
 		ctx,

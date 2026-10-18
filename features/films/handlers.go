@@ -1,7 +1,9 @@
 package films
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"math"
@@ -15,6 +17,9 @@ import (
 	"chameth.com/chameth.com/features/shortcodes/rating"
 	maintemplates "chameth.com/chameth.com/templates"
 )
+
+// RankingListPath is the film list that ranks every watched film.
+const RankingListPath = "/films/lists/ranking/"
 
 func FilmPage(w http.ResponseWriter, r *http.Request) {
 	film, err := GetFilmWithPosterByPath(r.Context(), r.URL.Path)
@@ -55,7 +60,7 @@ func FilmPage(w http.ResponseWriter, r *http.Request) {
 		reviewData = append(
 			reviewData,
 			templates.FilmReviewData{
-				WatchedDate: review.WatchedDate.Format("2006-01-02"),
+				WatchedDate: review.WatchedDate,
 				Rating:      review.Rating,
 				IsRewatch:   review.IsRewatch,
 				HasSpoilers: review.HasSpoilers,
@@ -96,6 +101,11 @@ func FilmPage(w http.ResponseWriter, r *http.Request) {
 		slog.Error("Failed to get film lists containing film", "film_id", film.ID, "error", err)
 	}
 
+	ranking, err := GetFilmListPosition(r.Context(), RankingListPath, film.ID)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		slog.Error("Failed to get film ranking", "film_id", film.ID, "error", err)
+	}
+
 	var filmListIDs []int
 	for _, list := range lists {
 		filmListIDs = append(filmListIDs, list.ID)
@@ -115,6 +125,9 @@ func FilmPage(w http.ResponseWriter, r *http.Request) {
 			AverageRating: averageRating,
 			PosterPath:    posterPath,
 			FilmLists:     filmListIDs,
+			Ranking:       ranking.Position,
+			RankingTotal:  ranking.Total,
+			RankingPath:   RankingListPath,
 			PageData: content.CreatePageData(
 				r.Context(),
 				fmt.Sprintf("%s (%s)", film.Title, year),

@@ -87,6 +87,11 @@ type FilmListEntry struct {
 	Position   int `db:"position"`
 }
 
+type FilmListPosition struct {
+	Position int `db:"position"`
+	Total    int `db:"total"`
+}
+
 type FilmListEntryWithFilm struct {
 	FilmListEntry
 	Film Film `db:"film"`

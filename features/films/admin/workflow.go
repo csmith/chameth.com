@@ -272,9 +272,9 @@ func FilmReviewWorkflowStep3Handler() func(http.ResponseWriter, *http.Request) {
 			return
 		}
 
-		syndicationResults, err := syndications.GetSyndicationsByPath(r.Context(), "/films/lists/ranking/", "anchor")
+		syndicationResults, err := syndications.GetSyndicationsByPath(r.Context(), films.RankingListPath, "anchor")
 		if err != nil {
-			slog.Warn("Failed to get syndications for ranking list", "path", "/films/lists/ranking/", "error", err)
+			slog.Warn("Failed to get syndications for ranking list", "path", films.RankingListPath, "error", err)
 		}
 		var letterboxdURL string
 		if len(syndicationResults) > 0 {
