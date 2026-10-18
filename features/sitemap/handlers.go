@@ -48,27 +48,27 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 		)
 	}
 
-	filmReviews, err := films.GetAllPublishedFilmReviewsWithFilmAndPosters(ctx)
+	sitemapFilms, err := films.SitemapFilms(ctx)
 	if err != nil {
-		return SiteMapData{}, fmt.Errorf("failed to get all film reviews: %w", err)
+		return SiteMapData{}, fmt.Errorf("failed to get all films: %w", err)
 	}
 
 	var filmDetails []templates.ContentDetails
-	for _, review := range filmReviews {
+	for _, film := range sitemapFilms {
 		filmDetails = append(
 			filmDetails,
 			templates.ContentDetails{
-				Title: review.Film.Title,
-				Path:  review.Film.Path,
+				Title: film.Title,
+				Path:  film.Path,
 				Date: templates.ContentDate{
-					Iso:      review.FilmReview.WatchedDate.Format("2006-01-02"),
-					Friendly: review.FilmReview.WatchedDate.Format("Jan 2, 2006"),
+					Iso:      film.LastWatched.Format("2006-01-02"),
+					Friendly: film.LastWatched.Format("Jan 2, 2006"),
 				},
 			},
 		)
 	}
 
-	filmLists, err := films.GetAllFilmLists(ctx)
+	filmLists, err := films.SitemapLists(ctx)
 	if err != nil {
 		return SiteMapData{}, fmt.Errorf("failed to get all film lists: %w", err)
 	}

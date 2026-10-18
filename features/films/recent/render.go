@@ -3,10 +3,8 @@ package recent
 import (
 	"bytes"
 	"embed"
-	"errors"
 	"fmt"
 	"html/template"
-	"strconv"
 
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/shortcodes"
@@ -18,38 +16,19 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("recentfilms.html.gotpl").ParseFS(templates, "recentfilms.html.gotpl"))
 
-func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
-	if len(args) < 1 {
-		return "", errors.New("recentfilms requires at least 1 argument (count)")
-	}
-
-	count, err := strconv.Atoi(args[0])
-	if err != nil {
-		return "", fmt.Errorf("invalid recent films count: %s", args[0])
-	}
-
-	reviews, err := films.GetRecentPublishedFilmReviewsWithFilmAndPosters(ctx.Context, count)
-	if err != nil {
-		return "", fmt.Errorf("failed to get recent film reviews: %w", err)
-	}
-
-	filmList := make([]Film, len(reviews))
-	for i, review := range reviews {
-		stars, err := rating.Render(review.Rating)
+func render(_ []string, entries []films.ReviewEntry, _ *shortcodes.Context) (string, error) {
+	filmList := make([]Film, len(entries))
+	for i, entry := range entries {
+		stars, err := rating.Render(entry.Rating)
 		if err != nil {
 			return "", fmt.Errorf("failed to render film rating: %w", err)
 		}
 
-		posterPath := ""
-		if review.Poster.Path != "" {
-			posterPath = review.Poster.Path
-		}
-
 		filmList[i] = Film{
-			Title:      review.Title,
-			PosterPath: posterPath,
-			Path:       review.Path,
-			Date:       review.WatchedDate.Format("2006-01-02"),
+			Title:      entry.FilmTitle,
+			PosterPath: entry.PosterPath,
+			Path:       entry.FilmPath,
+			Date:       entry.WatchedDate,
 			Stars:      template.HTML(stars),
 		}
 	}

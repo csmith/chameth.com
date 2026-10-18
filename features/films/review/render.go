@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
-	"strconv"
 
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/features/films"
@@ -19,41 +18,34 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("filmreview.html.gotpl").ParseFS(templates, "filmreview.html.gotpl"))
 
-func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
-	if len(args) < 1 {
-		return "", errors.New("filmreview requires at least 1 argument (id)")
+func render(_ []string, entry *films.ReviewEntry, _ *shortcodes.Context) (string, error) {
+	if entry == nil {
+		return "", errors.New("film review not found")
 	}
+	return RenderEntry(*entry)
+}
 
-	id, err := strconv.Atoi(args[0])
-	if err != nil {
-		return "", fmt.Errorf("invalid film review ID: %s", args[0])
-	}
-
-	data, err := films.GetFilmReviewWithFilmAndPoster(ctx.Context, id)
-	if err != nil {
-		return "", fmt.Errorf("failed to get film review: %w", err)
-	}
-
-	md, err := markdown.Render(data.FilmReview.ReviewText)
+func RenderEntry(entry films.ReviewEntry) (string, error) {
+	md, err := markdown.Render(entry.Text)
 	if err != nil {
 		return "", fmt.Errorf("failed to render film review markdown: %w", err)
 	}
 
-	stars, err := rating.Render(data.FilmReview.Rating)
+	stars, err := rating.Render(entry.Rating)
 	if err != nil {
 		return "", fmt.Errorf("failed to render film review stars: %w", err)
 	}
 
 	return Render(
 		Data{
-			Name:       data.Film.Title,
-			Path:       data.Film.Path,
-			PosterPath: data.Poster.Path,
-			Rating:     data.FilmReview.Rating,
+			Name:       entry.FilmTitle,
+			Path:       entry.FilmPath,
+			PosterPath: entry.PosterPath,
+			Rating:     entry.Rating,
 			Stars:      template.HTML(stars),
-			Date:       data.FilmReview.WatchedDate.Format("2006-01-02"),
-			Rewatch:    data.FilmReview.IsRewatch,
-			Spoiler:    data.FilmReview.HasSpoilers,
+			Date:       entry.WatchedDate,
+			Rewatch:    entry.IsRewatch,
+			Spoiler:    entry.HasSpoilers,
 			Review:     md,
 		},
 	)

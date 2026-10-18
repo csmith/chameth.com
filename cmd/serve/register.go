@@ -14,7 +14,6 @@ import (
 	featuresContactForm "chameth.com/chameth.com/features/contact/form"
 	featuresFeeds "chameth.com/chameth.com/features/feeds"
 	featuresFilms "chameth.com/chameth.com/features/films"
-	featuresFilmsAdmin "chameth.com/chameth.com/features/films/admin"
 	featuresFilmsList "chameth.com/chameth.com/features/films/list"
 	featuresFilmsRatingdistribution "chameth.com/chameth.com/features/films/ratingdistribution"
 	featuresFilmsRecent "chameth.com/chameth.com/features/films/recent"
@@ -94,13 +93,14 @@ func (s *site) registerShortcodes() {
 	featuresBoardgamesList.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresBoardgamesPlayed.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresContactForm.RegisterShortcodes(s.Shortcodes)
+	featuresFilms.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresFilmsList.RegisterShortcodes(s.Shortcodes)
-	featuresFilmsRatingdistribution.RegisterShortcodes(s.Shortcodes)
-	featuresFilmsRecent.RegisterShortcodes(s.Shortcodes)
-	featuresFilmsReview.RegisterShortcodes(s.Shortcodes)
-	featuresFilmsReviews.RegisterShortcodes(s.Shortcodes)
+	featuresFilmsRatingdistribution.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresFilmsRecent.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresFilmsReview.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresFilmsReviews.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresFilmsSearch.RegisterShortcodes(s.Shortcodes)
-	featuresFilmsWatched.RegisterShortcodes(s.Shortcodes)
+	featuresFilmsWatched.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresMediaAudio.RegisterShortcodes(s.Shortcodes)
 	featuresMediaFigure.RegisterShortcodes(s.Shortcodes)
 	featuresMediaLabelledfigure.RegisterShortcodes(s.Shortcodes)
@@ -138,9 +138,8 @@ func (s *site) registerRoutes() {
 	assets.RegisterRoutes(s.Routes, s.Assets)
 	featuresAdmin.RegisterRoutes(s.Routes, s.Assets)
 	featuresContact.RegisterRoutes(s.Routes, s.Temporal)
-	featuresFeeds.RegisterRoutes(s.Routes)
+	featuresFeeds.RegisterRoutes(s.Routes, s.Shortcodes)
 	featuresFilms.RegisterRoutes(s.Routes)
-	featuresFilmsAdmin.RegisterRoutes(s.Routes)
 	featuresGoimportsAdmin.RegisterRoutes(s.Routes)
 	featuresMediaAdmin.RegisterRoutes(s.Routes)
 	featuresNod.RegisterRoutes(s.Routes)
@@ -166,6 +165,7 @@ func (s *site) launchGoroutines() {
 	go externalMaxmind.RegisterGoroutine(s.Context)()
 	go featuresAdmin.RegisterGoroutine(s.Tailscale, s.Routes)()
 	go featuresContact.RegisterGoroutine(s.Context, s.Temporal)()
+	go featuresFilms.RegisterGoroutine(s.Context, s.Shortcodes, s.Tailscale)()
 	go featuresMetrics.RegisterGoroutine(s.Context)()
 	go featuresPosts.RegisterGoroutine(s.Context)()
 	go featuresShortcodes.RegisterGoroutine(s.Shortcodes, s.Context)()
@@ -173,7 +173,7 @@ func (s *site) launchGoroutines() {
 }
 
 func (s *site) registerContentTypes() {
-	featuresFilms.RegisterContentTypes(s.Routes)
+	featuresFilms.RegisterContentTypes(s.Routes, s.Shortcodes)
 	featuresGoimports.RegisterContentTypes(s.Routes)
 	featuresMedia.RegisterContentTypes(s.Routes)
 	featuresPages.RegisterContentTypes(s.Routes)

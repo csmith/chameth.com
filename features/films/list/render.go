@@ -33,44 +33,44 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 }
 
 func Render(ctx context.Context, id int) (string, error) {
-	list, count, entries, err := films.GetFilmListWithCount(ctx, id)
+	card, err := films.GetFilmListCard(ctx, id, 5)
 	if err != nil {
 		return "", fmt.Errorf("failed to get film list: %w", err)
 	}
 
-	filmList := make([]Film, len(entries))
-	for i, entry := range entries {
+	filmList := make([]Film, len(card.Films))
+	for i, film := range card.Films {
 		year := ""
-		if entry.Film.Year != nil {
-			year = strconv.Itoa(*entry.Film.Year)
+		if film.Year != nil {
+			year = strconv.Itoa(*film.Year)
 		}
 
 		posterPath := ""
-		if entry.Poster.Path != "" {
-			posterPath = entry.Poster.Path
+		if film.PosterPath != nil {
+			posterPath = *film.PosterPath
 		}
 
 		filmList[i] = Film{
-			ID:         entry.Film.ID,
-			Title:      entry.Film.Title,
+			ID:         film.ID,
+			Title:      film.Title,
 			Year:       year,
 			PosterPath: posterPath,
-			Path:       entry.Film.Path,
+			Path:       film.Path,
 		}
 	}
 
-	description, err := markdown.Render(list.Description)
+	description, err := markdown.Render(card.Description)
 	if err != nil {
 		return "", fmt.Errorf("failed to render film list description: %w", err)
 	}
 
 	return renderTemplate(
 		Data{
-			ID:          list.ID,
-			Title:       list.Title,
+			ID:          card.ID,
+			Title:       card.Title,
 			Description: description,
-			Path:        list.Path,
-			Count:       count,
+			Path:        card.Path,
+			Count:       card.Count,
 			Films:       filmList,
 		},
 	)

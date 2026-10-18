@@ -3,10 +3,8 @@ package watched
 import (
 	"bytes"
 	"embed"
-	"errors"
 	"fmt"
 	"html/template"
-	"time"
 
 	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/shortcodes"
@@ -18,43 +16,19 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("watchedfilms.html.gotpl").ParseFS(templates, "watchedfilms.html.gotpl"))
 
-func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
-	if len(args) < 2 {
-		return "", errors.New("watchedfilms requires 2 arguments (start_date, end_date) in YYYY-MM-DD format")
-	}
-
-	startDate, err := time.Parse("2006-01-02", args[0])
-	if err != nil {
-		return "", fmt.Errorf("invalid start date: %s (expected YYYY-MM-DD)", args[0])
-	}
-
-	endDate, err := time.Parse("2006-01-02", args[1])
-	if err != nil {
-		return "", fmt.Errorf("invalid end date: %s (expected YYYY-MM-DD)", args[1])
-	}
-
-	reviews, err := films.GetWatchedFilmsByDateRange(ctx.Context, startDate, endDate)
-	if err != nil {
-		return "", fmt.Errorf("failed to get film reviews by date range: %w", err)
-	}
-
-	filmList := make([]Film, len(reviews))
-	for i, review := range reviews {
-		stars, err := rating.Render(review.Rating)
+func render(_ []string, entries []films.ReviewEntry, _ *shortcodes.Context) (string, error) {
+	filmList := make([]Film, len(entries))
+	for i, entry := range entries {
+		stars, err := rating.Render(entry.Rating)
 		if err != nil {
 			return "", fmt.Errorf("failed to render film rating: %w", err)
 		}
 
-		posterPath := ""
-		if review.Poster.Path != "" {
-			posterPath = review.Poster.Path
-		}
-
 		filmList[i] = Film{
-			Title:      review.Title,
-			PosterPath: posterPath,
-			Path:       review.Path,
-			Date:       review.WatchedDate.Format("2006-01-02"),
+			Title:      entry.FilmTitle,
+			PosterPath: entry.PosterPath,
+			Path:       entry.FilmPath,
+			Date:       entry.WatchedDate,
 			Stars:      template.HTML(stars),
 		}
 	}

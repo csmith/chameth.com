@@ -15,7 +15,6 @@ import (
 	"strconv"
 	"strings"
 
-	"chameth.com/chameth.com/features/films"
 	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/media/admin/templates"
 	"chameth.com/chameth.com/features/pages"
@@ -377,13 +376,6 @@ func entityPathFor(w http.ResponseWriter, r *http.Request, entityType string, en
 			return "", false
 		}
 		entityPath = page.Path
-	case "film":
-		film, err := films.GetFilmByID(r.Context(), entityID)
-		if err != nil {
-			http.Error(w, "Entity not found", http.StatusNotFound)
-			return "", false
-		}
-		entityPath = fmt.Sprintf("/film-%d/", film.ID)
 	case "videogame":
 		game, err := videogames.GetVideoGameByID(r.Context(), entityID)
 		if err != nil {

@@ -17,12 +17,7 @@ var templates embed.FS
 
 var tmpl = template.Must(template.New("distribution.html.gotpl").ParseFS(templates, "distribution.html.gotpl"))
 
-func RenderFromText(_ []string, ctx *shortcodes.Context) (string, error) {
-	distribution, err := films.GetRatingDistribution(ctx.Context)
-	if err != nil {
-		return "", fmt.Errorf("failed to get film rating distribution: %w", err)
-	}
-
+func render(_ []string, distribution []films.RatingCount, _ *shortcodes.Context) (string, error) {
 	countMap := make(map[int]int)
 	maxCount := 0
 	for _, d := range distribution {

@@ -71,6 +71,13 @@ If the data shape or refresh semantics change, bump it so existing rows are
 ignored. Rows for old/unregistered `(name, version)` pairs are intentionally
 left in place.
 
+Go code (page handlers, feeds) can read the same cache with
+`shortcodes.CachedData[T](mgr, ctx, name, args)`, using `T` as registered.
+Data that isn't needed as a shortcode can be registered with
+`mgr.RegisterCachedData`. When a background sync knows a key has changed
+upstream, `mgr.RefreshData(ctx, name, args)` retrieves it immediately instead
+of waiting for its scheduled refresh.
+
 ### CSS
 
 Global frontend styles are in `assets/stylesheet`. CSS must NEVER be

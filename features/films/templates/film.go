@@ -43,6 +43,7 @@ type FilmData struct {
 	Ranking       int
 	RankingTotal  int
 	RankingPath   string
+	Syndications  template.HTML
 }
 
 type FilmReviewData struct {
@@ -55,9 +56,10 @@ type FilmReviewData struct {
 
 type FilmListData struct {
 	parenttemplates.PageData
-	ListTitle   string
-	Description template.HTML
-	Entries     []FilmListItem
+	ListTitle    string
+	Description  template.HTML
+	Entries      []FilmListItem
+	Syndications template.HTML
 }
 
 type FilmListItem struct {

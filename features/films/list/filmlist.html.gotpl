@@ -1,7 +1,7 @@
 <a href="{{.Path}}" class="film-list raised-box plain-link" data-title="Film list">
   <h3 class="plain-header">{{.Title}}</h3>
   <div class="poster-stack">
-    {{range .Films}}<img src="{{.PosterPath}}" alt="Poster of {{.Title}}" />{{end}}
+    {{range .Films}}{{if .PosterPath}}<img src="{{.PosterPath}}" alt="Poster of {{.Title}}" />{{end}}{{end}}
   </div>
   <div class="description">{{.Description}}</div>
   <p class="count">{{.Count}} film{{if ne .Count 1}}s{{end}}</p>

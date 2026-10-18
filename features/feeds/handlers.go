@@ -10,10 +10,12 @@ import (
 	"strings"
 
 	"chameth.com/chameth.com/content"
-	"chameth.com/chameth.com/features/films"
+	"chameth.com/chameth.com/content/markdown"
+	"chameth.com/chameth.com/features/films/recent"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/poems"
 	"chameth.com/chameth.com/features/posts"
+	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/snippets"
 	"chameth.com/chameth.com/templates"
 )
@@ -143,8 +145,10 @@ func handleSnippets(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleFilmReviews(w http.ResponseWriter, r *http.Request) {
-	renderFilmReviewsFeed(w, r, "Chameth.com - film reviews", 5, templates.SiteURL()+"/films/reviews/feed.xml")
+func handleFilmReviews(mgr *shortcodes.Manager) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		renderFilmReviewsFeed(w, r, mgr, "Chameth.com - film reviews", 5, templates.SiteURL()+"/films/reviews/feed.xml")
+	}
 }
 
 func renderPostsFeed(w http.ResponseWriter, r *http.Request, title, format string, limit int, selfLink string) {
@@ -193,11 +197,13 @@ func renderPostsFeed(w http.ResponseWriter, r *http.Request, title, format strin
 	}
 }
 
-func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string, limit int, selfLink string) {
+func renderFilmReviewsFeed(
+	w http.ResponseWriter, r *http.Request, mgr *shortcodes.Manager, title string, limit int, selfLink string,
+) {
 	slog.Debug("Serving feed", "type", "filmreviews", "useragent", r.UserAgent())
 	metrics.RecordFeedRequest("filmreviews", r.UserAgent())
 
-	reviews, err := films.GetRecentPublishedFilmReviewsWithFilmAndPosters(r.Context(), limit)
+	reviews, err := recent.Reviews(r.Context(), mgr, limit)
 	if err != nil {
 		slog.Error("Failed to get recent film reviews for feed", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -208,24 +214,28 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 	for _, review := range reviews {
 		var content strings.Builder
 		content.WriteString("<p>")
-		fmt.Fprintf(&content, "<strong>Rating:</strong> %d/10", review.FilmReview.Rating)
-		if review.FilmReview.IsRewatch {
+		fmt.Fprintf(&content, "<strong>Rating:</strong> %d/10", review.Rating)
+		if review.IsRewatch {
 			content.WriteString(" (Rewatch)")
 		}
 		content.WriteString("</p>")
 
-		if review.FilmReview.ReviewText != "" {
-			fmt.Fprintf(&content, "<p>%s</p>", review.FilmReview.ReviewText)
+		if review.Text != "" {
+			text, err := markdown.Render(review.Text)
+			if err != nil {
+				slog.Error("Failed to render film review for feed", "review_id", review.ID, "error", err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return
+			}
+			content.WriteString(string(text))
 		}
-
-		reviewURL := templates.SiteURL() + review.Film.Path
 
 		feedItems = append(
 			feedItems,
 			FeedItem{
-				Title:   review.Film.Title,
-				Link:    reviewURL,
-				Updated: review.FilmReview.WatchedDate.Format("2006-01-02T15:04:05Z"),
+				Title:   review.FilmTitle,
+				Link:    templates.SiteURL() + review.FilmPath,
+				Updated: review.WatchedDate + "T00:00:00Z",
 				Content: content.String(),
 			},
 		)
@@ -233,7 +243,7 @@ func renderFilmReviewsFeed(w http.ResponseWriter, r *http.Request, title string,
 
 	var lastUpdated string
 	if len(reviews) > 0 {
-		lastUpdated = reviews[0].FilmReview.WatchedDate.Format("2006-01-02T15:04:05Z")
+		lastUpdated = reviews[0].WatchedDate + "T00:00:00Z"
 	}
 
 	w.Header().Set("Content-Type", "application/xml; charset=utf-8")

@@ -60,7 +60,7 @@
                 {{end}}
             </section>
             {{end}}
-            {{call .Component "syndication"}}
+            {{.Syndications}}
         </div>
     </article>
 

@@ -47,6 +47,16 @@ func Render(ctx context.Context, url string) (string, error) {
 		}
 	}
 
+	return RenderLinks(links)
+}
+
+// RenderLinks renders syndication links that are not stored as syndications,
+// such as those owned by an external service.
+func RenderLinks(links []SyndicationLink) (string, error) {
+	if len(links) == 0 {
+		return "", nil
+	}
+
 	return renderTemplate(
 		Data{
 			Syndications: links,

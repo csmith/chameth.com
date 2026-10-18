@@ -21,12 +21,13 @@ type Result[T any] struct {
 type dataRegistration struct {
 	version  int
 	retrieve func(ctx context.Context, args []string) (dataJSON []byte, refreshAt time.Time, err error)
-	render   func(args []string, dataJSON []byte, ctx *Context) (string, error)
 }
 
 var errFetchInProgress = errors.New("fetch already in progress")
 
 var errNoCachedData = errors.New("no cached data available")
+
+var errUnknownData = errors.New("no data registered with that name")
 
 const (
 	fetchRetryDelay = 5 * time.Minute
@@ -40,7 +41,28 @@ func (m *Manager) RegisterData[T any](
 	retrieve func(context.Context, []string) (Result[T], error),
 	render func([]string, T, *Context) (string, error),
 ) {
-	reg := dataRegistration{
+	m.RegisterCachedData(name, version, retrieve)
+	m.Register(
+		name,
+		func(args []string, ctx *Context) (string, error) {
+			data, err := CachedData[T](m, ctx, name, args)
+			if err != nil {
+				return "", err
+			}
+			return render(args, data, ctx)
+		},
+	)
+}
+
+// RegisterCachedData registers cached retrieved data without a shortcode,
+// for use by Go code via CachedData. It is refreshed in the same way as
+// data registered by RegisterData.
+func (m *Manager) RegisterCachedData[T any](
+	name string,
+	version int,
+	retrieve func(context.Context, []string) (Result[T], error),
+) {
+	m.data[name] = dataRegistration{
 		version: version,
 		retrieve: func(ctx context.Context, args []string) ([]byte, time.Time, error) {
 			retrieved, err := retrieve(ctx, args)
@@ -53,47 +75,60 @@ func (m *Manager) RegisterData[T any](
 			}
 			return dataJSON, retrieved.RefreshAt, nil
 		},
-		render: func(args []string, dataJSON []byte, ctx *Context) (string, error) {
-			var data T
-			if err := json.Unmarshal(dataJSON, &data); err != nil {
-				return "", err
-			}
-			return render(args, data, ctx)
-		},
 	}
-
-	m.data[name] = reg
-	m.Register(
-		name,
-		func(args []string, ctx *Context) (string, error) {
-			return m.renderData(name, reg, args, ctx)
-		},
-	)
 }
 
-func (m *Manager) renderData(name string, reg dataRegistration, args []string, ctx *Context) (string, error) {
+// CachedData returns the cached data registered under name for args, with
+// the same semantics as rendering a data shortcode: only the first ever
+// request for a key retrieves synchronously. T must match the registered type.
+func CachedData[T any](m *Manager, ctx context.Context, name string, args []string) (T, error) {
+	var data T
+	dataJSON, err := m.cachedJSON(ctx, name, args)
+	if err != nil {
+		return data, err
+	}
+	err = json.Unmarshal(dataJSON, &data)
+	return data, err
+}
+
+// RefreshData retrieves fresh data for a key now, rather than waiting for
+// its scheduled refresh. It does nothing if the key is already being fetched.
+func (m *Manager) RefreshData(ctx context.Context, name string, args []string) error {
+	reg, ok := m.data[name]
+	if !ok {
+		return errUnknownData
+	}
+	_, err := m.fetchData(ctx, name, reg, args, hashArgs(args), true)
+	if errors.Is(err, errFetchInProgress) {
+		return nil
+	}
+	return err
+}
+
+func (m *Manager) cachedJSON(ctx context.Context, name string, args []string) ([]byte, error) {
+	reg, ok := m.data[name]
+	if !ok {
+		return nil, errUnknownData
+	}
+
 	argsHash := hashArgs(args)
 
 	entry, err := getShortcodeData(ctx, name, reg.version, argsHash)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return "", err
+		return nil, err
 	}
 	if errors.Is(err, sql.ErrNoRows) {
-		// First ever render of this key: retrieve synchronously so the
-		// shortcode produces content immediately.
-		dataJSON, err := m.fetchData(ctx, name, reg, args, argsHash, false)
-		if err != nil {
-			return "", err
-		}
-		return reg.render(args, dataJSON, ctx)
+		// First ever request for this key: retrieve synchronously so the
+		// caller gets content immediately.
+		return m.fetchData(ctx, name, reg, args, argsHash, false)
 	}
 	if entry.Data == nil {
 		// The last retrieval failed; fail fast rather than re-hitting
 		// the upstream. The refresher retries in the background.
-		return "", errNoCachedData
+		return nil, errNoCachedData
 	}
 
-	return reg.render(args, entry.Data, ctx)
+	return entry.Data, nil
 }
 
 // fetchData retrieves fresh data for a key and stores it. When

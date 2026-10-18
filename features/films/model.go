@@ -2,126 +2,60 @@ package films
 
 import (
 	"time"
-
-	"chameth.com/chameth.com/features/media"
 )
 
-type FilmMetadata struct {
-	ID        int    `db:"id" json:"ID"`
-	TMDBID    *int   `db:"tmdb_id" json:"TMDBID"`
-	Title     string `db:"title" json:"Title"`
-	Year      *int   `db:"year" json:"Year"`
-	Published bool   `db:"published" json:"Published"`
-	Path      string `db:"path" json:"Path"`
-}
-
 type Film struct {
-	FilmMetadata
-	Overview string `db:"overview" json:"Overview"`
-	Runtime  *int   `db:"runtime" json:"Runtime"`
-}
-
-type FilmWithPoster struct {
-	ID         int     `db:"id"`
-	TMDBID     *int    `db:"tmdb_id"`
-	Title      string  `db:"title"`
-	Year       *int    `db:"year"`
-	Overview   string  `db:"overview"`
-	Runtime    *int    `db:"runtime"`
-	Published  bool    `db:"published"`
-	Path       string  `db:"path"`
-	PosterPath *string `db:"poster_path"`
-}
-
-type FilmReview struct {
-	ID          int       `db:"id" json:"ID"`
-	FilmID      int       `db:"film_id" json:"FilmID"`
-	WatchedDate time.Time `db:"watched_date" json:"WatchedDate"`
-	Rating      int       `db:"rating" json:"Rating"`
-	IsRewatch   bool      `db:"is_rewatch" json:"IsRewatch"`
-	HasSpoilers bool      `db:"has_spoilers" json:"HasSpoilers"`
-	ReviewText  string    `db:"review_text" json:"ReviewText"`
-	Published   bool      `db:"published" json:"Published"`
-}
-
-type FilmWithReview struct {
-	Film
-	Review *FilmReview `json:"Review"`
-}
-
-type FilmWithReviewAndPoster struct {
-	FilmWithReview
-	PosterPath    *string
-	PosterMediaID *int
-	ReviewCount   int
-	LastWatched   *string
-}
-
-type FilmReviewWithFilmAndPoster struct {
-	FilmReview `db:"filmreview"`
-	Film       `db:"film"`
-	Poster     media.MediaRelationWithDetails `db:"poster"`
+	ID            int        `db:"id"`
+	Title         string     `db:"title"`
+	Year          *int       `db:"year"`
+	Path          string     `db:"path"`
+	WatchCount    int        `db:"watch_count"`
+	AverageRating *float64   `db:"average_rating"`
+	LastWatched   *time.Time `db:"last_watched"`
+	PosterPath    *string    `db:"poster_path"`
 }
 
 type FilmList struct {
-	ID          int    `db:"id"`
-	Title       string `db:"title"`
-	Description string `db:"description"`
-	Published   bool   `db:"published"`
-	Path        string `db:"path"`
-}
-
-type FilmListWithCount struct {
-	ID          int    `db:"id"`
-	Title       string `db:"title"`
-	Description string `db:"description"`
-	Published   bool   `db:"published"`
-	Path        string `db:"path"`
-	Count       int    `db:"count"`
+	ID            int    `db:"id"`
+	Title         string `db:"title"`
+	Description   string `db:"description"`
+	Path          string `db:"path"`
+	LetterboxdURL string `db:"letterboxd_url"`
+	Ranking       bool   `db:"ranking"`
 }
 
 type FilmListEntry struct {
-	ID         int `db:"id"`
-	FilmListID int `db:"film_list_id"`
-	FilmID     int `db:"film_id"`
-	Position   int `db:"position"`
+	Position int  `db:"position"`
+	Film     Film `db:"film"`
 }
 
-type FilmListPosition struct {
+type FilmListMembership struct {
+	FilmList
 	Position int `db:"position"`
 	Total    int `db:"total"`
 }
 
-type FilmListEntryWithFilm struct {
-	FilmListEntry
-	Film Film `db:"film"`
+type FilmListCard struct {
+	FilmList
+	Count int
+	Films []Film
 }
 
-type FilmListEntryWithDetails struct {
-	FilmListEntryWithFilm
-	Poster        media.MediaRelation `db:"poster"`
-	TimesWatched  int                 `db:"times_watched"`
-	AverageRating *float64            `db:"average_rating"`
-	LastWatched   *time.Time          `db:"last_watched"`
+type filmSyncState struct {
+	ID              int        `db:"id"`
+	Path            string     `db:"path"`
+	LastWatched     *time.Time `db:"last_watched"`
+	PosterUpdatedAt *time.Time `db:"poster_updated_at"`
 }
 
-type FilmListEntryWithPoster struct {
-	ID       int                 `db:"id"`
-	Position int                 `db:"position"`
-	Film     Film                `db:"film"`
-	Poster   media.MediaRelation `db:"poster"`
+type listEntryRow struct {
+	ListID   int `db:"film_list_id"`
+	FilmID   int `db:"film_id"`
+	Position int `db:"position"`
 }
 
-type FilmSearchResult struct {
-	ID            int      `db:"id"`
-	Title         string   `db:"title"`
-	Path          string   `db:"path"`
-	PosterPath    *string  `db:"poster_path"`
-	TimesWatched  int      `db:"times_watched"`
-	AverageRating *float64 `db:"average_rating"`
-}
-
-type FilmRatingDistribution struct {
-	Rating int `db:"rating"`
-	Count  int `db:"count"`
+type posterRelation struct {
+	Path     string `db:"path"`
+	MediaID  int    `db:"media_id"`
+	EntityID int    `db:"entity_id"`
 }
