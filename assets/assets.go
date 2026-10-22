@@ -43,7 +43,6 @@ func RegisterAssets(m *Manager) {
 }
 
 var moods = []moodConfig{
-	{include: "moods/birthday.css", startMonth: time.October, startDay: 22, stopMonth: time.October, stopDay: 22},
 	{include: "moods/christmas.css", startMonth: time.December, startDay: 1, stopMonth: time.December, stopDay: 31},
 	{include: "moods/halloween.css", startMonth: time.October, startDay: 24, stopMonth: time.October, stopDay: 31},
 }
