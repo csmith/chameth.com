@@ -69,8 +69,7 @@ func CreateVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 
 func EditVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
+		id, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Invalid video game ID", http.StatusBadRequest)
 			return
@@ -150,8 +149,7 @@ func EditVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 
 func UpdateVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
+		id, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Invalid video game ID", http.StatusBadRequest)
 			return
@@ -184,8 +182,7 @@ func UpdateVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 
 func DeleteVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
+		id, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Invalid video game ID", http.StatusBadRequest)
 			return
@@ -203,8 +200,7 @@ func DeleteVideoGameHandler() func(http.ResponseWriter, *http.Request) {
 
 func EditVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
+		id, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Invalid review ID", http.StatusBadRequest)
 			return
@@ -252,8 +248,7 @@ func EditVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 
 func CreateVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
+		id, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Invalid video game ID", http.StatusBadRequest)
 			return
@@ -278,8 +273,7 @@ func CreateVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 
 func UpdateVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
+		id, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Invalid review ID", http.StatusBadRequest)
 			return
@@ -291,8 +285,7 @@ func UpdateVideoGameReviewHandler() func(http.ResponseWriter, *http.Request) {
 		}
 
 		playedDate := r.FormValue("played_date")
-		ratingStr := r.FormValue("rating")
-		rating, err := strconv.Atoi(ratingStr)
+		rating, err := strconv.Atoi(r.FormValue("rating"))
 		if err != nil {
 			http.Error(w, "Invalid rating", http.StatusBadRequest)
 			return

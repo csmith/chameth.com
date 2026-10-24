@@ -48,8 +48,7 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 		return http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
 				r, requestId := withRequestID(r)
-				start := time.Now()
-				startRequestAt(requestId, start)
+				startRequestAt(requestId, time.Now())
 
 				writer := &StatsResponseWriter{
 					ResponseWriter: w,
@@ -69,8 +68,7 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 				}()
 
 				path := normalizePath(r.URL.Path)
-				status := writer.statusCode()
-				httpRequestsTotal.WithLabelValues(r.Method, path, status).Inc()
+				httpRequestsTotal.WithLabelValues(r.Method, path, writer.statusCode()).Inc()
 				dbQueriesPerRequest.WithLabelValues(path).Observe(float64(queries))
 
 				go recordRequestMetric(r.URL.Path, requestId, duration, queries)
@@ -210,9 +208,8 @@ func statsHTML(requestID string, duration time.Duration, queries int32) []byte {
 		shortCommit = buildVersion[:7]
 	}
 
-	p := message.NewPrinter(language.English)
 	return []byte(
-		p.Sprintf(
+		message.NewPrinter(language.English).Sprintf(
 			`Request ID <code>%s</code> served by chameth.com <code>%s</code> in %dμs using %d db queries`,
 			requestID,
 			shortCommit,

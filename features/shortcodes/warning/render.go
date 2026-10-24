@@ -21,9 +21,7 @@ func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 		return "", errors.New("warning requires at least 1 argument (content)")
 	}
 
-	content := args[0]
-
-	md, err := markdown.Render(content)
+	md, err := markdown.Render(args[0])
 	if err != nil {
 		return "", fmt.Errorf("failed to render warning markdown: %w", err)
 	}

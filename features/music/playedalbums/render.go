@@ -26,8 +26,12 @@ func render(args []string, albums []Album, _ *shortcodes.Context) (string, error
 		return "", err
 	}
 
-	title := fmt.Sprintf("Top albums · %s – %s", start.Format("2 Jan"), end.Format("2 Jan 2006"))
-	return renderTemplate(Data{Title: title, Albums: albums})
+	return renderTemplate(
+		Data{
+			Title:  fmt.Sprintf("Top albums · %s – %s", start.Format("2 Jan"), end.Format("2 Jan 2006")),
+			Albums: albums,
+		},
+	)
 }
 
 func renderTemplate(data Data) (string, error) {

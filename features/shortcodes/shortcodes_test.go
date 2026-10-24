@@ -76,9 +76,10 @@ func TestSplitArguments(t *testing.T) {
 }
 
 func TestRenderUnknownShortcode(t *testing.T) {
-	mgr := NewManager()
-	input := "prefix {%unknown%} suffix"
-	result := mgr.Render(input, &Context{URL: "/test/url", Context: context.Background()})
+	result := NewManager().Render(
+		"prefix {%unknown%} suffix",
+		&Context{URL: "/test/url", Context: context.Background()},
+	)
 	expected := "prefix " + shortcodesError + " suffix"
 	if result != expected {
 		t.Errorf("Render() = %q, want %q (unknown shortcode should be replaced with error)", result, expected)

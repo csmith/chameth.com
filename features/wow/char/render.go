@@ -136,7 +136,5 @@ func renderTemplate(data Data) (string, error) {
 
 func formatDuration(ms int64) string {
 	totalSeconds := ms / 1000
-	minutes := totalSeconds / 60
-	seconds := totalSeconds % 60
-	return fmt.Sprintf("%d:%02d", minutes, seconds)
+	return fmt.Sprintf("%d:%02d", totalSeconds/60, totalSeconds%60)
 }

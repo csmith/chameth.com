@@ -94,8 +94,12 @@ func GetCharacter(ctx context.Context, client *http.Client, realm, name, at stri
 		query.Set("at", at)
 	}
 
-	path := "/api/wow/characters/" + url.PathEscape(realm) + "/" + url.PathEscape(name)
-	body, _, err := ogreStreamGet(ctx, client, path, query)
+	body, _, err := ogreStreamGet(
+		ctx,
+		client,
+		"/api/wow/characters/"+url.PathEscape(realm)+"/"+url.PathEscape(name),
+		query,
+	)
 	if err != nil {
 		return nil, err
 	}

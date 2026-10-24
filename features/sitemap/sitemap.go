@@ -13,16 +13,15 @@ import (
 var templateFS embed.FS
 
 var siteMapHtmlTemplate = func() *template.Template {
-	t := template.Must(
-		template.
-			New("page.html.gotpl").
-			ParseFS(
-				parenttemplates.FS,
-				"page.html.gotpl",
-			),
-	)
 	return template.Must(
-		t.ParseFS(
+		template.Must(
+			template.
+				New("page.html.gotpl").
+				ParseFS(
+					parenttemplates.FS,
+					"page.html.gotpl",
+				),
+		).ParseFS(
 			templateFS,
 			"sitemap.html.gotpl",
 		),

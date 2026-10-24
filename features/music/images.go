@@ -133,7 +133,6 @@ func storeCover(ctx context.Context, c coverRef, contentType string, data []byte
 	if c.entityType == "artist" {
 		description = "Image of " + c.name
 	}
-	role := "image"
 	res, err := tx.ExecContext(
 		ctx,
 		`
@@ -145,7 +144,7 @@ func storeCover(ctx context.Context, c coverRef, contentType string, data []byte
 		mediaID,
 		caption,
 		description,
-		role,
+		"image",
 		c.entityType,
 		c.id,
 	)

@@ -130,8 +130,7 @@ func applyUpdate(ctx context.Context, id int, form url.Values) error {
 
 func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
+		id, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Invalid post ID", http.StatusBadRequest)
 			return

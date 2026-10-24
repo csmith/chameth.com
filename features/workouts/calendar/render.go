@@ -61,15 +61,13 @@ func buildData(title string, start, end, rangeStart, rangeEnd time.Time, entries
 	maxByType := perTypeMaxDay(byDay)
 
 	gridStart := startOfWeek(start)
-	days := int(end.Sub(gridStart).Hours()/24) + 1
-	columns := (days + 6) / 7
+	columns := (int(end.Sub(gridStart).Hours()/24) + 1 + 6) / 7
 
 	rows := make([]DayRow, 7)
 	for d := range rows {
 		cells := make([]Cell, columns)
 		for w := range cells {
-			date := gridStart.AddDate(0, 0, w*7+d)
-			cells[w] = buildCell(date, start, end, rangeStart, rangeEnd, byDay, maxByType)
+			cells[w] = buildCell(gridStart.AddDate(0, 0, w*7+d), start, end, rangeStart, rangeEnd, byDay, maxByType)
 		}
 		rows[d] = DayRow{DayName: dayNames[d], Cells: cells}
 	}
@@ -127,8 +125,7 @@ func stripeClass(group string, ratio float64) string {
 }
 
 func intensityStep(ratio float64) int {
-	step := int(math.Round(ratio * (intensitySteps - 1)))
-	return min(step, intensitySteps-1)
+	return min(int(math.Round(ratio*(intensitySteps-1))), intensitySteps-1)
 }
 
 func buildLegend(maxByType map[string]float64) []LegendRow {
@@ -198,8 +195,7 @@ func truncateToDay(t time.Time) time.Time {
 
 func startOfWeek(t time.Time) time.Time {
 	t = truncateToDay(t)
-	daysFromMonday := (int(t.Weekday()) - int(time.Monday) + 7) % 7
-	return t.AddDate(0, 0, -daysFromMonday)
+	return t.AddDate(0, 0, -((int(t.Weekday()) - int(time.Monday) + 7) % 7))
 }
 
 func formatSport(group string) string {

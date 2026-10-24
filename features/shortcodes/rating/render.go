@@ -37,8 +37,7 @@ func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 }
 
 func Render(rating int) (string, error) {
-	filledStars := rating / 2
-	rotations := make([]int, filledStars)
+	rotations := make([]int, rating/2)
 	for i := range rotations {
 		rotations[i] = rand.Intn(15)
 	}

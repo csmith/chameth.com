@@ -40,8 +40,6 @@ func GenerateAndStore(ctx context.Context, postPath string) error {
 		return fmt.Errorf("failed to render post content: %w", err)
 	}
 
-	content := markdown.StripHTMLTags(codeRemovalRegex.ReplaceAllString(string(renderedHTML), ""))
-
 	jsonData, err := json.Marshal(
 		struct {
 			Model      string         `json:"model"`
@@ -49,8 +47,12 @@ func GenerateAndStore(ctx context.Context, postPath string) error {
 			Dimensions int            `json:"dimensions"`
 			Options    map[string]int `json:"options"`
 		}{
-			Model:      *ollamaModel,
-			Input:      fmt.Sprintf("%s\n\n%s", post.Title, content),
+			Model: *ollamaModel,
+			Input: fmt.Sprintf(
+				"%s\n\n%s",
+				post.Title,
+				markdown.StripHTMLTags(codeRemovalRegex.ReplaceAllString(string(renderedHTML), "")),
+			),
 			Dimensions: 4096,
 			Options:    map[string]int{"num_ctx": 8192},
 		},

@@ -62,8 +62,7 @@ func GenerateWordcloud(ctx context.Context, postID int) ([]byte, []string, error
 		analyses = append(analyses, analysis)
 	}
 
-	words := bestWords(targetAnalysis, wordFrequency(analyses))
-	imageData, usedWords, err := generateImage(words)
+	imageData, usedWords, err := generateImage(bestWords(targetAnalysis, wordFrequency(analyses)))
 	return imageData, usedWords, err
 }
 
@@ -73,8 +72,7 @@ func analyzePost(content string) postAnalysis {
 		WordCounts: make(map[string]int),
 	}
 
-	clean := macroRegex.ReplaceAllString(linkRegex.ReplaceAllString(content, "$1"), "")
-	words := wordRegex.FindAllString(clean, -1)
+	words := wordRegex.FindAllString(macroRegex.ReplaceAllString(linkRegex.ReplaceAllString(content, "$1"), ""), -1)
 
 	for _, word := range words {
 		word = strings.ToLower(word)

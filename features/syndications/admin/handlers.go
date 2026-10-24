@@ -68,8 +68,7 @@ func ListSyndicationsHandler() func(http.ResponseWriter, *http.Request) {
 
 func EditSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
+		id, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Invalid syndication ID", http.StatusBadRequest)
 			return
@@ -138,8 +137,7 @@ func CreateSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 
 func UpdateSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
+		id, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Invalid syndication ID", http.StatusBadRequest)
 			return
@@ -182,8 +180,7 @@ func UpdateSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 
 func DeleteSyndicationHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
+		id, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Invalid syndication ID", http.StatusBadRequest)
 			return

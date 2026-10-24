@@ -277,8 +277,7 @@ func ReplaceMediaHandler() func(http.ResponseWriter, *http.Request) {
 
 func ViewMediaHandler() func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		idStr := r.PathValue("id")
-		id, err := strconv.Atoi(idStr)
+		id, err := strconv.Atoi(r.PathValue("id"))
 		if err != nil {
 			http.Error(w, "Invalid media ID", http.StatusBadRequest)
 			return

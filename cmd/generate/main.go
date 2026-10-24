@@ -37,8 +37,7 @@ func main() {
 	root := repoRoot()
 	mod := moduleName(filepath.Join(root, "go.mod"))
 	providers := parseSite(root)
-	pkgs := scan(root, mod, providers)
-	gen(root, pkgs, providers)
+	gen(root, scan(root, mod, providers), providers)
 }
 
 func die(msg string, args ...any) {
@@ -79,8 +78,7 @@ func moduleName(path string) string {
 }
 
 func makeAlias(mod, importPath string) string {
-	rel := strings.TrimPrefix(importPath, mod+"/")
-	parts := strings.Split(rel, "/")
+	parts := strings.Split(strings.TrimPrefix(importPath, mod+"/"), "/")
 	var a strings.Builder
 	a.WriteString(parts[0])
 	for _, p := range parts[1:] {
@@ -92,8 +90,7 @@ func makeAlias(mod, importPath string) string {
 
 func parseSite(root string) []provider {
 	siteFile := filepath.Join(root, "cmd", "serve", "site.go")
-	fset := token.NewFileSet()
-	f, err := parser.ParseFile(fset, siteFile, nil, 0)
+	f, err := parser.ParseFile(token.NewFileSet(), siteFile, nil, 0)
 	if err != nil {
 		die("failed to parse site.go: %v", err)
 	}
@@ -249,8 +246,7 @@ func skippedDir(name string) bool {
 // scanFile records the registration functions found in a single Go file. A
 // package whose files register nothing is removed from the map again.
 func scanFile(root, mod, path string, providers []provider, pkgs map[string]*pkg) {
-	fset := token.NewFileSet()
-	f, err := parser.ParseFile(fset, path, nil, 0)
+	f, err := parser.ParseFile(token.NewFileSet(), path, nil, 0)
 	if err != nil {
 		return
 	}

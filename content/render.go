@@ -39,14 +39,14 @@ func RenderContent(
 		return "", fmt.Errorf("failed to get media relations: %w", err)
 	}
 
-	contentWithShortcodes := ShortcodesManager.Render(
-		content,
-		&shortcodes.Context{
-			Media: mediaRelations, URL: url, Context: ctx,
-		},
+	renderedContent, err := markdown.Render(
+		ShortcodesManager.Render(
+			content,
+			&shortcodes.Context{
+				Media: mediaRelations, URL: url, Context: ctx,
+			},
+		),
 	)
-
-	renderedContent, err := markdown.Render(contentWithShortcodes)
 	if err != nil {
 		return "", fmt.Errorf("failed to render markdown: %w", err)
 	}

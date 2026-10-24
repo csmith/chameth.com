@@ -184,6 +184,7 @@ func render(args []string, d data, _ *shortcodes.Context) (string, error) {
 		return "", err
 	}
 
-	dateRange := fmt.Sprintf("%s – %s", startDate.Format("2 Jan"), endDate.Format("2 Jan 2006"))
-	return renderTemplate(buildData(dateRange, d))
+	return renderTemplate(
+		buildData(fmt.Sprintf("%s – %s", startDate.Format("2 Jan"), endDate.Format("2 Jan 2006")), d),
+	)
 }

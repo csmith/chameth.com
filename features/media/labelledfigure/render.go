@@ -25,9 +25,7 @@ func Render(args []string, ctx *shortcodes.Context) (string, error) {
 	}
 
 	description := args[0]
-	regionsText := args[1]
-
-	regions, err := parseRegions(regionsText)
+	regions, err := parseRegions(args[1])
 	if err != nil {
 		return "", fmt.Errorf("failed to parse regions: %w", err)
 	}
@@ -136,7 +134,6 @@ func parseRegions(text string) ([]Region, error) {
 
 		w := x2 - x1
 		h := y2 - y1
-		fontSize := max(h/4, 14)
 
 		regions = append(
 			regions,
@@ -149,7 +146,7 @@ func parseRegions(text string) ([]Region, error) {
 				CenterY:  y1 + h/2,
 				Colour:   colour,
 				Label:    label,
-				FontSize: fontSize,
+				FontSize: max(h/4, 14),
 			},
 		)
 	}

@@ -50,8 +50,7 @@ func PlayCounts(ctx context.Context, client *http.Client, start, end string) ([]
 }
 
 func fetchImage(ctx context.Context, client *http.Client, gameID string) ([]byte, string, error) {
-	path := "/games/" + url.PathEscape(gameID) + "/image"
-	body, header, err := magicMetersGet(ctx, client, path, nil)
+	body, header, err := magicMetersGet(ctx, client, "/games/"+url.PathEscape(gameID)+"/image", nil)
 	if err != nil {
 		return nil, "", err
 	}

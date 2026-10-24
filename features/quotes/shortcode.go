@@ -17,12 +17,9 @@ func renderRandomQuote(args []string, ctx *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("failed to get random quote: %w", err)
 	}
 
-	escapedText := html.EscapeString(quote.Text)
-	escapedAuthor := html.EscapeString(quote.Author)
-
 	return fmt.Sprintf(
 		`<blockquote class="random-quote"><p>%s</p><cite>— %s</cite></blockquote>`,
-		escapedText,
-		escapedAuthor,
+		html.EscapeString(quote.Text),
+		html.EscapeString(quote.Author),
 	), nil
 }

@@ -86,8 +86,7 @@ func (m *Manager) Render(input string, ctx *Context) string {
 
 		var args []string
 		if match[5] > match[4] {
-			argStr := input[match[4]:match[5]]
-			parsedArgs, err := splitArguments(argStr)
+			parsedArgs, err := splitArguments(input[match[4]:match[5]])
 			if err != nil {
 				slog.Error("failed to parse shortcode arguments", "name", name, "url", ctx.URL, "error", err)
 				res.WriteString(input[lastTag:start])

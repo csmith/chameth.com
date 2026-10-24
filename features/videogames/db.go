@@ -35,7 +35,9 @@ func GetAllVideoGames(ctx context.Context) ([]VideoGame, error) {
 }
 
 func GetAllVideoGamesWithReviews(ctx context.Context) ([]VideoGameWithReview, error) {
-	query := `
+	rows, err := db.Query(
+		ctx,
+		`
 		SELECT
 			vg.id, vg.title, vg.platform, vg.overview, vg.published, vg.path,
 			vgr.id as review_id, vgr.video_game_id as review_video_game_id,
@@ -49,9 +51,8 @@ func GetAllVideoGamesWithReviews(ctx context.Context) ([]VideoGameWithReview, er
 			LIMIT 1
 		) vgr ON true
 		ORDER BY vg.title
-	`
-
-	rows, err := db.Query(ctx, query)
+	`,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -256,7 +257,9 @@ func UpdateVideoGameReview(
 }
 
 func GetVideoGameReviewWithGameAndPoster(ctx context.Context, reviewID int) (*VideoGameReviewWithGameAndPoster, error) {
-	query := `
+	result, err := db.Get[VideoGameReviewWithGameAndPoster](
+		ctx,
+		`
 		SELECT
 			vgr.id as "videogamereview.id", vgr.video_game_id as "videogamereview.video_game_id",
 			vgr.played_date as "videogamereview.played_date",
@@ -275,9 +278,9 @@ func GetVideoGameReviewWithGameAndPoster(ctx context.Context, reviewID int) (*Vi
 		JOIN media_relations mr ON mr.entity_type = 'videogame' AND mr.entity_id = vg.id AND mr.role = 'poster'
 		JOIN media m ON mr.media_id = m.id
 		WHERE vgr.id = $1
-	`
-
-	result, err := db.Get[VideoGameReviewWithGameAndPoster](ctx, query, reviewID)
+	`,
+		reviewID,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -288,7 +291,9 @@ func GetVideoGameReviewWithGameAndPoster(ctx context.Context, reviewID int) (*Vi
 func GetAllPublishedVideoGameReviewsWithGameAndPosters(
 	ctx context.Context,
 ) ([]VideoGameReviewWithGameAndPoster, error) {
-	query := `
+	return db.Select[VideoGameReviewWithGameAndPoster](
+		ctx,
+		`
 		SELECT
 			vgr.id as "videogamereview.id", vgr.video_game_id as "videogamereview.video_game_id",
 			vgr.played_date as "videogamereview.played_date",
@@ -308,15 +313,16 @@ func GetAllPublishedVideoGameReviewsWithGameAndPosters(
 		JOIN media m ON mr.media_id = m.id
 		WHERE vgr.published = true
 		ORDER BY vgr.played_date DESC
-	`
-
-	return db.Select[VideoGameReviewWithGameAndPoster](ctx, query)
+	`,
+	)
 }
 
 func GetRecentPublishedVideoGameReviewsWithGameAndPosters(
 	ctx context.Context, limit int,
 ) ([]VideoGameReviewWithGameAndPoster, error) {
-	query := `
+	return db.Select[VideoGameReviewWithGameAndPoster](
+		ctx,
+		`
 		SELECT
 			vgr.id as "videogamereview.id", vgr.video_game_id as "videogamereview.video_game_id",
 			vgr.played_date as "videogamereview.played_date",
@@ -337,7 +343,7 @@ func GetRecentPublishedVideoGameReviewsWithGameAndPosters(
 		WHERE vgr.published = true
 		ORDER BY vgr.played_date DESC
 		LIMIT $1
-	`
-
-	return db.Select[VideoGameReviewWithGameAndPoster](ctx, query, limit)
+	`,
+		limit,
+	)
 }

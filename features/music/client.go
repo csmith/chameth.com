@@ -117,9 +117,7 @@ func TopArtists(ctx context.Context, client *http.Client, limit int) ([]Artist, 
 
 // NewAlbums returns the albums first played in the half-open date range.
 func NewAlbums(ctx context.Context, client *http.Client, start, end string) ([]Album, error) {
-	query := url.Values{"start": {start}, "end": {end}}
-
-	body, _, err := bonusMetalGet(ctx, client, "/api/insights/new-albums", query)
+	body, _, err := bonusMetalGet(ctx, client, "/api/insights/new-albums", url.Values{"start": {start}, "end": {end}})
 	if err != nil {
 		return nil, err
 	}

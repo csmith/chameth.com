@@ -22,9 +22,7 @@ func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 	}
 
 	date := args[0]
-	content := args[1]
-
-	md, err := markdown.Render(content)
+	md, err := markdown.Render(args[1])
 	if err != nil {
 		return "", fmt.Errorf("failed to render update markdown: %w", err)
 	}

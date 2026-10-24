@@ -54,8 +54,7 @@ func nextMilestone(milestones []milestone, distanceM float64) milestone {
 }
 
 func formatKm(m float64) string {
-	km := m / 1000
-	s := strconv.FormatFloat(km, 'f', 1, 64)
+	s := strconv.FormatFloat(m/1000, 'f', 1, 64)
 	s = strings.TrimSuffix(s, ".0")
 	return s + "km"
 }

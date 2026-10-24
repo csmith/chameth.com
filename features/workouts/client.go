@@ -103,8 +103,12 @@ func (r *DistanceRecord) RankingDistanceM() float64 {
 }
 
 func GetDistanceRecord(ctx context.Context, client *http.Client, group, start, end string) (*DistanceRecord, error) {
-	path := "/api/insights/distance-records/" + url.PathEscape(group)
-	body, err := pompeiBandGet(ctx, client, path, windowValues(start, end, ""))
+	body, err := pompeiBandGet(
+		ctx,
+		client,
+		"/api/insights/distance-records/"+url.PathEscape(group),
+		windowValues(start, end, ""),
+	)
 	if err != nil {
 		if errors.Is(err, errNotFound) {
 			return nil, nil

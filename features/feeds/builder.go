@@ -30,8 +30,7 @@ var builderTemplate = func() *template.Template {
 }()
 
 var builderEntryTemplate = func() *template.Template {
-	t := template.Must(builderTemplate.Clone())
-	return template.Must(t.ParseFS(builderTemplates, "builder_entry.html.gotpl"))
+	return template.Must(template.Must(builderTemplate.Clone()).ParseFS(builderTemplates, "builder_entry.html.gotpl"))
 }()
 
 const builderFeedPrefix = "/feeds/posts/build/"

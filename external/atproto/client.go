@@ -68,9 +68,14 @@ func (c *Client) CreateRecord(ctx context.Context, collection Collection, record
 }
 
 func (c *Client) GetRecord(ctx context.Context, collection Collection, recordKey string) (StrongRef, error) {
-	e := endpoint(fmt.Sprintf("%s?repo=%s&collection=%s&rkey=%s", getRecordEndpoint, c.did, collection, recordKey))
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.pds.url(e), nil)
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		c.pds.url(
+			endpoint(fmt.Sprintf("%s?repo=%s&collection=%s&rkey=%s", getRecordEndpoint, c.did, collection, recordKey)),
+		),
+		nil,
+	)
 	if err != nil {
 		return StrongRef{}, err
 	}

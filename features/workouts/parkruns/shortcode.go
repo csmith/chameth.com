@@ -169,9 +169,12 @@ func fetchParkruns(ctx context.Context, client *http.Client) (*parkrunsResponse,
 }
 
 func centralParkGet(ctx context.Context, client *http.Client, path string) ([]byte, error) {
-	u := strings.TrimRight(centralParkBaseURL, "/") + path
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodGet,
+		strings.TrimRight(centralParkBaseURL, "/")+path,
+		nil,
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to build request: %w", err)
 	}

@@ -29,8 +29,7 @@ func render(args []string, totalDistance float64, _ *shortcodes.Context) (string
 	svg := args[2]
 
 	timesCompleted := totalDistance / distanceKm
-	completedPortion := int(timesCompleted)
-	progressPercent := int((timesCompleted - float64(completedPortion)) * 100)
+	progressPercent := int((timesCompleted - float64(int(timesCompleted))) * 100)
 
 	return renderTemplate(
 		Data{

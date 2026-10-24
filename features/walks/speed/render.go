@@ -29,15 +29,21 @@ const (
 
 func render(_ []string, speeds []monthSpeed, _ *shortcodes.Context) (string, error) {
 	if len(speeds) == 0 {
-		empty := fmt.Sprintf(
-			`<svg width="%d" height="%d" viewBox="0 0 %d %d" `+
-				`xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Quickest walk speed line graph"/>`,
-			width,
-			height,
-			width,
-			height,
+		return renderTemplate(
+			Data{
+				SVG: template.HTML(
+					fmt.Sprintf(
+						`<svg width="%d" height="%d" viewBox="0 0 %d %d" `+
+							`xmlns="http://www.w3.org/2000/svg" role="img" `+
+							`aria-label="Quickest walk speed line graph"/>`,
+						width,
+						height,
+						width,
+						height,
+					),
+				),
+			},
 		)
-		return renderTemplate(Data{SVG: template.HTML(empty)})
 	}
 
 	speedMin := math.MaxFloat64
@@ -82,19 +88,12 @@ func render(_ []string, speeds []monthSpeed, _ *shortcodes.Context) (string, err
 func createPoints(speeds []monthSpeed, monthWidth, speedMin, speedRange float64) []point {
 	points := make([]point, 0, len(speeds))
 	for i, s := range speeds {
-		x := leftPadding + int(float64(i)*monthWidth)
-		normalizedSpeed := (s.SpeedKmh - speedMin) / speedRange
-		y := topPadding + contentHeight - int(normalizedSpeed*float64(contentHeight))
-
-		monthLabel := s.Month.Format("Jan 2006")
-		title := fmt.Sprintf("%s: %.1f km/h", monthLabel, s.SpeedKmh)
-
 		points = append(
 			points,
 			point{
-				X:     x,
-				Y:     y,
-				Title: title,
+				X:     leftPadding + int(float64(i)*monthWidth),
+				Y:     topPadding + contentHeight - int((s.SpeedKmh-speedMin)/speedRange*float64(contentHeight)),
+				Title: fmt.Sprintf("%s: %.1f km/h", s.Month.Format("Jan 2006"), s.SpeedKmh),
 			},
 		)
 	}
@@ -126,14 +125,11 @@ func renderXAxis(svgBuilder *strings.Builder, speeds []monthSpeed, monthWidth fl
 				topPadding+contentHeight,
 			)
 
-			startX := leftPadding + int(float64(yearStartIndex)*monthWidth)
-			endX := leftPadding + int(float64(i-1)*monthWidth)
-			centerX := (startX + endX) / 2
 			fmt.Fprintf(
 				svgBuilder,
 				`<text x="%d" y="%d" text-anchor="middle" dominant-baseline="hanging" `+
 					`fill="var(--text-alt-colour)" font-size="8">%d</text>`,
-				centerX,
+				(2*leftPadding+int(float64(yearStartIndex)*monthWidth)+int(float64(i-1)*monthWidth))/2,
 				topPadding+contentHeight+5,
 				currentYear,
 			)
@@ -142,14 +138,11 @@ func renderXAxis(svgBuilder *strings.Builder, speeds []monthSpeed, monthWidth fl
 			yearStartIndex = i
 		}
 	}
-	startX := leftPadding + int(float64(yearStartIndex)*monthWidth)
-	endX := leftPadding + int(float64(len(speeds)-1)*monthWidth)
-	centerX := (startX + endX) / 2
 	fmt.Fprintf(
 		svgBuilder,
 		`<text x="%d" y="%d" text-anchor="middle" dominant-baseline="hanging" `+
 			`fill="var(--text-alt-colour)" font-size="8">%d</text>`,
-		centerX,
+		(2*leftPadding+int(float64(yearStartIndex)*monthWidth)+int(float64(len(speeds)-1)*monthWidth))/2,
 		topPadding+contentHeight+5,
 		currentYear,
 	)
@@ -174,8 +167,7 @@ func renderYAxis(svgBuilder *strings.Builder, speedMin, speedMax, speedRange flo
 		yAxisCenterY,
 	)
 	for speed := speedMin; speed <= speedMax; speed++ {
-		normalizedSpeed := (speed - speedMin) / speedRange
-		y := topPadding + contentHeight - int(normalizedSpeed*float64(contentHeight))
+		y := topPadding + contentHeight - int((speed-speedMin)/speedRange*float64(contentHeight))
 		fmt.Fprintf(
 			svgBuilder,
 			`<line x1="%d" y1="%d" x2="%d" y2="%d" `+

@@ -85,8 +85,7 @@ func formatDistanceKm(km float64) string {
 		return "marathon"
 	}
 
-	s := strconv.FormatFloat(km, 'f', 1, 64)
-	return strings.TrimSuffix(s, ".0") + "k"
+	return strings.TrimSuffix(strconv.FormatFloat(km, 'f', 1, 64), ".0") + "k"
 }
 
 // startOfDay uses UTC midnight to compare races by whole days.

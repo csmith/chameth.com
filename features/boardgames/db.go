@@ -65,9 +65,6 @@ func createBoardgameImage(ctx context.Context, bggID int, name, contentType stri
 		return fmt.Errorf("failed to create media: %w", err)
 	}
 
-	description := "Box art of " + name
-	caption := name
-	role := "image"
 	res, err := tx.ExecContext(
 		ctx,
 		`
@@ -77,9 +74,9 @@ func createBoardgameImage(ctx context.Context, bggID int, name, contentType stri
 	`,
 		mediaPath,
 		mediaID,
-		caption,
-		description,
-		role,
+		name,
+		"Box art of "+name,
+		"image",
 		"boardgame",
 		bggID,
 	)

@@ -120,19 +120,22 @@ func contactWorkflow(ctx workflow.Context, sub submission) error {
 		return nil
 	}
 
-	sendCtx := workflow.WithActivityOptions(
-		ctx,
-		workflow.ActivityOptions{
-			StartToCloseTimeout: time.Minute,
-			RetryPolicy: &temporal.RetryPolicy{
-				InitialInterval:    30 * time.Second,
-				BackoffCoefficient: 2,
-				MaximumInterval:    30 * time.Minute,
-				MaximumAttempts:    10,
+	return workflow.ExecuteActivity(
+		workflow.WithActivityOptions(
+			ctx,
+			workflow.ActivityOptions{
+				StartToCloseTimeout: time.Minute,
+				RetryPolicy: &temporal.RetryPolicy{
+					InitialInterval:    30 * time.Second,
+					BackoffCoefficient: 2,
+					MaximumInterval:    30 * time.Minute,
+					MaximumAttempts:    10,
+				},
 			},
-		},
-	)
-	return workflow.ExecuteActivity(sendCtx, sendActivityName, sub).Get(ctx, nil)
+		),
+		sendActivityName,
+		sub,
+	).Get(ctx, nil)
 }
 
 // checkSpam asks German Mall's check-blog-spam workflow for a verdict. The
