@@ -25,6 +25,8 @@ var (
 	inFlightRequests   = make(map[string]*request)
 
 	buildVersion string
+
+	idGenerator, _ = aca.NewDefaultGenerator()
 )
 
 type request struct {
@@ -42,11 +44,10 @@ func normalizePath(path string) string {
 }
 
 func CollectRequestStats() func(http.Handler) http.Handler {
-	generator, _ := aca.NewDefaultGenerator()
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
-				requestId := generator.Generate()
+				r, requestId := withRequestID(r)
 				start := time.Now()
 				startRequestAt(requestId, start)
 
@@ -55,7 +56,7 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 					requestID:      requestId,
 				}
 
-				next.ServeHTTP(writer, r.WithContext(context.WithValue(r.Context(), requestIdKey, requestId)))
+				next.ServeHTTP(writer, r)
 
 				duration, queries := func() (time.Duration, int32) {
 					inFlightRequestsMu.RLock()
@@ -79,6 +80,16 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 			},
 		)
 	}
+}
+
+// withRequestID returns the request's ID, assigning one if an outer
+// middleware hasn't already done so.
+func withRequestID(r *http.Request) (*http.Request, string) {
+	if id, ok := r.Context().Value(requestIdKey).(string); ok {
+		return r, id
+	}
+	id := idGenerator.Generate()
+	return r.WithContext(context.WithValue(r.Context(), requestIdKey, id)), id
 }
 
 func startRequestAt(requestId string, start time.Time) {

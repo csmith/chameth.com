@@ -57,8 +57,10 @@ func insertRequestLog(ctx context.Context, log requestLog) {
 	_, err := db.Exec(
 		ctx,
 		`
-		INSERT INTO request_logs (recorded_at, url, user_agent, ip_hash, asn, as_org, duration_us, response_bytes, status)
-		SELECT $8, $1, $2, $3, n.asn, n.organization, $4, $5, $6
+		INSERT INTO request_logs (
+			recorded_at, request_id, url, user_agent, ip_hash, asn, as_org, duration_us, response_bytes, status
+		)
+		SELECT $8, $9, $1, $2, $3, n.asn, n.organization, $4, $5, $6
 		FROM (SELECT $7::inet AS addr) q
 		LEFT JOIN LATERAL (
 			SELECT asn, organization
@@ -76,6 +78,7 @@ func insertRequestLog(ctx context.Context, log requestLog) {
 		log.status,
 		addr,
 		log.start,
+		log.requestID,
 	)
 	if err != nil {
 		slog.Error("Error inserting request log", "error", err)

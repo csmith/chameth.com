@@ -35,6 +35,7 @@ var (
 )
 
 type requestLog struct {
+	requestID string
 	url       string
 	userAgent string
 	ipHash    []byte

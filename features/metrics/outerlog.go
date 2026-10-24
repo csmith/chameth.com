@@ -11,6 +11,7 @@ func LogRequests() func(http.Handler) http.Handler {
 		return http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
 				start := time.Now()
+				r, requestID := withRequestID(r)
 				cw := &outerWriter{ResponseWriter: w}
 				next.ServeHTTP(cw, r)
 				ip := remoteAddress(r.RemoteAddr)
@@ -20,6 +21,7 @@ func LogRequests() func(http.Handler) http.Handler {
 				}
 				enqueueRequestLog(
 					requestLog{
+						requestID: requestID,
 						url:       truncateString(r.URL.RequestURI(), maxLoggedURLLength),
 						userAgent: truncateString(r.UserAgent(), maxLoggedUserAgentLength),
 						ip:        ip,
