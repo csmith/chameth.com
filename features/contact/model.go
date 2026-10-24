@@ -56,3 +56,9 @@ type rejection struct {
 func (e *rejection) Error() string {
 	return "submission rejected: " + string(e.cause)
 }
+
+type checkPairCount struct {
+	RowCheck string `db:"row_check"`
+	ColCheck string `db:"col_check"`
+	Count    int    `db:"count"`
+}

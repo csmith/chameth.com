@@ -8,4 +8,5 @@ import (
 func RegisterRoutes(rm *routing.Manager, tc client.Client) {
 	rm.Public.HandleFunc("POST /api/contact", handleJSON(tc))
 	rm.Public.HandleFunc("POST /api/form/contact", handleForm(tc))
+	rm.Admin.HandleFunc("GET /contact-stats", handleStats())
 }
