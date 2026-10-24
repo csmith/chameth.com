@@ -1,0 +1,22 @@
+/* Film calendar: reuses the workout calendar's .calendar-grid, with one
+   ramp shaded by the day's watch count relative to the busiest day in the
+   window (s0 dimmest, s3 full tint). A year doesn't fit narrow viewports
+   at the workout calendar's cell size, so cells are smaller and the grid
+   scrolls horizontally when it still doesn't fit. */
+.film-calendar {
+    display: inline-block;
+    max-width: 100%;
+    margin: var(--smedium-space) 0;
+    padding: var(--smedium-space);
+    padding-top: var(--raised-box-title-padding);
+
+    .calendar-grid {
+        --cell-size: 0.7rem;
+        --cell-gap: 0.15rem;
+    }
+
+    .s0 { background-color: var(--accent-alt-colour); }
+    .s1 { background-color: var(--accent-colour); }
+    .s2 { background-color: color-mix(in srgb, var(--accent-colour), var(--link-colour)); }
+    .s3 { background-color: var(--link-colour); }
+}

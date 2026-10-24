@@ -204,6 +204,33 @@ func GetRatings(ctx context.Context, client *http.Client) ([]RatingCount, error)
 	return res.Ratings, nil
 }
 
+type WatchDay struct {
+	Date  string `json:"date"`
+	Count int    `json:"count"`
+}
+
+// GetWatchDays returns the number of published watches on each day between
+// the inclusive YYYY-MM-DD bounds, omitting days with none.
+func GetWatchDays(ctx context.Context, client *http.Client, start, end string) ([]WatchDay, error) {
+	body, _, err := tiredScrollGet(
+		ctx,
+		client,
+		"/api/watch-days",
+		url.Values{"start": {start}, "end": {end}},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var res struct {
+		Days []WatchDay `json:"days"`
+	}
+	if err := json.Unmarshal(body, &res); err != nil {
+		return nil, fmt.Errorf("failed to decode watch days: %w", err)
+	}
+	return res.Days, nil
+}
+
 func fetchPoster(ctx context.Context, client *http.Client, path string) ([]byte, string, error) {
 	body, headers, err := tiredScrollGet(ctx, client, path, nil)
 	if err != nil {

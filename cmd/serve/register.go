@@ -14,6 +14,7 @@ import (
 	featuresContactForm "chameth.com/chameth.com/features/contact/form"
 	featuresFeeds "chameth.com/chameth.com/features/feeds"
 	featuresFilms "chameth.com/chameth.com/features/films"
+	featuresFilmsCalendar "chameth.com/chameth.com/features/films/calendar"
 	featuresFilmsList "chameth.com/chameth.com/features/films/list"
 	featuresFilmsRatingdistribution "chameth.com/chameth.com/features/films/ratingdistribution"
 	featuresFilmsRecent "chameth.com/chameth.com/features/films/recent"
@@ -94,6 +95,7 @@ func (s *site) registerShortcodes() {
 	featuresBoardgamesPlayed.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresContactForm.RegisterShortcodes(s.Shortcodes)
 	featuresFilms.RegisterShortcodes(s.Shortcodes, s.Tailscale)
+	featuresFilmsCalendar.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresFilmsList.RegisterShortcodes(s.Shortcodes)
 	featuresFilmsRatingdistribution.RegisterShortcodes(s.Shortcodes, s.Tailscale)
 	featuresFilmsRecent.RegisterShortcodes(s.Shortcodes, s.Tailscale)

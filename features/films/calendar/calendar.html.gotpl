@@ -1,0 +1,18 @@
+{{/* gotype: chameth.com/chameth.com/features/films/calendar.Data*/}}
+<div class="film-calendar raised-box" data-title="{{ .Title }}">
+    <div class="table-holder">
+        <table class="plain-table calendar-grid">
+            <tbody>
+            {{- range .Rows }}
+                <tr>
+                    <th scope="row">{{ .DayName }}</th>
+                    {{- range .Cells }}
+                        {{- if .Inactive}}<td class="inactive"></td>
+                        {{- else}}<td class="{{ .Class }}" title="{{ .Title }}"></td>{{end}}
+                    {{- end}}
+                </tr>
+            {{- end}}
+            </tbody>
+        </table>
+    </div>
+</div>
