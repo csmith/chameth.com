@@ -236,11 +236,8 @@ func scan(root, mod string, providers []provider) map[string]*pkg {
 }
 
 func skippedDir(name string) bool {
-	switch name {
-	case ".git", ".postgres", "tsdata":
-		return true
-	}
-	return false
+	// Like the go tool, ignore directories starting with a dot or underscore.
+	return name == "tsdata" || strings.HasPrefix(name, ".") || strings.HasPrefix(name, "_")
 }
 
 // scanFile records the registration functions found in a single Go file. A
