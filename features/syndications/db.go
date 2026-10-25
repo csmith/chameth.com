@@ -71,7 +71,7 @@ func GetLinksByPath(ctx context.Context, path string) ([]templates.Link, error) 
 	return db.Select[templates.Link](
 		ctx,
 		`
-		SELECT COALESCE(rel, 'alternate') AS rel, external_url AS href
+		SELECT COALESCE(rel, 'alternate syndication') AS rel, external_url AS href
 		FROM syndications
 		WHERE path = $1 AND published = true AND disposition = 'link'
 	`,
