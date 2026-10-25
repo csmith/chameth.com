@@ -75,12 +75,24 @@ func syncIndex(ctx context.Context, mgr *shortcodes.Manager, client *http.Client
 		return err
 	}
 
+	ogRelations, err := getOpenGraphRelations(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to load film OpenGraph images: %w", err)
+	}
+	ogImages := make(map[int][]filmMedia, len(ogRelations))
+	for _, rel := range ogRelations {
+		ogImages[rel.EntityID] = append(ogImages[rel.EntityID], rel)
+	}
+
 	for _, f := range idx.Films {
 		prev, known := previous[f.ID]
 
+		posterUpdatedAt := prev.PosterUpdatedAt
 		if f.Poster != nil && (!known || prev.PosterUpdatedAt == nil || !prev.PosterUpdatedAt.Equal(f.Poster.UpdatedAt)) {
 			if err := syncPoster(ctx, client, f.FilmSummary); err != nil {
 				slog.Error("Failed to rehost film poster", "film_id", f.ID, "error", err)
+			} else {
+				posterUpdatedAt = &f.Poster.UpdatedAt
 			}
 		}
 
@@ -90,6 +102,12 @@ func syncIndex(ctx context.Context, mgr *shortcodes.Manager, client *http.Client
 			if err := mgr.RefreshData(ctx, filmPageData, []string{f.Slug}); err != nil {
 				slog.Error("Failed to refresh film page data", "film_id", f.ID, "error", err)
 			}
+		}
+
+		// Checked every sync rather than on detected changes, so it also picks
+		// up edited reviews (once the page data refreshes) and design changes.
+		if err := syncOpenGraph(ctx, mgr, f.FilmSummary, posterUpdatedAt, ogImages[f.ID]); err != nil {
+			slog.Error("Failed to update film OpenGraph image", "film_id", f.ID, "error", err)
 		}
 	}
 

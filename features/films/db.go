@@ -248,6 +248,17 @@ func getPosterRelations(ctx context.Context, filmID int) ([]filmMedia, error) {
 	)
 }
 
+func getOpenGraphRelations(ctx context.Context) ([]filmMedia, error) {
+	return db.Select[filmMedia](
+		ctx,
+		`
+		SELECT path, media_id, entity_id
+		FROM media_relations
+		WHERE entity_type = 'film' AND role = 'opengraph'
+	`,
+	)
+}
+
 func getOrphanedFilmMedia(ctx context.Context) ([]filmMedia, error) {
 	return db.Select[filmMedia](
 		ctx,

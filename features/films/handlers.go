@@ -16,6 +16,7 @@ import (
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/features/films/templates"
+	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/shortcodes/rating"
 	syndications "chameth.com/chameth.com/features/syndications/display"
@@ -120,7 +121,6 @@ func filmPageHandler(mgr *shortcodes.Manager) http.HandlerFunc {
 func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.FilmData, error) {
 	var reviews []templates.FilmReviewData
 	var links []syndications.SyndicationLink
-	var ratingSum int
 	for _, review := range page.Reviews {
 		watched, err := time.Parse(time.DateOnly, review.WatchedDate)
 		if err != nil {
@@ -143,16 +143,10 @@ func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.Fil
 				Content:     text,
 			},
 		)
-		ratingSum += review.Rating
 
 		if review.LetterboxdURL != "" {
 			links = append(links, syndications.SyndicationLink{ExternalURL: review.LetterboxdURL, Name: "Letterboxd"})
 		}
-	}
-
-	var averageRating int
-	if len(reviews) > 0 {
-		averageRating = int(math.Round(float64(ratingSum) / float64(len(reviews))))
 	}
 
 	overview, err := markdown.Render(page.Overview)
@@ -170,6 +164,14 @@ func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.Fil
 		return templates.FilmData{}, fmt.Errorf("failed to get lists containing film: %w", err)
 	}
 
+	var ogImage string
+	ogPath, err := media.GetOpenGraphImageForEntity(ctx, "film", film.ID)
+	if err != nil {
+		slog.Error("Failed to get film OpenGraph image", "film_id", film.ID, "error", err)
+	} else if ogPath != "" {
+		ogImage = maintemplates.SiteURL() + ogPath
+	}
+
 	data := templates.FilmData{
 		FilmTitle:     page.Title,
 		Year:          formatYear(page.Year),
@@ -177,14 +179,14 @@ func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.Fil
 		Overview:      overview,
 		Reviews:       reviews,
 		TimesWatched:  len(reviews),
-		AverageRating: averageRating,
+		AverageRating: averageRating(page.Reviews),
 		PosterPath:    derefString(film.PosterPath),
 		Syndications:  template.HTML(syndicationHTML),
 		PageData: content.CreatePageData(
 			ctx,
 			fmt.Sprintf("%s (%s)", page.Title, formatYear(page.Year)),
 			film.Path,
-			maintemplates.OpenGraphHeaders{},
+			maintemplates.OpenGraphHeaders{Image: ogImage},
 		),
 	}
 	for _, m := range memberships {
