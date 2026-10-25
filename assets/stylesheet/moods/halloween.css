@@ -1,6 +1,5 @@
 body {
-  background: url(/moods/cobweb.png), var(--background-colour);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-position: 0 0;
+  background:
+    url(/moods/cobweb.png) 0 0 no-repeat fixed,
+    var(--background-texture) var(--background-colour);
 }

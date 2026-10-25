@@ -1,5 +1,6 @@
 :root {
     --timing-ease-in-out-quad: cubic-bezier(0.45, 0, 0.55, 1);
+    --background-texture: url(/background.png);
 }
 
 /* Registered so the ch measure resolves at body text size on main, rather than
@@ -11,7 +12,7 @@
 }
 
 body {
-    background: url(/background.png) var(--background-colour);
+    background: var(--background-texture) var(--background-colour);
     color: var(--text-colour);
     display: flex;
     flex-direction: column;
