@@ -7,7 +7,7 @@
         if you want to keep up-to-date.
     </p>
 
-    <section class="post-catalogue">
+    <section class="post-catalogue h-feed">
         {{- range .Posts }}
             {{call $.Component "postlink" .}}
         {{ end -}}

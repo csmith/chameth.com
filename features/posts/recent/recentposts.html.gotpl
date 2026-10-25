@@ -1,4 +1,4 @@
 {{/* gotype: chameth.com/chameth.com/features/posts/recent.Data*/}}
 <section class="recent-posts post-links-parent">
-  <div class="post-links">{{ .Posts }}</div>
+  <div class="post-links h-feed">{{ .Posts }}</div>
 </section>

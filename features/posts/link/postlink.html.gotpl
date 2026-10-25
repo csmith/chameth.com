@@ -1,6 +1,7 @@
 {{/* gotype: chameth.com/chameth.com/features/posts/link.Data*/}}
 <a class="post-link raised-box plain-link" href="{{.Url}}">
-  <article>
+  <article class="h-entry">
+    <data class="u-url" value="{{ .Url }}" hidden></data>
     <div class="img-holder">
       {{- if .Images }}
       <picture>
@@ -20,8 +21,8 @@
       </div>
       {{ end -}}
     </div>
-    <time class="post-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
-    <h3 class="plain-header">{{ .Title }}</h3>
-    <p>{{ .Summary }}</p>
+    <time class="post-date dt-published" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
+    <h3 class="plain-header p-name">{{ .Title }}</h3>
+    <p class="p-summary">{{ .Summary }}</p>
   </article>
 </a>
