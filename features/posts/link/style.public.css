@@ -60,6 +60,28 @@
             }
         }
 
+        .post-date {
+            z-index: 1;
+            grid-row: 1;
+            grid-column: 1;
+            align-self: start;
+            justify-self: end;
+            margin: var(--small-space);
+            padding: 0.3em 0.6em;
+            font-family: "Berkeley Mono", monospace;
+            font-size: var(--font-size-tiny);
+            line-height: 1.2;
+            text-transform: uppercase;
+            color: var(--text-highlight-colour);
+            background-color: color-mix(
+                in srgb,
+                var(--background-colour) 80%,
+                transparent
+            );
+            border: 1px solid var(--accent-alt-colour);
+            border-radius: calc(var(--border-radius) / 2);
+        }
+
         h3 {
             z-index: 1;
             grid-row: 1;

@@ -1,12 +1,16 @@
 package link
 
-import "html/template"
+import (
+	"html/template"
+	"time"
+)
 
 type Data struct {
 	Url     string
 	Images  []Image
 	Title   string
 	Summary template.HTML
+	Date    time.Time
 }
 
 func (d Data) Alt() string {

@@ -69,6 +69,7 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 				Title:   post.Title,
 				Summary: template.HTML(summary),
 				Images:  images,
+				Date:    post.Date,
 			},
 		)
 		if err != nil {

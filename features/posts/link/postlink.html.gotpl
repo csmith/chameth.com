@@ -20,6 +20,7 @@
       </div>
       {{ end -}}
     </div>
+    <time class="post-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2, 2006" }}</time>
     <h3 class="plain-header">{{ .Title }}</h3>
     <p>{{ .Summary }}</p>
   </article>

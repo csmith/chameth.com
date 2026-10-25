@@ -75,6 +75,7 @@ func renderForPath(path string) (string, error) {
 			Title:   post.Title,
 			Summary: template.HTML(summary),
 			Images:  images,
+			Date:    post.Date,
 		},
 	)
 }
