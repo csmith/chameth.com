@@ -32,7 +32,7 @@
 
         <div class="film-reviews">
             {{range .Reviews}}
-            <section class="h-review">
+            <section class="h-review" id="review-{{.ID}}">
                 <h3>Watched on <time class="dt-published" datetime="{{.WatchedDate.Format "2006-01-02"}}">{{.WatchedDate.Format "2 Jan 2006"}}</time></h3>
                 {{if or (gt $.TimesWatched 1) .IsRewatch .HasSpoilers}}
                 <p class="film-review-meta">
@@ -49,6 +49,9 @@
                 <p class="film-no-review">No review.</p>
                 {{end}}
                 <div hidden>
+                    <a class="u-url" href="{{$.CanonicalUrl}}#review-{{.ID}}"></a>
+                    <span class="p-item h-cite"><a class="p-name u-url" href="{{$.CanonicalUrl}}">{{$.FilmTitle}}</a></span>
+                    <span class="p-author h-card"><a class="p-name u-url" href="{{$.SiteURL}}/">Chris Smith</a></span>
                     <data class="p-rating" value="{{.Rating}}"></data>
                     <data class="p-worst" value="1"></data>
                     <data class="p-best" value="10"></data>

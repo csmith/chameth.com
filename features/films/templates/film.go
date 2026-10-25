@@ -47,6 +47,7 @@ type FilmData struct {
 }
 
 type FilmReviewData struct {
+	ID          int
 	WatchedDate time.Time
 	Rating      int
 	IsRewatch   bool

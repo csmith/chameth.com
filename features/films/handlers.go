@@ -135,6 +135,7 @@ func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.Fil
 		reviews = append(
 			reviews,
 			templates.FilmReviewData{
+				ID:          review.ID,
 				WatchedDate: watched,
 				Rating:      review.Rating,
 				IsRewatch:   review.IsRewatch,
