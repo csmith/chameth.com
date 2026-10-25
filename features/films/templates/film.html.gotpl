@@ -36,12 +36,10 @@
                 <h3>Watched on <time class="dt-published" datetime="{{.WatchedDate.Format "2006-01-02"}}">{{.WatchedDate.Format "2 Jan 2006"}}</time></h3>
                 {{if or (gt $.TimesWatched 1) .IsRewatch .HasSpoilers}}
                 <p class="film-review-meta">
-                    {{if gt $.TimesWatched 1}}<data class="p-rating" value="{{.Rating}}">{{call $.Component "rating" .Rating}}</data>{{end}}
+                    {{if gt $.TimesWatched 1}}{{call $.Component "rating" .Rating}}{{end}}
                     {{if .IsRewatch}}<span class="film-rewatch">Rewatch</span>{{end}}
                     {{if .HasSpoilers}}<span class="film-spoilers">Spoilers</span>{{end}}
                 </p>
-                {{else}}
-                <data class="p-rating" value="{{.Rating}}" hidden></data>
                 {{end}}
                 {{if .Content}}
                 <div class="e-content">
@@ -50,6 +48,11 @@
                 {{else}}
                 <p class="film-no-review">No review.</p>
                 {{end}}
+                <div hidden>
+                    <data class="p-rating" value="{{.Rating}}"></data>
+                    <data class="p-worst" value="1"></data>
+                    <data class="p-best" value="10"></data>
+                </div>
             </section>
             {{end}}
             {{if .FilmLists}}
