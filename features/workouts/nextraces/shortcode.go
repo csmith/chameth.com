@@ -39,7 +39,7 @@ type race struct {
 }
 
 func retrieve(ctx context.Context, client *http.Client, _ []string) (shortcodes.Result[[]race], error) {
-	body, err := centralParkGet(ctx, client, "/api/events", url.Values{"type": {"race"}})
+	body, err := centralParkGet(ctx, client, "/api/events", url.Values{"type": {"event"}})
 	if err != nil {
 		return shortcodes.Result[[]race]{}, fmt.Errorf("failed to fetch races: %w", err)
 	}
