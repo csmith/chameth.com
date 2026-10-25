@@ -58,6 +58,10 @@
 
             <a class="u-url u-uid" href="{{ .PageData.CanonicalUrl }}"></a>
 
+            {{ if .PageData.OpenGraph.Image -}}
+                <a class="u-featured" href="{{ .PageData.OpenGraph.Image }}"></a>
+            {{- end }}
+
             <p class="p-summary">
                 {{ .ArticleSummary }}
             </p>
