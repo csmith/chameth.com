@@ -65,13 +65,17 @@
             grid-row: 1;
             grid-column: 1;
             margin: 0;
-            padding: var(--small-space);
+            /* Overflow clips at the padding edge, so the bottom spacing is a
+               border, and the line height fits the font's ascenders and
+               descenders, so a third line can't peek out. */
+            padding: var(--small-space) var(--small-space) 0;
+            border-bottom: var(--small-space) solid transparent;
             font-size: var(--font-size-xlarge);
             font-weight: bold;
-            line-height: 1em;
+            line-height: 1.25em;
             align-self: end;
             box-sizing: content-box;
-            max-height: 2em;
+            max-height: 2.5em;
             overflow: hidden;
             background-color: color-mix(
                 in srgb,
