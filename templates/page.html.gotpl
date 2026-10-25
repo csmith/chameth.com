@@ -177,7 +177,7 @@
         <a class="p-name u-url" href="{{.SiteURL}}/">Chris Smith</a>
         <img class="u-photo" src="{{.SiteURL}}/avatar.webp" alt="Photo of Chris Smith">
         <span class="p-nickname">MD87</span>
-        #nobridge
+        <p class="p-note">#nobridge</p>
     </section>
 </footer>
 </body>

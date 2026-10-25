@@ -53,7 +53,7 @@
                 <a class="p-name u-url" href="{{ .PageData.SiteURL }}/">Chris Smith</a>
                 <img class="u-photo" src="{{ .PageData.SiteURL }}/avatar.webp">
                 <span class="p-nickname">MD87</span>
-                #nobridge
+                <p class="p-note">#nobridge</p>
             </section>
 
             <a class="u-url u-uid" href="{{ .PageData.CanonicalUrl }}"></a>
