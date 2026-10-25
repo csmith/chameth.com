@@ -40,7 +40,7 @@
                         <a href="/feeds/">Standard feeds</a> are also available, but are approximately 42% less fun.
                     </p>
                 {{- end }}
-                <div class="post-links">
+                <div class="post-links h-feed">
                 {{ range .RelatedPosts -}}
                     {{call $.Component "postlink" .}}
                 {{ end }}
