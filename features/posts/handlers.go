@@ -42,11 +42,11 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 		summary = summary[:200] + "..."
 	}
 
-	var ogImage string
-	ogPath, err := media.GetOpenGraphImageForEntity(r.Context(), "post", post.ID)
-	if err == nil && ogPath != "" {
-		ogImage = parenttemplates.SiteURL() + ogPath
+	ogHeaders, err := media.OpenGraphHeaders(r.Context(), "post", post.ID)
+	if err != nil {
+		slog.Error("Failed to get post OpenGraph image", "post_id", post.ID, "error", err)
 	}
+	ogHeaders.Type = "article"
 
 	relatedPosts, err := RelatedPosts(r.Context(), post.ID)
 	if err != nil {
@@ -76,10 +76,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 				r.Context(),
 				post.Title,
 				post.Path,
-				parenttemplates.OpenGraphHeaders{
-					Image: ogImage,
-					Type:  "article",
-				},
+				ogHeaders,
 			),
 		},
 	)

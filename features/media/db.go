@@ -92,12 +92,13 @@ func GetOpenGraphDetailsForEntity(
 	return &relation, nil
 }
 
-func GetOpenGraphImageForEntity(ctx context.Context, entityType string, entityID int) (string, error) {
-	path, err := db.Get[string](
+func GetOpenGraphImageForEntity(ctx context.Context, entityType string, entityID int) (*OpenGraphImage, error) {
+	image, err := db.Get[OpenGraphImage](
 		ctx,
 		`
-		SELECT mr.path
+		SELECT mr.path, mr.description, m.width, m.height
 		FROM media_relations mr
+		JOIN media m ON mr.media_id = m.id
 		WHERE mr.entity_type = $1 AND mr.entity_id = $2 AND mr.role = 'opengraph'
 		LIMIT 1
 	`,
@@ -106,11 +107,11 @@ func GetOpenGraphImageForEntity(ctx context.Context, entityType string, entityID
 	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return "", nil
+			return nil, nil
 		}
-		return "", err
+		return nil, err
 	}
-	return path, nil
+	return &image, nil
 }
 
 func GetOpenGraphImageVariantsForEntity(

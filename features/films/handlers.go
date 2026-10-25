@@ -164,12 +164,9 @@ func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.Fil
 		return templates.FilmData{}, fmt.Errorf("failed to get lists containing film: %w", err)
 	}
 
-	var ogImage string
-	ogPath, err := media.GetOpenGraphImageForEntity(ctx, "film", film.ID)
+	ogHeaders, err := media.OpenGraphHeaders(ctx, "film", film.ID)
 	if err != nil {
 		slog.Error("Failed to get film OpenGraph image", "film_id", film.ID, "error", err)
-	} else if ogPath != "" {
-		ogImage = maintemplates.SiteURL() + ogPath
 	}
 
 	data := templates.FilmData{
@@ -186,7 +183,7 @@ func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.Fil
 			ctx,
 			fmt.Sprintf("%s (%s)", page.Title, formatYear(page.Year)),
 			film.Path,
-			maintemplates.OpenGraphHeaders{Image: ogImage},
+			ogHeaders,
 		),
 	}
 	for _, m := range memberships {

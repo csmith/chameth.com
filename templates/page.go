@@ -32,8 +32,11 @@ type PageData struct {
 }
 
 type OpenGraphHeaders struct {
-	Image string
-	Type  string
+	Image       string
+	ImageWidth  int
+	ImageHeight int
+	ImageAlt    string
+	Type        string
 }
 
 type RecentPost struct {

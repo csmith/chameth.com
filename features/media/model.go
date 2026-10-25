@@ -29,6 +29,13 @@ type MediaRelationWithDetails struct {
 	Media
 }
 
+type OpenGraphImage struct {
+	Path        string  `db:"path"`
+	Description *string `db:"description"`
+	Width       *int    `db:"width"`
+	Height      *int    `db:"height"`
+}
+
 type MediaImageVariant struct {
 	Path        string `db:"path"`
 	ContentType string `db:"content_type"`
