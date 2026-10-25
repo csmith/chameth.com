@@ -54,7 +54,7 @@ type listEntryRow struct {
 	Position int `db:"position"`
 }
 
-type posterRelation struct {
+type filmMedia struct {
 	Path     string `db:"path"`
 	MediaID  int    `db:"media_id"`
 	EntityID int    `db:"entity_id"`

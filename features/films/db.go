@@ -236,8 +236,8 @@ func setPosterUpdatedAt(ctx context.Context, filmID int, updatedAt time.Time) er
 	return err
 }
 
-func getPosterRelations(ctx context.Context, filmID int) ([]posterRelation, error) {
-	return db.Select[posterRelation](
+func getPosterRelations(ctx context.Context, filmID int) ([]filmMedia, error) {
+	return db.Select[filmMedia](
 		ctx,
 		`
 		SELECT path, media_id, entity_id
@@ -248,8 +248,8 @@ func getPosterRelations(ctx context.Context, filmID int) ([]posterRelation, erro
 	)
 }
 
-func getOrphanedPosterRelations(ctx context.Context) ([]posterRelation, error) {
-	return db.Select[posterRelation](
+func getOrphanedFilmMedia(ctx context.Context) ([]filmMedia, error) {
+	return db.Select[filmMedia](
 		ctx,
 		`
 		SELECT path, media_id, entity_id

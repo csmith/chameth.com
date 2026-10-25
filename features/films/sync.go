@@ -93,8 +93,8 @@ func syncIndex(ctx context.Context, mgr *shortcodes.Manager, client *http.Client
 		}
 	}
 
-	if err := removeOrphanedPosters(ctx); err != nil {
-		slog.Error("Failed to remove posters of removed films", "error", err)
+	if err := removeOrphanedMedia(ctx); err != nil {
+		slog.Error("Failed to remove media of removed films", "error", err)
 	}
 
 	return nil
@@ -164,7 +164,7 @@ func syncPoster(ctx context.Context, client *http.Client, f FilmSummary) error {
 	// A poster whose type changed lives at a different path.
 	for _, rel := range existing {
 		if rel.Path != path {
-			if err := deletePoster(ctx, rel); err != nil {
+			if err := deleteFilmMedia(ctx, rel); err != nil {
 				return err
 			}
 		}
@@ -173,25 +173,25 @@ func syncPoster(ctx context.Context, client *http.Client, f FilmSummary) error {
 	return setPosterUpdatedAt(ctx, f.ID, f.Poster.UpdatedAt)
 }
 
-func removeOrphanedPosters(ctx context.Context) error {
-	orphans, err := getOrphanedPosterRelations(ctx)
+func removeOrphanedMedia(ctx context.Context) error {
+	orphans, err := getOrphanedFilmMedia(ctx)
 	if err != nil {
 		return err
 	}
 	for _, rel := range orphans {
-		if err := deletePoster(ctx, rel); err != nil {
+		if err := deleteFilmMedia(ctx, rel); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func deletePoster(ctx context.Context, rel posterRelation) error {
+func deleteFilmMedia(ctx context.Context, rel filmMedia) error {
 	if err := media.DeleteMediaRelation(ctx, "film", rel.EntityID, rel.Path); err != nil {
-		return fmt.Errorf("failed to delete poster relation %s: %w", rel.Path, err)
+		return fmt.Errorf("failed to delete film media relation %s: %w", rel.Path, err)
 	}
 	if err := media.DeleteMedia(ctx, rel.MediaID); err != nil {
-		return fmt.Errorf("failed to delete poster media %d: %w", rel.MediaID, err)
+		return fmt.Errorf("failed to delete film media %d: %w", rel.MediaID, err)
 	}
 	return nil
 }
