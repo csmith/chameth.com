@@ -26,7 +26,7 @@ var (
 
 	buildVersion string
 
-	idGenerator, _ = aca.NewDefaultGenerator()
+	idGenerator, _ = aca.NewDefaultGenerator(aca.WithHexSuffix(10))
 )
 
 type request struct {
