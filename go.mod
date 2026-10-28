@@ -112,7 +112,7 @@ require (
 	golang.org/x/net v0.60.0
 	golang.org/x/text v0.42.0
 	google.golang.org/grpc v1.84.0
-	tailscale.com v1.102.4
+	tailscale.com v1.102.5
 )
 
 tool github.com/air-verse/air
