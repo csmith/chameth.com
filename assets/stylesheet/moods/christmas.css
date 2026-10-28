@@ -4,6 +4,12 @@ body {
     url(/moods/snowflakes.png),
     var(--background-texture) var(--background-colour);
   animation: snow 30s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    /* Keep the layers offset as at the start of the animation so the flakes don't stack. */
+    background-position: 0 0, 50px 200px, 0 0;
+  }
 }
 
 /* The third position in each list belongs to the page texture, which stays put. */
