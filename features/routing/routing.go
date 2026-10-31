@@ -3,7 +3,9 @@ package routing
 import (
 	"log/slog"
 	"net/http"
+	"net/url"
 	"regexp"
+	"strings"
 
 	"chameth.com/chameth.com/db"
 )
@@ -75,7 +77,10 @@ func ApplyRedirects() func(http.Handler) http.Handler {
 				for _, rw := range redirects {
 					n := rw.matcher.ReplaceAllString(r.URL.Path, rw.destination)
 					if n != r.URL.Path {
-						w.Header().Add("Location", n)
+						// Collapse leading slashes so paths like "//example.com/index.html"
+						// can't produce a protocol-relative redirect to another host.
+						n = "/" + strings.TrimLeft(n, "/\\")
+						w.Header().Add("Location", (&url.URL{Path: n}).EscapedPath())
 						w.WriteHeader(http.StatusMovedPermanently)
 						return
 					}
