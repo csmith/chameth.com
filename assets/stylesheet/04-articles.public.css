@@ -27,7 +27,7 @@ article section + section {
     font-size: var(--font-size-tiny);
     font-family: "Berkeley Mono", monospace;
     text-transform: uppercase;
-    float: right;
+    text-align: right;
 }
 
 @media (width >= 1200px) {
