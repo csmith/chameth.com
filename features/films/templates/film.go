@@ -34,7 +34,7 @@ type FilmData struct {
 	FilmTitle     string
 	Year          string
 	TMDBID        *int
-	Overview      template.HTML
+	Overview      string
 	Reviews       []FilmReviewData
 	TimesWatched  int
 	AverageRating int

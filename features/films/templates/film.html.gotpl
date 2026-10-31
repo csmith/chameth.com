@@ -11,7 +11,7 @@
                 {{end}}
                 <p class="film-breadcrumb"><a href="/films/">Films</a> &raquo;</p>
                 <h2 class="plain-header">{{.FilmTitle}}{{if .Year}} <time class="film-year" datetime="{{.Year}}">{{.Year}}</time>{{end}}</h2>
-                <div class="film-overview">{{.Overview}}</div>
+                <div class="film-overview">{{if .Overview}}<p>{{.Overview}}</p>{{end}}</div>
             </div>
             <div class="film-summary">
                 {{if .TimesWatched}}

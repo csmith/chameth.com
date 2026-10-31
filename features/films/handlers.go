@@ -152,11 +152,6 @@ func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.Fil
 		}
 	}
 
-	overview, err := markdown.Render(page.Overview)
-	if err != nil {
-		return templates.FilmData{}, fmt.Errorf("failed to render overview: %w", err)
-	}
-
 	syndicationHTML, err := syndications.RenderLinks(links)
 	if err != nil {
 		return templates.FilmData{}, fmt.Errorf("failed to render syndication links: %w", err)
@@ -176,7 +171,7 @@ func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.Fil
 		FilmTitle:     page.Title,
 		Year:          formatYear(page.Year),
 		TMDBID:        page.TMDBID,
-		Overview:      overview,
+		Overview:      page.Overview,
 		Reviews:       reviews,
 		TimesWatched:  len(reviews),
 		AverageRating: averageRating(page.Reviews),
