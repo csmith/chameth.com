@@ -160,15 +160,18 @@ article section + section {
 }
 
 /* Footnote references (and littlefoot's buttons, which use the same markup)
-   as small versions of the margin notes' number badges. */
+   as small versions of the margin notes' number badges. These stay inline:
+   an inline-block would allow a line break between it and the preceding word.
+   Inline boxes paint vertical padding without affecting the line box, so
+   padding-block keeps the badge the height it was as an inline-block. */
 a.footnote-ref,
 sup.footnote-ref > a {
-    display: inline-block;
+    display: inline;
     font-family: "Berkeley Mono", monospace;
     font-size: 0.7rem;
     font-weight: 400;
     line-height: 1.4;
-    padding: 0 0.35em;
+    padding: 0.1em 0.35em;
     margin-inline: 0.25em;
     color: var(--background-colour);
     background: var(--pen-ink-colour);
