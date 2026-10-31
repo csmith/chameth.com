@@ -78,6 +78,7 @@ type Review struct {
 	HasSpoilers   bool   `json:"has_spoilers"`
 	Text          string `json:"text"`
 	LetterboxdURL string `json:"letterboxd_url"`
+	PopfeedURL    string `json:"popfeed_url"`
 }
 
 type filmDetail struct {

@@ -26,7 +26,7 @@ import (
 
 const (
 	filmPageData    = "filmpage"
-	filmPageVersion = 1
+	filmPageVersion = 2
 	filmPageRefresh = 7 * 24 * time.Hour
 )
 
@@ -147,6 +147,9 @@ func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.Fil
 		if review.LetterboxdURL != "" {
 			links = append(links, syndications.SyndicationLink{ExternalURL: review.LetterboxdURL, Name: "Letterboxd"})
 		}
+		if review.PopfeedURL != "" {
+			links = append(links, syndications.SyndicationLink{ExternalURL: review.PopfeedURL, Name: "Popfeed"})
+		}
 	}
 
 	overview, err := markdown.Render(page.Overview)
@@ -156,7 +159,7 @@ func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.Fil
 
 	syndicationHTML, err := syndications.RenderLinks(links)
 	if err != nil {
-		return templates.FilmData{}, fmt.Errorf("failed to render letterboxd links: %w", err)
+		return templates.FilmData{}, fmt.Errorf("failed to render syndication links: %w", err)
 	}
 
 	memberships, err := getFilmListMemberships(ctx, film.ID)
