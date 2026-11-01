@@ -17,9 +17,10 @@ import (
 	"chameth.com/chameth.com/features/posts/admin/wordclouds"
 	"chameth.com/chameth.com/features/routing"
 	"chameth.com/chameth.com/features/syndications"
+	"go.temporal.io/sdk/client"
 )
 
-func RegisterRoutes(rm *routing.Manager) {
+func RegisterRoutes(rm *routing.Manager, tc client.Client) {
 	crud.Register(
 		rm.Admin,
 		"/posts",
@@ -32,7 +33,7 @@ func RegisterRoutes(rm *routing.Manager) {
 			),
 			Create: crud.Create("post", "/posts", crud.GeneratePath("/%s/", posts.CreatePost)),
 			Edit:   crud.Edit("post", posts.GetPostByID, toEditData, templates.RenderEditPost),
-			Update: crud.Update("post", "/posts", applyUpdate),
+			Update: crud.Update("post", "/posts", applyUpdate(tc)),
 		},
 	)
 	rm.Admin.HandleFunc("POST /posts/delete/{id}", DeletePostHandler())
@@ -96,36 +97,42 @@ func toEditData(ctx context.Context, post *posts.Post) (templates.EditPostData, 
 	}, nil
 }
 
-func applyUpdate(ctx context.Context, id int, form url.Values) error {
-	path := form.Get("path")
-	published := form.Get("published") == "true"
+func applyUpdate(tc client.Client) func(context.Context, int, url.Values) error {
+	return func(ctx context.Context, id int, form url.Values) error {
+		path := form.Get("path")
+		published := form.Get("published") == "true"
 
-	if err := posts.UpdatePost(
-		ctx,
-		id,
-		path,
-		form.Get("title"),
-		form.Get("content"),
-		form.Get("date"),
-		form.Get("format"),
-		published,
-	); err != nil {
-		return err
+		if err := posts.UpdatePost(
+			ctx,
+			id,
+			path,
+			form.Get("title"),
+			form.Get("content"),
+			form.Get("date"),
+			form.Get("format"),
+			published,
+		); err != nil {
+			return err
+		}
+
+		content.PreWarm("post", id, form.Get("content"), path)
+
+		if published {
+			go func() {
+				if err := posts.GenerateAndStore(context.Background(), path); err != nil {
+					slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
+				}
+			}()
+
+			go func() {
+				if err := syndications.SyndicateAllPosts(context.Background(), tc); err != nil {
+					slog.Error("Failed to start post syndication", "error", err)
+				}
+			}()
+		}
+
+		return nil
 	}
-
-	content.PreWarm("post", id, form.Get("content"), path)
-
-	if published {
-		go func() {
-			if err := posts.GenerateAndStore(context.Background(), path); err != nil {
-				slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
-			}
-		}()
-
-		go syndications.SyndicateAllPosts(context.Background())
-	}
-
-	return nil
 }
 
 func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {

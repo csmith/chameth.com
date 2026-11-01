@@ -6,9 +6,11 @@ import (
 	"flag"
 	"log/slog"
 	"net"
+	"time"
 
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/log"
+	"go.temporal.io/sdk/worker"
 	"google.golang.org/grpc"
 	"tailscale.com/tsnet"
 )
@@ -37,4 +39,40 @@ func New(ts *tsnet.Server) (client.Client, error) {
 			},
 		},
 	)
+}
+
+const workerRetryInterval = time.Minute
+
+// RunWorker runs a worker for the task queue until ctx is cancelled. The
+// frontend may be unreachable at boot (tailnet or Temporal down), so starting
+// is retried rather than giving up. onStart is called once the worker is up.
+func RunWorker(
+	ctx context.Context,
+	tc client.Client,
+	taskQueue string,
+	register func(worker.Registry),
+	onStart func(),
+) {
+	w := worker.New(tc, taskQueue, worker.Options{})
+	register(w)
+
+	for {
+		err := w.Start()
+		if err == nil {
+			break
+		}
+		slog.Error("Failed to start Temporal worker", "task_queue", taskQueue, "error", err)
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(workerRetryInterval):
+		}
+	}
+
+	if onStart != nil {
+		onStart()
+	}
+
+	<-ctx.Done()
+	w.Stop()
 }

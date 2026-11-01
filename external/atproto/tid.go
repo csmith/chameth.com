@@ -9,7 +9,8 @@ const (
 	base32  = "234567abcdefghijklmnopqrstuvwxyz"
 )
 
-func generateTID() string {
+// GenerateTID returns a new timestamp identifier, suitable as a record key.
+func GenerateTID() string {
 	// > The top bit is always 0
 	// > The next 53 bits represent microseconds since the UNIX epoch. 53 bits is chosen as the
 	// > maximum safe integer precision in a 64-bit floating point number, as used by Javascript.

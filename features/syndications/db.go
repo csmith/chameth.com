@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/templates"
 )
 
@@ -135,30 +134,61 @@ func DeleteSyndication(ctx context.Context, id int) error {
 	return nil
 }
 
-func getUnsyndicatedAtProtoPosts(ctx context.Context) ([]posts.PostMetadata, error) {
-	return db.Select[posts.PostMetadata](
+func createSyndicationIfMissing(ctx context.Context, path, externalURL, name, disposition string, rel *string) error {
+	_, err := db.Exec(
 		ctx,
 		`
-		SELECT id, path, title, date, format, published
-		FROM posts
-		WHERE published AND path NOT IN (
-			SELECT path FROM syndications WHERE name = 'Bluesky'
-		)
+		INSERT INTO syndications (path, external_url, name, published, disposition, rel)
+		SELECT $1, $2, $3, true, $4, $5
+		WHERE NOT EXISTS (SELECT 1 FROM syndications WHERE path = $1 AND external_url = $2)
 	`,
+		path,
+		externalURL,
+		name,
+		disposition,
+		rel,
 	)
+	if err != nil {
+		return fmt.Errorf("failed to create syndication: %w", err)
+	}
+	return nil
 }
 
-func getPostsNeedingDocumentBackfill(ctx context.Context) ([]Syndication, error) {
+func getSyndicationsByPathAndRel(ctx context.Context, path, rel string) ([]Syndication, error) {
 	return db.Select[Syndication](
 		ctx,
 		`
 		SELECT id, path, external_url, name, published, disposition, rel
-		FROM syndications
-		WHERE name = 'Bluesky' AND published
-		  AND path IN (SELECT path FROM posts WHERE published)
-		  AND path NOT IN (
-			SELECT path FROM syndications WHERE rel = 'site.standard.document'
-		  )
+		FROM syndications WHERE path = $1 AND rel = $2 ORDER BY id
+	`,
+		path,
+		rel,
+	)
+}
+
+func getSyndicationsByPathAndName(ctx context.Context, path, name string) ([]Syndication, error) {
+	return db.Select[Syndication](
+		ctx,
+		`
+		SELECT id, path, external_url, name, published, disposition, rel
+		FROM syndications WHERE path = $1 AND name = $2 ORDER BY id
+	`,
+		path,
+		name,
+	)
+}
+
+func getUnsyndicatedAtProtoPaths(ctx context.Context) ([]string, error) {
+	return db.Select[string](
+		ctx,
+		`
+		SELECT path
+		FROM posts
+		WHERE published AND (
+			path NOT IN (SELECT path FROM syndications WHERE name = 'Bluesky')
+			OR path NOT IN (SELECT path FROM syndications WHERE rel = 'site.standard.document')
+		)
+		ORDER BY date
 	`,
 	)
 }

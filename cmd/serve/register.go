@@ -149,7 +149,7 @@ func (s *site) registerRoutes() {
 	featuresPastesAdmin.RegisterRoutes(s.Routes)
 	featuresPoemsAdmin.RegisterRoutes(s.Routes)
 	featuresPosts.RegisterRoutes(s.Routes)
-	featuresPostsAdmin.RegisterRoutes(s.Routes)
+	featuresPostsAdmin.RegisterRoutes(s.Routes, s.Temporal)
 	featuresPrints.RegisterRoutes(s.Routes)
 	featuresProjects.RegisterRoutes(s.Routes)
 	featuresProjectsAdmin.RegisterRoutes(s.Routes)
@@ -171,7 +171,7 @@ func (s *site) launchGoroutines() {
 	go featuresMetrics.RegisterGoroutine(s.Context)()
 	go featuresPosts.RegisterGoroutine(s.Context)()
 	go featuresShortcodes.RegisterGoroutine(s.Shortcodes, s.Context)()
-	go featuresSyndications.RegisterGoroutine(s.Context)()
+	go featuresSyndications.RegisterGoroutine(s.Context, s.Temporal)()
 }
 
 func (s *site) registerContentTypes() {

@@ -8,11 +8,12 @@ import (
 	"net"
 	"time"
 
+	"chameth.com/chameth.com/external/temporal"
 	"chameth.com/chameth.com/features/metrics"
 	enumspb "go.temporal.io/api/enums/v1"
 	"go.temporal.io/sdk/activity"
 	"go.temporal.io/sdk/client"
-	"go.temporal.io/sdk/temporal"
+	sdktemporal "go.temporal.io/sdk/temporal"
 	"go.temporal.io/sdk/worker"
 	"go.temporal.io/sdk/workflow"
 )
@@ -33,8 +34,6 @@ const (
 	// germanMallTimeout bounds the whole child execution, queueing included:
 	// above the five minutes German Mall allows its provider call.
 	germanMallTimeout = 10 * time.Minute
-
-	workerRetryInterval = time.Minute
 )
 
 // startWorkflow hands a submission over to Temporal; everything from the
@@ -46,29 +45,18 @@ func startWorkflow(ctx context.Context, tc client.Client, sub submission) error 
 
 func RegisterGoroutine(ctx context.Context, tc client.Client) func() {
 	return func() {
-		w := worker.New(tc, taskQueue, worker.Options{})
-		w.RegisterWorkflowWithOptions(contactWorkflow, workflow.RegisterOptions{Name: workflowName})
-		w.RegisterActivityWithOptions(checksActivity, activity.RegisterOptions{Name: checksActivityName})
-		w.RegisterActivityWithOptions(recordActivity, activity.RegisterOptions{Name: recordActivityName})
-		w.RegisterActivityWithOptions(sendActivity, activity.RegisterOptions{Name: sendActivityName})
-
-		// The frontend may be unreachable at boot (tailnet or Temporal down),
-		// so keep trying rather than leaving the form without a worker.
-		for {
-			err := w.Start()
-			if err == nil {
-				break
-			}
-			slog.Error("Failed to start contact form worker", "error", err)
-			select {
-			case <-ctx.Done():
-				return
-			case <-time.After(workerRetryInterval):
-			}
-		}
-
-		<-ctx.Done()
-		w.Stop()
+		temporal.RunWorker(
+			ctx,
+			tc,
+			taskQueue,
+			func(w worker.Registry) {
+				w.RegisterWorkflowWithOptions(contactWorkflow, workflow.RegisterOptions{Name: workflowName})
+				w.RegisterActivityWithOptions(checksActivity, activity.RegisterOptions{Name: checksActivityName})
+				w.RegisterActivityWithOptions(recordActivity, activity.RegisterOptions{Name: recordActivityName})
+				w.RegisterActivityWithOptions(sendActivity, activity.RegisterOptions{Name: sendActivityName})
+			},
+			nil,
+		)
 	}
 }
 
@@ -81,7 +69,7 @@ func contactWorkflow(ctx workflow.Context, sub submission) error {
 		ctx,
 		workflow.ActivityOptions{
 			StartToCloseTimeout: time.Minute,
-			RetryPolicy:         &temporal.RetryPolicy{MaximumAttempts: 1},
+			RetryPolicy:         &sdktemporal.RetryPolicy{MaximumAttempts: 1},
 		},
 	)
 	var failed []cause
@@ -109,7 +97,7 @@ func contactWorkflow(ctx workflow.Context, sub submission) error {
 		ctx,
 		workflow.ActivityOptions{
 			StartToCloseTimeout: 30 * time.Second,
-			RetryPolicy:         &temporal.RetryPolicy{MaximumAttempts: 5},
+			RetryPolicy:         &sdktemporal.RetryPolicy{MaximumAttempts: 5},
 		},
 	)
 	if err := workflow.ExecuteActivity(recordCtx, recordActivityName, sub, failed, llmReason).Get(ctx, nil); err != nil {
@@ -125,7 +113,7 @@ func contactWorkflow(ctx workflow.Context, sub submission) error {
 			ctx,
 			workflow.ActivityOptions{
 				StartToCloseTimeout: time.Minute,
-				RetryPolicy: &temporal.RetryPolicy{
+				RetryPolicy: &sdktemporal.RetryPolicy{
 					InitialInterval:    30 * time.Second,
 					BackoffCoefficient: 2,
 					MaximumInterval:    30 * time.Minute,
@@ -146,7 +134,7 @@ func checkSpam(ctx workflow.Context, sub submission) (spamVerdict, error) {
 		workflow.ChildWorkflowOptions{
 			TaskQueue:                germanMallTaskQueue,
 			WorkflowExecutionTimeout: germanMallTimeout,
-			RetryPolicy:              &temporal.RetryPolicy{MaximumAttempts: 1},
+			RetryPolicy:              &sdktemporal.RetryPolicy{MaximumAttempts: 1},
 			ParentClosePolicy:        enumspb.PARENT_CLOSE_POLICY_TERMINATE,
 		},
 	)

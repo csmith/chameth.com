@@ -40,9 +40,13 @@ func (c *Client) DID() string {
 	return c.did
 }
 
-func (c *Client) CreateRecord(ctx context.Context, collection Collection, record Record) (StrongRef, string, error) {
-	recordKey := generateTID()
-
+// PutRecord creates or replaces the record with the given key.
+func (c *Client) PutRecord(
+	ctx context.Context,
+	collection Collection,
+	recordKey string,
+	record Record,
+) (StrongRef, string, error) {
 	payload := struct {
 		Repository string     `json:"repo"`
 		Collection Collection `json:"collection"`
