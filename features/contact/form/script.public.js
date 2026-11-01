@@ -28,6 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     resultText.innerText = 'Message sent! Thanks for getting in touch!'
                     el.appendChild(resultContainer)
                     el.removeChild(loadingContainer)
+                } else if (response.status === 429) {
+                    resultText.innerText = "You've sent too many messages recently. This one was not sent."
+                    el.appendChild(resultContainer)
+                    el.removeChild(loadingContainer)
                 } else {
                     resultText.innerText = 'Sorry, something went wrong. Your message was not sent.'
                     el.appendChild(resultContainer)

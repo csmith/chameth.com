@@ -7,6 +7,7 @@ import (
 	"flag"
 	"fmt"
 	"log/slog"
+	"net"
 	"net/mail"
 	"net/smtp"
 	"strconv"
@@ -109,6 +110,7 @@ func init() {
 	go func() {
 		for range ticker.C {
 			cleanupRateLimitMap()
+			throttle.cleanup()
 		}
 	}()
 }
@@ -135,4 +137,55 @@ func isRateAllowed(ip string) bool {
 
 	rateLimitMap[ip] = time.Now()
 	return true
+}
+
+const (
+	throttleLimit  = 10
+	throttleWindow = time.Hour
+)
+
+var throttle = &submissionThrottle{windows: make(map[string]throttleCount)}
+
+// submissionThrottle caps how many submissions an address can make before
+// they're stored at all. It's much looser than the rate limit check, which
+// only decides whether a stored submission gets sent.
+type submissionThrottle struct {
+	mu      sync.Mutex
+	windows map[string]throttleCount
+}
+
+type throttleCount struct {
+	start time.Time
+	count int
+}
+
+func (t *submissionThrottle) allow(remoteAddr string) bool {
+	host, _, err := net.SplitHostPort(remoteAddr)
+	if err != nil {
+		host = remoteAddr
+	}
+
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	now := time.Now()
+	w := t.windows[host]
+	if now.Sub(w.start) >= throttleWindow {
+		w = throttleCount{start: now}
+	}
+	w.count++
+	t.windows[host] = w
+	return w.count <= throttleLimit
+}
+
+func (t *submissionThrottle) cleanup() {
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	now := time.Now()
+	for host, w := range t.windows {
+		if now.Sub(w.start) >= throttleWindow {
+			delete(t.windows, host)
+		}
+	}
 }

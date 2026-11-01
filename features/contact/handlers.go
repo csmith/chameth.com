@@ -43,6 +43,12 @@ func handleJSON(tc client.Client) http.HandlerFunc {
 			return
 		}
 
+		if !throttle.allow(r.RemoteAddr) {
+			slog.Info("Dropping throttled contact form submission", "remoteAddr", r.RemoteAddr)
+			http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+			return
+		}
+
 		if err := startWorkflow(r.Context(), tc, newSubmission(r, req, methodJSON)); err != nil {
 			slog.Error("Error starting contact workflow", "error", err, "request", req)
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -74,6 +80,12 @@ func handleForm(tc client.Client) http.HandlerFunc {
 		if err := req.validateLengths(); err != nil {
 			slog.Info("Rejecting oversized contact form submission", "error", err)
 			http.Error(w, "Your message is too long and was not sent.", http.StatusBadRequest)
+			return
+		}
+
+		if !throttle.allow(r.RemoteAddr) {
+			slog.Info("Dropping throttled contact form submission", "remoteAddr", r.RemoteAddr)
+			http.Error(w, "You've sent too many messages recently. This one was not sent.", http.StatusTooManyRequests)
 			return
 		}
 
