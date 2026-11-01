@@ -107,8 +107,6 @@ func main() {
 		IdleTimeout:  60 * time.Second,
 		Handler: middleware.Chain(
 			middleware.WithMiddleware(
-				middleware.RealAddress(),
-				metrics.LogRequests(),
 				middleware.CrossOriginProtection(),
 				middleware.ErrorHandler(
 					middleware.WithErrorHandler(http.StatusNotFound, http.HandlerFunc(errorpages.NotFound)),
@@ -146,6 +144,8 @@ func main() {
 				routing.ApplyRedirects(),
 				sudo.Middleware,
 				middleware.Recover(),
+				middleware.RealAddress(),
+				metrics.LogRequests(),
 				disableCaching(),
 			),
 		)(s.Routes.Public),

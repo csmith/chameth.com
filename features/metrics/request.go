@@ -49,6 +49,7 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 			func(w http.ResponseWriter, r *http.Request) {
 				r, requestId := withRequestID(r)
 				startRequestAt(requestId, time.Now())
+				defer pruneRequest(requestId)
 
 				writer := &StatsResponseWriter{
 					ResponseWriter: w,
@@ -74,7 +75,6 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 				go recordRequestMetric(r.URL.Path, requestId, duration, queries)
 
 				writer.Finish(duration, queries)
-				pruneRequest(requestId)
 			},
 		)
 	}
