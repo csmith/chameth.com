@@ -169,7 +169,7 @@ func (s *site) launchGoroutines() {
 	go featuresContact.RegisterGoroutine(s.Context, s.Temporal)()
 	go featuresFilms.RegisterGoroutine(s.Context, s.Shortcodes, s.Tailscale)()
 	go featuresMetrics.RegisterGoroutine(s.Context)()
-	go featuresPosts.RegisterGoroutine(s.Context)()
+	go featuresPosts.RegisterGoroutine(s.Context, s.Temporal)()
 	go featuresShortcodes.RegisterGoroutine(s.Shortcodes, s.Context)()
 	go featuresSyndications.RegisterGoroutine(s.Context, s.Temporal)()
 }

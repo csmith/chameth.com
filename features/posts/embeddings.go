@@ -4,32 +4,121 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"regexp"
-	"sync"
+	"time"
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/content/markdown"
+	"chameth.com/chameth.com/external/temporal"
 	"github.com/pgvector/pgvector-go"
+	"go.temporal.io/sdk/activity"
+	"go.temporal.io/sdk/client"
+	sdktemporal "go.temporal.io/sdk/temporal"
+	"go.temporal.io/sdk/worker"
+	"go.temporal.io/sdk/workflow"
 )
 
 var (
 	ollamaEndpoint = flag.String("ollama-endpoint", "http://ollama:11434", "Ollama API endpoint")
 	ollamaModel    = flag.String("ollama-model", "qwen3-embedding:8b", "Ollama embedding model")
 
-	embeddingMutex sync.Mutex
-
 	codeRemovalRegex = regexp.MustCompile(`(?s)<code>.*?</code>`)
 )
 
-// GenerateAndStore generates an embedding for a post and stores it in the database
-func GenerateAndStore(ctx context.Context, postPath string) error {
-	embeddingMutex.Lock()
-	defer embeddingMutex.Unlock()
+const (
+	embeddingTaskQueue    = "chameth.com.embeddings"
+	embeddingWorkflowName = "chameth.com.EmbedPost"
+	embeddingActivityName = "chameth.com.embedPost"
+	postChangedSignal     = "changed"
+)
 
+func RegisterGoroutine(ctx context.Context, tc client.Client) func() {
+	return func() {
+		temporal.RunWorker(
+			ctx,
+			tc,
+			embeddingTaskQueue,
+			// One embedding at a time, so a backlog doesn't swamp Ollama.
+			worker.Options{MaxConcurrentActivityExecutionSize: 1},
+			func(w worker.Registry) {
+				w.RegisterWorkflowWithOptions(embedPostWorkflow, workflow.RegisterOptions{Name: embeddingWorkflowName})
+				w.RegisterActivityWithOptions(generateAndStore, activity.RegisterOptions{Name: embeddingActivityName})
+			},
+			func() {
+				if err := embedMissingPosts(ctx, tc); err != nil {
+					slog.Error("Failed to start embedding missing posts", "error", err)
+				}
+			},
+		)
+	}
+}
+
+// EmbedPost (re)generates the embedding for a post. If one is already being
+// generated, it is generated again once that finishes so it reflects the
+// latest content.
+func EmbedPost(ctx context.Context, tc client.Client, path string) error {
+	_, err := tc.SignalWithStartWorkflow(
+		ctx,
+		"embed-post:"+path,
+		postChangedSignal,
+		nil,
+		client.StartWorkflowOptions{TaskQueue: embeddingTaskQueue},
+		embeddingWorkflowName,
+		path,
+	)
+	return err
+}
+
+func embedMissingPosts(ctx context.Context, tc client.Client) error {
+	paths, err := postPathsWithoutEmbeddings(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to query posts without embeddings: %w", err)
+	}
+
+	var errs []error
+	for _, path := range paths {
+		if err := EmbedPost(ctx, tc, path); err != nil {
+			errs = append(errs, fmt.Errorf("failed to start embedding for %s: %w", path, err))
+		}
+	}
+	return errors.Join(errs...)
+}
+
+func embedPostWorkflow(ctx workflow.Context, path string) error {
+	ctx = workflow.WithActivityOptions(
+		ctx,
+		workflow.ActivityOptions{
+			StartToCloseTimeout: 5 * time.Minute,
+			RetryPolicy: &sdktemporal.RetryPolicy{
+				InitialInterval:    30 * time.Second,
+				BackoffCoefficient: 2,
+				MaximumInterval:    30 * time.Minute,
+				MaximumAttempts:    10,
+			},
+		},
+	)
+
+	changed := workflow.GetSignalChannel(ctx, postChangedSignal)
+	for {
+		for changed.ReceiveAsync(nil) {
+		}
+		if err := workflow.ExecuteActivity(ctx, embeddingActivityName, path).Get(ctx, nil); err != nil {
+			return err
+		}
+		// The post was saved again while its embedding was being generated.
+		if !changed.ReceiveAsync(nil) {
+			return nil
+		}
+	}
+}
+
+// generateAndStore generates an embedding for a post and stores it in the database
+func generateAndStore(ctx context.Context, postPath string) error {
 	post, err := GetPostByPath(ctx, postPath)
 	if err != nil {
 		return fmt.Errorf("failed to get post by path %s: %w", postPath, err)
@@ -96,46 +185,6 @@ func GenerateAndStore(ctx context.Context, postPath string) error {
 
 	slog.Info("Generated embedding for post", "path", postPath, "dimension", len(embedding))
 	return nil
-}
-
-// updateAllPosts generates embeddings for all posts that don't have one
-func updateAllPosts(ctx context.Context) {
-	slog.Info("Starting to update post embeddings")
-
-	paths, err := postPathsWithoutEmbeddings(ctx)
-	if err != nil {
-		slog.Error("Failed to query posts without embeddings", "error", err)
-		return
-	}
-
-	if len(paths) == 0 {
-		slog.Info("No posts need embedding generation")
-		return
-	}
-
-	slog.Info("Found posts without embeddings", "count", len(paths))
-
-	successCount := 0
-	failureCount := 0
-
-	for i, path := range paths {
-		slog.Info("Generating embedding", "progress", fmt.Sprintf("%d/%d", i+1, len(paths)), "path", path)
-
-		if err := GenerateAndStore(ctx, path); err != nil {
-			slog.Error("Failed to generate embedding for post", "path", path, "error", err)
-			failureCount++
-		} else {
-			successCount++
-		}
-	}
-
-	slog.Info("Finished updating post embeddings", "success", successCount, "failures", failureCount, "total", len(paths))
-}
-
-func RegisterGoroutine(ctx context.Context) func() {
-	return func() {
-		updateAllPosts(ctx)
-	}
 }
 
 // RelatedPosts finds posts that are semantically similar to the given post.

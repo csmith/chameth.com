@@ -119,8 +119,8 @@ func applyUpdate(tc client.Client) func(context.Context, int, url.Values) error 
 
 		if published {
 			go func() {
-				if err := posts.GenerateAndStore(context.Background(), path); err != nil {
-					slog.Error("Failed to regenerate embedding for updated post", "path", path, "error", err)
+				if err := posts.EmbedPost(context.Background(), tc, path); err != nil {
+					slog.Error("Failed to start embedding for updated post", "path", path, "error", err)
 				}
 			}()
 

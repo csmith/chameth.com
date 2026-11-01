@@ -51,6 +51,7 @@ func RegisterGoroutine(ctx context.Context, tc client.Client) func() {
 			ctx,
 			tc,
 			taskQueue,
+			worker.Options{},
 			func(w worker.Registry) {
 				w.RegisterWorkflowWithOptions(syndicatePostWorkflow, workflow.RegisterOptions{Name: workflowName})
 				w.RegisterActivityWithOptions(documentActivity, activity.RegisterOptions{Name: documentActivityName})

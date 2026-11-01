@@ -50,10 +50,11 @@ func RunWorker(
 	ctx context.Context,
 	tc client.Client,
 	taskQueue string,
+	options worker.Options,
 	register func(worker.Registry),
 	onStart func(),
 ) {
-	w := worker.New(tc, taskQueue, worker.Options{})
+	w := worker.New(tc, taskQueue, options)
 	register(w)
 
 	for {

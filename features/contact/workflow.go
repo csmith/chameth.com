@@ -49,6 +49,7 @@ func RegisterGoroutine(ctx context.Context, tc client.Client) func() {
 			ctx,
 			tc,
 			taskQueue,
+			worker.Options{},
 			func(w worker.Registry) {
 				w.RegisterWorkflowWithOptions(contactWorkflow, workflow.RegisterOptions{Name: workflowName})
 				w.RegisterActivityWithOptions(checksActivity, activity.RegisterOptions{Name: checksActivityName})
