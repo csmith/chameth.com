@@ -130,11 +130,7 @@ func applyUpdate(ctx context.Context, id int, form url.Values) error {
 		return err
 	}
 
-	entityType := "staticpage"
-	if form.Get("raw") == "true" {
-		entityType = "rawpage"
-	}
-	content.PreWarm(entityType, id, form.Get("content"), form.Get("path"))
+	content.PreWarm("staticpage", id, form.Get("content"), form.Get("path"))
 
 	return nil
 }

@@ -23,7 +23,7 @@ func StaticPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if page.Raw {
-		renderedContent, err := content.RenderContent(r.Context(), "rawpage", page.ID, page.Content, page.Path)
+		renderedContent, err := content.RenderContent(r.Context(), "staticpage", page.ID, page.Content, page.Path)
 		if err != nil {
 			slog.Error("Failed to render raw page content", "page", page.Title, "error", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
