@@ -8,45 +8,58 @@ import (
 	"net/http"
 )
 
-func handleJSON(w http.ResponseWriter, r *http.Request) {
-	if r.Header.Get("Content-Type") != "application/json" {
-		http.Error(w, http.StatusText(http.StatusUnsupportedMediaType), http.StatusUnsupportedMediaType)
-		return
-	}
+const maxBodySize = 4096
 
-	defer r.Body.Close()
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		slog.Error("Error reading nod body", "error", err)
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
+func handleJSON(pages pageChecker) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Content-Type") != "application/json" {
+			http.Error(w, http.StatusText(http.StatusUnsupportedMediaType), http.StatusUnsupportedMediaType)
+			return
+		}
 
-	var req struct {
-		Page string `json:"page"`
-	}
-	if err = json.Unmarshal(body, &req); err != nil {
-		slog.Error("Error parsing nod payload", "error", err, "payload", string(body))
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
+		defer r.Body.Close()
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, maxBodySize))
+		if err != nil {
+			slog.Info("Error reading nod body", "error", err)
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
 
-	if err = processNod(req.Page); err != nil {
-		slog.Error("Error processing nod", "error", err)
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-		return
-	}
+		var req struct {
+			Page string `json:"page"`
+		}
+		if err = json.Unmarshal(body, &req); err != nil {
+			slog.Info("Error parsing nod payload", "error", err, "size", len(body))
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
 
-	w.WriteHeader(http.StatusAccepted)
+		if err = processNod(r.Context(), pages, r.RemoteAddr, req.Page); err != nil {
+			slog.Info("Error processing nod", "error", err)
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+
+		w.WriteHeader(http.StatusAccepted)
+	}
 }
 
-func handleForm(w http.ResponseWriter, r *http.Request) {
-	if err := processNod(r.FormValue("page")); err != nil {
-		slog.Error("Error processing nod form", "error", err)
-		http.Error(w, "Something went wrong", http.StatusBadRequest)
-		return
-	}
+func handleForm(pages pageChecker) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		r.Body = http.MaxBytesReader(w, r.Body, maxBodySize)
+		if err := r.ParseForm(); err != nil {
+			slog.Info("Error parsing nod form", "error", err)
+			http.Error(w, "Something went wrong", http.StatusBadRequest)
+			return
+		}
 
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	fmt.Fprint(w, "Your nod has been received and is appreciated")
+		if err := processNod(r.Context(), pages, r.RemoteAddr, r.FormValue("page")); err != nil {
+			slog.Info("Error processing nod form", "error", err)
+			http.Error(w, "Something went wrong", http.StatusBadRequest)
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		fmt.Fprint(w, "Your nod has been received and is appreciated")
+	}
 }

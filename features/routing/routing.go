@@ -1,9 +1,13 @@
 package routing
 
 import (
+	"context"
+	"database/sql"
+	"errors"
 	"log/slog"
 	"net/http"
 	"net/url"
+	"path"
 	"regexp"
 	"strings"
 
@@ -90,6 +94,30 @@ func ApplyRedirects() func(http.Handler) http.Handler {
 			},
 		)
 	}
+}
+
+// IsPage reports whether p is the canonical path of a public page: either
+// content in the paths table, or a route registered with a {$} pattern.
+// Prefix-matched content and wildcard routes don't count, as they would
+// accept arbitrary text in the path.
+func (m *Manager) IsPage(ctx context.Context, p string) (bool, error) {
+	if canonical := path.Clean(p); p != canonical && p != canonical+"/" {
+		return false, nil
+	}
+
+	req := &http.Request{Method: http.MethodGet, URL: &url.URL{Path: p}, Header: http.Header{}}
+	if _, pattern := m.Public.Handler(req.WithContext(ctx)); strings.HasSuffix(pattern, "{$}") {
+		return true, nil
+	}
+
+	contentType, err := findExactContentType(ctx, p)
+	if errors.Is(err, sql.ErrNoRows) {
+		return false, nil
+	} else if err != nil {
+		return false, err
+	}
+	_, ok := m.contentTypes[contentType]
+	return ok, nil
 }
 
 func (m *Manager) contentHandler() http.HandlerFunc {
