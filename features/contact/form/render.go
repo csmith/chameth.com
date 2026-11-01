@@ -26,6 +26,10 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 			Page:      parenttemplates.SiteURL() + ctx.URL,
 			Preamble:  preamble,
 			Timestamp: contact.SignedTimestamp(),
+
+			MaxNameLength:    contact.MaxNameLength,
+			MaxEmailLength:   contact.MaxEmailLength,
+			MaxMessageLength: contact.MaxMessageLength,
 		},
 	)
 }

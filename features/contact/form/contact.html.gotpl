@@ -4,9 +4,9 @@
         <input type="hidden" name="page" value="{{.Page}}" />
         <input type="hidden" name="ts" value="{{.Timestamp}}" />
         <input type="text" name="subject" class="subject" placeholder="Subject" tabindex="-1" autocomplete="off" />
-        <input type="text" name="name" placeholder="Your name/alias (optional)" />
-        <input type="email" name="email" placeholder="Your e-mail address (optional)" />
-        <textarea name="message" placeholder="Your message" required></textarea>
+        <input type="text" name="name" maxlength="{{.MaxNameLength}}" placeholder="Your name/alias (optional)" />
+        <input type="email" name="email" maxlength="{{.MaxEmailLength}}" placeholder="Your e-mail address (optional)" />
+        <textarea name="message" maxlength="{{.MaxMessageLength}}" placeholder="Your message" required></textarea>
         <button type="submit" class="submit">Send!</button>
         <p class="privacy">See the <a class="plain-link" href="/colophon/">colophon</a> for <a class="plain-link" href="/colophon/#contact-form">information on how personal data is used and retained</a> when submitting this form.</p>
     </form>

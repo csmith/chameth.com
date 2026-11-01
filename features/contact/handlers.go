@@ -11,6 +11,10 @@ import (
 	"go.temporal.io/sdk/client"
 )
 
+// maxBodySize comfortably fits a submission at the maximum field lengths,
+// even with every character percent-encoded.
+const maxBodySize = 256 * 1024
+
 func handleJSON(tc client.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Content-Type") != "application/json" {
@@ -19,16 +23,22 @@ func handleJSON(tc client.Client) http.HandlerFunc {
 		}
 
 		defer r.Body.Close()
-		body, err := io.ReadAll(r.Body)
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, maxBodySize))
 		if err != nil {
-			slog.Error("Error reading contact form body", "error", err)
+			slog.Info("Error reading contact form body", "error", err)
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
 
 		var req request
 		if err = json.Unmarshal(body, &req); err != nil {
-			slog.Error("Error parsing contact form payload", "error", err, "payload", string(body))
+			slog.Info("Error parsing contact form payload", "error", err, "size", len(body))
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+
+		if err := req.validateLengths(); err != nil {
+			slog.Info("Rejecting oversized contact form submission", "error", err)
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
 		}
@@ -45,6 +55,13 @@ func handleJSON(tc client.Client) http.HandlerFunc {
 
 func handleForm(tc client.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		r.Body = http.MaxBytesReader(w, r.Body, maxBodySize)
+		if err := r.ParseForm(); err != nil {
+			slog.Info("Error parsing contact form", "error", err)
+			http.Error(w, "Your message could not be read and was not sent.", http.StatusBadRequest)
+			return
+		}
+
 		req := request{
 			Page:        r.FormValue("page"),
 			SenderName:  r.FormValue("name"),
@@ -52,6 +69,12 @@ func handleForm(tc client.Client) http.HandlerFunc {
 			Message:     r.FormValue("message"),
 			Timestamp:   r.FormValue("ts"),
 			Honeypot:    r.FormValue("subject"),
+		}
+
+		if err := req.validateLengths(); err != nil {
+			slog.Info("Rejecting oversized contact form submission", "error", err)
+			http.Error(w, "Your message is too long and was not sent.", http.StatusBadRequest)
+			return
 		}
 
 		if err := startWorkflow(r.Context(), tc, newSubmission(r, req, methodForm)); err != nil {

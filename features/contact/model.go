@@ -1,6 +1,10 @@
 package contact
 
-import "time"
+import (
+	"fmt"
+	"time"
+	"unicode/utf8"
+)
 
 type method string
 
@@ -16,6 +20,37 @@ type request struct {
 	Message     string `json:"message"`
 	Timestamp   string `json:"ts"`
 	Honeypot    string `json:"subject"`
+}
+
+const (
+	// Maximum field lengths, in characters. The form renders the user-editable
+	// ones as maxlength attributes so browsers enforce them before submitting.
+	MaxNameLength    = 200
+	MaxEmailLength   = 254
+	MaxMessageLength = 10000
+	maxPageLength    = 1024
+	maxOtherLength   = 256
+)
+
+func (r request) validateLengths() error {
+	fields := []struct {
+		name  string
+		value string
+		max   int
+	}{
+		{"page", r.Page, maxPageLength},
+		{"name", r.SenderName, MaxNameLength},
+		{"email", r.SenderEmail, MaxEmailLength},
+		{"message", r.Message, MaxMessageLength},
+		{"ts", r.Timestamp, maxOtherLength},
+		{"subject", r.Honeypot, maxOtherLength},
+	}
+	for _, f := range fields {
+		if n := utf8.RuneCountInString(f.value); n > f.max {
+			return fmt.Errorf("%s is %d characters, maximum is %d", f.name, n, f.max)
+		}
+	}
+	return nil
 }
 
 // submission is the contact workflow's input: the request plus what the
