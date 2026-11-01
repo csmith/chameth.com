@@ -30,17 +30,40 @@ var (
 )
 
 type request struct {
-	start   time.Time
-	queries atomic.Int32
+	start    time.Time
+	queries  atomic.Int32
+	pageType atomic.Pointer[string]
 }
 
-func normalizePath(path string) string {
-	// Limit label cardinality a bit by truncating to two segments
-	parts := strings.SplitN(path, "/", 4)
-	if len(parts) > 3 {
-		return strings.Join(parts[:3], "/") + "/..."
+// SetPageType records what kind of page is serving the request, for use as
+// a low-cardinality metric label in place of the URL.
+func SetPageType(ctx context.Context, pageType string) {
+	if details := inFlightRequest(ctx); details != nil {
+		details.pageType.Store(&pageType)
 	}
-	return path
+}
+
+func inFlightRequest(ctx context.Context) *request {
+	requestId, ok := ctx.Value(requestIdKey).(string)
+	if !ok {
+		return nil
+	}
+
+	inFlightRequestsMu.RLock()
+	defer inFlightRequestsMu.RUnlock()
+	return inFlightRequests[requestId]
+}
+
+// methodLabel limits the method label to standard methods, as clients can
+// send arbitrary method tokens.
+func methodLabel(method string) string {
+	switch method {
+	case http.MethodGet, http.MethodHead, http.MethodPost, http.MethodPut, http.MethodPatch,
+		http.MethodDelete, http.MethodConnect, http.MethodOptions, http.MethodTrace:
+		return method
+	default:
+		return "other"
+	}
 }
 
 func CollectRequestStats() func(http.Handler) http.Handler {
@@ -58,19 +81,19 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 
 				next.ServeHTTP(writer, r)
 
-				duration, queries := func() (time.Duration, int32) {
-					inFlightRequestsMu.RLock()
-					defer inFlightRequestsMu.RUnlock()
-					details, ok := inFlightRequests[requestId]
-					if !ok {
-						return 0, 0
+				var duration time.Duration
+				var queries int32
+				pageType := "unrouted"
+				if details := inFlightRequest(r.Context()); details != nil {
+					duration = time.Since(details.start)
+					queries = details.queries.Load()
+					if t := details.pageType.Load(); t != nil {
+						pageType = *t
 					}
-					return time.Since(details.start), details.queries.Load()
-				}()
+				}
 
-				path := normalizePath(r.URL.Path)
-				httpRequestsTotal.WithLabelValues(r.Method, path, writer.statusCode()).Inc()
-				dbQueriesPerRequest.WithLabelValues(path).Observe(float64(queries))
+				httpRequestsTotal.WithLabelValues(methodLabel(r.Method), pageType, writer.statusCode()).Inc()
+				dbQueriesPerRequest.WithLabelValues(pageType).Observe(float64(queries))
 
 				go recordRequestMetric(r.URL.Path, requestId, duration, queries)
 
@@ -105,19 +128,9 @@ func pruneRequest(requestId string) {
 }
 
 func LogQuery(ctx context.Context) {
-	requestId, ok := ctx.Value(requestIdKey).(string)
-	if !ok {
-		return
+	if details := inFlightRequest(ctx); details != nil {
+		details.queries.Add(1)
 	}
-
-	inFlightRequestsMu.RLock()
-	details, ok := inFlightRequests[requestId]
-	inFlightRequestsMu.RUnlock()
-	if !ok {
-		return
-	}
-
-	details.queries.Add(1)
 }
 
 var statsPlaceholder = []byte("[[STATS_GO_HERE]]")

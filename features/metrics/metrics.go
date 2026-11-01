@@ -8,7 +8,7 @@ var (
 			Name: "http_requests_total",
 			Help: "Total number of HTTP requests.",
 		},
-		[]string{"method", "path", "status"},
+		[]string{"method", "page_type", "status"},
 	)
 
 	dbQueriesPerRequest = prometheus.NewHistogramVec(
@@ -17,7 +17,7 @@ var (
 			Help:    "Number of database queries per HTTP request.",
 			Buckets: []float64{0, 1, 2, 3, 5, 8, 13, 21, 34, 55},
 		},
-		[]string{"path"},
+		[]string{"page_type"},
 	)
 
 	feedRequestsTotal = prometheus.NewCounterVec(

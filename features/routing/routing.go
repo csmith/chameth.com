@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"chameth.com/chameth.com/db"
+	"chameth.com/chameth.com/features/metrics"
 )
 
 type redirect struct {
@@ -74,6 +75,15 @@ func (m *Manager) RegisterContentType(contentType string, handler http.HandlerFu
 	m.contentTypes[contentType] = handler
 }
 
+// ServeHTTP dispatches to the public routes, recording the matched route
+// pattern as the request's page type.
+func (m *Manager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if _, pattern := m.Public.Handler(r); pattern != "" {
+		metrics.SetPageType(r.Context(), pattern)
+	}
+	m.Public.ServeHTTP(w, r)
+}
+
 func ApplyRedirects() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(
@@ -81,6 +91,7 @@ func ApplyRedirects() func(http.Handler) http.Handler {
 				for _, rw := range redirects {
 					n := rw.matcher.ReplaceAllString(r.URL.Path, rw.destination)
 					if n != r.URL.Path {
+						metrics.SetPageType(r.Context(), "redirect")
 						// Collapse leading slashes so paths like "//example.com/index.html"
 						// can't produce a protocol-relative redirect to another host.
 						n = "/" + strings.TrimLeft(n, "/\\")
@@ -131,10 +142,12 @@ func (m *Manager) contentHandler() http.HandlerFunc {
 			}
 
 			if handler, ok := m.contentTypes[contentType]; ok {
+				metrics.SetPageType(r.Context(), contentType)
 				handler(w, r)
 				return
 			}
 
+			metrics.SetPageType(r.Context(), "fallback")
 			m.fallback(w, r)
 		},
 	)

@@ -148,7 +148,7 @@ func main() {
 				metrics.LogRequests(),
 				disableCaching(),
 			),
-		)(s.Routes.Public),
+		)(s.Routes),
 	}
 
 	go func() {
