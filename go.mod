@@ -44,7 +44,7 @@ require (
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/jsimonetti/rtnetlink v1.4.2 // indirect
-	github.com/klauspost/compress v1.20.0 // indirect
+	github.com/klauspost/compress v1.20.1 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/mdlayher/netlink v1.11.2 // indirect
@@ -57,8 +57,8 @@ require (
 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
 	github.com/pires/go-proxyproto v0.15.0 // indirect
 	github.com/prometheus/client_model v0.6.3 // indirect
-	github.com/prometheus/common v0.71.0 // indirect
-	github.com/prometheus/procfs v0.21.1 // indirect
+	github.com/prometheus/common v0.72.0 // indirect
+	github.com/prometheus/procfs v0.22.0 // indirect
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/safchain/ethtool v0.7.0 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
@@ -104,7 +104,7 @@ require (
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/kljensen/snowball v0.10.0
 	github.com/pgvector/pgvector-go v0.4.1
-	github.com/prometheus/client_golang v1.24.1
+	github.com/prometheus/client_golang v1.25.0
 	go.temporal.io/api v1.63.6
 	go.temporal.io/sdk v1.49.0
 	golang.org/x/image v0.46.0
