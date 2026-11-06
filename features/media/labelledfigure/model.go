@@ -1,11 +1,10 @@
 package labelledfigure
 
-import "html/template"
+import (
+	"html/template"
 
-type Source struct {
-	Src  string
-	Type string
-}
+	"chameth.com/chameth.com/features/media"
+)
 
 type Region struct {
 	X        int
@@ -20,7 +19,7 @@ type Region struct {
 }
 
 type Data struct {
-	Sources     []Source
+	Sources     []media.Source
 	Src         string
 	Description string
 	Caption     template.HTML

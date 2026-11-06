@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"chameth.com/chameth.com/content/markdown"
 	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/shortcodes"
 )
@@ -36,50 +35,19 @@ func Render(args []string, ctx *shortcodes.Context) (string, error) {
 		return "", fmt.Errorf("labelledfigure media not found for description: %s", description)
 	}
 
-	var primaryMedia *media.MediaRelationWithDetails
-	var sources []Source
-
-	for i := range matchingMedia {
-		m := &matchingMedia[i]
-		switch m.ContentType {
-		case "image/jpeg", "image/png":
-			if primaryMedia == nil {
-				primaryMedia = m
-			}
-		case "image/avif", "image/webp":
-			sources = append(
-				sources,
-				Source{
-					Src:  m.Path,
-					Type: m.ContentType,
-				},
-			)
-		}
+	picture, err := media.SelectPicture(matchingMedia, description)
+	if err != nil {
+		return "", err
 	}
-
-	if primaryMedia == nil {
-		return "", fmt.Errorf("no jpeg or png image found for description: %s", description)
-	}
-
-	if primaryMedia.Width == nil || primaryMedia.Height == nil {
-		return "", fmt.Errorf("image dimensions not set for description: %s", description)
-	}
-
-	caption := description
-	if primaryMedia.Caption != nil && *primaryMedia.Caption != "" {
-		caption = *primaryMedia.Caption
-	}
-
-	renderedCaption := markdown.Render(caption)
 
 	return renderTemplate(
 		Data{
-			Sources:     sources,
-			Src:         primaryMedia.Path,
+			Sources:     picture.Sources,
+			Src:         picture.Src,
 			Description: description,
-			Caption:     renderedCaption,
-			Width:       *primaryMedia.Width,
-			Height:      *primaryMedia.Height,
+			Caption:     picture.Caption,
+			Width:       picture.Width,
+			Height:      picture.Height,
 			Regions:     regions,
 		},
 	)

@@ -1,15 +1,14 @@
 package figure
 
-import "html/template"
+import (
+	"html/template"
 
-type Source struct {
-	Src  string
-	Type string
-}
+	"chameth.com/chameth.com/features/media"
+)
 
 type Data struct {
 	Class       string
-	Sources     []Source
+	Sources     []media.Source
 	Src         string
 	Description string
 	Caption     template.HTML
