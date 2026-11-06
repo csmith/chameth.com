@@ -127,11 +127,6 @@ func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.Fil
 			return templates.FilmData{}, fmt.Errorf("invalid watched date for review %d: %w", review.ID, err)
 		}
 
-		text, err := markdown.Render(review.Text)
-		if err != nil {
-			return templates.FilmData{}, fmt.Errorf("failed to render review %d: %w", review.ID, err)
-		}
-
 		reviews = append(
 			reviews,
 			templates.FilmReviewData{
@@ -140,7 +135,7 @@ func buildFilmData(ctx context.Context, film Film, page filmPage) (templates.Fil
 				Rating:      review.Rating,
 				IsRewatch:   review.IsRewatch,
 				HasSpoilers: review.HasSpoilers,
-				Content:     text,
+				Content:     markdown.Render(review.Text),
 			},
 		)
 
@@ -215,12 +210,7 @@ func filmListPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	description, err := markdown.Render(filmList.Description)
-	if err != nil {
-		slog.Error("Failed to render film list description", "list_id", filmList.ID, "error", err)
-		http.Error(w, "Failed to render description", http.StatusInternalServerError)
-		return
-	}
+	description := markdown.Render(filmList.Description)
 
 	var links []syndications.SyndicationLink
 	if filmList.LetterboxdURL != "" {

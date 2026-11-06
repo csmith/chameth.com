@@ -1,8 +1,6 @@
 package markdown
 
 import (
-	"html/template"
-	"log/slog"
 	"regexp"
 	"strings"
 )
@@ -29,17 +27,10 @@ var footnoteRegex = regexp.MustCompile(`\[\^[0-9]+]`)
 // Renders markdown to HTML first, then extracts first paragraph and strips HTML tags.
 // Returns up to 200 characters with "..." if truncated.
 func FirstParagraph(content string) string {
-	cleaned := footnoteRegex.ReplaceAllString(removeShortCodes(content), "")
-
-	rendered, err := Render(cleaned)
-	if err != nil {
-		slog.Error("Failed to render markdown for summary", "error", err)
-		// Fall back to using raw content
-		rendered = template.HTML(cleaned)
-	}
-
-	plainText := StripHTMLTags(string(rendered))
-	paragraphs := regexp.MustCompile(`\n\n+`).Split(plainText, -1)
+	paragraphs := regexp.MustCompile(`\n\n+`).Split(
+		StripHTMLTags(string(Render(footnoteRegex.ReplaceAllString(removeShortCodes(content), "")))),
+		-1,
+	)
 
 	var firstParagraph string
 	for _, p := range paragraphs {

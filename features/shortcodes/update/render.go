@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"embed"
 	"errors"
-	"fmt"
 	"html/template"
 
 	"chameth.com/chameth.com/content/markdown"
@@ -21,16 +20,10 @@ func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 		return "", errors.New("update requires at least 2 arguments (date, content)")
 	}
 
-	date := args[0]
-	md, err := markdown.Render(args[1])
-	if err != nil {
-		return "", fmt.Errorf("failed to render update markdown: %w", err)
-	}
-
 	return renderTemplate(
 		Data{
-			Date:    date,
-			Content: md,
+			Date:    args[0],
+			Content: markdown.Render(args[1]),
 		},
 	)
 }

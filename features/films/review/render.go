@@ -26,10 +26,7 @@ func render(_ []string, entry *films.ReviewEntry, _ *shortcodes.Context) (string
 }
 
 func RenderEntry(entry films.ReviewEntry) (string, error) {
-	md, err := markdown.Render(entry.Text)
-	if err != nil {
-		return "", fmt.Errorf("failed to render film review markdown: %w", err)
-	}
+	md := markdown.Render(entry.Text)
 
 	stars, err := rating.Render(entry.Rating)
 	if err != nil {

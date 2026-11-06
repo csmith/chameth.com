@@ -59,16 +59,11 @@ func Render(ctx context.Context, id int) (string, error) {
 		}
 	}
 
-	description, err := markdown.Render(card.Description)
-	if err != nil {
-		return "", fmt.Errorf("failed to render film list description: %w", err)
-	}
-
 	return renderTemplate(
 		Data{
 			ID:          card.ID,
 			Title:       card.Title,
-			Description: description,
+			Description: markdown.Render(card.Description),
 			Path:        card.Path,
 			Count:       card.Count,
 			Films:       filmList,

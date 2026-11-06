@@ -32,12 +32,7 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 		}
 
 		for _, project := range projects {
-			renderedDesc, err := markdown.Render(project.Description)
-			if err != nil {
-				slog.Error("Failed to render markdown for project description", "project", project.Name, "error", err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				return
-			}
+			renderedDesc := markdown.Render(project.Description)
 			projectDetails = append(
 				projectDetails,
 				projecttemplates.ProjectDetails{

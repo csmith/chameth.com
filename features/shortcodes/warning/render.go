@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"embed"
 	"errors"
-	"fmt"
 	"html/template"
 
 	"chameth.com/chameth.com/content/markdown"
@@ -21,14 +20,9 @@ func RenderFromText(args []string, _ *shortcodes.Context) (string, error) {
 		return "", errors.New("warning requires at least 1 argument (content)")
 	}
 
-	md, err := markdown.Render(args[0])
-	if err != nil {
-		return "", fmt.Errorf("failed to render warning markdown: %w", err)
-	}
-
 	return renderTemplate(
 		Data{
-			Content: md,
+			Content: markdown.Render(args[0]),
 		},
 	)
 }

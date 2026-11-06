@@ -25,12 +25,7 @@ func PoemHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedComments, err := markdown.Render(poem.Notes)
-	if err != nil {
-		slog.Error("Failed to render markdown for poem comments", "poem", poem.Title, "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
+	renderedComments := markdown.Render(poem.Notes)
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)

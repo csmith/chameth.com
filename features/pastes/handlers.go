@@ -49,12 +49,7 @@ func PasteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	md.WriteString(delimiter)
 
-	renderedContent, err := markdown.Render(md.String())
-	if err != nil {
-		slog.Error("Failed to render markdown for paste", "paste", paste.Title, "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
+	renderedContent := markdown.Render(md.String())
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)

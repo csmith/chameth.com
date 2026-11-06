@@ -144,11 +144,7 @@ func reviewExcerpt(reviews []Review) string {
 		if r.HasSpoilers {
 			continue
 		}
-		rendered, err := markdown.Render(r.Text)
-		if err != nil {
-			continue
-		}
-		words := strings.Fields(html.UnescapeString(markdown.StripHTMLTags(string(rendered))))
+		words := strings.Fields(html.UnescapeString(markdown.StripHTMLTags(string(markdown.Render(r.Text)))))
 		if len(words) > 0 {
 			return strings.Join(words[:min(len(words), excerptWords)], " ")
 		}

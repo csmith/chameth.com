@@ -14,10 +14,8 @@ import (
 
 var md = cfm.Renderer{Highlight: highlight}
 
-// Render converts markdown input to HTML. The error is always nil; it is
-// kept in the signature so callers can treat rendering as fallible.
-func Render(input string) (template.HTML, error) {
-	return template.HTML(md.Markdown(input)), nil
+func Render(input string) template.HTML {
+	return template.HTML(md.Markdown(input))
 }
 
 var chromaFormatter = chromahtml.New(

@@ -65,10 +65,7 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 		caption = *primaryMedia.Caption
 	}
 
-	renderedCaption, err := markdown.Render(caption)
-	if err != nil {
-		return "", fmt.Errorf("failed to render figure caption markdown: %w", err)
-	}
+	renderedCaption := markdown.Render(caption)
 
 	return renderTemplate(
 		Data{

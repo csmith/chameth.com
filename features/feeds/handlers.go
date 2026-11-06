@@ -221,13 +221,7 @@ func renderFilmReviewsFeed(
 		content.WriteString("</p>")
 
 		if review.Text != "" {
-			text, err := markdown.Render(review.Text)
-			if err != nil {
-				slog.Error("Failed to render film review for feed", "review_id", review.ID, "error", err)
-				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-				return
-			}
-			content.WriteString(string(text))
+			content.WriteString(string(markdown.Render(review.Text)))
 		}
 
 		feedItems = append(
