@@ -22,38 +22,6 @@ type Result struct {
 	CheckURL                string
 }
 
-func (r Result) Summary() string {
-	if !r.Success {
-		return "check failed"
-	}
-
-	var lists []string
-	if r.SpamhausBlockList {
-		lists = append(lists, "SBL")
-	}
-	if r.CombinedSpamSources {
-		lists = append(lists, "CSS")
-	}
-	if r.ExploitsBlockList {
-		lists = append(lists, "XBL")
-	}
-	if r.DontRouteOrPeer {
-		lists = append(lists, "DROP")
-	}
-	if r.PolicyBlockListISP {
-		lists = append(lists, "PBL")
-	}
-	if r.PolicyBlockListSpamhaus {
-		lists = append(lists, "PBL")
-	}
-
-	if len(lists) == 0 {
-		return "not listed"
-	}
-
-	return "listed: " + strings.Join(lists, ", ")
-}
-
 func Check(host string) (Result, error) {
 	result := Result{
 		CheckURL: "https://check.spamhaus.org/results/?query=" + host,
