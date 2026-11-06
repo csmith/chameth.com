@@ -33,13 +33,3 @@ func ParsePage(content string) *template.Template {
 		template.Must(template.New("page.html.gotpl").Funcs(standardFuncs).Parse(pageGotpl)).Parse(content),
 	)
 }
-
-// ParsePageWithFuncs is ParsePage with custom template functions, which must be
-// registered before the content is parsed.
-func ParsePageWithFuncs(funcs template.FuncMap, content string) *template.Template {
-	return template.Must(
-		template.Must(
-			template.New("page.html.gotpl").Funcs(standardFuncs).Funcs(funcs).Parse(pageGotpl),
-		).Parse(content),
-	)
-}

@@ -74,7 +74,7 @@ func CollectRequestStats() func(http.Handler) http.Handler {
 				startRequestAt(requestId, time.Now())
 				defer pruneRequest(requestId)
 
-				writer := &StatsResponseWriter{
+				writer := &statsResponseWriter{
 					ResponseWriter: w,
 					requestID:      requestId,
 				}
@@ -135,7 +135,7 @@ func LogQuery(ctx context.Context) {
 
 var statsPlaceholder = []byte("[[STATS_GO_HERE]]")
 
-type StatsResponseWriter struct {
+type statsResponseWriter struct {
 	http.ResponseWriter
 	buffer      []byte
 	passthrough bool
@@ -144,7 +144,7 @@ type StatsResponseWriter struct {
 	requestID   string
 }
 
-func (w *StatsResponseWriter) Write(b []byte) (int, error) {
+func (w *statsResponseWriter) Write(b []byte) (int, error) {
 	// Only HTML pages can contain the stats placeholder, so only they need
 	// buffering; everything else (assets, media, feeds) is written straight
 	// through. The decision is made on the first non-empty write.
@@ -167,7 +167,7 @@ func isHTML(contentType string, firstChunk []byte) bool {
 	return strings.HasPrefix(contentType, "text/html")
 }
 
-func (w *StatsResponseWriter) WriteHeader(statusCode int) {
+func (w *statsResponseWriter) WriteHeader(statusCode int) {
 	w.wroteHeader = true
 	w.code = statusCode
 	w.ResponseWriter.WriteHeader(statusCode)
@@ -176,7 +176,7 @@ func (w *StatsResponseWriter) WriteHeader(statusCode int) {
 // Flush implements http.Flusher so that non-buffered responses can stream.
 // For buffered pages only the headers can be flushed early; the body follows
 // when the request completes.
-func (w *StatsResponseWriter) Flush() {
+func (w *statsResponseWriter) Flush() {
 	w.wroteHeader = true
 	if f, ok := w.ResponseWriter.(http.Flusher); ok {
 		f.Flush()
@@ -185,7 +185,7 @@ func (w *StatsResponseWriter) Flush() {
 
 // Finish completes the response: buffered HTML pages have the request stats
 // injected before being written out; anything else is already done.
-func (w *StatsResponseWriter) Finish(duration time.Duration, queries int32) {
+func (w *statsResponseWriter) Finish(duration time.Duration, queries int32) {
 	if w.passthrough || len(w.buffer) == 0 {
 		return
 	}
@@ -198,14 +198,14 @@ func (w *StatsResponseWriter) Finish(duration time.Duration, queries int32) {
 	_, _ = w.ResponseWriter.Write(w.buffer)
 }
 
-func (w *StatsResponseWriter) status() int {
+func (w *statsResponseWriter) status() int {
 	if w.code == 0 {
 		return http.StatusOK
 	}
 	return w.code
 }
 
-func (w *StatsResponseWriter) statusCode() string {
+func (w *statsResponseWriter) statusCode() string {
 	return strconv.Itoa(w.status())
 }
 

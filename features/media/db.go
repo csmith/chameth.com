@@ -55,17 +55,6 @@ func GetAllMediaRelationsForEntityType(ctx context.Context, entityType string) (
 	)
 }
 
-func HasMediaRelationForEntity(ctx context.Context, entityType string, entityID int, role string) (bool, error) {
-	query := `SELECT EXISTS(SELECT 1 FROM media_relations WHERE entity_type = $1 AND entity_id = $2`
-	args := []any{entityType, entityID}
-	if role != "" {
-		query += ` AND role = $3`
-		args = append(args, role)
-	}
-	query += `)`
-	return db.Get[bool](ctx, query, args...)
-}
-
 func GetOpenGraphDetailsForEntity(
 	ctx context.Context, entityType string, entityID int,
 ) (*MediaRelationWithDetails, error) {
