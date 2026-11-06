@@ -5,8 +5,8 @@ import (
 	"embed"
 	"html/template"
 	"math"
-	"strconv"
-	"strings"
+
+	"chameth.com/chameth.com/features/workouts"
 )
 
 //go:embed longest.html.gotpl
@@ -37,7 +37,7 @@ func buildData(title string, r *record, milestones []milestone) Data {
 	next := nextMilestone(milestones, r.DistanceM)
 	return Data{
 		Title:           title,
-		Distance:        formatKm(r.DistanceM),
+		Distance:        workouts.FormatKm(r.DistanceM),
 		Date:            r.StartTime.Format("2 Jan 2006"),
 		NextMilestone:   next.Label,
 		ProgressPercent: int(math.Min(r.DistanceM/next.DistanceM*100, 100)),
@@ -51,12 +51,6 @@ func nextMilestone(milestones []milestone, distanceM float64) milestone {
 		}
 	}
 	return milestones[len(milestones)-1]
-}
-
-func formatKm(m float64) string {
-	s := strconv.FormatFloat(m/1000, 'f', 1, 64)
-	s = strings.TrimSuffix(s, ".0")
-	return s + "km"
 }
 
 func renderTemplate(data Data) (string, error) {

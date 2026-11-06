@@ -5,6 +5,8 @@ import (
 	"embed"
 	"html/template"
 	"strconv"
+
+	"chameth.com/chameth.com/features/workouts"
 )
 
 //go:embed *.gotpl
@@ -19,10 +21,13 @@ func buildData(dateRange string, d data) Data {
 		sectionStats := []Stat{
 			{Value: strconv.Itoa(d.CycleCount), Label: "activities"},
 			{Value: formatDurationLong(d.CycleDurationS), Label: "total time"},
-			{Value: formatKm(d.CycleDistanceM), Label: "total distance"},
+			{Value: workouts.FormatKm(d.CycleDistanceM), Label: "total distance"},
 		}
 		if d.LongestCycle != nil {
-			sectionStats = append(sectionStats, Stat{Value: formatKm(d.LongestCycle.DistanceM), Label: "longest distance"})
+			sectionStats = append(
+				sectionStats,
+				Stat{Value: workouts.FormatKm(d.LongestCycle.DistanceM), Label: "longest distance"},
+			)
 		}
 		view.Sections = append(
 			view.Sections,
@@ -38,10 +43,13 @@ func buildData(dateRange string, d data) Data {
 		sectionStats := []Stat{
 			{Value: strconv.Itoa(d.RunCount), Label: "activities"},
 			{Value: formatDurationLong(d.RunDurationS), Label: "total time"},
-			{Value: formatKm(d.RunDistanceM), Label: "total distance"},
+			{Value: workouts.FormatKm(d.RunDistanceM), Label: "total distance"},
 		}
 		if d.LongestRun != nil {
-			sectionStats = append(sectionStats, Stat{Value: formatKm(d.LongestRun.DistanceM), Label: "longest distance"})
+			sectionStats = append(
+				sectionStats,
+				Stat{Value: workouts.FormatKm(d.LongestRun.DistanceM), Label: "longest distance"},
+			)
 		}
 		view.Sections = append(
 			view.Sections,
@@ -65,8 +73,8 @@ func pbsForGroup(pbs []pb, group string) []PB {
 		result = append(
 			result,
 			PB{
-				Label:    formatDistanceLabel(pb.DistanceM),
-				Time:     formatDuration(pb.GapElapsedS),
+				Label:    workouts.FormatDistanceLabel(pb.DistanceM),
+				Time:     workouts.FormatDuration(pb.GapElapsedS),
 				Previous: formatPreviousBest(pb.PreviousGapElapsedS),
 			},
 		)

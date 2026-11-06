@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/features/shortcodes"
+	"chameth.com/chameth.com/features/workouts"
 )
 
 //go:embed *.gotpl
@@ -30,7 +31,7 @@ func renderStats(_ []string, d statsData, _ *shortcodes.Context) (string, error)
 		Best:   best,
 	}
 	if d.LatestDate != "" {
-		data.Total.Detail = "Most recent: " + formatDate(d.LatestDate)
+		data.Total.Detail = "Most recent: " + workouts.FormatDate(d.LatestDate)
 	}
 	if d.LatestVenue != "" {
 		data.Venues.Detail = "Most recent: " + d.LatestVenue
@@ -55,7 +56,7 @@ func renderTable(args []string, runs []runRecord, _ *shortcodes.Context) (string
 	rows := make([]TableRow, len(runs))
 	for i, r := range runs {
 		rows[i] = TableRow{
-			Date:   formatDate(r.Date),
+			Date:   workouts.FormatDate(r.Date),
 			Event:  r.Name,
 			Time:   formatResultTime(r.GunTime, r.ChipTime),
 			Pos:    formatOrdinal(r.PosOverall),
@@ -67,21 +68,13 @@ func renderTable(args []string, runs []runRecord, _ *shortcodes.Context) (string
 
 func formatBestDetail(best *bestRun) string {
 	detail := best.Location
-	if date := formatDate(best.Date); date != "" {
+	if date := workouts.FormatDate(best.Date); date != "" {
 		if detail != "" {
 			detail += ", "
 		}
 		detail += date
 	}
 	return detail
-}
-
-func formatDate(date string) string {
-	d, err := time.Parse("2006-01-02", date)
-	if err != nil {
-		return date
-	}
-	return d.Format("2 Jan 2006")
 }
 
 // formatResultTime renders the first recorded time, trimming a leading
