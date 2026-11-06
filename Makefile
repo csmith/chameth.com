@@ -17,7 +17,7 @@ endif
 
 build:
 	go generate ./...
-	bash -c "go build -v -ldflags=\"-X 'chameth.com/chameth.com/cmd/serve/metrics.buildVersion=$$(git rev-parse HEAD)'\" -o /tmp/chamethdotcom ./cmd/serve"
+	bash -c "go build -v -ldflags=\"-X 'chameth.com/chameth.com/features/metrics.buildVersion=$$(git rev-parse HEAD)'\" -o /tmp/chamethdotcom ./cmd/serve"
 
 verify: build
 	go vet ./...
