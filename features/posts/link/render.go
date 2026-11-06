@@ -52,9 +52,13 @@ func renderForPath(path string) (string, error) {
 		return "", fmt.Errorf("failed to get post by path %s: %w", path, err)
 	}
 
-	summary := markdown.FirstParagraph(post.Content)
+	return Render(DataForPost(context.Background(), *post))
+}
 
-	imageVariants, err := media.GetOpenGraphImageVariantsForEntity(context.Background(), "post", post.ID)
+// DataForPost builds the card for a post, without an image if its images can't
+// be retrieved.
+func DataForPost(ctx context.Context, post posts.Post) Data {
+	imageVariants, err := media.GetOpenGraphImageVariantsForEntity(ctx, "post", post.ID)
 	var images []Image
 	if err == nil {
 		for _, variant := range imageVariants {
@@ -69,15 +73,13 @@ func renderForPath(path string) (string, error) {
 		}
 	}
 
-	return Render(
-		Data{
-			Url:     post.Path,
-			Title:   post.Title,
-			Summary: template.HTML(summary),
-			Images:  images,
-			Date:    post.Date,
-		},
-	)
+	return Data{
+		Url:     post.Path,
+		Title:   post.Title,
+		Summary: template.HTML(markdown.FirstParagraph(post.Content)),
+		Images:  images,
+		Date:    post.Date,
+	}
 }
 
 func Render(data Data) (string, error) {

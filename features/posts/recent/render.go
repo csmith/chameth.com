@@ -9,8 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"chameth.com/chameth.com/content/markdown"
-	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/posts"
 	"chameth.com/chameth.com/features/posts/link"
 	"chameth.com/chameth.com/features/shortcodes"
@@ -46,32 +44,7 @@ func RenderFromText(args []string, ctx *shortcodes.Context) (string, error) {
 
 	var postLinks strings.Builder
 	for _, post := range postList {
-		summary := markdown.FirstParagraph(post.Content)
-
-		imageVariants, err := media.GetOpenGraphImageVariantsForEntity(ctx.Context, "post", post.ID)
-		var images []link.Image
-		if err == nil {
-			for _, variant := range imageVariants {
-				images = append(
-					images,
-					link.Image{
-						Url:         variant.Path,
-						ContentType: variant.ContentType,
-						Alt:         variant.Description,
-					},
-				)
-			}
-		}
-
-		linkHTML, err := link.Render(
-			link.Data{
-				Url:     post.Path,
-				Title:   post.Title,
-				Summary: template.HTML(summary),
-				Images:  images,
-				Date:    post.Date,
-			},
-		)
+		linkHTML, err := link.Render(link.DataForPost(ctx.Context, post))
 		if err != nil {
 			return "", fmt.Errorf("failed to render post link: %w", err)
 		}
