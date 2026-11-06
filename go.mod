@@ -107,7 +107,7 @@ require (
 	github.com/prometheus/client_golang v1.25.0
 	go.temporal.io/api v1.63.6
 	go.temporal.io/sdk v1.49.0
-	golang.org/x/image v0.46.0
+	golang.org/x/image v0.47.0
 	golang.org/x/net v0.62.0
 	golang.org/x/text v0.43.0
 	google.golang.org/grpc v1.84.0
