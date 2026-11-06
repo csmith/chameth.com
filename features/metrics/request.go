@@ -173,9 +173,7 @@ func (w *statsResponseWriter) WriteHeader(statusCode int) {
 	w.ResponseWriter.WriteHeader(statusCode)
 }
 
-// Flush implements http.Flusher so that non-buffered responses can stream.
-// For buffered pages only the headers can be flushed early; the body follows
-// when the request completes.
+// Flush lets non-buffered responses stream; buffered pages only flush headers.
 func (w *statsResponseWriter) Flush() {
 	w.wroteHeader = true
 	if f, ok := w.ResponseWriter.(http.Flusher); ok {
