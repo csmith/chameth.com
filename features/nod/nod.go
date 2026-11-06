@@ -1,29 +1,23 @@
 package nod
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"flag"
 	"fmt"
-	"io"
 	"log/slog"
 	"net"
-	"net/http"
 	"net/url"
-	"strings"
 	"sync"
 	"time"
 
 	"chameth.com/chameth.com/templates"
+	"go.temporal.io/sdk/client"
 )
 
-var (
-	ircCatAddress    = flag.String("irc-cat-address", "", "URL to post IRC notifications")
-	ircCatApiKey     = flag.String("irc-cat-key", "", "API key for IRC notifications")
-	ircCatNodChannel = flag.String("irc-cat-nod-channel", "", "Channel to post nod messages to")
-
-	httpClient = &http.Client{Timeout: 10 * time.Second}
+const (
+	ircTaskQueue    = "irc"
+	ircWorkflowName = "irc.SendMessage"
+	ircSource       = "chameth.com"
+	ircStartTimeout = 10 * time.Second
 )
 
 type pageChecker interface {
@@ -32,7 +26,7 @@ type pageChecker interface {
 
 // processNod announces a nod for page, which may be a path or a full URL;
 // only its path is used, and only if it is a page on this site.
-func processNod(ctx context.Context, pages pageChecker, remoteAddr, page string) error {
+func processNod(ctx context.Context, pages pageChecker, tc client.Client, remoteAddr, page string) error {
 	if len(page) == 0 || len(page) > 512 {
 		return fmt.Errorf("invalid page length: %d", len(page))
 	}
@@ -54,10 +48,7 @@ func processNod(ctx context.Context, pages pageChecker, remoteAddr, page string)
 		return nil
 	}
 
-	return announceToIrc(
-		"\00311\002[CHAMETH.COM]\002\003 Someone nodded at " +
-			templates.SiteURL() + (&url.URL{Path: path}).EscapedPath(),
-	)
+	return announceToIrc(tc, "Someone nodded at "+templates.SiteURL()+(&url.URL{Path: path}).EscapedPath())
 }
 
 const nodInterval = time.Minute
@@ -91,37 +82,25 @@ func nodAllowed(remoteAddr string, now time.Time) bool {
 	return true
 }
 
-func announceToIrc(message string) error {
-	type Wrapper struct {
+func announceToIrc(tc client.Client, message string) error {
+	type input struct {
+		Source  string `json:"source"`
 		Message string `json:"message"`
-		Channel string `json:"channel"`
-	}
-
-	b, err := json.Marshal(Wrapper{message, *ircCatNodChannel})
-	if err != nil {
-		return err
 	}
 
 	// The IRC announce is fire-and-forget: it must not be cancelled if the
 	// requesting client disconnects, so it uses a background context.
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, *ircCatAddress, bytes.NewReader(b))
+	ctx, cancel := context.WithTimeout(context.Background(), ircStartTimeout)
+	defer cancel()
+
+	_, err := tc.ExecuteWorkflow(
+		ctx,
+		client.StartWorkflowOptions{TaskQueue: ircTaskQueue},
+		ircWorkflowName,
+		input{Source: ircSource, Message: message},
+	)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to start IRC announcement: %w", err)
 	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-Api-Key", *ircCatApiKey)
-
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return fmt.Errorf("failed to send to irc-cat: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode >= http.StatusBadRequest {
-		body, _ := io.ReadAll(io.LimitReader(resp.Body, 1024))
-		return fmt.Errorf("irc-cat returned status %d: %s", resp.StatusCode, strings.TrimSpace(string(body)))
-	}
-
 	return nil
 }

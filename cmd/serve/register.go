@@ -144,7 +144,7 @@ func (s *site) registerRoutes() {
 	featuresFilms.RegisterRoutes(s.Routes)
 	featuresGoimportsAdmin.RegisterRoutes(s.Routes)
 	featuresMediaAdmin.RegisterRoutes(s.Routes)
-	featuresNod.RegisterRoutes(s.Routes)
+	featuresNod.RegisterRoutes(s.Routes, s.Temporal)
 	featuresPagesAdmin.RegisterRoutes(s.Routes)
 	featuresPastesAdmin.RegisterRoutes(s.Routes)
 	featuresPoemsAdmin.RegisterRoutes(s.Routes)

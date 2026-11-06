@@ -6,11 +6,13 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+
+	"go.temporal.io/sdk/client"
 )
 
 const maxBodySize = 4096
 
-func handleJSON(pages pageChecker) http.HandlerFunc {
+func handleJSON(pages pageChecker, tc client.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Header.Get("Content-Type") != "application/json" {
 			http.Error(w, http.StatusText(http.StatusUnsupportedMediaType), http.StatusUnsupportedMediaType)
@@ -34,7 +36,7 @@ func handleJSON(pages pageChecker) http.HandlerFunc {
 			return
 		}
 
-		if err = processNod(r.Context(), pages, r.RemoteAddr, req.Page); err != nil {
+		if err = processNod(r.Context(), pages, tc, r.RemoteAddr, req.Page); err != nil {
 			slog.Info("Error processing nod", "error", err)
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return
@@ -44,7 +46,7 @@ func handleJSON(pages pageChecker) http.HandlerFunc {
 	}
 }
 
-func handleForm(pages pageChecker) http.HandlerFunc {
+func handleForm(pages pageChecker, tc client.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		r.Body = http.MaxBytesReader(w, r.Body, maxBodySize)
 		if err := r.ParseForm(); err != nil {
@@ -53,7 +55,7 @@ func handleForm(pages pageChecker) http.HandlerFunc {
 			return
 		}
 
-		if err := processNod(r.Context(), pages, r.RemoteAddr, r.FormValue("page")); err != nil {
+		if err := processNod(r.Context(), pages, tc, r.RemoteAddr, r.FormValue("page")); err != nil {
 			slog.Info("Error processing nod form", "error", err)
 			http.Error(w, "Something went wrong", http.StatusBadRequest)
 			return
