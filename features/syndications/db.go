@@ -139,7 +139,7 @@ func createSyndicationIfMissing(ctx context.Context, path, externalURL, name, di
 		ctx,
 		`
 		INSERT INTO syndications (path, external_url, name, published, disposition, rel)
-		SELECT $1, $2, $3, true, $4, $5
+		SELECT $1::varchar, $2::varchar, $3, true, $4, $5
 		WHERE NOT EXISTS (SELECT 1 FROM syndications WHERE path = $1 AND external_url = $2)
 	`,
 		path,
