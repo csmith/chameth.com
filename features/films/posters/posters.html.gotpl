@@ -1,5 +1,5 @@
-{{/* gotype: chameth.com/chameth.com/features/films/recent.Data*/}}
-<ol class="recent-films">
+{{/* gotype: chameth.com/chameth.com/features/films/posters.Data*/}}
+<ol class="{{ .Layout }}">
 {{- range .Films }}
   <li>
     <a class="plain-link raised-box" href="{{ .Path }}">

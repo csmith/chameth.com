@@ -1,4 +1,4 @@
-package watched
+package posters
 
 import (
 	"bytes"
@@ -7,16 +7,35 @@ import (
 	"html/template"
 
 	"chameth.com/chameth.com/features/films"
-	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/shortcodes/rating"
 )
 
 //go:embed *.gotpl
 var templates embed.FS
 
-var tmpl = template.Must(template.New("watchedfilms.html.gotpl").ParseFS(templates, "watchedfilms.html.gotpl"))
+var tmpl = template.Must(template.New("posters.html.gotpl").ParseFS(templates, "posters.html.gotpl"))
 
-func render(_ []string, entries []films.ReviewEntry, _ *shortcodes.Context) (string, error) {
+type Layout string
+
+const (
+	Strip Layout = "recent-films"
+	Grid  Layout = "watched-films"
+)
+
+type Film struct {
+	Title      string
+	PosterPath string
+	Path       string
+	Date       string
+	Stars      template.HTML
+}
+
+type Data struct {
+	Layout Layout
+	Films  []Film
+}
+
+func Render(layout Layout, entries []films.ReviewEntry) (string, error) {
 	filmList := make([]Film, len(entries))
 	for i, entry := range entries {
 		stars, err := rating.Render(entry.Rating)
@@ -33,17 +52,8 @@ func render(_ []string, entries []films.ReviewEntry, _ *shortcodes.Context) (str
 		}
 	}
 
-	return renderTemplate(
-		Data{
-			Films: filmList,
-		},
-	)
-}
-
-func renderTemplate(data Data) (string, error) {
 	buf := &bytes.Buffer{}
-	err := tmpl.Execute(buf, data)
-	if err != nil {
+	if err := tmpl.Execute(buf, Data{Layout: layout, Films: filmList}); err != nil {
 		return "", err
 	}
 	return buf.String(), nil

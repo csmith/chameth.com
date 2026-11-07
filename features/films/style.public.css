@@ -48,61 +48,6 @@
     }
 }
 
-ol.recent-films,
-ol.watched-films {
-    list-style-type: none;
-    gap: var(--smedium-space);
-    margin: var(--small-space) 0;
-    padding: 0;
-
-    &.recent-films {
-        display: flex;
-        flex-direction: row;
-        overflow-x: hidden;
-        mask: linear-gradient(to right, black, black 95%, transparent 100%);
-        padding: 3px 0 5px 3px;
-        margin-left: -3px;
-
-        li {
-            width: 150px;
-            flex-shrink: 0;
-        }
-    }
-
-    &.watched-films {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    }
-
-    li {
-        margin: 0;
-        padding: 0;
-
-        a {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: var(--small-space);
-            padding-bottom: var(--small-space);
-            overflow: hidden;
-
-            & > img {
-                width: 100%;
-                height: auto;
-                border-bottom: 1px solid var(--background-alt-colour);
-            }
-
-            time,
-            & > div {
-                padding: 0 var(--small-space);
-                font-family: "Berkeley Mono", monospace;
-                font-size: var(--font-size-small);
-                color: var(--text-alt-colour);
-            }
-        }
-    }
-}
-
 .film-rewatch {
     display: inline-block;
     font-size: var(--font-size-tiny);

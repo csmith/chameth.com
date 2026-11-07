@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"chameth.com/chameth.com/features/films"
+	"chameth.com/chameth.com/features/films/posters"
 	"chameth.com/chameth.com/features/shortcodes"
 	"tailscale.com/tsnet"
 )
@@ -38,7 +39,9 @@ func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
 				RefreshAt: shortcodes.RefreshIn(refreshFrequency),
 			}, nil
 		},
-		render,
+		func(_ []string, entries []films.ReviewEntry, _ *shortcodes.Context) (string, error) {
+			return posters.Render(posters.Strip, entries)
+		},
 	)
 }
 
