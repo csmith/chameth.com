@@ -19,13 +19,10 @@ type Result struct {
 	DontRouteOrPeer         bool
 	PolicyBlockListISP      bool
 	PolicyBlockListSpamhaus bool
-	CheckURL                string
 }
 
 func Check(host string) (Result, error) {
-	result := Result{
-		CheckURL: "https://check.spamhaus.org/results/?query=" + host,
-	}
+	var result Result
 
 	ip := net.ParseIP(host)
 	if ip == nil {
