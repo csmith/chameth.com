@@ -2,6 +2,7 @@ package nod
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -37,8 +38,8 @@ func handleJSON(pages pageChecker, tc client.Client) http.HandlerFunc {
 		}
 
 		if err = processNod(r.Context(), pages, tc, r.RemoteAddr, req.Page); err != nil {
-			slog.Info("Error processing nod", "error", err)
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			status := nodErrorStatus(err)
+			http.Error(w, http.StatusText(status), status)
 			return
 		}
 
@@ -56,12 +57,22 @@ func handleForm(pages pageChecker, tc client.Client) http.HandlerFunc {
 		}
 
 		if err := processNod(r.Context(), pages, tc, r.RemoteAddr, r.FormValue("page")); err != nil {
-			slog.Info("Error processing nod form", "error", err)
-			http.Error(w, "Something went wrong", http.StatusBadRequest)
+			http.Error(w, "Something went wrong", nodErrorStatus(err))
 			return
 		}
 
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		fmt.Fprint(w, "Your nod has been received and is appreciated")
 	}
+}
+
+// nodErrorStatus logs a processNod error and returns the status to respond
+// with: 400 if the client sent a bad page, 500 otherwise.
+func nodErrorStatus(err error) int {
+	if _, ok := errors.AsType[*invalidNodError](err); ok {
+		slog.Info("Rejecting invalid nod", "error", err)
+		return http.StatusBadRequest
+	}
+	slog.Error("Error processing nod", "error", err)
+	return http.StatusInternalServerError
 }

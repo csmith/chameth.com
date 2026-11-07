@@ -24,23 +24,32 @@ type pageChecker interface {
 	IsPage(ctx context.Context, path string) (bool, error)
 }
 
+// invalidNodError is returned by processNod when the client sent a bad page.
+type invalidNodError struct {
+	err error
+}
+
+func (e *invalidNodError) Error() string {
+	return e.err.Error()
+}
+
 // processNod announces a nod for page, which may be a path or a full URL;
 // only its path is used, and only if it is a page on this site.
 func processNod(ctx context.Context, pages pageChecker, tc client.Client, remoteAddr, page string) error {
 	if len(page) == 0 || len(page) > 512 {
-		return fmt.Errorf("invalid page length: %d", len(page))
+		return &invalidNodError{fmt.Errorf("invalid page length: %d", len(page))}
 	}
 
 	parsedURL, err := url.Parse(page)
 	if err != nil {
-		return fmt.Errorf("invalid URL: %w", err)
+		return &invalidNodError{fmt.Errorf("invalid URL: %w", err)}
 	}
 
 	path := parsedURL.Path
 	if ok, err := pages.IsPage(ctx, path); err != nil {
 		return fmt.Errorf("unable to check page %q: %w", path, err)
 	} else if !ok {
-		return fmt.Errorf("not a page: %q", path)
+		return &invalidNodError{fmt.Errorf("not a page: %q", path)}
 	}
 
 	if !nodAllowed(remoteAddr, time.Now()) {
