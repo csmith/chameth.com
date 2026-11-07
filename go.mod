@@ -92,7 +92,7 @@ require (
 )
 
 require (
-	chameth.com/cfm v1.0.0
+	chameth.com/cfm v1.1.0
 	github.com/alecthomas/chroma/v2 v2.27.0
 	github.com/anthonynsimon/bild v0.17.1
 	github.com/csmith/aca v1.3.0
