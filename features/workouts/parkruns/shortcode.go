@@ -7,19 +7,16 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"log/slog"
 	"net/http"
-	"strings"
 	"time"
 
 	"chameth.com/chameth.com/features/shortcodes"
+	"chameth.com/chameth.com/features/workouts"
 	"tailscale.com/tsnet"
 )
 
 const (
-	centralParkBaseURL = "https://cp.yak-wall.ts.net"
-	refreshFrequency   = 12 * time.Hour
+	refreshFrequency = 12 * time.Hour
 
 	parkrunstatsVersion = 2
 	parkrunsVersion     = 2
@@ -156,7 +153,7 @@ type parkrunsResponse struct {
 }
 
 func fetchParkruns(ctx context.Context, client *http.Client) (*parkrunsResponse, error) {
-	body, err := centralParkGet(ctx, client, "/api/insights/parkruns")
+	body, _, err := workouts.CentralPark.Get(ctx, client, "/api/insights/parkruns", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -166,33 +163,4 @@ func fetchParkruns(ctx context.Context, client *http.Client) (*parkrunsResponse,
 		return nil, fmt.Errorf("failed to decode parkruns response: %w", err)
 	}
 	return &res, nil
-}
-
-func centralParkGet(ctx context.Context, client *http.Client, path string) ([]byte, error) {
-	req, err := http.NewRequestWithContext(
-		ctx,
-		http.MethodGet,
-		strings.TrimRight(centralParkBaseURL, "/")+path,
-		nil,
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to build request: %w", err)
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch %s: %w", path, err)
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read %s response: %w", path, err)
-	}
-
-	if res.StatusCode >= 400 {
-		slog.Warn("Central Park request failed", "path", path, "status", res.StatusCode, "response", string(body))
-		return nil, fmt.Errorf("bad status code: %d", res.StatusCode)
-	}
-	return body, nil
 }

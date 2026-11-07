@@ -13,6 +13,9 @@ import (
 
 var pompeiBand = twowords.Service{Name: "Pompei Band", BaseURL: "https://pb.yak-wall.ts.net"}
 
+// CentralPark serves race and parkrun data.
+var CentralPark = twowords.Service{Name: "Central Park", BaseURL: "https://cp.yak-wall.ts.net"}
+
 type GroupSummary struct {
 	Count         int      `json:"count"`
 	DistanceM     float64  `json:"distance_m"`
