@@ -5,18 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"log/slog"
 	"net/http"
-	"net/url"
-	"strconv"
-	"strings"
 	"time"
+
+	"chameth.com/chameth.com/external/twowords"
 )
 
-const bonusMetalBaseURL = "https://bm.yak-wall.ts.net"
-
-var errNotFound = errors.New("not found")
+var bonusMetal = twowords.Service{Name: "Bonus Metal", BaseURL: "https://bm.yak-wall.ts.net"}
 
 type NowPlaying struct {
 	PlayedAt        time.Time `json:"played_at"`
@@ -58,8 +53,8 @@ type Artist struct {
 // GetNowPlaying returns the most recent play, or nil when nothing has been
 // played yet.
 func GetNowPlaying(ctx context.Context, client *http.Client) (*NowPlaying, error) {
-	body, _, err := bonusMetalGet(ctx, client, "/api/nowplaying", nil)
-	if errors.Is(err, errNotFound) {
+	body, _, err := bonusMetal.Get(ctx, client, "/api/nowplaying", nil)
+	if errors.Is(err, twowords.ErrNotFound) {
 		return nil, nil
 	}
 	if err != nil {
@@ -75,12 +70,7 @@ func GetNowPlaying(ctx context.Context, client *http.Client) (*NowPlaying, error
 
 // TopAlbums returns the all-time album ranking; limit of 0 means no limit.
 func TopAlbums(ctx context.Context, client *http.Client, limit int) ([]Album, error) {
-	query := url.Values{}
-	if limit > 0 {
-		query.Set("limit", strconv.Itoa(limit))
-	}
-
-	body, _, err := bonusMetalGet(ctx, client, "/api/insights/top-albums", query)
+	body, _, err := bonusMetal.Get(ctx, client, "/api/insights/top-albums", twowords.Query{"limit": limit})
 	if err != nil {
 		return nil, err
 	}
@@ -96,12 +86,7 @@ func TopAlbums(ctx context.Context, client *http.Client, limit int) ([]Album, er
 
 // TopArtists returns the all-time artist ranking; limit of 0 means no limit.
 func TopArtists(ctx context.Context, client *http.Client, limit int) ([]Artist, error) {
-	query := url.Values{}
-	if limit > 0 {
-		query.Set("limit", strconv.Itoa(limit))
-	}
-
-	body, _, err := bonusMetalGet(ctx, client, "/api/insights/top-artists", query)
+	body, _, err := bonusMetal.Get(ctx, client, "/api/insights/top-artists", twowords.Query{"limit": limit})
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +102,7 @@ func TopArtists(ctx context.Context, client *http.Client, limit int) ([]Artist, 
 
 // NewAlbums returns the albums first played in the half-open date range.
 func NewAlbums(ctx context.Context, client *http.Client, start, end string) ([]Album, error) {
-	body, _, err := bonusMetalGet(ctx, client, "/api/insights/new-albums", url.Values{"start": {start}, "end": {end}})
+	body, _, err := bonusMetal.Get(ctx, client, "/api/insights/new-albums", twowords.Query{"start": start, "end": end})
 	if err != nil {
 		return nil, err
 	}
@@ -134,12 +119,12 @@ func NewAlbums(ctx context.Context, client *http.Client, start, end string) ([]A
 // AlbumChart returns the most played albums of the half-open date range,
 // ranked with movement versus the preceding same-length window.
 func AlbumChart(ctx context.Context, client *http.Client, start, end string, limit int) ([]Album, error) {
-	query := url.Values{"start": {start}, "end": {end}}
-	if limit > 0 {
-		query.Set("limit", strconv.Itoa(limit))
-	}
-
-	body, _, err := bonusMetalGet(ctx, client, "/api/insights/album-chart", query)
+	body, _, err := bonusMetal.Get(
+		ctx,
+		client,
+		"/api/insights/album-chart",
+		twowords.Query{"start": start, "end": end, "limit": limit},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -156,43 +141,9 @@ func AlbumChart(ctx context.Context, client *http.Client, start, end string, lim
 // FetchImage retrieves artwork; path is the root-relative cover path
 // reported by the service.
 func FetchImage(ctx context.Context, client *http.Client, path string) ([]byte, string, error) {
-	body, header, err := bonusMetalGet(ctx, client, path, nil)
+	body, header, err := bonusMetal.Get(ctx, client, path, nil)
 	if err != nil {
 		return nil, "", err
 	}
 	return body, header.Get("Content-Type"), nil
-}
-
-func bonusMetalGet(
-	ctx context.Context, client *http.Client, path string, query url.Values,
-) ([]byte, http.Header, error) {
-	u := strings.TrimRight(bonusMetalBaseURL, "/") + path
-	if len(query) > 0 {
-		u += "?" + query.Encode()
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build request: %w", err)
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to fetch %s: %w", path, err)
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to read %s response: %w", path, err)
-	}
-
-	if res.StatusCode == http.StatusNotFound {
-		return nil, nil, errNotFound
-	}
-	if res.StatusCode >= 400 {
-		slog.Warn("Bonus Metal request failed", "path", path, "status", res.StatusCode, "response", string(body))
-		return nil, nil, fmt.Errorf("bad status code: %d", res.StatusCode)
-	}
-	return body, res.Header, nil
 }

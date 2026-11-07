@@ -3,20 +3,14 @@ package wow
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
-	"log/slog"
 	"net/http"
-	"net/url"
-	"strconv"
-	"strings"
 	"time"
+
+	"chameth.com/chameth.com/external/twowords"
 )
 
-const ogreStreamBaseURL = "https://os.yak-wall.ts.net"
-
-var errNotFound = errors.New("not found")
+var ogreStream = twowords.Service{Name: "Ogre Stream", BaseURL: "https://os.yak-wall.ts.net"}
 
 type Character struct {
 	Game        string       `json:"game"`
@@ -89,16 +83,11 @@ type Achievement struct {
 }
 
 func GetCharacter(ctx context.Context, client *http.Client, realm, name, at string) (*Character, error) {
-	query := url.Values{}
-	if at != "" {
-		query.Set("at", at)
-	}
-
-	body, _, err := ogreStreamGet(
+	body, _, err := ogreStream.Get(
 		ctx,
 		client,
-		"/api/wow/characters/"+url.PathEscape(realm)+"/"+url.PathEscape(name),
-		query,
+		twowords.Path("/api/wow/characters/%s/%s", realm, name),
+		twowords.Query{"at": at},
 	)
 	if err != nil {
 		return nil, err
@@ -112,12 +101,7 @@ func GetCharacter(ctx context.Context, client *http.Client, realm, name, at stri
 }
 
 func RecentAchievements(ctx context.Context, client *http.Client, limit int) ([]Achievement, error) {
-	query := url.Values{}
-	if limit > 0 {
-		query.Set("limit", strconv.Itoa(limit))
-	}
-
-	body, _, err := ogreStreamGet(ctx, client, "/api/wow/achievements", query)
+	body, _, err := ogreStream.Get(ctx, client, "/api/wow/achievements", twowords.Query{"limit": limit})
 	if err != nil {
 		return nil, err
 	}
@@ -132,43 +116,9 @@ func RecentAchievements(ctx context.Context, client *http.Client, limit int) ([]
 }
 
 func FetchImage(ctx context.Context, client *http.Client, path string) ([]byte, string, error) {
-	body, headers, err := ogreStreamGet(ctx, client, path, nil)
+	body, headers, err := ogreStream.Get(ctx, client, path, nil)
 	if err != nil {
 		return nil, "", err
 	}
 	return body, headers.Get("Content-Type"), nil
-}
-
-func ogreStreamGet(
-	ctx context.Context, client *http.Client, path string, query url.Values,
-) ([]byte, http.Header, error) {
-	u := strings.TrimRight(ogreStreamBaseURL, "/") + path
-	if len(query) > 0 {
-		u += "?" + query.Encode()
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build request: %w", err)
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to fetch %s: %w", path, err)
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to read %s response: %w", path, err)
-	}
-
-	if res.StatusCode == http.StatusNotFound {
-		return nil, nil, errNotFound
-	}
-	if res.StatusCode >= 400 {
-		slog.Warn("Ogre Stream request failed", "path", path, "status", res.StatusCode, "response", string(body))
-		return nil, nil, fmt.Errorf("bad status code: %d", res.StatusCode)
-	}
-	return body, res.Header, nil
 }

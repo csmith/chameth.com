@@ -15,6 +15,7 @@ import (
 
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/content/markdown"
+	"chameth.com/chameth.com/external/twowords"
 	"chameth.com/chameth.com/features/films/templates"
 	"chameth.com/chameth.com/features/media"
 	"chameth.com/chameth.com/features/shortcodes"
@@ -56,7 +57,7 @@ func retrieveFilmPage(ctx context.Context, client *http.Client, args []string) (
 	}
 
 	film, err := fetchFilm(ctx, client, args[0])
-	if errors.Is(err, errNotFound) {
+	if errors.Is(err, twowords.ErrNotFound) {
 		return shortcodes.Result[filmPage]{
 			Data:      filmPage{Missing: true},
 			RefreshAt: shortcodes.RefreshIn(filmPageRefresh),

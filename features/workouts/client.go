@@ -5,31 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"log/slog"
 	"net/http"
-	"net/url"
-	"strings"
 	"time"
+
+	"chameth.com/chameth.com/external/twowords"
 )
 
-const pompeiBandBaseURL = "https://pb.yak-wall.ts.net"
-
-var errNotFound = errors.New("not found")
-
-func windowValues(start, end, group string) url.Values {
-	v := url.Values{}
-	if start != "" {
-		v.Set("start", start)
-	}
-	if end != "" {
-		v.Set("end", end)
-	}
-	if group != "" {
-		v.Set("group", group)
-	}
-	return v
-}
+var pompeiBand = twowords.Service{Name: "Pompei Band", BaseURL: "https://pb.yak-wall.ts.net"}
 
 type GroupSummary struct {
 	Count         int      `json:"count"`
@@ -42,7 +24,12 @@ type GroupSummary struct {
 func ActivitySummary(
 	ctx context.Context, client *http.Client, start, end, group string,
 ) (map[string]GroupSummary, error) {
-	body, err := pompeiBandGet(ctx, client, "/api/insights/activity-summary", windowValues(start, end, group))
+	body, _, err := pompeiBand.Get(
+		ctx,
+		client,
+		"/api/insights/activity-summary",
+		twowords.Query{"start": start, "end": end, "group": group},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +49,12 @@ type DaySummary struct {
 }
 
 func ActivityDays(ctx context.Context, client *http.Client, start, end, group string) ([]DaySummary, error) {
-	body, err := pompeiBandGet(ctx, client, "/api/insights/activity-days", windowValues(start, end, group))
+	body, _, err := pompeiBand.Get(
+		ctx,
+		client,
+		"/api/insights/activity-days",
+		twowords.Query{"start": start, "end": end, "group": group},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -103,14 +95,14 @@ func (r *DistanceRecord) RankingDistanceM() float64 {
 }
 
 func GetDistanceRecord(ctx context.Context, client *http.Client, group, start, end string) (*DistanceRecord, error) {
-	body, err := pompeiBandGet(
+	body, _, err := pompeiBand.Get(
 		ctx,
 		client,
-		"/api/insights/distance-records/"+url.PathEscape(group),
-		windowValues(start, end, ""),
+		twowords.Path("/api/insights/distance-records/%s", group),
+		twowords.Query{"start": start, "end": end},
 	)
 	if err != nil {
-		if errors.Is(err, errNotFound) {
+		if errors.Is(err, twowords.ErrNotFound) {
 			return nil, nil
 		}
 		return nil, err
@@ -137,7 +129,7 @@ type PersonalBest struct {
 }
 
 func PBs(ctx context.Context, client *http.Client, group string) ([]PersonalBest, error) {
-	body, err := pompeiBandGet(ctx, client, "/api/insights/pbs", windowValues("", "", group))
+	body, _, err := pompeiBand.Get(ctx, client, "/api/insights/pbs", twowords.Query{"group": group})
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +156,7 @@ type PBEvent struct {
 }
 
 func PBEvents(ctx context.Context, client *http.Client, start, end string) ([]PBEvent, error) {
-	body, err := pompeiBandGet(ctx, client, "/api/insights/pb-events", windowValues(start, end, ""))
+	body, _, err := pompeiBand.Get(ctx, client, "/api/insights/pb-events", twowords.Query{"start": start, "end": end})
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +192,7 @@ func (a *Activity) WalkingDistanceM() float64 {
 }
 
 func Activities(ctx context.Context, client *http.Client, group string) ([]Activity, error) {
-	body, err := pompeiBandGet(ctx, client, "/api/activities", windowValues("", "", group))
+	body, _, err := pompeiBand.Get(ctx, client, "/api/activities", twowords.Query{"group": group})
 	if err != nil {
 		return nil, err
 	}
@@ -223,7 +215,7 @@ type MonthSummary struct {
 }
 
 func ActivityMonths(ctx context.Context, client *http.Client, group string) ([]MonthSummary, error) {
-	body, err := pompeiBandGet(ctx, client, "/api/insights/activity-months", windowValues("", "", group))
+	body, _, err := pompeiBand.Get(ctx, client, "/api/insights/activity-months", twowords.Query{"group": group})
 	if err != nil {
 		return nil, err
 	}
@@ -235,36 +227,4 @@ func ActivityMonths(ctx context.Context, client *http.Client, group string) ([]M
 		return nil, fmt.Errorf("failed to decode activity-months response: %w", err)
 	}
 	return res.Months, nil
-}
-
-func pompeiBandGet(ctx context.Context, client *http.Client, path string, query url.Values) ([]byte, error) {
-	u := strings.TrimRight(pompeiBandBaseURL, "/") + path
-	if len(query) > 0 {
-		u += "?" + query.Encode()
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
-	if err != nil {
-		return nil, fmt.Errorf("failed to build request: %w", err)
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch %s: %w", path, err)
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read %s response: %w", path, err)
-	}
-
-	if res.StatusCode == http.StatusNotFound {
-		return nil, errNotFound
-	}
-	if res.StatusCode >= 400 {
-		slog.Warn("Pompei Band request failed", "path", path, "status", res.StatusCode, "response", string(body))
-		return nil, fmt.Errorf("bad status code: %d", res.StatusCode)
-	}
-	return body, nil
 }

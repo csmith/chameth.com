@@ -3,18 +3,13 @@ package boardgames
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
-	"log/slog"
 	"net/http"
-	"net/url"
-	"strings"
+
+	"chameth.com/chameth.com/external/twowords"
 )
 
-const magicMetersBaseURL = "https://mm.yak-wall.ts.net"
-
-var errNotFound = errors.New("not found")
+var magicMeters = twowords.Service{Name: "Magic Meters", BaseURL: "https://mm.yak-wall.ts.net"}
 
 type Game struct {
 	ID         string `json:"id"`
@@ -28,14 +23,7 @@ type Game struct {
 
 // start and end define a half-open range; empty values mean all time.
 func PlayCounts(ctx context.Context, client *http.Client, start, end string) ([]Game, error) {
-	var query url.Values
-	if start != "" || end != "" {
-		query = url.Values{}
-		query.Set("start", start)
-		query.Set("end", end)
-	}
-
-	body, _, err := magicMetersGet(ctx, client, "/api/playcounts", query)
+	body, _, err := magicMeters.Get(ctx, client, "/api/playcounts", twowords.Query{"start": start, "end": end})
 	if err != nil {
 		return nil, err
 	}
@@ -50,43 +38,9 @@ func PlayCounts(ctx context.Context, client *http.Client, start, end string) ([]
 }
 
 func fetchImage(ctx context.Context, client *http.Client, gameID string) ([]byte, string, error) {
-	body, header, err := magicMetersGet(ctx, client, "/games/"+url.PathEscape(gameID)+"/image", nil)
+	body, header, err := magicMeters.Get(ctx, client, twowords.Path("/games/%s/image", gameID), nil)
 	if err != nil {
 		return nil, "", err
 	}
 	return body, header.Get("Content-Type"), nil
-}
-
-func magicMetersGet(
-	ctx context.Context, client *http.Client, path string, query url.Values,
-) ([]byte, http.Header, error) {
-	u := strings.TrimRight(magicMetersBaseURL, "/") + path
-	if len(query) > 0 {
-		u += "?" + query.Encode()
-	}
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u, nil)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to build request: %w", err)
-	}
-
-	res, err := client.Do(req)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to fetch %s: %w", path, err)
-	}
-	defer res.Body.Close()
-
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to read %s response: %w", path, err)
-	}
-
-	if res.StatusCode == http.StatusNotFound {
-		return nil, nil, errNotFound
-	}
-	if res.StatusCode >= 400 {
-		slog.Warn("Magic Meters request failed", "path", path, "status", res.StatusCode, "response", string(body))
-		return nil, nil, fmt.Errorf("bad status code: %d", res.StatusCode)
-	}
-	return body, res.Header, nil
 }
