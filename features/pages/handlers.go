@@ -22,17 +22,17 @@ func StaticPageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	renderedContent, err := content.RenderContent(r.Context(), "staticpage", page.ID, page.Content, page.Path)
+	if err != nil {
+		slog.Error("Failed to render static page content", "page", page.Title, "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+
 	if page.Raw {
-		renderedContent, err := content.RenderContent(r.Context(), "staticpage", page.ID, page.Content, page.Path)
-		if err != nil {
-			slog.Error("Failed to render raw page content", "page", page.Title, "error", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.WriteHeader(http.StatusOK)
-
 		err = pagetemplates.RenderRawPage(
 			w,
 			pagetemplates.RawPageData{
@@ -45,16 +45,6 @@ func StaticPageHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-
-	renderedContent, err := content.RenderContent(r.Context(), "staticpage", page.ID, page.Content, page.Path)
-	if err != nil {
-		slog.Error("Failed to render static page content", "page", page.Title, "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
 
 	pageData := pagetemplates.StaticPageData{
 		StaticTitle:   page.Title,
