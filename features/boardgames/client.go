@@ -37,8 +37,9 @@ func PlayCounts(ctx context.Context, client *http.Client, start, end string) ([]
 	return res.Games, nil
 }
 
-func fetchImage(ctx context.Context, client *http.Client, gameID string) ([]byte, string, error) {
-	body, header, err := magicMeters.Get(ctx, client, twowords.Path("/games/%s/image", gameID), nil)
+// imageURL is the root-relative path on Magic Meters' host from Game.ImageURL.
+func fetchImage(ctx context.Context, client *http.Client, imageURL string) ([]byte, string, error) {
+	body, header, err := magicMeters.Get(ctx, client, imageURL, nil)
 	if err != nil {
 		return nil, "", err
 	}

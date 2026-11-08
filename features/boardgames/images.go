@@ -34,7 +34,7 @@ func EnsureImages(ctx context.Context, client *http.Client, games []Game) (map[i
 }
 
 func rehostImage(ctx context.Context, client *http.Client, g Game) error {
-	data, contentType, err := fetchImage(ctx, client, g.ID)
+	data, contentType, err := fetchImage(ctx, client, g.ImageURL)
 	if err != nil {
 		slog.Error("Failed to fetch boardgame image", "game", g.Name, "id", g.ID, "error", err)
 		return err
