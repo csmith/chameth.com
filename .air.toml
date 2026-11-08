@@ -5,7 +5,7 @@ env_files = [".env"]
 [build]
 cmd = "make build"
 entrypoint = ["/tmp/chamethdotcom"]
-args_bin = ["-csp-report-only", "-no-cache"]
+args_bin = ["-csp-report-only", "-no-cache", "-no-login"]
 include_ext = ["go", "gotpl", "html", "css", "js", "sql", "svg", "png", "webp", "woff", "woff2", "txt"]
 exclude_dir = [".git", ".postgres", "tsdata", "cache", "tmp", ".idea", ".zed", ".zcode", ".crush", ".claude", ".forgejo"]
 exclude_unchanged = true

@@ -130,8 +130,14 @@ matching arguments automatically.
 ### Admin interface
 
 The admin interface is only accessible by a single user. We do
-not need to be concerned about parallel updates, authentication,
+not need to be concerned about parallel updates, permissions,
 etc.
+
+It is served on the tailnet, behind an OIDC login against Pocket ID
+(see `features/admin/auth.go`). Every admin route needs a session, so
+admin handlers don't need to check for one. `-no-login` turns this off
+for local runs. The public site is unaffected and uses its own `/sudo`
+cookie.
 
 ## Code standards
 

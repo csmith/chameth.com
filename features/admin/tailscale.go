@@ -2,6 +2,7 @@ package admin
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"net/http"
 	"time"
@@ -22,6 +23,20 @@ func RegisterGoroutine(ts *tsnet.Server, rm *routing.Manager) func() {
 }
 
 func start(s *tsnet.Server, rm *routing.Manager) error {
+	handler, err := requireLogin(
+		rm.Admin,
+		func(context.Context) (string, error) {
+			host := fullHostName(s)
+			if host == "" {
+				return "", errors.New("tailnet hostname is not known yet")
+			}
+			return "https://" + host, nil
+		},
+	)
+	if err != nil {
+		return err
+	}
+
 	if err := s.Start(); err != nil {
 		return err
 	}
@@ -71,7 +86,7 @@ func start(s *tsnet.Server, rm *routing.Manager) error {
 					),
 				),
 			),
-		)(rm.Admin),
+		)(handler),
 	}
 
 	go httpServer.Serve(httpListener)

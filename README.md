@@ -6,6 +6,26 @@ This repo contains the source for my personal website hosted at https://chameth.
 
 The site is running a custom Go server found in `cmd/serve`.
 
+## Admin login
+
+The admin interface is served on the tailnet and requires an OpenID Connect
+login. Configure it with these flags (or the equivalent env vars, e.g.
+`OIDC_CLIENT_ID`):
+
+| Flag                  | Default               | Purpose                                                  |
+|-----------------------|-----------------------|----------------------------------------------------------|
+| `-oidc-issuer`        | `https://id.929w.net` | OpenID Connect issuer                                    |
+| `-oidc-client-id`     |                       | Client ID                                                |
+| `-oidc-client-secret` |                       | Client secret                                            |
+| `-oidc-session-key`   |                       | Signs session cookies; at least 32 characters            |
+| `-no-login`           | `false`               | Serve the admin interface without a login, for local use |
+
+The client's callback URL is `https://website-admin.yak-wall.ts.net/auth/callback`.
+Sessions last until the next 05:00 Europe/London; changing the session key logs
+everyone out.
+
+## History
+
 It was previously built using [11ty](https://www.11ty.dev/); you can see the
 last revision [here](https://github.com/csmith/chameth.com/tree/4094173f88ebb4cf601e6dc3853e700cb00877fa).
 Prior to that it used [Hugo](https://gohugo.io/); you can see the last revision
