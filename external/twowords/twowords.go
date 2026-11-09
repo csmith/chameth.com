@@ -38,6 +38,9 @@ func (s Service) Get(ctx context.Context, client *http.Client, path string, quer
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to build request: %w", err)
 	}
+	if err := s.authorise(ctx, req); err != nil {
+		return nil, nil, err
+	}
 
 	res, err := client.Do(req)
 	if err != nil {

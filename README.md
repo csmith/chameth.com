@@ -24,6 +24,10 @@ The client's callback URL is `https://website-admin.yak-wall.ts.net/auth/callbac
 Sessions last until the next 05:00 Europe/London; changing the session key logs
 everyone out.
 
+The same client authenticates the site to the services it pulls data from,
+using client-credentials tokens with each service's URL as the `resource`.
+Without a client ID and secret, those requests are sent without a token.
+
 ## History
 
 It was previously built using [11ty](https://www.11ty.dev/); you can see the

@@ -16,6 +16,8 @@ import (
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
 	"chameth.com/chameth.com/external/temporal"
+	"chameth.com/chameth.com/external/twowords"
+	"chameth.com/chameth.com/features/admin"
 	"chameth.com/chameth.com/features/errorpages"
 	"chameth.com/chameth.com/features/metrics"
 	"chameth.com/chameth.com/features/posts"
@@ -54,6 +56,7 @@ var (
 func main() {
 	envflag.Parse()
 	_ = slogflags.Logger(slogflags.WithSetDefault(true))
+	twowords.UseClient(admin.OIDCClient())
 
 	if err := db.Init(metrics.LogQuery); err != nil {
 		slog.Error("Failed to initialize database", "error", err)

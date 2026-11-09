@@ -25,11 +25,15 @@ var (
 	oidcIssuer = flag.String(
 		"oidc-issuer",
 		"https://id.929w.net",
-		"OpenID Connect issuer that admin logins go through",
+		"OpenID Connect issuer for admin logins and service calls",
 	)
-	oidcClientID     = flag.String("oidc-client-id", "", "OpenID Connect client ID for admin logins")
-	oidcClientSecret = flag.String("oidc-client-secret", "", "OpenID Connect client secret for admin logins")
-	oidcSessionKey   = flag.String(
+	oidcClientID     = flag.String("oidc-client-id", "", "OpenID Connect client ID for admin logins and service calls")
+	oidcClientSecret = flag.String(
+		"oidc-client-secret",
+		"",
+		"OpenID Connect client secret for admin logins and service calls",
+	)
+	oidcSessionKey = flag.String(
 		"oidc-session-key",
 		"",
 		"Key that signs admin session cookies, at least 32 characters; changing it logs everyone out",
@@ -48,6 +52,12 @@ const (
 	loginTimeout      = 10 * time.Minute
 	minKeyLength      = 32
 )
+
+// OIDCClient returns the OpenID Connect client that admin logins use, which
+// the site also uses to authenticate to other services.
+func OIDCClient() (issuer, clientID, clientSecret string) {
+	return *oidcIssuer, *oidcClientID, *oidcClientSecret
+}
 
 // requireLogin puts every page served by next behind a login, using the
 // -oidc-* flags. With -no-login it returns next unchanged. Provider discovery
