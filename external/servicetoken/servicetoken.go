@@ -1,4 +1,6 @@
-package twowords
+// Package servicetoken gets client-credentials tokens that authenticate the
+// site to other services.
+package servicetoken
 
 import (
 	"context"
@@ -17,7 +19,7 @@ import (
 // the service call instead of holding it up.
 const tokenTimeout = 10 * time.Second
 
-var auth struct {
+var client struct {
 	issuer       string
 	clientID     string
 	clientSecret string
@@ -27,58 +29,59 @@ var auth struct {
 	sources  map[string]oauth2.TokenSource
 }
 
-// UseClient makes requests carry a client-credentials token from the given
-// OpenID Connect provider, with the service's base URL as its audience. With
-// no client ID or secret, requests are sent without a token.
-func UseClient(issuer, clientID, clientSecret string) {
-	auth.issuer = issuer
-	auth.clientID = clientID
-	auth.clientSecret = clientSecret
+// Configure sets the OpenID Connect provider and client that tokens are
+// requested from. With no client ID or secret, Enabled reports false.
+func Configure(issuer, clientID, clientSecret string) {
+	client.issuer = issuer
+	client.clientID = clientID
+	client.clientSecret = clientSecret
 }
 
-func (s Service) authorise(ctx context.Context, req *http.Request) error {
-	if auth.clientID == "" || auth.clientSecret == "" {
-		return nil
-	}
+// Enabled reports whether a client is configured, so callers should send
+// tokens.
+func Enabled() bool {
+	return client.clientID != "" && client.clientSecret != ""
+}
 
-	source, err := s.tokenSource(ctx)
+// Token returns a token with the given resource as its audience. Tokens are
+// cached until they expire.
+func Token(ctx context.Context, resource string) (*oauth2.Token, error) {
+	source, err := tokenSource(ctx, resource)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	token, err := source.Token()
 	if err != nil {
-		return fmt.Errorf("failed to get token for %s: %w", s.Name, err)
+		return nil, fmt.Errorf("failed to get token for %s: %w", resource, err)
 	}
-	token.SetAuthHeader(req)
-	return nil
+	return token, nil
 }
 
 // tokenSource discovers the provider on first use, then keeps one source per
-// service, which caches the token until it expires. A failed discovery is
-// not kept, so the next request tries again.
-func (s Service) tokenSource(ctx context.Context) (oauth2.TokenSource, error) {
-	auth.mu.Lock()
-	defer auth.mu.Unlock()
+// resource. A failed discovery is not kept, so the next request tries again.
+func tokenSource(ctx context.Context, resource string) (oauth2.TokenSource, error) {
+	client.mu.Lock()
+	defer client.mu.Unlock()
 
-	if source, ok := auth.sources[s.BaseURL]; ok {
+	if source, ok := client.sources[resource]; ok {
 		return source, nil
 	}
 
-	if auth.tokenURL == "" {
+	if client.tokenURL == "" {
 		ctx, cancel := context.WithTimeout(ctx, tokenTimeout)
 		defer cancel()
-		provider, err := oidc.NewProvider(ctx, auth.issuer)
+		provider, err := oidc.NewProvider(ctx, client.issuer)
 		if err != nil {
 			return nil, fmt.Errorf("failed to discover OIDC provider: %w", err)
 		}
-		auth.tokenURL = provider.Endpoint().TokenURL
+		client.tokenURL = provider.Endpoint().TokenURL
 	}
 
 	cfg := clientcredentials.Config{
-		ClientID:       auth.clientID,
-		ClientSecret:   auth.clientSecret,
-		TokenURL:       auth.tokenURL,
-		EndpointParams: url.Values{"resource": {s.BaseURL}},
+		ClientID:       client.clientID,
+		ClientSecret:   client.clientSecret,
+		TokenURL:       client.tokenURL,
+		EndpointParams: url.Values{"resource": {resource}},
 	}
 	// The source outlives the request that creates it, so its token requests
 	// get their own context.
@@ -86,9 +89,9 @@ func (s Service) tokenSource(ctx context.Context) (oauth2.TokenSource, error) {
 		context.WithValue(context.Background(), oauth2.HTTPClient, &http.Client{Timeout: tokenTimeout}),
 	)
 
-	if auth.sources == nil {
-		auth.sources = map[string]oauth2.TokenSource{}
+	if client.sources == nil {
+		client.sources = map[string]oauth2.TokenSource{}
 	}
-	auth.sources[s.BaseURL] = source
+	client.sources[resource] = source
 	return source, nil
 }

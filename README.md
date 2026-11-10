@@ -26,7 +26,9 @@ everyone out.
 
 The same client authenticates the site to the services it pulls data from,
 using client-credentials tokens with each service's URL as the `resource`.
-Without a client ID and secret, those requests are sent without a token.
+Temporal calls use `-temporal-resource` (default
+`https://temporal.yak-wall.ts.net`) as theirs. Without a client ID and secret,
+those requests are sent without a token.
 
 ## History
 

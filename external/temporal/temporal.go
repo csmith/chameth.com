@@ -8,6 +8,7 @@ import (
 	"net"
 	"time"
 
+	"chameth.com/chameth.com/external/servicetoken"
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/log"
 	"go.temporal.io/sdk/worker"
@@ -18,27 +19,48 @@ import (
 var (
 	address   = flag.String("temporal-address", "temporal.yak-wall.ts.net:7233", "Host and port of the Temporal frontend")
 	namespace = flag.String("temporal-namespace", "personal-prod", "Temporal namespace workflows run in")
+	resource  = flag.String(
+		"temporal-resource",
+		"https://temporal.yak-wall.ts.net",
+		"Resource identifier of the Temporal API, the audience of its tokens",
+	)
 )
 
 // New returns a lazy client that dials the frontend through the tailnet. It
-// connects on first use, so it can be created before the tailnet is up.
+// connects on first use, so it can be created before the tailnet is up. When a
+// service client is configured, every call carries one of its tokens.
 func New(ts *tsnet.Server) (client.Client, error) {
-	return client.NewLazyClient(
-		client.Options{
-			// Passthrough leaves MagicDNS resolution to tsnet rather than the
-			// host's resolver, and hands host:port straight to the dialer.
-			HostPort:  "passthrough:///" + *address,
-			Namespace: *namespace,
-			Logger:    log.NewStructuredLogger(slog.Default()),
-			ConnectionOptions: client.ConnectionOptions{
-				DialOptions: []grpc.DialOption{grpc.WithContextDialer(
-					func(ctx context.Context, addr string) (net.Conn, error) {
-						return ts.Dial(ctx, "tcp", addr)
-					},
-				)},
-			},
+	options := client.Options{
+		// Passthrough leaves MagicDNS resolution to tsnet rather than the
+		// host's resolver, and hands host:port straight to the dialer.
+		HostPort:  "passthrough:///" + *address,
+		Namespace: *namespace,
+		Logger:    log.NewStructuredLogger(slog.Default()),
+		ConnectionOptions: client.ConnectionOptions{
+			DialOptions: []grpc.DialOption{grpc.WithContextDialer(
+				func(ctx context.Context, addr string) (net.Conn, error) {
+					return ts.Dial(ctx, "tcp", addr)
+				},
+			)},
 		},
-	)
+	}
+
+	if servicetoken.Enabled() {
+		options.Credentials = client.NewAPIKeyDynamicCredentials(
+			func(ctx context.Context) (string, error) {
+				token, err := servicetoken.Token(ctx, *resource)
+				if err != nil {
+					return "", err
+				}
+				return token.AccessToken, nil
+			},
+		)
+		// Credentials turn TLS on by default, but the frontend is plain TCP
+		// on the tailnet.
+		options.ConnectionOptions.TLSDisabled = true
+	}
+
+	return client.NewLazyClient(options)
 }
 
 const workerRetryInterval = time.Minute

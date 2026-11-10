@@ -11,6 +11,8 @@ import (
 	"net/url"
 	"reflect"
 	"strings"
+
+	"chameth.com/chameth.com/external/servicetoken"
 )
 
 // ErrNotFound is returned when the service responds with a 404.
@@ -38,8 +40,12 @@ func (s Service) Get(ctx context.Context, client *http.Client, path string, quer
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to build request: %w", err)
 	}
-	if err := s.authorise(ctx, req); err != nil {
-		return nil, nil, err
+	if servicetoken.Enabled() {
+		token, err := servicetoken.Token(ctx, s.BaseURL)
+		if err != nil {
+			return nil, nil, err
+		}
+		token.SetAuthHeader(req)
 	}
 
 	res, err := client.Do(req)
