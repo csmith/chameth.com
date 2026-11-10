@@ -106,7 +106,7 @@ require (
 	github.com/kljensen/snowball v0.10.0
 	github.com/pgvector/pgvector-go v0.4.1
 	github.com/prometheus/client_golang v1.25.0
-	go.temporal.io/api v1.63.6
+	go.temporal.io/api v1.63.7
 	go.temporal.io/sdk v1.49.0
 	golang.org/x/image v0.47.0
 	golang.org/x/net v0.62.0
