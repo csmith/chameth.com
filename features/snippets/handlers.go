@@ -22,7 +22,7 @@ func SnippetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderedContent, err := content.RenderContent(r.Context(), "snippet", 0, snippet.Content, snippet.Path)
+	renderedContent, err := content.RenderContent(r.Context(), "snippet", snippet.ID, snippet.Content, snippet.Path)
 	if err != nil {
 		slog.Error("Failed to render markdown for snippet content", "snippet", snippet.Title, "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
