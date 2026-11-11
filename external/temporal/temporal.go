@@ -63,11 +63,13 @@ func New(ts *tsnet.Server) (client.Client, error) {
 	return client.NewLazyClient(options)
 }
 
-const workerRetryInterval = time.Minute
+var workerRetryInterval = time.Minute
 
 // RunWorker runs a worker for the task queue until ctx is cancelled. The
 // frontend may be unreachable at boot (tailnet or Temporal down), so starting
-// is retried rather than giving up. onStart is called once the worker is up.
+// is retried rather than giving up. A worker memoizes the result of its first
+// start, so each attempt builds and registers a new one. onStart is called once
+// the worker is up.
 func RunWorker(
 	ctx context.Context,
 	tc client.Client,
@@ -76,10 +78,10 @@ func RunWorker(
 	register func(worker.Registry),
 	onStart func(),
 ) {
-	w := worker.New(tc, taskQueue, options)
-	register(w)
-
+	var w worker.Worker
 	for {
+		w = worker.New(tc, taskQueue, options)
+		register(w)
 		err := w.Start()
 		if err == nil {
 			break
