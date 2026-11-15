@@ -97,7 +97,7 @@ require (
 	github.com/coreos/go-oidc/v3 v3.21.0
 	github.com/csmith/aca v1.3.0
 	github.com/csmith/envflag/v2 v2.0.0
-	github.com/csmith/middleware v1.3.0
+	github.com/csmith/middleware v1.4.0
 	github.com/csmith/slogflags v1.2.0
 	github.com/golang-migrate/migrate/v4 v4.20.1
 	github.com/jackc/pgx/v5 v5.11.0
