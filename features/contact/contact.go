@@ -1,8 +1,10 @@
 package contact
 
 import (
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
+	"crypto/tls"
 	"encoding/hex"
 	"flag"
 	"fmt"
@@ -36,8 +38,7 @@ var (
 	duplicateWindow = 28 * 24 * time.Hour
 )
 
-func sendContact(req request, content string) error {
-	auth := smtp.PlainAuth("", *smtpUsername, *smtpPassword, *smtpServer)
+func sendContact(ctx context.Context, req request, content string) error {
 	// ParseAddress rejects anything unsafe to embed in a header (CRLF, control chars)
 	replyTo := "noreply@chameth.com"
 	if addr, err := mail.ParseAddress(req.SenderEmail); err == nil {
@@ -62,16 +63,67 @@ func sendContact(req request, content string) error {
 		"replyTo",
 		req.SenderEmail,
 	)
-	err := smtp.SendMail(
-		fmt.Sprintf("%s:%d", *smtpServer, *smtpPort),
-		auth,
-		*fromAddress,
-		[]string{*toAddress},
-		[]byte(body),
-	)
-	if err != nil {
+	if err := sendMail(ctx, []byte(body)); err != nil {
 		slog.Error("Unable to send e-mail", "error", err)
 		return err
+	}
+	return nil
+}
+
+// sendMail delivers the message to the configured SMTP server. It's the
+// equivalent of smtp.SendMail, except the connection follows ctx, and the
+// message counts as sent once the server accepts the data: a failure after
+// that only gets logged, so a retry doesn't deliver it again.
+func sendMail(ctx context.Context, msg []byte) error {
+	ctx, cancel := context.WithTimeout(ctx, 45*time.Second)
+	defer cancel()
+
+	conn, err := (&net.Dialer{}).DialContext(ctx, "tcp", net.JoinHostPort(*smtpServer, strconv.Itoa(*smtpPort)))
+	if err != nil {
+		return err
+	}
+	stop := context.AfterFunc(ctx, func() { _ = conn.Close() })
+	defer stop()
+	if deadline, ok := ctx.Deadline(); ok {
+		_ = conn.SetDeadline(deadline)
+	}
+
+	c, err := smtp.NewClient(conn, *smtpServer)
+	if err != nil {
+		_ = conn.Close()
+		return err
+	}
+	defer c.Close()
+
+	if ok, _ := c.Extension("STARTTLS"); ok {
+		if err := c.StartTLS(&tls.Config{ServerName: *smtpServer}); err != nil {
+			return err
+		}
+	}
+	if ok, _ := c.Extension("AUTH"); ok {
+		if err := c.Auth(smtp.PlainAuth("", *smtpUsername, *smtpPassword, *smtpServer)); err != nil {
+			return err
+		}
+	}
+	if err := c.Mail(*fromAddress); err != nil {
+		return err
+	}
+	if err := c.Rcpt(*toAddress); err != nil {
+		return err
+	}
+	w, err := c.Data()
+	if err != nil {
+		return err
+	}
+	if _, err := w.Write(msg); err != nil {
+		return err
+	}
+	if err := w.Close(); err != nil {
+		return err
+	}
+
+	if err := c.Quit(); err != nil {
+		slog.Warn("SMTP server accepted the message but QUIT failed", "error", err)
 	}
 	return nil
 }

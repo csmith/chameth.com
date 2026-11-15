@@ -20,13 +20,15 @@ func recordContactMetric(ctx context.Context, sub ContactSubmission) error {
 		ctx,
 		`
 		INSERT INTO contact_metrics (
-			method, user_agent, remote_addr, checks, page, sender_name, sender_email, message, llm_reason
+			workflow_id, method, user_agent, remote_addr, checks, page, sender_name, sender_email, message, llm_reason
 		)
 		VALUES (
-			:method, :user_agent, :remote_addr, :checks, :page, :sender_name, :sender_email, :message, :llm_reason
+			:workflow_id, :method, :user_agent, :remote_addr, :checks, :page, :sender_name, :sender_email, :message, :llm_reason
 		)
+		ON CONFLICT (workflow_id) DO NOTHING
 	`,
 		map[string]any{
+			"workflow_id":  sub.WorkflowID,
 			"method":       sub.Method,
 			"user_agent":   sub.UserAgent,
 			"remote_addr":  sub.RemoteAddr,

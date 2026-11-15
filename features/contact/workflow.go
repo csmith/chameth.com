@@ -199,6 +199,7 @@ func recordActivity(ctx context.Context, sub submission, failed []cause, llmReas
 	return metrics.RecordContactSubmission(
 		ctx,
 		metrics.ContactSubmission{
+			WorkflowID:   activity.GetInfo(ctx).WorkflowExecution.ID,
 			Method:       string(sub.Method),
 			UserAgent:    sub.UserAgent,
 			RemoteAddr:   sub.RemoteAddr,
@@ -212,6 +213,6 @@ func recordActivity(ctx context.Context, sub submission, failed []cause, llmReas
 	)
 }
 
-func sendActivity(_ context.Context, sub submission) error {
-	return sendContact(sub.Request, messageBody(sub.Request, sub.Method, sub.RemoteAddr))
+func sendActivity(ctx context.Context, sub submission) error {
+	return sendContact(ctx, sub.Request, messageBody(sub.Request, sub.Method, sub.RemoteAddr))
 }
