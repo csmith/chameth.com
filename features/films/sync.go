@@ -175,7 +175,7 @@ func syncPoster(ctx context.Context, client *http.Client, f FilmSummary) error {
 		description := "Poster of " + f.Title
 		role := "poster"
 		if err := media.CreateMediaRelation(ctx, "film", f.ID, mediaID, path, &caption, &description, &role); err != nil {
-			return fmt.Errorf("failed to create poster relation: %w", err)
+			return errors.Join(fmt.Errorf("failed to create poster relation: %w", err), media.DeleteMedia(ctx, mediaID))
 		}
 	}
 

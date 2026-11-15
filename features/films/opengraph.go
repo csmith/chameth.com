@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html"
 	"image"
@@ -50,10 +51,28 @@ func syncOpenGraph(
 	if err != nil {
 		return err
 	}
-	if len(existing) == 1 && existing[0].Path == path {
-		return nil
+	// A previous sync may have created the image and then failed to delete
+	// the old ones, so only the clean-up is left to do.
+	if !slices.ContainsFunc(existing, func(rel filmMedia) bool { return rel.Path == path }) {
+		if err := createOpenGraph(ctx, f, card, path, posterUpdatedAt); err != nil {
+			return err
+		}
 	}
 
+	for _, rel := range existing {
+		if rel.Path != path {
+			if err := deleteFilmMedia(ctx, rel); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func createOpenGraph(
+	ctx context.Context, f FilmSummary, card opengraph.Film, path string, posterUpdatedAt *time.Time,
+) error {
+	var err error
 	if posterUpdatedAt != nil {
 		card.Poster, err = loadPoster(ctx, f.ID)
 		if err != nil {
@@ -74,15 +93,7 @@ func syncOpenGraph(
 	description := "Review card for " + f.Title
 	role := "opengraph"
 	if err := media.CreateMediaRelation(ctx, "film", f.ID, mediaID, path, nil, &description, &role); err != nil {
-		return fmt.Errorf("failed to create media relation: %w", err)
-	}
-
-	for _, rel := range existing {
-		if rel.Path != path {
-			if err := deleteFilmMedia(ctx, rel); err != nil {
-				return err
-			}
-		}
+		return errors.Join(fmt.Errorf("failed to create media relation: %w", err), media.DeleteMedia(ctx, mediaID))
 	}
 	return nil
 }
