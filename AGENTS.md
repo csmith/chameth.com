@@ -119,7 +119,9 @@ registrations — just add the function to the package and run
 
 - `RegisterShortcodes(mgr *shortcodes.Manager)` — for shortcode registration
 - `RegisterAssets(mgr *assets.Manager)` — for static asset registration
-- `RegisterRoutes(mux *http.ServeMux)` — for HTTP route registration
+- `RegisterRoutes(rm *routing.Manager)` — for HTTP route registration
+- `RegisterContentTypes(rm *routing.Manager)` — for mapping a content type
+  from the `paths` table to its handler
 - `RegisterGoroutine(...) func()` — for background goroutines, returns a function to launch
 
 All registration functions can optionally accept parameters whose types match
