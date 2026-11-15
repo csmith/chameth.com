@@ -68,34 +68,48 @@ func RegisterGoroutine(ctx context.Context, tc client.Client) func() {
 }
 
 // SyndicateAllPosts starts a syndication workflow for each published post
-// missing a standard.site document or Bluesky post. Workflow IDs are per post,
-// so a post that is already being syndicated isn't started again.
+// missing a standard.site document or Bluesky post. Record keys and workflow
+// IDs are derived from the post, so a post that is already being syndicated
+// isn't started again, and a run that follows a failed one replaces the
+// records the failed run created instead of adding more.
 func SyndicateAllPosts(ctx context.Context, tc client.Client) error {
-	paths, err := getUnsyndicatedAtProtoPaths(ctx)
+	unsyndicated, err := getUnsyndicatedAtProtoPosts(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to get posts needing AT Proto syndication: %w", err)
 	}
 
 	var errs []error
-	for _, path := range paths {
+	for _, post := range unsyndicated {
+		args := syndicatePostArgs{
+			Path: post.Path,
+			// Record keys are per collection, so the document and the Bluesky
+			// post can share one. The post's ID as the clock ID keeps posts
+			// with the same date apart.
+			RecordKey: atproto.TID(post.Date, uint(post.ID)),
+		}
 		_, err := tc.ExecuteWorkflow(
 			ctx,
 			client.StartWorkflowOptions{
-				ID:                       "syndicate-post:" + path,
+				ID:                       "syndicate-post:" + args.Path + ":" + args.RecordKey,
 				TaskQueue:                taskQueue,
 				WorkflowIDConflictPolicy: enumspb.WORKFLOW_ID_CONFLICT_POLICY_USE_EXISTING,
 			},
 			workflowName,
-			path,
+			args,
 		)
 		if err != nil {
-			errs = append(errs, fmt.Errorf("failed to start syndication for %s: %w", path, err))
+			errs = append(errs, fmt.Errorf("failed to start syndication for %s: %w", post.Path, err))
 		}
 	}
 	return errors.Join(errs...)
 }
 
-func syndicatePostWorkflow(ctx workflow.Context, path string) error {
+type syndicatePostArgs struct {
+	Path      string
+	RecordKey string
+}
+
+func syndicatePostWorkflow(ctx workflow.Context, args syndicatePostArgs) error {
 	ctx = workflow.WithActivityOptions(
 		ctx,
 		workflow.ActivityOptions{
@@ -109,19 +123,9 @@ func syndicatePostWorkflow(ctx workflow.Context, path string) error {
 		},
 	)
 
-	// Record keys are fixed before anything is sent to the PDS, so a retried
-	// activity replaces the record it may already have created.
-	documentKey, err := newRecordKey(ctx)
-	if err != nil {
-		return err
-	}
-	blueskyKey, err := newRecordKey(ctx)
-	if err != nil {
-		return err
-	}
-
+	path := args.Path
 	var document documentResult
-	if err := workflow.ExecuteActivity(ctx, documentActivityName, path, documentKey).Get(ctx, &document); err != nil {
+	if err := workflow.ExecuteActivity(ctx, documentActivityName, path, args.RecordKey).Get(ctx, &document); err != nil {
 		return err
 	}
 	if document.Created {
@@ -142,7 +146,7 @@ func syndicatePostWorkflow(ctx workflow.Context, path string) error {
 	}
 
 	var blueskyURL string
-	err = workflow.ExecuteActivity(ctx, blueskyActivityName, path, blueskyKey, document.Ref).Get(ctx, &blueskyURL)
+	err := workflow.ExecuteActivity(ctx, blueskyActivityName, path, args.RecordKey, document.Ref).Get(ctx, &blueskyURL)
 	if err != nil || blueskyURL == "" {
 		return err
 	}
@@ -156,12 +160,6 @@ func syndicatePostWorkflow(ctx workflow.Context, path string) error {
 			Disposition: "anchor",
 		},
 	).Get(ctx, nil)
-}
-
-func newRecordKey(ctx workflow.Context) (string, error) {
-	var key string
-	err := workflow.SideEffect(ctx, func(workflow.Context) any { return atproto.GenerateTID() }).Get(&key)
-	return key, err
 }
 
 type documentResult struct {

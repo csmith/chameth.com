@@ -1,5 +1,7 @@
 package syndications
 
+import "time"
+
 type Syndication struct {
 	ID          int     `db:"id"`
 	Path        string  `db:"path"`
@@ -8,4 +10,10 @@ type Syndication struct {
 	Published   bool    `db:"published"`
 	Disposition string  `db:"disposition"`
 	Rel         *string `db:"rel"`
+}
+
+type unsyndicatedPost struct {
+	ID   int       `db:"id"`
+	Path string    `db:"path"`
+	Date time.Time `db:"date"`
 }

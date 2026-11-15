@@ -178,11 +178,11 @@ func getSyndicationsByPathAndName(ctx context.Context, path, name string) ([]Syn
 	)
 }
 
-func getUnsyndicatedAtProtoPaths(ctx context.Context) ([]string, error) {
-	return db.Select[string](
+func getUnsyndicatedAtProtoPosts(ctx context.Context) ([]unsyndicatedPost, error) {
+	return db.Select[unsyndicatedPost](
 		ctx,
 		`
-		SELECT path
+		SELECT id, path, date
 		FROM posts
 		WHERE published AND (
 			path NOT IN (SELECT path FROM syndications WHERE name = 'Bluesky')
