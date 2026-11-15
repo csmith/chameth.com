@@ -26,7 +26,7 @@ func handleIndex() func(http.ResponseWriter, *http.Request) {
 
 func handleAssets(mgr *assets.Manager) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fsys, fsPath, ok := mgr.StaticAssetWithFallback(r.URL.Path)
+		fsys, fsPath, ok := mgr.StaticAsset(r.URL.Path)
 		if !ok {
 			http.NotFound(w, r)
 			return

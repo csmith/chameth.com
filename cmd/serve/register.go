@@ -85,7 +85,6 @@ import (
 func (s *site) registerAssets() {
 	assets.RegisterAssets(s.Assets)
 	features.RegisterAssets(s.Assets)
-	featuresAdmin.RegisterAssets(s.Assets)
 	featuresFeeds.RegisterAssets(s.Assets)
 	featuresShortcodesRating.RegisterAssets(s.Assets)
 }
