@@ -142,7 +142,7 @@ func changedEntries(ctx context.Context, idx *index) ([]listEntryRow, error) {
 }
 
 func syncPoster(ctx context.Context, client *http.Client, f FilmSummary) error {
-	data, contentType, err := fetchPoster(ctx, client, f.Poster.Path)
+	data, contentType, err := tiredScroll.GetImage(ctx, client, f.Poster.Path)
 	if err != nil {
 		return fmt.Errorf("failed to download poster: %w", err)
 	}

@@ -3,6 +3,7 @@ package twowords
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -28,9 +29,31 @@ type Service struct {
 // zero values ("", 0, false, nil) are omitted.
 type Query map[string]any
 
-// Get fetches path (which should be root-relative, see Path) with the given
-// query, returning the response body and headers.
-func (s Service) Get(ctx context.Context, client *http.Client, path string, query Query) ([]byte, http.Header, error) {
+// GetJSON fetches path (which must be root-relative, see Path) with the given
+// query, and decodes the JSON response into a T.
+func GetJSON[T any](ctx context.Context, s Service, client *http.Client, path string, query Query) (T, error) {
+	var res T
+	body, _, err := s.get(ctx, client, path, query)
+	if err != nil {
+		return res, err
+	}
+	if err := json.Unmarshal(body, &res); err != nil {
+		return res, fmt.Errorf("failed to decode %s response: %w", path, err)
+	}
+	return res, nil
+}
+
+// GetImage fetches the image at path (which must be root-relative), returning
+// its body and Content-Type.
+func (s Service) GetImage(ctx context.Context, client *http.Client, path string) ([]byte, string, error) {
+	body, header, err := s.get(ctx, client, path, nil)
+	if err != nil {
+		return nil, "", err
+	}
+	return body, header.Get("Content-Type"), nil
+}
+
+func (s Service) get(ctx context.Context, client *http.Client, path string, query Query) ([]byte, http.Header, error) {
 	// Paths can come from earlier responses; anything not root-relative
 	// could move the request, and the token, to another host or port.
 	if !strings.HasPrefix(path, "/") || strings.HasPrefix(path, "//") {

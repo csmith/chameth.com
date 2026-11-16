@@ -84,7 +84,7 @@ func ensureCovers(ctx context.Context, client *http.Client, covers []coverRef) (
 
 // The service serves finished JPEG cover art, so the bytes are stored as-is.
 func rehostCover(ctx context.Context, client *http.Client, c coverRef) error {
-	data, contentType, err := FetchImage(ctx, client, c.coverPath)
+	data, contentType, err := bonusMetal.GetImage(ctx, client, c.coverPath)
 	if err != nil {
 		slog.Error("Failed to fetch music artwork", "type", c.entityType, "name", c.name, "error", err)
 		return err

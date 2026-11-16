@@ -2,9 +2,7 @@ package workouts
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -27,21 +25,17 @@ type GroupSummary struct {
 func ActivitySummary(
 	ctx context.Context, client *http.Client, start, end, group string,
 ) (map[string]GroupSummary, error) {
-	body, _, err := pompeiBand.Get(
+	res, err := twowords.GetJSON[struct {
+		Groups map[string]GroupSummary `json:"groups"`
+	}](
 		ctx,
+		pompeiBand,
 		client,
 		"/api/insights/activity-summary",
 		twowords.Query{"start": start, "end": end, "group": group},
 	)
 	if err != nil {
 		return nil, err
-	}
-
-	var res struct {
-		Groups map[string]GroupSummary `json:"groups"`
-	}
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode activity-summary response: %w", err)
 	}
 	return res.Groups, nil
 }
@@ -52,21 +46,17 @@ type DaySummary struct {
 }
 
 func ActivityDays(ctx context.Context, client *http.Client, start, end, group string) ([]DaySummary, error) {
-	body, _, err := pompeiBand.Get(
+	res, err := twowords.GetJSON[struct {
+		Days []DaySummary `json:"days"`
+	}](
 		ctx,
+		pompeiBand,
 		client,
 		"/api/insights/activity-days",
 		twowords.Query{"start": start, "end": end, "group": group},
 	)
 	if err != nil {
 		return nil, err
-	}
-
-	var res struct {
-		Days []DaySummary `json:"days"`
-	}
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode activity-days response: %w", err)
 	}
 	return res.Days, nil
 }
@@ -98,8 +88,9 @@ func (r *DistanceRecord) RankingDistanceM() float64 {
 }
 
 func GetDistanceRecord(ctx context.Context, client *http.Client, group, start, end string) (*DistanceRecord, error) {
-	body, _, err := pompeiBand.Get(
+	record, err := twowords.GetJSON[DistanceRecord](
 		ctx,
+		pompeiBand,
 		client,
 		twowords.Path("/api/insights/distance-records/%s", group),
 		twowords.Query{"start": start, "end": end},
@@ -109,11 +100,6 @@ func GetDistanceRecord(ctx context.Context, client *http.Client, group, start, e
 			return nil, nil
 		}
 		return nil, err
-	}
-
-	var record DistanceRecord
-	if err := json.Unmarshal(body, &record); err != nil {
-		return nil, fmt.Errorf("failed to decode distance-records response: %w", err)
 	}
 	return &record, nil
 }
@@ -132,16 +118,11 @@ type PersonalBest struct {
 }
 
 func PBs(ctx context.Context, client *http.Client, group string) ([]PersonalBest, error) {
-	body, _, err := pompeiBand.Get(ctx, client, "/api/insights/pbs", twowords.Query{"group": group})
+	res, err := twowords.GetJSON[struct {
+		PBs []PersonalBest `json:"pbs"`
+	}](ctx, pompeiBand, client, "/api/insights/pbs", twowords.Query{"group": group})
 	if err != nil {
 		return nil, err
-	}
-
-	var res struct {
-		PBs []PersonalBest `json:"pbs"`
-	}
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode pbs response: %w", err)
 	}
 	return res.PBs, nil
 }
@@ -159,16 +140,11 @@ type PBEvent struct {
 }
 
 func PBEvents(ctx context.Context, client *http.Client, start, end string) ([]PBEvent, error) {
-	body, _, err := pompeiBand.Get(ctx, client, "/api/insights/pb-events", twowords.Query{"start": start, "end": end})
+	res, err := twowords.GetJSON[struct {
+		Events []PBEvent `json:"events"`
+	}](ctx, pompeiBand, client, "/api/insights/pb-events", twowords.Query{"start": start, "end": end})
 	if err != nil {
 		return nil, err
-	}
-
-	var res struct {
-		Events []PBEvent `json:"events"`
-	}
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode pb-events response: %w", err)
 	}
 	return res.Events, nil
 }
@@ -195,14 +171,15 @@ func (a *Activity) WalkingDistanceM() float64 {
 }
 
 func Activities(ctx context.Context, client *http.Client, group string) ([]Activity, error) {
-	body, _, err := pompeiBand.Get(ctx, client, "/api/activities", twowords.Query{"group": group})
+	activities, err := twowords.GetJSON[[]Activity](
+		ctx,
+		pompeiBand,
+		client,
+		"/api/activities",
+		twowords.Query{"group": group},
+	)
 	if err != nil {
 		return nil, err
-	}
-
-	var activities []Activity
-	if err := json.Unmarshal(body, &activities); err != nil {
-		return nil, fmt.Errorf("failed to decode activities response: %w", err)
 	}
 	return activities, nil
 }
@@ -218,16 +195,11 @@ type MonthSummary struct {
 }
 
 func ActivityMonths(ctx context.Context, client *http.Client, group string) ([]MonthSummary, error) {
-	body, _, err := pompeiBand.Get(ctx, client, "/api/insights/activity-months", twowords.Query{"group": group})
+	res, err := twowords.GetJSON[struct {
+		Months []MonthSummary `json:"months"`
+	}](ctx, pompeiBand, client, "/api/insights/activity-months", twowords.Query{"group": group})
 	if err != nil {
 		return nil, err
-	}
-
-	var res struct {
-		Months []MonthSummary `json:"months"`
-	}
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode activity-months response: %w", err)
 	}
 	return res.Months, nil
 }

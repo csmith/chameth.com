@@ -4,12 +4,12 @@ package parkruns
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
+	"chameth.com/chameth.com/external/twowords"
 	"chameth.com/chameth.com/features/shortcodes"
 	"chameth.com/chameth.com/features/workouts"
 	"tailscale.com/tsnet"
@@ -153,14 +153,9 @@ type parkrunsResponse struct {
 }
 
 func fetchParkruns(ctx context.Context, client *http.Client) (*parkrunsResponse, error) {
-	body, _, err := workouts.CentralPark.Get(ctx, client, "/api/insights/parkruns", nil)
+	res, err := twowords.GetJSON[parkrunsResponse](ctx, workouts.CentralPark, client, "/api/insights/parkruns", nil)
 	if err != nil {
 		return nil, err
-	}
-
-	var res parkrunsResponse
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode parkruns response: %w", err)
 	}
 	return &res, nil
 }

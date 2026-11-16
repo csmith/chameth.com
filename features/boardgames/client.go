@@ -2,8 +2,6 @@ package boardgames
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"chameth.com/chameth.com/external/twowords"
@@ -23,25 +21,11 @@ type Game struct {
 
 // start and end define a half-open range; empty values mean all time.
 func PlayCounts(ctx context.Context, client *http.Client, start, end string) ([]Game, error) {
-	body, _, err := magicMeters.Get(ctx, client, "/api/playcounts", twowords.Query{"start": start, "end": end})
+	res, err := twowords.GetJSON[struct {
+		Games []Game `json:"games"`
+	}](ctx, magicMeters, client, "/api/playcounts", twowords.Query{"start": start, "end": end})
 	if err != nil {
 		return nil, err
 	}
-
-	var res struct {
-		Games []Game `json:"games"`
-	}
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode playcounts response: %w", err)
-	}
 	return res.Games, nil
-}
-
-// imageURL is the root-relative path on Magic Meters' host from Game.ImageURL.
-func fetchImage(ctx context.Context, client *http.Client, imageURL string) ([]byte, string, error) {
-	body, header, err := magicMeters.Get(ctx, client, imageURL, nil)
-	if err != nil {
-		return nil, "", err
-	}
-	return body, header.Get("Content-Type"), nil
 }

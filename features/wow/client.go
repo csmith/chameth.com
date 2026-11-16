@@ -2,8 +2,6 @@ package wow
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -83,8 +81,9 @@ type Achievement struct {
 }
 
 func GetCharacter(ctx context.Context, client *http.Client, realm, name, at string) (*Character, error) {
-	body, _, err := ogreStream.Get(
+	character, err := twowords.GetJSON[Character](
 		ctx,
+		ogreStream,
 		client,
 		twowords.Path("/api/wow/characters/%s/%s", realm, name),
 		twowords.Query{"at": at},
@@ -92,33 +91,19 @@ func GetCharacter(ctx context.Context, client *http.Client, realm, name, at stri
 	if err != nil {
 		return nil, err
 	}
-
-	var character Character
-	if err := json.Unmarshal(body, &character); err != nil {
-		return nil, fmt.Errorf("failed to decode character: %w", err)
-	}
 	return &character, nil
 }
 
 func RecentAchievements(ctx context.Context, client *http.Client, limit int) ([]Achievement, error) {
-	body, _, err := ogreStream.Get(ctx, client, "/api/wow/achievements", twowords.Query{"limit": limit})
+	res, err := twowords.GetJSON[struct {
+		Achievements []Achievement `json:"achievements"`
+	}](ctx, ogreStream, client, "/api/wow/achievements", twowords.Query{"limit": limit})
 	if err != nil {
 		return nil, err
-	}
-
-	var res struct {
-		Achievements []Achievement `json:"achievements"`
-	}
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode achievements: %w", err)
 	}
 	return res.Achievements, nil
 }
 
 func FetchImage(ctx context.Context, client *http.Client, path string) ([]byte, string, error) {
-	body, headers, err := ogreStream.Get(ctx, client, path, nil)
-	if err != nil {
-		return nil, "", err
-	}
-	return body, headers.Get("Content-Type"), nil
+	return ogreStream.GetImage(ctx, client, path)
 }

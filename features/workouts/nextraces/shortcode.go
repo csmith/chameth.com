@@ -2,7 +2,6 @@ package nextraces
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -37,17 +36,12 @@ type race struct {
 }
 
 func retrieve(ctx context.Context, client *http.Client, _ []string) (shortcodes.Result[[]race], error) {
-	body, _, err := workouts.CentralPark.Get(ctx, client, "/api/events", twowords.Query{"type": "event"})
-	if err != nil {
-		return shortcodes.Result[[]race]{}, fmt.Errorf("failed to fetch races: %w", err)
-	}
-
-	var events []struct {
+	events, err := twowords.GetJSON[[]struct {
 		Date     string  `json:"date"`
 		Distance float64 `json:"distance"`
-	}
-	if err := json.Unmarshal(body, &events); err != nil {
-		return shortcodes.Result[[]race]{}, fmt.Errorf("failed to decode events response: %w", err)
+	}](ctx, workouts.CentralPark, client, "/api/events", twowords.Query{"type": "event"})
+	if err != nil {
+		return shortcodes.Result[[]race]{}, fmt.Errorf("failed to fetch races: %w", err)
 	}
 
 	races := make([]race, 0, len(events))

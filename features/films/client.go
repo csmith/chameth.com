@@ -2,9 +2,7 @@ package films
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -53,14 +51,9 @@ type indexList struct {
 }
 
 func fetchIndex(ctx context.Context, client *http.Client) (*index, error) {
-	body, _, err := tiredScroll.Get(ctx, client, "/api/index", nil)
+	res, err := twowords.GetJSON[index](ctx, tiredScroll, client, "/api/index", nil)
 	if err != nil {
 		return nil, err
-	}
-
-	var res index
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode index: %w", err)
 	}
 	return &res, nil
 }
@@ -84,14 +77,9 @@ type filmDetail struct {
 }
 
 func fetchFilm(ctx context.Context, client *http.Client, slug string) (*filmDetail, error) {
-	body, _, err := tiredScroll.Get(ctx, client, twowords.Path("/api/films/%s", slug), nil)
+	res, err := twowords.GetJSON[filmDetail](ctx, tiredScroll, client, twowords.Path("/api/films/%s", slug), nil)
 	if err != nil {
 		return nil, err
-	}
-
-	var res filmDetail
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode film: %w", err)
 	}
 	return &res, nil
 }
@@ -122,17 +110,12 @@ func (r reviewWithFilm) entry() ReviewEntry {
 // GetReview returns the published review with the given id, or nil if
 // there is no such review.
 func GetReview(ctx context.Context, client *http.Client, id int) (*ReviewEntry, error) {
-	body, _, err := tiredScroll.Get(ctx, client, twowords.Path("/api/reviews/%d", id), nil)
+	res, err := twowords.GetJSON[reviewWithFilm](ctx, tiredScroll, client, twowords.Path("/api/reviews/%d", id), nil)
 	if errors.Is(err, twowords.ErrNotFound) {
 		return nil, nil
 	}
 	if err != nil {
 		return nil, err
-	}
-
-	var res reviewWithFilm
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode review: %w", err)
 	}
 	entry := res.entry()
 	return &entry, nil
@@ -152,21 +135,17 @@ func GetReviews(ctx context.Context, client *http.Client, q ReviewQuery) ([]Revi
 		order = "asc"
 	}
 
-	body, _, err := tiredScroll.Get(
+	res, err := twowords.GetJSON[struct {
+		Reviews []reviewWithFilm `json:"reviews"`
+	}](
 		ctx,
+		tiredScroll,
 		client,
 		"/api/reviews",
 		twowords.Query{"limit": q.Limit, "start": q.Start, "end": q.End, "order": order},
 	)
 	if err != nil {
 		return nil, err
-	}
-
-	var res struct {
-		Reviews []reviewWithFilm `json:"reviews"`
-	}
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode reviews: %w", err)
 	}
 
 	entries := make([]ReviewEntry, len(res.Reviews))
@@ -182,16 +161,11 @@ type RatingCount struct {
 }
 
 func GetRatings(ctx context.Context, client *http.Client) ([]RatingCount, error) {
-	body, _, err := tiredScroll.Get(ctx, client, "/api/ratings", nil)
+	res, err := twowords.GetJSON[struct {
+		Ratings []RatingCount `json:"ratings"`
+	}](ctx, tiredScroll, client, "/api/ratings", nil)
 	if err != nil {
 		return nil, err
-	}
-
-	var res struct {
-		Ratings []RatingCount `json:"ratings"`
-	}
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode ratings: %w", err)
 	}
 	return res.Ratings, nil
 }
@@ -204,24 +178,11 @@ type WatchDay struct {
 // GetWatchDays returns the number of published watches on each day between
 // the inclusive YYYY-MM-DD bounds, omitting days with none.
 func GetWatchDays(ctx context.Context, client *http.Client, start, end string) ([]WatchDay, error) {
-	body, _, err := tiredScroll.Get(ctx, client, "/api/watch-days", twowords.Query{"start": start, "end": end})
+	res, err := twowords.GetJSON[struct {
+		Days []WatchDay `json:"days"`
+	}](ctx, tiredScroll, client, "/api/watch-days", twowords.Query{"start": start, "end": end})
 	if err != nil {
 		return nil, err
 	}
-
-	var res struct {
-		Days []WatchDay `json:"days"`
-	}
-	if err := json.Unmarshal(body, &res); err != nil {
-		return nil, fmt.Errorf("failed to decode watch days: %w", err)
-	}
 	return res.Days, nil
-}
-
-func fetchPoster(ctx context.Context, client *http.Client, path string) ([]byte, string, error) {
-	body, headers, err := tiredScroll.Get(ctx, client, path, nil)
-	if err != nil {
-		return nil, "", err
-	}
-	return body, headers.Get("Content-Type"), nil
 }
