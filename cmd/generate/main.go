@@ -19,18 +19,11 @@ type provider struct {
 }
 
 type pkg struct {
-	importPath        string
-	alias             string
-	hasShortcodes     bool
-	hasAssets         bool
-	hasRoutes         bool
-	hasGoroutines     bool
-	hasContentTypes   bool
-	shortcodeParams   []int
-	assetParams       []int
-	routeParams       []int
-	goroutineParams   []int
-	contentTypeParams []int
+	importPath string
+	alias      string
+	// params maps each registration function the package defines to the
+	// indices of the providers it takes.
+	params map[string][]int
 }
 
 func main() {
@@ -262,49 +255,44 @@ func scanFile(root, mod, path string, providers []provider, pkgs map[string]*pkg
 
 	p, ok := pkgs[importPath]
 	if !ok {
-		p = &pkg{importPath: importPath, alias: makeAlias(mod, importPath)}
+		p = &pkg{importPath: importPath, alias: makeAlias(mod, importPath), params: map[string][]int{}}
 		pkgs[importPath] = p
 	}
 
-	if !registerDecls(f, fileImports, providers, importPath, p) &&
-		!p.hasShortcodes && !p.hasAssets && !p.hasRoutes && !p.hasGoroutines && !p.hasContentTypes {
+	for _, d := range f.Decls {
+		fn, ok := d.(*ast.FuncDecl)
+		if !ok || !isRegistration(fn.Name.Name) {
+			continue
+		}
+		p.params[fn.Name.Name] = append(p.params[fn.Name.Name], matchProviders(fn, fileImports, providers, importPath)...)
+	}
+
+	if len(p.params) == 0 {
 		delete(pkgs, importPath)
 	}
 }
 
-// registerDecls processes the top-level declarations of f, updating p for
-// each registration function found. It reports whether any were found.
-func registerDecls(f *ast.File, fileImports map[string]string, providers []provider, importPath string, p *pkg) bool {
-	found := false
-	for _, d := range f.Decls {
-		fn, ok := d.(*ast.FuncDecl)
-		if !ok {
-			continue
-		}
-		switch fn.Name.Name {
-		case "RegisterShortcodes":
-			found = true
-			p.hasShortcodes = true
-			p.shortcodeParams = append(p.shortcodeParams, matchProviders(fn, fileImports, providers, importPath)...)
-		case "RegisterAssets":
-			found = true
-			p.hasAssets = true
-			p.assetParams = append(p.assetParams, matchProviders(fn, fileImports, providers, importPath)...)
-		case "RegisterRoutes":
-			found = true
-			p.hasRoutes = true
-			p.routeParams = append(p.routeParams, matchProviders(fn, fileImports, providers, importPath)...)
-		case "RegisterGoroutine":
-			found = true
-			p.hasGoroutines = true
-			p.goroutineParams = append(p.goroutineParams, matchProviders(fn, fileImports, providers, importPath)...)
-		case "RegisterContentTypes":
-			found = true
-			p.hasContentTypes = true
-			p.contentTypeParams = append(p.contentTypeParams, matchProviders(fn, fileImports, providers, importPath)...)
+// registrations lists each registration function and the site method that
+// calls it, in the order the methods are generated.
+var registrations = []struct {
+	funcName   string
+	methodName string
+	call       string
+}{
+	{"RegisterAssets", "registerAssets", "%s.RegisterAssets(%s)"},
+	{"RegisterShortcodes", "registerShortcodes", "%s.RegisterShortcodes(%s)"},
+	{"RegisterRoutes", "registerRoutes", "%s.RegisterRoutes(%s)"},
+	{"RegisterGoroutine", "launchGoroutines", "go %s.RegisterGoroutine(%s)()"},
+	{"RegisterContentTypes", "registerContentTypes", "%s.RegisterContentTypes(%s)"},
+}
+
+func isRegistration(name string) bool {
+	for _, r := range registrations {
+		if r.funcName == name {
+			return true
 		}
 	}
-	return found
+	return false
 }
 
 func buildArgs(paramIndices []int, providers []provider) string {
@@ -316,17 +304,6 @@ func buildArgs(paramIndices []int, providers []provider) string {
 }
 
 func gen(root string, pkgs map[string]*pkg, providers []provider) {
-	allImports := map[string]string{}
-	for _, p := range pkgs {
-		allImports[p.alias] = p.importPath
-	}
-
-	sortedAliases := make([]string, 0, len(allImports))
-	for a := range allImports {
-		sortedAliases = append(sortedAliases, a)
-	}
-	sort.Strings(sortedAliases)
-
 	sortedPaths := make([]string, 0, len(pkgs))
 	for p := range pkgs {
 		sortedPaths = append(sortedPaths, p)
@@ -338,63 +315,18 @@ func gen(root string, pkgs map[string]*pkg, providers []provider) {
 	buf.WriteString("//go:generate go run ../../cmd/generate\n\n")
 	buf.WriteString("package main\n\n")
 	buf.WriteString("import (\n")
-	for _, a := range sortedAliases {
-		fmt.Fprintf(&buf, "\t%s %q\n", a, allImports[a])
-	}
-	buf.WriteString(")\n\n")
-
-	var assetPkgs, shortcodePkgs, routePkgs, goroutinePkgs, contentTypePkgs []*pkg
 	for _, path := range sortedPaths {
-		p := pkgs[path]
-		if p.hasAssets {
-			assetPkgs = append(assetPkgs, p)
-		}
-		if p.hasShortcodes {
-			shortcodePkgs = append(shortcodePkgs, p)
-		}
-		if p.hasRoutes {
-			routePkgs = append(routePkgs, p)
-		}
-		if p.hasGoroutines {
-			goroutinePkgs = append(goroutinePkgs, p)
-		}
-		if p.hasContentTypes {
-			contentTypePkgs = append(contentTypePkgs, p)
-		}
+		fmt.Fprintf(&buf, "\t%s %q\n", pkgs[path].alias, path)
 	}
+	buf.WriteString(")\n")
 
-	buf.WriteString("func (s *site) registerAssets() {\n")
-	for _, p := range assetPkgs {
-		fmt.Fprintf(&buf, "\t%s.RegisterAssets(%s)\n", p.alias, buildArgs(p.assetParams, providers))
-	}
-	buf.WriteString("}\n\n")
-
-	buf.WriteString("func (s *site) registerShortcodes() {\n")
-	for _, p := range shortcodePkgs {
-		fmt.Fprintf(&buf, "\t%s.RegisterShortcodes(%s)\n", p.alias, buildArgs(p.shortcodeParams, providers))
-	}
-	buf.WriteString("}\n\n")
-
-	if len(routePkgs) > 0 {
-		buf.WriteString("func (s *site) registerRoutes() {\n")
-		for _, p := range routePkgs {
-			fmt.Fprintf(&buf, "\t%s.RegisterRoutes(%s)\n", p.alias, buildArgs(p.routeParams, providers))
-		}
-		buf.WriteString("}\n")
-	}
-
-	if len(goroutinePkgs) > 0 {
-		buf.WriteString("\nfunc (s *site) launchGoroutines() {\n")
-		for _, p := range goroutinePkgs {
-			fmt.Fprintf(&buf, "\tgo %s.RegisterGoroutine(%s)()\n", p.alias, buildArgs(p.goroutineParams, providers))
-		}
-		buf.WriteString("}\n")
-	}
-
-	if len(contentTypePkgs) > 0 {
-		buf.WriteString("\nfunc (s *site) registerContentTypes() {\n")
-		for _, p := range contentTypePkgs {
-			fmt.Fprintf(&buf, "\t%s.RegisterContentTypes(%s)\n", p.alias, buildArgs(p.contentTypeParams, providers))
+	for _, r := range registrations {
+		fmt.Fprintf(&buf, "\nfunc (s *site) %s() {\n", r.methodName)
+		for _, path := range sortedPaths {
+			p := pkgs[path]
+			if params, ok := p.params[r.funcName]; ok {
+				fmt.Fprintf(&buf, "\t"+r.call+"\n", p.alias, buildArgs(params, providers))
+			}
 		}
 		buf.WriteString("}\n")
 	}
