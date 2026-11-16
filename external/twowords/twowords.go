@@ -31,6 +31,12 @@ type Query map[string]any
 // Get fetches path (which should be root-relative, see Path) with the given
 // query, returning the response body and headers.
 func (s Service) Get(ctx context.Context, client *http.Client, path string, query Query) ([]byte, http.Header, error) {
+	// Paths can come from earlier responses; anything not root-relative
+	// could move the request, and the token, to another host or port.
+	if !strings.HasPrefix(path, "/") || strings.HasPrefix(path, "//") {
+		return nil, nil, fmt.Errorf("path %q is not root-relative", path)
+	}
+
 	u := strings.TrimRight(s.BaseURL, "/") + path
 	if values := query.values(); len(values) > 0 {
 		u += "?" + values.Encode()
