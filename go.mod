@@ -1,6 +1,6 @@
 module chameth.com/chameth.com
 
-go 1.27.1
+go 1.27.3
 
 require (
 	dario.cat/mergo v1.0.2 // indirect
@@ -113,7 +113,7 @@ require (
 	golang.org/x/oauth2 v0.37.0
 	golang.org/x/text v0.43.0
 	google.golang.org/grpc v1.84.0
-	tailscale.com v1.104.1
+	tailscale.com v1.104.2
 )
 
 tool github.com/air-verse/air
