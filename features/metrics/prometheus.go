@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	xhttp "chameth.com/x/http"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
@@ -32,7 +33,7 @@ func RegisterGoroutine(ctx context.Context) func() {
 		}
 
 		slog.Info(fmt.Sprintf("Metrics server listening on http://0.0.0.0:%d/metrics", *metricsPort))
-		if err := server.ListenAndServe(); err != nil {
+		if err := xhttp.ListenAndServe(ctx, server); err != nil {
 			slog.Error("Metrics server failed", "error", err)
 		}
 	}

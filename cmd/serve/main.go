@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -26,6 +25,7 @@ import (
 	"chameth.com/chameth.com/features/sudo"
 	"chameth.com/chameth.com/features/syndications"
 	"chameth.com/chameth.com/templates"
+	xhttp "chameth.com/x/http"
 	"chameth.com/x/oidc"
 	"chameth.com/x/tailscale"
 	"github.com/csmith/envflag/v2"
@@ -70,7 +70,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 
 	am := assets.NewManager()
@@ -152,12 +152,11 @@ func main() {
 		)(s.Routes),
 	}
 
+	served := make(chan error, 1)
 	go func() {
 		slog.Info(fmt.Sprintf("Listening on http://0.0.0.0:%d/", *port))
-		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			slog.Error("Failed to listen", "error", err)
-			panic(err)
-		}
+		served <- xhttp.ListenAndServe(ctx, server)
+		cancel()
 	}()
 
 	// Let the public site serve before waiting for the tailnet, but block
@@ -171,17 +170,9 @@ func main() {
 
 	s.launchGoroutines()
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-
-	cancel()
-
-	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer shutdownCancel()
-	if err := server.Shutdown(shutdownCtx); err != nil {
-		slog.Error("Failed to shutdown HTTP server", "error", err)
-		panic(err)
+	if err := <-served; err != nil {
+		slog.Error("HTTP server failed", "error", err)
+		os.Exit(1)
 	}
 }
 

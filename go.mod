@@ -94,7 +94,7 @@ require (
 
 require (
 	chameth.com/cfm v1.1.0
-	chameth.com/x v0.0.1
+	chameth.com/x v0.0.2
 	github.com/alecthomas/chroma/v2 v2.27.0
 	github.com/anthonynsimon/bild v0.17.1
 	github.com/csmith/aca v1.3.0
