@@ -94,7 +94,7 @@ require (
 
 require (
 	chameth.com/cfm v1.1.0
-	chameth.com/x v0.0.2
+	chameth.com/x v0.0.3
 	github.com/alecthomas/chroma/v2 v2.27.0
 	github.com/anthonynsimon/bild v0.17.1
 	github.com/csmith/aca v1.3.0
@@ -108,8 +108,8 @@ require (
 	github.com/pgvector/pgvector-go v0.4.1
 	github.com/prometheus/client_golang v1.25.0
 	github.com/stretchr/testify v1.12.1
-	go.temporal.io/api v1.64.0
-	go.temporal.io/sdk v1.50.0
+	go.temporal.io/api v1.64.3
+	go.temporal.io/sdk v1.51.0
 	golang.org/x/image v0.47.0
 	golang.org/x/net v0.62.0
 	golang.org/x/text v0.43.0

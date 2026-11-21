@@ -5,14 +5,12 @@ import (
 	"context"
 	"flag"
 	"log/slog"
-	"net"
 	"time"
 
 	"chameth.com/x/oidc"
+	xtemporal "chameth.com/x/temporal"
 	"go.temporal.io/sdk/client"
-	"go.temporal.io/sdk/log"
 	"go.temporal.io/sdk/worker"
-	"google.golang.org/grpc"
 	"tailscale.com/tsnet"
 )
 
@@ -30,29 +28,11 @@ var (
 // connects on first use, so it can be created before the tailnet is up. With
 // tokens, every call carries one of its access tokens.
 func New(ts *tsnet.Server, tokens *oidc.ClientCredentials) (client.Client, error) {
-	options := client.Options{
-		// Passthrough leaves MagicDNS resolution to tsnet rather than the
-		// host's resolver, and hands host:port straight to the dialer.
-		HostPort:  "passthrough:///" + *address,
-		Namespace: *namespace,
-		Logger:    log.NewStructuredLogger(slog.Default()),
-		ConnectionOptions: client.ConnectionOptions{
-			DialOptions: []grpc.DialOption{grpc.WithContextDialer(
-				func(ctx context.Context, addr string) (net.Conn, error) {
-					return ts.Dial(ctx, "tcp", addr)
-				},
-			)},
-		},
-	}
-
+	var token func(context.Context) (string, error)
 	if tokens != nil {
-		options.Credentials = client.NewAPIKeyDynamicCredentials(tokens.TokenFunc(*resource))
-		// Credentials turn TLS on by default, but the frontend is plain TCP
-		// on the tailnet.
-		options.ConnectionOptions.TLSDisabled = true
+		token = tokens.TokenFunc(*resource)
 	}
-
-	return client.NewLazyClient(options)
+	return client.NewLazyClient(xtemporal.ClientOptions(*address, *namespace, token, xtemporal.WithDialer(ts.Dial)))
 }
 
 var workerRetryInterval = time.Minute
