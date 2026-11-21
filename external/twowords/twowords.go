@@ -13,7 +13,7 @@ import (
 	"reflect"
 	"strings"
 
-	"chameth.com/chameth.com/external/servicetoken"
+	"chameth.com/x/oidc"
 )
 
 // ErrNotFound is returned when the service responds with a 404.
@@ -53,6 +53,10 @@ func (s Service) GetImage(ctx context.Context, client *http.Client, path string)
 	return body, header.Get("Content-Type"), nil
 }
 
+// Tokens, when set, gets the access token sent with each request, with the
+// service's base URL as the resource.
+var Tokens *oidc.ClientCredentials
+
 func (s Service) get(ctx context.Context, client *http.Client, path string, query Query) ([]byte, http.Header, error) {
 	// Paths can come from earlier responses; anything not root-relative
 	// could move the request, and the token, to another host or port.
@@ -69,8 +73,8 @@ func (s Service) get(ctx context.Context, client *http.Client, path string, quer
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to build request: %w", err)
 	}
-	if servicetoken.Enabled() {
-		token, err := servicetoken.Token(ctx, s.BaseURL)
+	if Tokens != nil {
+		token, err := Tokens.Token(ctx, s.BaseURL)
 		if err != nil {
 			return nil, nil, err
 		}

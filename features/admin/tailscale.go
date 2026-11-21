@@ -2,69 +2,51 @@ package admin
 
 import (
 	"context"
-	"errors"
 	"log/slog"
 	"net/http"
+	"os"
 	"time"
 
 	"chameth.com/chameth.com/features/routing"
+	"chameth.com/x/tailscale"
 	"github.com/csmith/middleware"
-	"os"
 	"tailscale.com/tsnet"
 )
 
-func RegisterGoroutine(ts *tsnet.Server, rm *routing.Manager) func() {
+func RegisterGoroutine(ctx context.Context, ts *tsnet.Server, rm *routing.Manager) func() {
 	return func() {
-		if err := start(ts, rm); err != nil {
-			slog.Error("Failed to start admin interface", "error", err)
+		if err := serve(ctx, ts, rm); err != nil && ctx.Err() == nil {
+			slog.Error("Failed to serve admin interface", "error", err)
 			os.Exit(1)
 		}
 	}
 }
 
-func start(s *tsnet.Server, rm *routing.Manager) error {
+func serve(ctx context.Context, s *tsnet.Server, rm *routing.Manager) error {
 	handler, err := requireLogin(
 		rm.Admin,
-		func(context.Context) (string, error) {
-			host := fullHostName(s)
-			if host == "" {
-				return "", errors.New("tailnet hostname is not known yet")
+		func(ctx context.Context) (string, error) {
+			name, err := tailscale.Up(ctx, s)
+			if err != nil {
+				return "", err
 			}
-			return "https://" + host, nil
+			return "https://" + name, nil
 		},
 	)
 	if err != nil {
 		return err
 	}
 
-	if err := s.Start(); err != nil {
-		return err
-	}
-
-	httpListener, err := s.Listen("tcp", ":80")
+	name, err := tailscale.Up(ctx, s)
 	if err != nil {
 		return err
 	}
 
-	httpsListener, err := s.ListenTLS("tcp", ":443")
-	if err != nil {
-		return err
-	}
-
-	httpServer := &http.Server{
-		Handler: http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				httpsURL := "https://" + fullHostName(s) + r.URL.Path
-				if r.URL.RawQuery != "" {
-					httpsURL += "?" + r.URL.RawQuery
-				}
-				http.Redirect(w, r, httpsURL, http.StatusMovedPermanently)
-			},
-		),
-	}
-
-	httpsServer := &http.Server{
-		Handler: middleware.Chain(
+	return tailscale.Serve(
+		ctx,
+		s,
+		name,
+		middleware.Chain(
 			middleware.WithMiddleware(
 				middleware.CacheControl(
 					middleware.WithCacheTimes(
@@ -87,31 +69,5 @@ func start(s *tsnet.Server, rm *routing.Manager) error {
 				),
 			),
 		)(handler),
-	}
-
-	go httpServer.Serve(httpListener)
-	go httpsServer.Serve(httpsListener)
-
-	return nil
-}
-
-func fullHostName(s *tsnet.Server) string {
-	lc, err := s.LocalClient()
-	if err != nil {
-		slog.Error("Failed to get local client", "error", err)
-		return ""
-	}
-
-	status, err := lc.Status(context.Background())
-	if err != nil {
-		slog.Error("Failed to get local status", "error", err)
-		return ""
-	}
-
-	fullHostname := status.Self.DNSName
-	if len(fullHostname) > 0 && fullHostname[len(fullHostname)-1] == '.' {
-		fullHostname = fullHostname[:len(fullHostname)-1]
-	}
-
-	return fullHostname
+	)
 }

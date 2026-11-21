@@ -164,7 +164,7 @@ func (s *site) registerRoutes() {
 
 func (s *site) launchGoroutines() {
 	go externalMaxmind.RegisterGoroutine(s.Context)()
-	go featuresAdmin.RegisterGoroutine(s.Tailscale, s.Routes)()
+	go featuresAdmin.RegisterGoroutine(s.Context, s.Tailscale, s.Routes)()
 	go featuresContact.RegisterGoroutine(s.Context, s.Temporal)()
 	go featuresFilms.RegisterGoroutine(s.Context, s.Shortcodes, s.Tailscale)()
 	go featuresMetrics.RegisterGoroutine(s.Context)()

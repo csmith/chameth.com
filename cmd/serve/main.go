@@ -15,8 +15,8 @@ import (
 	"chameth.com/chameth.com/assets"
 	"chameth.com/chameth.com/content"
 	"chameth.com/chameth.com/db"
-	"chameth.com/chameth.com/external/servicetoken"
 	"chameth.com/chameth.com/external/temporal"
+	"chameth.com/chameth.com/external/twowords"
 	"chameth.com/chameth.com/features/admin"
 	"chameth.com/chameth.com/features/errorpages"
 	"chameth.com/chameth.com/features/metrics"
@@ -26,10 +26,11 @@ import (
 	"chameth.com/chameth.com/features/sudo"
 	"chameth.com/chameth.com/features/syndications"
 	"chameth.com/chameth.com/templates"
+	"chameth.com/x/oidc"
+	"chameth.com/x/tailscale"
 	"github.com/csmith/envflag/v2"
 	"github.com/csmith/middleware"
 	"github.com/csmith/slogflags"
-	"tailscale.com/tsnet"
 )
 
 var (
@@ -56,7 +57,13 @@ var (
 func main() {
 	envflag.Parse()
 	_ = slogflags.Logger(slogflags.WithSetDefault(true))
-	servicetoken.Configure(admin.OIDCClient())
+
+	tokens, err := serviceTokens()
+	if err != nil {
+		slog.Error("Failed to configure service tokens", "error", err)
+		os.Exit(1)
+	}
+	twowords.Tokens = tokens
 
 	if err := db.Init(metrics.LogQuery); err != nil {
 		slog.Error("Failed to initialize database", "error", err)
@@ -69,23 +76,14 @@ func main() {
 	am := assets.NewManager()
 
 	s := &site{
-		Context: ctx,
-		Tailscale: &tsnet.Server{
-			Hostname: *tailscaleHost,
-			Dir:      *tailscaleDir,
-			UserLogf: func(s string, v ...any) {
-				slog.Info(fmt.Sprintf(s, v...), "source", "tailscale")
-			},
-			Logf: func(s string, v ...any) {
-				slog.Debug(fmt.Sprintf(s, v...), "source", "tailscale")
-			},
-		},
+		Context:    ctx,
+		Tailscale:  tailscale.NewServer(*tailscaleHost, *tailscaleDir, ""),
 		Assets:     am,
 		Shortcodes: shortcodes.NewManager(),
 		Routes:     routing.NewManager(assets.StaticAssetHandler(am)),
 	}
 
-	tc, err := temporal.New(s.Tailscale)
+	tc, err := temporal.New(s.Tailscale, tokens)
 	if err != nil {
 		slog.Error("Failed to create Temporal client", "error", err)
 		os.Exit(1)
@@ -185,6 +183,23 @@ func main() {
 		slog.Error("Failed to shutdown HTTP server", "error", err)
 		panic(err)
 	}
+}
+
+// serviceTokens gets the tokens the site sends to other services, as the admin
+// login's OIDC client. It returns nil if that client isn't configured.
+func serviceTokens() (*oidc.ClientCredentials, error) {
+	issuer, clientID, clientSecret := admin.OIDCClient()
+	if clientID == "" || clientSecret == "" {
+		return nil, nil
+	}
+	// A short timeout, so an unresponsive provider fails the service call
+	// instead of holding it up.
+	return oidc.NewClientCredentials(
+		issuer,
+		clientID,
+		clientSecret,
+		oidc.WithHTTPClient(&http.Client{Timeout: 10 * time.Second}),
+	)
 }
 
 func cspHeader() string {

@@ -1,6 +1,6 @@
 module chameth.com/chameth.com
 
-go 1.27.3
+go 1.27.4
 
 require (
 	dario.cat/mergo v1.0.2 // indirect
@@ -15,6 +15,7 @@ require (
 	github.com/bits-and-blooms/bitset v1.24.5 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/coder/websocket v1.8.15 // indirect
+	github.com/coreos/go-oidc/v3 v3.21.0 // indirect
 	github.com/creachadair/msync v0.10.1 // indirect
 	github.com/dblohm7/wingoes v0.0.0-20260526185140-fb298caac7ca // indirect
 	github.com/dlclark/regexp2/v2 v2.2.1 // indirect
@@ -23,7 +24,7 @@ require (
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.3 // indirect
 	github.com/gaissmai/bart v0.29.0 // indirect
-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
+	github.com/go-jose/go-jose/v4 v4.1.9 // indirect
 	github.com/go-json-experiment/json v0.0.0-20260820222146-c27c302e5fc3 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/godbus/dbus/v5 v5.2.2 // indirect
@@ -78,6 +79,7 @@ require (
 	go4.org/netipx v0.0.0-20260823151212-3075585bcbeb // indirect
 	golang.org/x/crypto v0.58.0 // indirect
 	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba // indirect
+	golang.org/x/oauth2 v0.38.0 // indirect
 	golang.org/x/sync v0.24.0 // indirect
 	golang.org/x/sys v0.49.0 // indirect
 	golang.org/x/term v0.47.0 // indirect
@@ -92,9 +94,9 @@ require (
 
 require (
 	chameth.com/cfm v1.1.0
+	chameth.com/x v0.0.1
 	github.com/alecthomas/chroma/v2 v2.27.0
 	github.com/anthonynsimon/bild v0.17.1
-	github.com/coreos/go-oidc/v3 v3.21.0
 	github.com/csmith/aca v1.3.0
 	github.com/csmith/envflag/v2 v2.0.0
 	github.com/csmith/middleware v1.4.0
@@ -110,10 +112,9 @@ require (
 	go.temporal.io/sdk v1.50.0
 	golang.org/x/image v0.47.0
 	golang.org/x/net v0.62.0
-	golang.org/x/oauth2 v0.37.0
 	golang.org/x/text v0.43.0
 	google.golang.org/grpc v1.84.0
-	tailscale.com v1.104.2
+	tailscale.com v1.104.5
 )
 
 tool github.com/air-verse/air

@@ -8,7 +8,7 @@ import (
 	"net"
 	"time"
 
-	"chameth.com/chameth.com/external/servicetoken"
+	"chameth.com/x/oidc"
 	"go.temporal.io/sdk/client"
 	"go.temporal.io/sdk/log"
 	"go.temporal.io/sdk/worker"
@@ -27,9 +27,9 @@ var (
 )
 
 // New returns a lazy client that dials the frontend through the tailnet. It
-// connects on first use, so it can be created before the tailnet is up. When a
-// service client is configured, every call carries one of its tokens.
-func New(ts *tsnet.Server) (client.Client, error) {
+// connects on first use, so it can be created before the tailnet is up. With
+// tokens, every call carries one of its access tokens.
+func New(ts *tsnet.Server, tokens *oidc.ClientCredentials) (client.Client, error) {
 	options := client.Options{
 		// Passthrough leaves MagicDNS resolution to tsnet rather than the
 		// host's resolver, and hands host:port straight to the dialer.
@@ -45,16 +45,8 @@ func New(ts *tsnet.Server) (client.Client, error) {
 		},
 	}
 
-	if servicetoken.Enabled() {
-		options.Credentials = client.NewAPIKeyDynamicCredentials(
-			func(ctx context.Context) (string, error) {
-				token, err := servicetoken.Token(ctx, *resource)
-				if err != nil {
-					return "", err
-				}
-				return token.AccessToken, nil
-			},
-		)
+	if tokens != nil {
+		options.Credentials = client.NewAPIKeyDynamicCredentials(tokens.TokenFunc(*resource))
 		// Credentials turn TLS on by default, but the frontend is plain TCP
 		// on the tailnet.
 		options.ConnectionOptions.TLSDisabled = true
