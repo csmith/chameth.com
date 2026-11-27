@@ -23,7 +23,9 @@ type GroupSummary struct {
 }
 
 func ActivitySummary(
-	ctx context.Context, client *http.Client, start, end, group string,
+	ctx context.Context,
+	client *http.Client,
+	start, end, group string,
 ) (map[string]GroupSummary, error) {
 	res, err := twowords.GetJSON[struct {
 		Groups map[string]GroupSummary `json:"groups"`

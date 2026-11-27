@@ -59,7 +59,12 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 		&rendered,
 		projecttemplates.ProjectsData{
 			ProjectGroups: groups,
-			PageData:      content.CreatePageData(r.Context(), "Projects", "/projects/", parenttemplates.OpenGraphHeaders{}),
+			PageData: content.CreatePageData(
+				r.Context(),
+				"Projects",
+				"/projects/",
+				parenttemplates.OpenGraphHeaders{},
+			),
 		},
 	); err != nil {
 		slog.Error("Failed to render projects", "error", err)

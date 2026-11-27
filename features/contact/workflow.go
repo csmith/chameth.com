@@ -101,7 +101,9 @@ func contactWorkflow(ctx workflow.Context, sub submission) error {
 			RetryPolicy:         &sdktemporal.RetryPolicy{MaximumAttempts: 5},
 		},
 	)
-	if err := workflow.ExecuteActivity(recordCtx, recordActivityName, sub, failed, llmReason).Get(ctx, nil); err != nil {
+	if err := workflow.ExecuteActivity(recordCtx, recordActivityName, sub, failed, llmReason).Get(ctx,
+		nil,
+	); err != nil {
 		logger.Error("Failed to record contact submission", "error", err)
 	}
 

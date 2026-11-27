@@ -152,7 +152,12 @@ func processMediaGroup(ctx context.Context, files []fileInfo) error {
 		if err != nil {
 			return err
 		}
-		slog.Info("Created media variant/file", "id", id, "filename", files[i].header.Filename, "parent_id", parentMediaID)
+		slog.Info(
+			"Created media variant/file",
+			"id", id,
+			"filename", files[i].header.Filename,
+			"parent_id", parentMediaID,
+		)
 	}
 
 	return nil
@@ -179,7 +184,9 @@ func getImageDimensions(fileHeader *multipart.FileHeader) (int, int, error) {
 }
 
 func createMediaFromFile(
-	ctx context.Context, fileHeader *multipart.FileHeader, width, height, parentMediaID *int,
+	ctx context.Context,
+	fileHeader *multipart.FileHeader,
+	width, height, parentMediaID *int,
 ) (int, error) {
 	file, err := fileHeader.Open()
 	if err != nil {

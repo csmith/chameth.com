@@ -72,12 +72,7 @@ func PostHandler(w http.ResponseWriter, r *http.Request) {
 			RelatedPosts:   relatedPosts,
 			FeedBuilderURL: feedBuilderURL(post.Path),
 			EditLink:       fmt.Sprintf("%s/posts/edit/%d", parenttemplates.AdminURL(), post.ID),
-			PageData: content.CreatePageData(
-				r.Context(),
-				post.Title,
-				post.Path,
-				ogHeaders,
-			),
+			PageData:       content.CreatePageData(r.Context(), post.Title, post.Path, ogHeaders),
 		},
 	)
 	if err != nil {

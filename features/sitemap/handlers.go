@@ -149,7 +149,9 @@ func buildSiteMapData(ctx context.Context, pageData templates.PageData) (SiteMap
 // routes rather than staticpages rows, so the nesting cannot be expressed in
 // the database. Children of pages that do not exist are dropped.
 var codeDefinedChildren = map[string][]SiteMapPageDetails{
-	"/feeds": {{Title: "Post feed builder", Path: "/feeds/posts/build/"}},
+	"/feeds": {
+		{Title: "Post feed builder", Path: "/feeds/posts/build/"},
+	},
 }
 
 // buildPageTree builds the hierarchy of published pages for the HTML sitemap,

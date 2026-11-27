@@ -17,24 +17,15 @@ var siteMapHtmlTemplate = func() *template.Template {
 		template.Must(
 			template.
 				New("page.html.gotpl").
-				ParseFS(
-					parenttemplates.FS,
-					"page.html.gotpl",
-				),
-		).ParseFS(
-			templateFS,
-			"sitemap.html.gotpl",
-		),
+				ParseFS(parenttemplates.FS, "page.html.gotpl"),
+		).ParseFS(templateFS, "sitemap.html.gotpl"),
 	)
 }()
 
 var siteMapXmlTemplate = textTemplate.Must(
 	textTemplate.
 		New("sitemap.xml.gotpl").
-		ParseFS(
-			templateFS,
-			"sitemap.xml.gotpl",
-		),
+		ParseFS(templateFS, "sitemap.xml.gotpl"),
 )
 
 type SiteMapData struct {

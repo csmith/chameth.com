@@ -96,7 +96,10 @@ func retrieve(ctx context.Context, client *http.Client, args []string) (shortcod
 
 	entries := make([]dayEntry, 0, len(days))
 	for _, day := range days {
-		entry := dayEntry{Date: day.Date, Distances: map[string]float64{}}
+		entry := dayEntry{
+			Date:      day.Date,
+			Distances: map[string]float64{},
+		}
 		for group, summary := range day.Groups {
 			dist := summary.DistanceM
 			if group == "run" && summary.RunDistanceM != nil {

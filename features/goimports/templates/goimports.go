@@ -5,9 +5,7 @@ import (
 	"net/http"
 )
 
-var goImportTemplate = template.Must(
-	template.New("go.html.gotpl").Parse(goImportTemplateContent),
-)
+var goImportTemplate = template.Must(template.New("go.html.gotpl").Parse(goImportTemplateContent))
 
 type GoImportData struct {
 	ModulePath string

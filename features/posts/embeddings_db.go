@@ -16,7 +16,9 @@ func updatePostEmbedding(ctx context.Context, path string, embedding any) error 
 }
 
 func postPathsWithoutEmbeddings(ctx context.Context) ([]string, error) {
-	return db.Select[string](ctx, "SELECT path FROM posts WHERE embedding IS NULL AND published = true ORDER BY date DESC")
+	return db.Select[string](ctx,
+		"SELECT path FROM posts WHERE embedding IS NULL AND published = true ORDER BY date DESC",
+	)
 }
 
 func relatedPostsByID(ctx context.Context, postID int, limit int) ([]PostMetadata, error) {
@@ -38,8 +40,10 @@ func relatedPostsByID(ctx context.Context, postID int, limit int) ([]PostMetadat
 }
 
 func recentPostsBySimilarityScore(
-	ctx context.Context, likePaths, unlikePaths []string,
-	unlikeCoeff, maxLikeDist, minScore, minUnlikeDist float64, limit int,
+	ctx context.Context,
+	likePaths, unlikePaths []string,
+	unlikeCoeff, maxLikeDist, minScore, minUnlikeDist float64,
+	limit int,
 ) ([]Post, error) {
 	return db.Select[Post](
 		ctx,

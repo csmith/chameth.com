@@ -240,14 +240,7 @@ func drawText(dst *image.RGBA, f Film) {
 	m := face.Metrics()
 	halfLeading := (lineHeight - fixedToFloat(m.Ascent+m.Descent)) / 2
 	for i, line := range lines {
-		drawString(
-			dst,
-			face,
-			quoteColor,
-			marginX,
-			top+float64(i)*lineHeight+halfLeading+fixedToFloat(m.Ascent),
-			line,
-		)
+		drawString(dst, face, quoteColor, marginX, top+float64(i)*lineHeight+halfLeading+fixedToFloat(m.Ascent), line)
 	}
 
 	drawByline(dst, f, top+float64(len(lines))*lineHeight+bylineGap, quoted)
@@ -257,14 +250,7 @@ func drawText(dst *image.RGBA, f Film) {
 		brand += " · watched " + timesWatched(f.TimesWatched)
 	}
 	brandFace := newFace(monoFont, brandSize)
-	drawString(
-		dst,
-		brandFace,
-		altColor,
-		marginX,
-		Height-brandBottom-fixedToFloat(brandFace.Metrics().Descent),
-		brand,
-	)
+	drawString(dst, brandFace, altColor, marginX, Height-brandBottom-fixedToFloat(brandFace.Metrics().Descent), brand)
 }
 
 // drawByline draws the stars and, if the main text is a quote, the film's

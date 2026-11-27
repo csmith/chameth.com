@@ -259,7 +259,12 @@ func filmListPage(w http.ResponseWriter, r *http.Request) {
 			Description:  description,
 			Entries:      items,
 			Syndications: template.HTML(syndicationHTML),
-			PageData:     content.CreatePageData(r.Context(), filmList.Title, filmList.Path, maintemplates.OpenGraphHeaders{}),
+			PageData: content.CreatePageData(
+				r.Context(),
+				filmList.Title,
+				filmList.Path,
+				maintemplates.OpenGraphHeaders{},
+			),
 		},
 	)
 	if err != nil {

@@ -25,14 +25,24 @@ func PreWarm(entityType string, entityID int, content string, url string) {
 		defer cancel()
 
 		if _, err := RenderContent(ctx, entityType, entityID, content, url); err != nil {
-			slog.Error("Failed to pre-warm content", "entity_type", entityType, "id", entityID, "url", url, "error", err)
+			slog.Error(
+				"Failed to pre-warm content",
+				"entity_type", entityType,
+				"id", entityID,
+				"url", url,
+				"error", err,
+			)
 		}
 	}()
 }
 
 // RenderContent renders content (shortcodes + markdown to HTML) for any entity type.
 func RenderContent(
-	ctx context.Context, entityType string, entityID int, content string, url string,
+	ctx context.Context,
+	entityType string,
+	entityID int,
+	content string,
+	url string,
 ) (template.HTML, error) {
 	mediaRelations, err := media.GetMediaRelationsForEntity(ctx, entityType, entityID)
 	if err != nil {

@@ -174,8 +174,13 @@ func GenerateWordcloudHandler() func(http.ResponseWriter, *http.Request) {
 }
 
 func updateWordcloud(
-	w http.ResponseWriter, r *http.Request, postID int,
-	existing *media.MediaRelationWithDetails, imageData []byte, description string, width, height int,
+	w http.ResponseWriter,
+	r *http.Request,
+	postID int,
+	existing *media.MediaRelationWithDetails,
+	imageData []byte,
+	description string,
+	width, height int,
 ) bool {
 	if err := media.UpdateMediaData(r.Context(), existing.MediaID, imageData, &width, &height); err != nil {
 		slog.Error("Failed to update wordcloud", "error", err)
@@ -199,8 +204,12 @@ func updateWordcloud(
 }
 
 func createWordcloud(
-	w http.ResponseWriter, r *http.Request, postID int,
-	imageData []byte, description string, width, height int,
+	w http.ResponseWriter,
+	r *http.Request,
+	postID int,
+	imageData []byte,
+	description string,
+	width, height int,
 ) bool {
 	post, err := posts.GetPostByID(r.Context(), postID)
 	if err != nil {

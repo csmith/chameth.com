@@ -116,7 +116,11 @@ func (m *Manager) IsPage(ctx context.Context, p string) (bool, error) {
 		return false, nil
 	}
 
-	req := &http.Request{Method: http.MethodGet, URL: &url.URL{Path: p}, Header: http.Header{}}
+	req := &http.Request{
+		Method: http.MethodGet,
+		URL:    &url.URL{Path: p},
+		Header: http.Header{},
+	}
 	if _, pattern := m.Public.Handler(req.WithContext(ctx)); strings.HasSuffix(pattern, "{$}") {
 		return true, nil
 	}

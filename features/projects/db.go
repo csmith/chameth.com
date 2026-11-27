@@ -93,7 +93,11 @@ func CreateProject(ctx context.Context, name string) (int, error) {
 }
 
 func UpdateProject(
-	ctx context.Context, id int, name, icon, description string, section int, pinned, published bool,
+	ctx context.Context,
+	id int,
+	name, icon, description string,
+	section int,
+	pinned, published bool,
 ) error {
 	_, err := db.Exec(
 		ctx,

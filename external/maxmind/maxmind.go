@@ -23,7 +23,11 @@ import (
 
 var (
 	maxmindAccountID  = flag.String("maxmind-account-id", "", "MaxMind account ID used to download GeoLite2 databases")
-	maxmindLicenseKey = flag.String("maxmind-license-key", "", "MaxMind license key used to download GeoLite2 databases")
+	maxmindLicenseKey = flag.String(
+		"maxmind-license-key",
+		"",
+		"MaxMind license key used to download GeoLite2 databases",
+	)
 )
 
 const (
@@ -179,7 +183,9 @@ func parseASNCSV(r io.Reader) ([]asnNetwork, error) {
 	if err != nil {
 		return nil, fmt.Errorf("reading CSV header: %w", err)
 	}
-	if len(header) != 3 || header[0] != "network" || header[1] != "autonomous_system_number" ||
+	if len(header) != 3 ||
+		header[0] != "network" ||
+		header[1] != "autonomous_system_number" ||
 		header[2] != "autonomous_system_organization" {
 		return nil, errors.New("invalid ASN CSV header")
 	}

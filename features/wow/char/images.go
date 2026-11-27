@@ -53,7 +53,15 @@ func ensureLivePortrait(ctx context.Context, client *http.Client, c *wow.Charact
 
 	mediaID, err := mediaIDAtPath(ctx, path)
 	if errors.Is(err, sql.ErrNoRows) {
-		if err := storePortrait(ctx, c.BlizzardID, path, filename, c.Profile.Name, "render", contentType, data); err != nil {
+		if err := storePortrait(ctx,
+			c.BlizzardID,
+			path,
+			filename,
+			c.Profile.Name,
+			"render",
+			contentType,
+			data,
+		); err != nil {
 			return "", err
 		}
 		return path, nil
@@ -122,7 +130,10 @@ func imageDimensions(data []byte) (width, height *int) {
 }
 
 func storePortrait(
-	ctx context.Context, blizzardID int, path, filename, caption, role, contentType string, data []byte,
+	ctx context.Context,
+	blizzardID int,
+	path, filename, caption, role, contentType string,
+	data []byte,
 ) error {
 	width, height := imageDimensions(data)
 

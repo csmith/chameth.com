@@ -37,7 +37,12 @@ func SnippetHandler(w http.ResponseWriter, r *http.Request) {
 			SnippetTitle:   snippet.Title,
 			SnippetGroup:   snippet.Topic,
 			SnippetContent: renderedContent,
-			PageData:       content.CreatePageData(r.Context(), snippet.Title, snippet.Path, parenttemplates.OpenGraphHeaders{}),
+			PageData: content.CreatePageData(
+				r.Context(),
+				snippet.Title,
+				snippet.Path,
+				parenttemplates.OpenGraphHeaders{},
+			),
 		},
 	)
 	if err != nil {
@@ -73,7 +78,12 @@ func handleList(w http.ResponseWriter, r *http.Request) {
 		w,
 		templates.SnippetsData{
 			SnippetGroups: groups,
-			PageData:      content.CreatePageData(r.Context(), "Snippets", "/snippets/", parenttemplates.OpenGraphHeaders{}),
+			PageData: content.CreatePageData(
+				r.Context(),
+				"Snippets",
+				"/snippets/",
+				parenttemplates.OpenGraphHeaders{},
+			),
 		},
 	)
 	if err != nil {

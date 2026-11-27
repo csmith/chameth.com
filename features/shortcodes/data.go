@@ -135,8 +135,12 @@ func (m *Manager) cachedJSON(ctx context.Context, name string, args []string) ([
 // skipIfInFlight is set and another goroutine is already fetching the same
 // key, it returns errFetchInProgress instead of waiting.
 func (m *Manager) fetchData(
-	ctx context.Context, name string, reg dataRegistration,
-	args []string, argsHash string, skipIfInFlight bool,
+	ctx context.Context,
+	name string,
+	reg dataRegistration,
+	args []string,
+	argsHash string,
+	skipIfInFlight bool,
 ) ([]byte, error) {
 	argsJSON, err := json.Marshal(args)
 	if err != nil {

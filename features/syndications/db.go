@@ -79,7 +79,11 @@ func GetLinksByPath(ctx context.Context, path string) ([]templates.Link, error) 
 }
 
 func CreateSyndication(
-	ctx context.Context, path, externalURL, name string, published bool, disposition string, rel *string,
+	ctx context.Context,
+	path, externalURL, name string,
+	published bool,
+	disposition string,
+	rel *string,
 ) (int, error) {
 	var id int
 	err := db.QueryRow(
@@ -103,7 +107,12 @@ func CreateSyndication(
 }
 
 func UpdateSyndication(
-	ctx context.Context, id int, path, externalURL, name string, published bool, disposition string, rel *string,
+	ctx context.Context,
+	id int,
+	path, externalURL, name string,
+	published bool,
+	disposition string,
+	rel *string,
 ) error {
 	_, err := db.Exec(
 		ctx,

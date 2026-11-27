@@ -206,8 +206,14 @@ func GetVideoGameReviewsByVideoGameID(ctx context.Context, gameID int) ([]VideoG
 }
 
 func CreateVideoGameReview(
-	ctx context.Context, gameID int, rating int, playedDate time.Time,
-	playtime *int, completionStatus *string, published bool, notes string,
+	ctx context.Context,
+	gameID int,
+	rating int,
+	playedDate time.Time,
+	playtime *int,
+	completionStatus *string,
+	published bool,
+	notes string,
 ) (int, error) {
 	var id int
 	err := db.QueryRow(
@@ -232,8 +238,14 @@ func CreateVideoGameReview(
 }
 
 func UpdateVideoGameReview(
-	ctx context.Context, id int, rating int, playedDate string,
-	playtime *int, completionStatus *string, published bool, notes string,
+	ctx context.Context,
+	id int,
+	rating int,
+	playedDate string,
+	playtime *int,
+	completionStatus *string,
+	published bool,
+	notes string,
 ) error {
 	_, err := db.Exec(
 		ctx,
@@ -318,7 +330,8 @@ func GetAllPublishedVideoGameReviewsWithGameAndPosters(
 }
 
 func GetRecentPublishedVideoGameReviewsWithGameAndPosters(
-	ctx context.Context, limit int,
+	ctx context.Context,
+	limit int,
 ) ([]VideoGameReviewWithGameAndPoster, error) {
 	return db.Select[VideoGameReviewWithGameAndPoster](
 		ctx,

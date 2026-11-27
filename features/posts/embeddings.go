@@ -150,7 +150,11 @@ func generateAndStore(ctx context.Context, postPath string) error {
 		return fmt.Errorf("failed to marshal request: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, *ollamaEndpoint+"/api/embed", bytes.NewReader(jsonData))
+	req, err := http.NewRequestWithContext(ctx,
+		http.MethodPost,
+		*ollamaEndpoint+"/api/embed",
+		bytes.NewReader(jsonData),
+	)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}

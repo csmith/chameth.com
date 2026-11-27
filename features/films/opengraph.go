@@ -29,7 +29,11 @@ const excerptWords = 40
 // reviews, poster and design, generating a new one if not. Images are served
 // as immutable, so each version gets its own path.
 func syncOpenGraph(
-	ctx context.Context, mgr *shortcodes.Manager, f FilmSummary, posterUpdatedAt *time.Time, existing []filmMedia,
+	ctx context.Context,
+	mgr *shortcodes.Manager,
+	f FilmSummary,
+	posterUpdatedAt *time.Time,
+	existing []filmMedia,
 ) error {
 	page, err := shortcodes.CachedData[filmPage](mgr, ctx, filmPageData, []string{f.Slug})
 	if err != nil {
@@ -70,7 +74,11 @@ func syncOpenGraph(
 }
 
 func createOpenGraph(
-	ctx context.Context, f FilmSummary, card opengraph.Film, path string, posterUpdatedAt *time.Time,
+	ctx context.Context,
+	f FilmSummary,
+	card opengraph.Film,
+	path string,
+	posterUpdatedAt *time.Time,
 ) error {
 	var err error
 	if posterUpdatedAt != nil {

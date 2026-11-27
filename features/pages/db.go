@@ -104,8 +104,13 @@ func GetSitemapStaticPages(ctx context.Context) ([]StaticPageMetadata, error) {
 }
 
 func UpdateStaticPage(
-	ctx context.Context, id int, path, title, content string, published, raw bool,
-	parentID *int, sitemapFrequency *string, sitemapPriority *float64,
+	ctx context.Context,
+	id int,
+	path, title, content string,
+	published, raw bool,
+	parentID *int,
+	sitemapFrequency *string,
+	sitemapPriority *float64,
 ) error {
 	_, err := db.Exec(
 		ctx,

@@ -95,7 +95,10 @@ type standardSiteDocument struct {
 }
 
 func NewStandardSiteDocument(
-	site, path, title, description string, coverImage *Blob, publishedAt time.Time, authorDid string,
+	site, path, title, description string,
+	coverImage *Blob,
+	publishedAt time.Time,
+	authorDid string,
 ) Record {
 	return &standardSiteDocument{
 		Type:        "site.standard.document",

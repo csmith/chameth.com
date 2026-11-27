@@ -81,7 +81,8 @@ func buildData(title string, start, end, rangeStart, rangeEnd time.Time, entries
 
 func buildCell(
 	date, start, end, rangeStart, rangeEnd time.Time,
-	byDay map[string]*dayBucket, maxByType map[string]float64,
+	byDay map[string]*dayBucket,
+	maxByType map[string]float64,
 ) Cell {
 	if date.Before(start) || date.After(end) {
 		return Cell{Inactive: true}

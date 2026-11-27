@@ -47,12 +47,7 @@ func createQuote(r *http.Request) (int, error) {
 }
 
 func applyUpdate(ctx context.Context, id int, form url.Values) error {
-	return quotes.UpdateQuote(
-		ctx,
-		id,
-		form.Get("text"),
-		form.Get("author"),
-	)
+	return quotes.UpdateQuote(ctx, id, form.Get("text"), form.Get("author"))
 }
 
 func deleteQuoteHandler() func(http.ResponseWriter, *http.Request) {

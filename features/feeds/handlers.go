@@ -198,7 +198,12 @@ func renderPostsFeed(w http.ResponseWriter, r *http.Request, title, format strin
 }
 
 func renderFilmReviewsFeed(
-	w http.ResponseWriter, r *http.Request, mgr *shortcodes.Manager, title string, limit int, selfLink string,
+	w http.ResponseWriter,
+	r *http.Request,
+	mgr *shortcodes.Manager,
+	title string,
+	limit int,
+	selfLink string,
 ) {
 	slog.Debug("Serving feed", "type", "filmreviews", "useragent", r.UserAgent())
 	metrics.RecordFeedRequest("filmreviews", r.UserAgent())

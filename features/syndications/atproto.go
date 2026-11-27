@@ -125,7 +125,9 @@ func syndicatePostWorkflow(ctx workflow.Context, args syndicatePostArgs) error {
 
 	path := args.Path
 	var document documentResult
-	if err := workflow.ExecuteActivity(ctx, documentActivityName, path, args.RecordKey).Get(ctx, &document); err != nil {
+	if err := workflow.ExecuteActivity(ctx, documentActivityName, path, args.RecordKey).Get(ctx,
+		&document,
+	); err != nil {
 		return err
 	}
 	if document.Created {

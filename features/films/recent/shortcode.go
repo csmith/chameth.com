@@ -31,7 +31,10 @@ func RegisterShortcodes(mgr *shortcodes.Manager, ts *tsnet.Server) {
 
 			entries, err := films.GetReviews(ctx, ts.HTTPClient(), films.ReviewQuery{Limit: count})
 			if err != nil {
-				return shortcodes.Result[[]films.ReviewEntry]{}, fmt.Errorf("failed to fetch recent film reviews: %w", err)
+				return shortcodes.Result[[]films.ReviewEntry]{}, fmt.Errorf(
+					"failed to fetch recent film reviews: %w",
+					err,
+				)
 			}
 
 			return shortcodes.Result[[]films.ReviewEntry]{

@@ -42,11 +42,7 @@ var (
 		30*time.Second,
 		"How long to wait for the tailnet before starting background jobs",
 	)
-	noCache = flag.Bool(
-		"no-cache",
-		false,
-		"Tell browsers not to cache any responses, for local development",
-	)
+	noCache       = flag.Bool("no-cache", false, "Tell browsers not to cache any responses, for local development")
 	cspReportOnly = flag.Bool(
 		"csp-report-only",
 		false,
@@ -111,7 +107,10 @@ func main() {
 				middleware.CrossOriginProtection(),
 				middleware.ErrorHandler(
 					middleware.WithErrorHandler(http.StatusNotFound, http.HandlerFunc(errorpages.NotFound)),
-					middleware.WithErrorHandler(http.StatusInternalServerError, http.HandlerFunc(errorpages.ServerError)),
+					middleware.WithErrorHandler(
+						http.StatusInternalServerError,
+						http.HandlerFunc(errorpages.ServerError),
+					),
 				),
 				middleware.CacheControl(
 					middleware.WithCacheTimes(

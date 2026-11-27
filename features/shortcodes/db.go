@@ -26,8 +26,13 @@ func getShortcodeData(ctx context.Context, shortcode string, version int, argsHa
 }
 
 func upsertShortcodeData(
-	ctx context.Context, shortcode string, version int, argsHash string,
-	argsJSON, dataJSON []byte, retrievedAt time.Time, nextRefreshAt *time.Time,
+	ctx context.Context,
+	shortcode string,
+	version int,
+	argsHash string,
+	argsJSON, dataJSON []byte,
+	retrievedAt time.Time,
+	nextRefreshAt *time.Time,
 ) error {
 	_, err := db.Exec(
 		ctx,
@@ -55,8 +60,13 @@ func upsertShortcodeData(
 // stores no data; on an existing row it leaves data and retrieved_at
 // untouched and only pushes the retry time forward.
 func upsertShortcodeDataFailure(
-	ctx context.Context, shortcode string, version int, argsHash string,
-	argsJSON []byte, failedAt time.Time, nextRefreshAt *time.Time,
+	ctx context.Context,
+	shortcode string,
+	version int,
+	argsHash string,
+	argsJSON []byte,
+	failedAt time.Time,
+	nextRefreshAt *time.Time,
 ) error {
 	_, err := db.Exec(
 		ctx,

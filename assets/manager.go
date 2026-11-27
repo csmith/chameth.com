@@ -95,7 +95,9 @@ func (m *Manager) StaticAsset(urlPath string) (fs.FS, string, bool) {
 }
 
 func (m *Manager) register(kind BundleKind, suffix string) {
-	m.bundles[kind] = &bundle{next: time.Time{}}
+	m.bundles[kind] = &bundle{
+		next: time.Time{},
+	}
 	m.suffixes[kind] = suffix
 }
 

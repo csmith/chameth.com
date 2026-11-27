@@ -26,7 +26,9 @@ func GetMediaByPath(ctx context.Context, path string) (*Media, error) {
 }
 
 func GetMediaRelationsForEntity(
-	ctx context.Context, entityType string, entityID int,
+	ctx context.Context,
+	entityType string,
+	entityID int,
 ) ([]MediaRelationWithDetails, error) {
 	return db.Select[MediaRelationWithDetails](
 		ctx,
@@ -56,7 +58,9 @@ func GetAllMediaRelationsForEntityType(ctx context.Context, entityType string) (
 }
 
 func GetOpenGraphDetailsForEntity(
-	ctx context.Context, entityType string, entityID int,
+	ctx context.Context,
+	entityType string,
+	entityID int,
 ) (*MediaRelationWithDetails, error) {
 	relation, err := db.Get[MediaRelationWithDetails](
 		ctx,
@@ -104,7 +108,9 @@ func GetOpenGraphImageForEntity(ctx context.Context, entityType string, entityID
 }
 
 func GetOpenGraphImageVariantsForEntity(
-	ctx context.Context, entityType string, entityID int,
+	ctx context.Context,
+	entityType string,
+	entityID int,
 ) ([]MediaImageVariant, error) {
 	return db.Select[MediaImageVariant](
 		ctx,
@@ -128,8 +134,11 @@ func GetOpenGraphImageVariantsForEntity(
 }
 
 func CreateMedia(
-	ctx context.Context, contentType, originalFilename string, data []byte,
-	width, height *int, parentMediaID *int,
+	ctx context.Context,
+	contentType, originalFilename string,
+	data []byte,
+	width, height *int,
+	parentMediaID *int,
 ) (int, error) {
 	return db.Get[int](
 		ctx,
@@ -162,7 +171,11 @@ func UpdateMediaData(ctx context.Context, id int, data []byte, width, height *in
 }
 
 func UpdateMedia(
-	ctx context.Context, id int, contentType, originalFilename string, data []byte, width, height *int,
+	ctx context.Context,
+	id int,
+	contentType, originalFilename string,
+	data []byte,
+	width, height *int,
 ) error {
 	_, err := db.Exec(
 		ctx,
@@ -207,7 +220,11 @@ func GetMediaByID(ctx context.Context, id int) (*Media, error) {
 }
 
 func UpdateMediaRelation(
-	ctx context.Context, entityType string, entityID int, path string, caption, description, role *string,
+	ctx context.Context,
+	entityType string,
+	entityID int,
+	path string,
+	caption, description, role *string,
 ) error {
 	_, err := db.Exec(
 		ctx,
@@ -241,7 +258,10 @@ func DeleteMediaRelation(ctx context.Context, entityType string, entityID int, p
 }
 
 func UpdateMediaRelationVariants(
-	ctx context.Context, entityType string, entityID, parentMediaID int, caption, description *string,
+	ctx context.Context,
+	entityType string,
+	entityID, parentMediaID int,
+	caption, description *string,
 ) error {
 	_, err := db.Exec(
 		ctx,
@@ -280,7 +300,10 @@ func GetAvailableMediaForEntity(ctx context.Context, entityType string, entityID
 }
 
 func CreateMediaRelation(
-	ctx context.Context, entityType string, entityID, mediaID int, path string,
+	ctx context.Context,
+	entityType string,
+	entityID, mediaID int,
+	path string,
 	caption, description, role *string,
 ) error {
 	_, err := db.Exec(

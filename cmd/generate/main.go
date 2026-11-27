@@ -255,7 +255,11 @@ func scanFile(root, mod, path string, providers []provider, pkgs map[string]*pkg
 
 	p, ok := pkgs[importPath]
 	if !ok {
-		p = &pkg{importPath: importPath, alias: makeAlias(mod, importPath), params: map[string][]int{}}
+		p = &pkg{
+			importPath: importPath,
+			alias:      makeAlias(mod, importPath),
+			params:     map[string][]int{},
+		}
 		pkgs[importPath] = p
 	}
 
@@ -264,7 +268,10 @@ func scanFile(root, mod, path string, providers []provider, pkgs map[string]*pkg
 		if !ok || !isRegistration(fn.Name.Name) {
 			continue
 		}
-		p.params[fn.Name.Name] = append(p.params[fn.Name.Name], matchProviders(fn, fileImports, providers, importPath)...)
+		p.params[fn.Name.Name] = append(
+			p.params[fn.Name.Name],
+			matchProviders(fn, fileImports, providers, importPath)...,
+		)
 	}
 
 	if len(p.params) == 0 {

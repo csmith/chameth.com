@@ -88,7 +88,8 @@ func syncIndex(ctx context.Context, mgr *shortcodes.Manager, client *http.Client
 		prev, known := previous[f.ID]
 
 		posterUpdatedAt := prev.PosterUpdatedAt
-		if f.Poster != nil && (!known || prev.PosterUpdatedAt == nil || !prev.PosterUpdatedAt.Equal(f.Poster.UpdatedAt)) {
+		if f.Poster != nil &&
+			(!known || prev.PosterUpdatedAt == nil || !prev.PosterUpdatedAt.Equal(f.Poster.UpdatedAt)) {
 			if err := syncPoster(ctx, client, f.FilmSummary); err != nil {
 				slog.Error("Failed to rehost film poster", "film_id", f.ID, "error", err)
 			} else {
@@ -174,7 +175,15 @@ func syncPoster(ctx context.Context, client *http.Client, f FilmSummary) error {
 		caption := f.Title
 		description := "Poster of " + f.Title
 		role := "poster"
-		if err := media.CreateMediaRelation(ctx, "film", f.ID, mediaID, path, &caption, &description, &role); err != nil {
+		if err := media.CreateMediaRelation(ctx,
+			"film",
+			f.ID,
+			mediaID,
+			path,
+			&caption,
+			&description,
+			&role,
+		); err != nil {
 			return errors.Join(fmt.Errorf("failed to create poster relation: %w", err), media.DeleteMedia(ctx, mediaID))
 		}
 	}

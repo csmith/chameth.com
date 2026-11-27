@@ -99,13 +99,7 @@ func NewAlbums(ctx context.Context, client *http.Client, start, end string) ([]A
 func AlbumChart(ctx context.Context, client *http.Client, start, end string, limit int) ([]Album, error) {
 	res, err := twowords.GetJSON[struct {
 		Albums []Album `json:"albums"`
-	}](
-		ctx,
-		bonusMetal,
-		client,
-		"/api/insights/album-chart",
-		twowords.Query{"start": start, "end": end, "limit": limit},
-	)
+	}](ctx, bonusMetal, client, "/api/insights/album-chart", twowords.Query{"start": start, "end": end, "limit": limit})
 	if err != nil {
 		return nil, err
 	}

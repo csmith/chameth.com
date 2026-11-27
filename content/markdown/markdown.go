@@ -18,10 +18,7 @@ func Render(input string) template.HTML {
 	return template.HTML(md.Markdown(input))
 }
 
-var chromaFormatter = chromahtml.New(
-	chromahtml.WithClasses(true),
-	chromahtml.ClassPrefix("chroma-"),
-)
+var chromaFormatter = chromahtml.New(chromahtml.WithClasses(true), chromahtml.ClassPrefix("chroma-"))
 
 // highlight renders the body of a fenced code block with Chroma, emitting
 // CSS classes rather than inline styles. If the block has no language, or
