@@ -15,7 +15,11 @@ import (
 )
 
 var (
-	address   = flag.String("temporal-address", "temporal.yak-wall.ts.net:7233", "Host and port of the Temporal frontend")
+	address = flag.String(
+		"temporal-address",
+		"temporal.yak-wall.ts.net:7233",
+		"Host and port of the Temporal frontend",
+	)
 	namespace = flag.String("temporal-namespace", "personal-prod", "Temporal namespace workflows run in")
 	resource  = flag.String(
 		"temporal-resource",
@@ -38,10 +42,11 @@ func New(ts *tsnet.Server, tokens *oidc.ClientCredentials) (client.Client, error
 var workerRetryInterval = time.Minute
 
 // RunWorker runs a worker for the task queue until ctx is cancelled. The
-// frontend may be unreachable at boot (tailnet or Temporal down), so starting
-// is retried rather than giving up. A worker memoizes the result of its first
-// start, so each attempt builds and registers a new one. onStart is called once
-// the worker is up.
+// frontend may be unreachable at boot (tailnet or Temporal down), and a running
+// worker stops itself if a poll keeps failing with a persistent error, so both
+// are retried rather than giving up. A worker can't be started again after an
+// error, so each attempt builds and registers a new one. onStart is called each
+// time a worker is up.
 func RunWorker(
 	ctx context.Context,
 	tc client.Client,
@@ -50,26 +55,26 @@ func RunWorker(
 	register func(worker.Registry),
 	onStart func(),
 ) {
-	var w worker.Worker
 	for {
-		w = worker.New(tc, taskQueue, options)
+		w := worker.New(tc, taskQueue, options)
 		register(w)
+		// Start is memoized, so starting here lets onStart run once the worker
+		// is up, and xtemporal.RunWorker then just gets the same result.
 		err := w.Start()
 		if err == nil {
-			break
+			if onStart != nil {
+				onStart()
+			}
+			err = xtemporal.RunWorker(ctx, w)
 		}
-		slog.Error("Failed to start Temporal worker", "task_queue", taskQueue, "error", err)
+		if err == nil {
+			return
+		}
+		slog.Error("Temporal worker failed", "task_queue", taskQueue, "error", err)
 		select {
 		case <-ctx.Done():
 			return
 		case <-time.After(workerRetryInterval):
 		}
 	}
-
-	if onStart != nil {
-		onStart()
-	}
-
-	<-ctx.Done()
-	w.Stop()
 }

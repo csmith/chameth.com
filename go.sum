@@ -2,8 +2,8 @@
 9fans.net/go v0.0.8-0.20250307142834-96bdba94b63f/go.mod h1:hHyrZRryGqVdqrknjq5OWDLGCTJ2NeEvtrpR96mjraM=
 chameth.com/cfm v1.1.0 h1:mu4ur6aegJcIxYxD5zT4SIlMytvXHK11sKxS24g3E2s=
 chameth.com/cfm v1.1.0/go.mod h1:fCxIfT2jKa27pn+6tY0OtLUt+UscyfkrGp+ovhMlr8k=
-chameth.com/x v0.0.3 h1:HQGeTr+OUj5DKWhV4KxQnrqczPYDdZhxImyyD07j2+w=
-chameth.com/x v0.0.3/go.mod h1:9U/ovFFebX3thyTAj4G1yfFnKC7yxklxQDCtT8PQetM=
+chameth.com/x v0.0.4 h1:buWBo7TQYB9zcb8859Q+svbqvqX3ImAZF6kgCp89Ns0=
+chameth.com/x v0.0.4/go.mod h1:YBjVjYZSoyLsSTuaIKqeKgYKMPxqZbUbCJE9Ux6IchE=
 dario.cat/mergo v1.0.2 h1:85+piFYR1tMbRrLcDwR18y4UKJ3aH1Tbzi24VRW1TK8=
 dario.cat/mergo v1.0.2/go.mod h1:E/hbnu0NxMFBjpMIE34DRGLWqDy0g5FuKDhCb31ngxA=
 filippo.io/edwards25519 v1.1.0/go.mod h1:BxyFTGdWcka3PhytdK4V28tE5sGfRvvvRV7EaN4VDT4=
